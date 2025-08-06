@@ -215,6 +215,80 @@ icon: "wrench"
 
 ## Workspace Issues
 
+### Workspace Sync and Access Problems
+
+<AccordionGroup>
+  <Accordion title="Workspaces Missing Locally">
+    **Symptoms**: Can't see or access workspaces that exist on the server
+    
+    **Solutions**:
+    
+    1. **Check workspace sync status**:
+       ```bash
+       ntcli workspace sync
+       ```
+    
+    2. **Get access tokens for missing workspaces**:
+       ```bash
+       ntcli token refresh <workspace-name>
+       ```
+    
+    3. **Verify workspace is now available**:
+       ```bash
+       ntcli workspace list
+       ```
+  </Accordion>
+
+  <Accordion title="Workspace Storage Issues">
+    **Symptoms**: Workspace commands failing or behaving unexpectedly
+    
+    **Solutions**:
+    
+    1. **Debug local workspace storage**:
+       ```bash
+       ntcli workspace debug
+       ```
+    
+    2. **Check for detailed file contents** (if needed):
+       ```bash
+       ntcli workspace debug --verbose
+       ```
+    
+    3. **Compare local and server state**:
+       ```bash
+       ntcli workspace sync
+       ```
+    
+    4. **Fix authentication issues**:
+       ```bash
+       ntcli auth logout
+       ntcli auth login
+       ```
+  </Accordion>
+
+  <Accordion title="Token Expiration Issues">
+    **Symptoms**: `ntcli workspace debug` shows expired tokens
+    
+    **Solutions**:
+    
+    1. **Check token status**:
+       ```bash
+       ntcli workspace debug
+       ```
+    
+    2. **Refresh expired tokens**:
+       ```bash
+       ntcli token refresh <workspace-name>
+       ```
+    
+    3. **Verify all workspaces are accessible**:
+       ```bash
+       ntcli workspace list
+       ntcli workspace sync
+       ```
+  </Accordion>
+</AccordionGroup>
+
 ### Workspace Creation Problems
 
 <AccordionGroup>
@@ -612,6 +686,10 @@ ntcli auth status --verbose
 # Check workspace and tokens
 ntcli workspace list
 ntcli token show
+
+# Debug workspace storage and sync issues
+ntcli workspace debug
+ntcli workspace sync
 ```
 
 ```bash Server Diagnostics

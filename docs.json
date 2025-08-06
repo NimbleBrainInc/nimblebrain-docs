@@ -58,7 +58,9 @@
               "commands/workspace/switch",
               "commands/workspace/select",
               "commands/workspace/delete",
-              "commands/workspace/clear"
+              "commands/workspace/clear",
+              "commands/workspace/debug",
+              "commands/workspace/sync"
             ]
           },
           {
@@ -67,7 +69,6 @@
               "commands/server/deploy",
               "commands/server/list",
               "commands/server/info",
-              "commands/server/logs",
               "commands/server/scale",
               "commands/server/remove",
               "commands/server/claude-config"
