@@ -1,0 +1,65 @@
+---
+title: 'LangChain Integration'
+description: 'Use deployed MCP servers in LangChain applications'
+icon: 'link'
+---
+
+## Overview
+
+Learn how to integrate deployed MCP servers directly into LangChain applications using HTTP API calls.
+
+## Basic Integration
+
+```javascript
+import { DynamicTool } from "@langchain/core/tools";
+
+const searchParks = new DynamicTool({
+  name: "search_parks",
+  description: "Search for national parks",
+  func: async (query) => {
+    const response = await fetch(
+      `https://mcp.nimbletools.ai/v1/workspaces/${workspaceId}/servers/nationalparks-mcp/mcp`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${workspaceToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          method: "tools/call", 
+          params: { name: "search_parks", arguments: { query } },
+        }),
+      }
+    );
+    return (await response.json()).result?.content?.[0]?.text;
+  },
+});
+```
+
+## Environment Setup
+
+```bash
+export NTCLI_WORKSPACE_ID="your-workspace-uuid"
+export NTCLI_WORKSPACE_TOKEN="your-workspace-token"
+export OPENAI_API_KEY="your-openai-key"
+```
+
+## Related Examples
+
+<CardGroup cols={2}>
+  <Card
+    title="Advanced Usage"
+    icon="code"
+    href="/examples/advanced-usage"
+  >
+    Advanced integration patterns
+  </Card>
+  <Card
+    title="Complete Workflow"
+    icon="list-check"
+    href="/examples/complete-workflow"
+  >
+    Full deployment workflow
+  </Card>
+</CardGroup>

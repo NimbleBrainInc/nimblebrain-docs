@@ -1,0 +1,61 @@
+---
+title: 'MCP Servers'
+description: 'Serverless Model Context Protocol servers with auto-scaling and health monitoring'
+icon: 'server'
+---
+
+## Overview
+
+MCP (Model Context Protocol) Servers are containerized applications that provide tools and data sources for AI assistants like Claude Desktop.
+
+## What are MCP Servers?
+
+MCP servers implement the Model Context Protocol to provide:
+
+- **Tools**: Functions that AI assistants can call
+- **Resources**: Data sources and APIs
+- **Prompts**: Pre-defined prompt templates
+
+## Server Lifecycle
+
+<Steps>
+  <Step title="Registry">
+    Servers are defined in the community registry with metadata and capabilities
+  </Step>
+  <Step title="Deployment">
+    Deploy servers to your workspace with `ntcli server deploy`
+  </Step>
+  <Step title="Scaling">
+    Servers auto-scale from 0 to N replicas based on demand
+  </Step>
+  <Step title="Integration">
+    Connect to Claude Desktop or use via HTTP API
+  </Step>
+</Steps>
+
+## Popular Servers
+
+| Server | Description | Use Cases |
+|--------|-------------|-----------|
+| **nationalparks-mcp** | US National Parks data | Travel planning, research |
+| **finnhub-mcp** | Stock market data | Financial analysis |
+| **reverse-text-mcp** | Text manipulation | Text processing |
+
+## Related Concepts
+
+<CardGroup cols={2}>
+  <Card
+    title="Workspaces"
+    icon="folder"
+    href="/concepts/workspaces"
+  >
+    Isolated environments for your servers
+  </Card>
+  <Card
+    title="Claude Integration"
+    icon="brain"
+    href="/concepts/claude-integration"
+  >
+    Connect servers to Claude Desktop
+  </Card>
+</CardGroup>

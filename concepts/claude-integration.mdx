@@ -1,0 +1,103 @@
+---
+title: "Claude Integration"
+description: "Seamless integration with Claude Desktop and other AI applications"
+icon: "brain"
+---
+
+## Overview
+
+Connect your deployed MCP servers to Claude Desktop for seamless AI-powered workflows with real-time data access.
+
+## Integration Architecture
+
+```mermaid
+graph LR
+    Claude[Claude Desktop] --> Bridge[MCP HTTP Bridge]
+    Bridge --> API[NimbleTools API]
+    API --> Server[MCP Server]
+```
+
+## Setup Process
+
+<Steps>
+  <Step title="Deploy Server">
+    ```bash
+    ntcli server deploy nationalparks-mcp
+    ```
+  </Step>
+  <Step title="Set Secret">
+    ```bash 
+    ntcli secrets set NPS_API_KEY [YOUR_API_KEY]
+    ```
+  </Step>
+
+  <Step title="Generate Config">
+    ```bash  
+    ntcli server claude-config nationalparks-mcp
+    ```
+    
+    **Example Output:**
+    ```bash
+    ⠋ 🔧 Generating Claude Desktop config for nationalparks-mcp...
+    ✔ ✅ Claude Desktop config generated for nationalparks-mcp
+
+    📋 Claude Desktop MCP Configuration:
+    {
+      "mcpServers": {
+        "echo": {
+          "command": "npx",
+          "args": [
+            "@nimbletools/mcp-http-bridge",
+            "--endpoint",
+            "https://mcp.nimbletools.ai/v1/workspaces/89d4769a-d093-411f-987c-782216903383/servers/nationalparks-mcp/mcp",
+            "--token",
+            "eyJhbGci...."
+          ],
+          "auth": null,
+          "oauth": false
+        }
+      }
+    }
+    ```
+
+  </Step>
+  <Step title="Update Claude Config">
+    Copy the JSON output to your claude_desktop_config.json file (see locations below)
+  </Step>
+  <Step title="Restart Claude">
+    Restart Claude Desktop to load the new configuration
+  </Step>
+</Steps>
+
+## Configuration Locations
+
+<Tabs>
+  <Tab title="macOS">
+    `~/Library/Application Support/Claude/claude_desktop_config.json`
+  </Tab>
+  <Tab title="Linux">`~/.config/claude/claude_desktop_config.json`</Tab>
+  <Tab title="Windows">`%APPDATA%\Claude\claude_desktop_config.json`</Tab>
+</Tabs>
+
+## Testing Integration
+
+Ask Claude to use your deployed tools:
+
+- "Find national parks in Wyoming"
+- "Get the current stock price for Apple"
+- "Reverse this text: Hello World"
+
+## Related Guides
+
+<CardGroup cols={2}>
+  <Card
+    title="Claude Desktop Example"
+    icon="robot"
+    href="/examples/claude-desktop"
+  >
+    Complete integration walkthrough
+  </Card>
+  <Card title="Troubleshooting" icon="wrench" href="/guides/troubleshooting">
+    Common integration issues
+  </Card>
+</CardGroup>

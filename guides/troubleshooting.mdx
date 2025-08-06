@@ -1,0 +1,716 @@
+---
+title: "Troubleshooting"
+description: "Common issues and solutions for deployment and integration problems"
+icon: "wrench"
+---
+
+## Installation Issues
+
+### Command not found: ntcli
+
+<AccordionGroup>
+  <Accordion title="NPM Installation Issues">
+    **Symptoms**:
+    `ntcli: command not found` after running `npm install -g @nimbletools/ntcli` 
+    
+    **Cause**: 
+    NPM global bin directory not in PATH
+
+    **Solutions**: 
+    1. **Check NPM global bin location**: 
+    ```bash
+    npm config get prefix 
+    # Should be in your PATH 
+    ``` 
+
+    2. **Add NPM global bin to PATH**:
+
+    ```bash 
+    # Add to ~/.bashrc, ~/.zshrc, etc. 
+    export PATH=$(npm config get prefix)/bin:$PATH 
+    ```
+    
+    3. **Verify installation**: 
+    
+    ```bash
+    which ntcli ntcli
+    --version
+    ```
+  </Accordion>
+
+  <Accordion title="Permission Errors">
+    **Symptoms**: `EACCES` permission denied errors during installation
+
+    **Cause**: NPM trying to write to system directories
+
+    **Solutions**: 
+    1. **Configure NPM to use user directory** (recommended): 
+      
+        ```bash 
+        mkdir ~/.npm-global 
+        npm config set prefix '~/.npm-global' 
+        echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc 
+        source ~/.bashrc npm install -g @nimbletools/ntcli 
+        ```
+
+    2. **Use Node Version Manager** (recommended):
+
+      ```bash
+      # Install nvm curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash 
+      # Install and use Node.js 
+      nvm install node 
+      nvm use node 
+      npm install -g @nimbletools/ntcli
+      ```
+  </Accordion>
+
+  <Accordion title="Old Version After Update">
+    **Symptoms**: 
+    `ntcli --version` shows old version after update 
+    
+    **Cause**:
+    Multiple installations or cached binaries **Solutions**:
+      1. **Clear NPM cache**: 
+      
+      ```bash
+      npm cache clean --force
+      ```
+
+      2. **Complete reinstall**:
+      
+      ```bash
+      npm uninstall -g @nimbletools/ntcli
+      npm install -g @nimbletools/ntcli
+      ```
+    
+    3. **Check installation location**: 
+    
+      ```bash
+      which ntcli ls -la $(which ntcli)
+      ```
+  </Accordion>
+</AccordionGroup>
+
+## Authentication Issues
+
+### OAuth Login Problems
+
+<AccordionGroup>
+  <Accordion title="Browser Doesn't Open">
+    **Symptoms**: Browser doesn't automatically open during `ntcli auth login`
+    
+    **Solutions**:
+    
+    1. **Manual browser opening**:
+
+       ```bash
+       ntcli auth login --verbose
+       # Copy the URL from the output and open manually
+       ```
+    
+    2. **Check default browser**:
+
+       ```bash
+       # macOS
+       defaults read com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers
+       
+       # Linux - check $BROWSER variable
+       echo $BROWSER
+       ```
+    
+    3. **Use alternative browser**:
+
+       ```bash
+       # Set browser temporarily
+       export BROWSER=firefox
+       ntcli auth login
+       ```
+  </Accordion>
+  
+  <Accordion title="Port Already in Use">
+    **Symptoms**: `Error: listen EADDRINUSE: address already in use :::41247`
+    
+    **Solutions**:
+    
+    1. **Use different port**:
+
+       ```bash
+       ntcli auth login --port 8080
+       ```
+    
+    2. **Find process using port**:
+
+       ```bash
+       # Find process using port 41247
+       lsof -i :41247
+       
+       # Kill process if safe to do so
+       kill -9 <PID>
+       ```
+    
+    3. **Set default port**:
+
+       ```bash
+       export NTCLI_DEFAULT_PORT=8080
+       ntcli auth login
+       ```
+  </Accordion>
+  
+  <Accordion title="Timeout During Authentication">
+    **Symptoms**: Authentication times out before completion
+    
+    **Solutions**:
+    
+    1. **Increase timeout**:
+
+       ```bash
+       ntcli auth login --timeout 120000  # 2 minutes
+       ```
+    
+    2. **Check network connectivity**:
+
+       ```bash
+       curl -I https://clerk.nimbletools.ai
+       ping clerk.nimbletools.ai
+       ```
+    
+    3. **Disable firewall/proxy temporarily**:
+
+       ```bash
+       # Test without proxy
+       unset http_proxy https_proxy
+       ntcli auth login
+       ```
+  </Accordion>
+</AccordionGroup>
+
+### Token and Credential Issues
+
+<AccordionGroup>
+  <Accordion title="Authentication Expired">
+    **Symptoms**: `Authentication token expired` or `401 Unauthorized`
+    
+    **Solutions**: 
+    
+      1. **Re-authenticate**: 
+      
+        ```bash
+        ntcli auth logout ntcli auth login
+        ```
+
+    2. **Refresh workspace tokens**:
+    
+      ```bash
+      ntcli token refresh --no-expiry
+      ```
+      
+    3. **Check token status**: 
+    
+      ```bash
+      ntcli auth status 
+      ntcli token show
+      ```
+  </Accordion>
+</AccordionGroup>
+
+## Workspace Issues
+
+### Workspace Creation Problems
+
+<AccordionGroup>
+  <Accordion title="Invalid Workspace Name">
+    **Symptoms**: `Invalid workspace name format` error 
+    
+    **Cause**: Workspace name violates naming rules 
+    
+    **Solution**: Follow naming conventions: 
+    
+      ```bash
+      # ❌ Invalid names 
+      ntcli workspace create "my project"
+      # spaces 
+      ntcli workspace create my_project 
+      # underscores
+      ntcli workspace create very-long-workspace-name-here 
+      # too long 
+      ntcli workspace create my-project!
+      # special chars 
+      # ✅ Valid names 
+      ntcli workspace create my-project # good
+      ntcli workspace create data-science-2024 # good ntcli workspace create
+      prod-env # good
+      ```
+  </Accordion>
+
+  <Accordion title="Workspace Already Exists">
+    **Symptoms**: `Workspace name already exists` error 
+    **Solutions**:
+    
+    1. **List existing workspaces**: 
+    
+      ```bash 
+      ntcli workspace list
+      ```
+    
+    2. **Use different name**: 
+    
+      ```bash
+      ntcli workspace create my-project-v2
+      ``` 
+    
+    3. **Switch to existing workspace**:
+    
+      ```bash
+      ntcli workspace switch my-project
+      ```
+  </Accordion>
+
+  <Accordion title="Workspace Quota Exceeded">
+    **Symptoms**: `Workspace quota exceeded` error
+    
+    **Solutions**: 
+    
+    1. **Check current workspaces**:
+
+      ```bash
+      ntcli workspace list
+      ```
+    
+    2. **Delete unused workspaces**: 
+    
+      ```bash
+      ntcli workspace delete old-workspace --force
+      ```
+  </Accordion>
+</AccordionGroup>
+
+## Server Deployment Issues
+
+### Deployment Failures
+
+<AccordionGroup>
+  <Accordion title="Server Not Found in Registry">
+    **Symptoms**: `Server 'xyz' not found in registry`
+    
+    **Solutions**: 
+
+      1. **Check available servers**:
+      
+      ```bash
+      ntcli registry list
+      ```
+      
+    2. **Search for similar names**: 
+  
+      ```bash
+      ntcli registry list | grep -i keyword
+      ``` 
+    
+    3. **Get exact server ID**: 
+    
+      ```bash
+      ntcli registry show server-name
+      ```
+
+  </Accordion>
+
+  <Accordion title="Deployment Timeout">
+    **Symptoms**: Deployment hangs or times out 
+    
+    **Solutions**: 1. **Check deployment status**: 
+    
+      ```bash
+      ntcli server list
+      ntcli server info server-name
+      ```
+    
+    2. **View deployment logs**:
+    
+      ```bash
+      ntcli server logs server-name --lines 50
+      ```
+      
+    3. **Retry deployment**: 
+    
+      ```bash
+      ntcli server remove server-name --force
+      ntcli server deploy server-name
+      ```
+
+  </Accordion>
+
+  <Accordion title="Resource Quota Exceeded">
+    **Symptoms**: `Resource quota exceeded` during deployment
+    
+    **Solutions**: 
+    
+      1. **Check current resource usage**: 
+      
+        ```bash
+        ntcli server list
+        ```
+        
+      2. **Scale down or remove unused servers**: 
+      
+        ```bash
+        ntcli server scale server-name 1 
+        ntcli server remove unused-server
+        ```
+
+  </Accordion>
+</AccordionGroup>
+
+### Runtime Issues
+
+<AccordionGroup>
+  <Accordion title="Server Not Responding">
+    **Symptoms**: MCP calls fail with connection errors
+    
+    **Solutions**: 
+    
+    1. **Check server status**: 
+       ```bash
+       ntcli server info server-name
+       ntcli server logs server-name --lines 20
+       ```
+    
+    2. **Test MCP connection**: 
+       ```bash
+       ntcli mcp connect server-name --verbose
+       ```
+    
+    3. **Restart server** (scale to 0 then back up): 
+       ```bash
+       ntcli server scale server-name 0
+       sleep 10
+       ntcli server scale server-name 1
+       ```
+  </Accordion>
+
+  <Accordion title="Missing Environment Variables">
+    **Symptoms**: Server logs show missing required environment variables
+    
+    **Solutions**: 
+    
+    1. **Check required secrets**: 
+       ```bash
+       ntcli registry show server-name
+       # Look for required environment variables
+       ```
+    
+    2. **Set missing secrets**: 
+       ```bash
+       ntcli secrets set API_KEY=your-key-here
+       ntcli secrets set DATABASE_URL=postgres://...
+       ```
+    
+    3. **Restart server after setting secrets**: 
+       ```bash
+       ntcli server scale server-name 0
+       ntcli server scale server-name 1
+       ```
+  </Accordion>
+</AccordionGroup>
+
+## MCP Integration Issues
+
+### Claude Desktop Integration
+
+<AccordionGroup>
+  <Accordion title="Claude Can't Find MCP Server">
+      **Symptoms**: Claude Desktop doesn't show MCP tools or shows connection errors
+
+      **Solutions**:
+
+      1. **Verify server is running**:
+        ```bash
+        ntcli server list
+        ntcli server info server-name
+        ```
+
+      2. **Test MCP connection directly**:
+        ```bash
+        ntcli mcp connect server-name
+        ntcli mcp tools server-name
+        ```
+
+      3. **Regenerate Claude Desktop config**:
+        ```bash
+        ntcli server claude-config server-name --insecure
+        # Copy output to claude_desktop_config.json
+        ```
+
+      4. **Restart Claude Desktop** after config changes
+    </Accordion>
+
+
+  <Accordion title="MCP HTTP Bridge Issues">
+    **Symptoms**: `@nimbletools/mcp-http-bridge` connection failures
+    
+    **Solutions**: 
+    1. **Test bridge manually**: 
+       ```bash
+       npx @nimbletools/mcp-http-bridge \
+         --endpoint "https://mcp.nimbletools.ai/v1/workspaces/your-workspace/servers/server-name/mcp" \
+         --token "your-token" \
+         --insecure
+       ```
+    
+    2. **Check network connectivity**:
+       ```bash
+       curl -H "Authorization: Bearer your-token" \
+         "https://mcp.nimbletools.ai/v1/workspaces/your-workspace/servers/server-name/mcp"
+       ```
+    
+    3. **Clear npx cache** (if bridge seems outdated):
+       ```bash
+       npx clear-npx-cache
+       # or
+       rm -rf ~/.npm/_npx
+       ```
+  </Accordion>
+
+  <Accordion title="SSL Certificate Issues">
+    **Symptoms**: SSL certificate errors in Claude Desktop or MCP bridge
+    **Solutions**: 1. **Use --insecure flag for development**: ```bash ntcli
+    server claude-config server-name --insecure ``` 2. **Update system
+    certificates**: ```bash # macOS brew install ca-certificates # Linux sudo
+    apt update && sudo apt install ca-certificates ``` 3. **Check certificate
+    validity**: ```bash openssl s_client -connect mcp.nimbletools.ai:443
+    -servername mcp.nimbletools.ai ```
+  </Accordion>
+</AccordionGroup>
+
+## Network and Connectivity Issues
+
+### API Connection Problems
+
+<AccordionGroup>
+  <Accordion title="Connection Timeout">
+    **Symptoms**: `ETIMEDOUT` or `ECONNREFUSED` errors
+    
+    **Solutions**: 
+    1. **Check API endpoint**: 
+    
+      ```bash
+      echo $NTCLI_API_URL
+      curl -I $NTCLI_API_URL/health
+      ```
+    
+    2. **Test DNS resolution**:
+    
+      ```bash
+      nslookup mcp.nimbletools.ai
+      ping mcp.nimbletools.ai
+      ```
+      
+    3. **Check firewall/proxy settings**:
+    
+      ```bash
+      # Temporarily disable proxy
+      unset http_proxy https_proxy
+      ntcli health
+      ```
+  </Accordion>
+
+  <Accordion title="Proxy Configuration">
+    **Symptoms**: Connection issues in corporate networks
+    
+    **Solutions**: 
+    
+    1. **Configure proxy settings**: 
+       ```bash
+       export http_proxy=http://proxy.company.com:8080
+       export https_proxy=http://proxy.company.com:8080
+       export no_proxy=localhost,127.0.0.1
+       ```
+    
+    2. **NPM proxy configuration**: 
+       ```bash
+       npm config set proxy http://proxy.company.com:8080
+       npm config set https-proxy http://proxy.company.com:8080
+       ```
+    
+    3. **Test connectivity**: 
+       ```bash
+       ntcli health --verbose
+       ```
+  </Accordion>
+</AccordionGroup>
+
+## Performance Issues
+
+### Slow Operations
+
+<AccordionGroup>
+  <Accordion title="Slow Server Deployment">
+    **Symptoms**: Server deployment takes unusually long
+    
+    **Solutions**: 
+    
+    1. **Check network connection**: 
+       ```bash
+       curl -w "@curl-format.txt" -o /dev/null -s $NTCLI_API_URL/health
+       ```
+    
+    2. **Monitor deployment progress**: 
+       ```bash
+       ntcli server deploy server-name --verbose --wait
+       ```
+    
+    3. **Use smaller resource limits**: 
+       ```bash
+       ntcli server deploy server-name --cpu "100m" --memory "128Mi"
+       ```
+  </Accordion>
+
+  <Accordion title="Slow MCP Calls">
+    **Symptoms**: MCP tool calls take a long time to respond
+    
+    **Solutions**: 
+    
+    1. **Check server logs for errors**: 
+       ```bash
+       ntcli server logs server-name --lines 50
+       ```
+    
+    2. **Scale up server resources**: 
+       ```bash
+       ntcli server scale server-name 2
+       ```
+    
+    3. **Test MCP call timing**: 
+       ```bash
+       time ntcli mcp call server-name tool-name --arg key=value
+       ```
+  </Accordion>
+</AccordionGroup>
+
+## Debug and Diagnostic Commands
+
+### Collecting Debug Information
+
+<CodeGroup>
+
+```bash System Information
+# Node.js and NPM versions
+node --version
+npm --version
+
+# ntcli version and location
+ntcli --version
+which ntcli
+
+# Environment variables
+env | grep NTCLI
+```
+
+```bash Authentication Status
+# Check authentication
+ntcli auth status --verbose
+
+# Check workspace and tokens
+ntcli workspace list
+ntcli token show
+```
+
+```bash Server Diagnostics
+# List all servers and their status
+ntcli server list --verbose
+
+# Get detailed server information
+ntcli server info server-name --verbose
+
+# Check server logs
+ntcli server logs server-name --lines 100 --timestamps
+```
+
+```bash Network Connectivity
+# Test API connectivity
+ntcli health --verbose
+
+# Test MCP connectivity
+ntcli mcp connect server-name --timeout 30000 --verbose
+```
+
+</CodeGroup>
+
+### Enable Global Debug Mode
+
+For comprehensive debugging across all commands:
+
+```bash
+export NTCLI_DEBUG=1
+export NODE_ENV=development
+
+# All ntcli commands will now show debug output
+ntcli auth status
+ntcli server list
+ntcli mcp tools server-name
+```
+
+## Getting Help
+
+If you're still experiencing issues after trying these solutions:
+
+<CardGroup cols={2}>
+  <Card
+    title="GitHub Issues"
+    icon="github"
+    href="https://github.com/nimbletools/ntcli/issues"
+  >
+    Report bugs or request features on our GitHub repository
+  </Card>
+  <Card
+    title="Community Slack"
+    icon="Slack"
+    href="https://join.slack.com/t/nimblebrain-users/shared_invite/zt-2jpyzxgvl-7_kFJQHyJSmJzWXmYK8cMg"
+  >
+    Get help from the community and NimbleTools team
+  </Card>
+  <Card title="Documentation" icon="book" href="/commands/auth/login">
+    Browse command documentation and examples
+  </Card>
+  <Card title="Best Practices" icon="star" href="/guides/best-practices">
+    Follow recommended practices to avoid common issues
+  </Card>
+</CardGroup>
+
+### When Reporting Issues
+
+Please include the following information:
+
+<Tabs>
+  <Tab title="Environment">
+    ```bash
+    # System information
+    uname -a
+    node --version
+    npm --version
+    ntcli --version
+    
+    # Environment variables
+    env | grep NTCLI
+    ```
+  </Tab>
+  <Tab title="Error Details">
+    ```bash
+    # Run with debug enabled
+    NTCLI_DEBUG=1 ntcli [your-command] --verbose
+    
+    # Include full error output and stack traces
+    ```
+  </Tab>
+  <Tab title="Steps to Reproduce">
+    1. Exact commands run
+    2. Expected behavior
+    3. Actual behavior
+    4. Any error messages
+  </Tab>
+</Tabs>
+
+<Callout type="success">
+  **Most issues** can be resolved by re-authenticating (`ntcli auth logout &&
+  ntcli auth login`) or updating to the latest version (`npm update -g
+  @nimbletools/ntcli`).
+</Callout>

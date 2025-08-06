@@ -1,22 +1,134 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "NimbleTools",
+  "name": "NimbleTools CLI",
   "colors": {
-    "primary": "#16A34A",
+    "primary": "#0D9373",
     "light": "#07C983",
-    "dark": "#15803D"
+    "dark": "#0D9373"
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Get Started",
             "pages": [
-              "introduction"
+              "introduction",
+              "installation",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/workspaces",
+              "concepts/mcp-servers",
+              "concepts/claude-integration"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "configuration/environment-variables",
+              "configuration/authentication"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Commands",
+        "groups": [
+          {
+            "group": "Authentication",
+            "pages": [
+              "commands/auth/login",
+              "commands/auth/logout",
+              "commands/auth/status",
+              "commands/auth/signup"
+            ]
+          },
+          {
+            "group": "Workspace Management",
+            "pages": [
+              "commands/workspace/create",
+              "commands/workspace/list",
+              "commands/workspace/switch",
+              "commands/workspace/select",
+              "commands/workspace/delete",
+              "commands/workspace/clear"
+            ]
+          },
+          {
+            "group": "Server Management",
+            "pages": [
+              "commands/server/deploy",
+              "commands/server/list",
+              "commands/server/info",
+              "commands/server/logs",
+              "commands/server/scale",
+              "commands/server/remove",
+              "commands/server/claude-config"
+            ]
+          },
+          {
+            "group": "MCP Client",
+            "pages": [
+              "commands/mcp/connect",
+              "commands/mcp/tools",
+              "commands/mcp/call"
+            ]
+          },
+          {
+            "group": "Registry",
+            "pages": [
+              "commands/registry/list",
+              "commands/registry/show"
+            ]
+          },
+          {
+            "group": "Secrets Management",
+            "pages": [
+              "commands/secrets/list",
+              "commands/secrets/set",
+              "commands/secrets/unset"
+            ]
+          },
+          {
+            "group": "Token Management",
+            "pages": [
+              "commands/token/refresh",
+              "commands/token/show"
+            ]
+          },
+          {
+            "group": "Utilities",
+            "pages": [
+              "commands/health"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Examples",
+        "groups": [
+          {
+            "group": "Examples & Integrations",
+            "pages": [
+              "examples/complete-workflow",
+              "examples/claude-desktop",
+              "examples/langchain-integration",
+              "examples/advanced-usage"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/troubleshooting",
+              "guides/best-practices",
+              "guides/ci-cd"
             ]
           }
         ]
@@ -25,45 +137,52 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "GitHub",
+          "href": "https://github.com/nimbletools/ntcli",
+          "icon": "github"
+        },
+        {
+          "anchor": "NPM Package",
+          "href": "https://www.npmjs.com/package/@nimbletools/ntcli",
+          "icon": "cube"
         },
         {
           "anchor": "Community",
-          "href": "https://mintlify.com/community",
+          "href": "https://join.slack.com/t/nimblebrain-users/shared_invite/zt-2jpyzxgvl-7_kFJQHyJSmJzWXmYK8cMg",
           "icon": "slack"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.png"
   },
   "navbar": {
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "https://github.com/nimbletools/ntcli/issues"
       }
     ],
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "href": "https://nimbletools.dev"
     }
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "github": "https://github.com/nimbletools/ntcli",
+      "slack": "https://join.slack.com/t/nimblebrain-users/shared_invite/zt-2jpyzxgvl-7_kFJQHyJSmJzWXmYK8cMg"
     }
+  },
+  "search": {
+    "prompt": "Search ntcli documentation..."
+  },
+  "feedback": {
+    "thumbsRating": true,
+    "suggestEdit": true,
+    "raiseIssue": true
   }
 }

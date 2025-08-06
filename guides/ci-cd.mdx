@@ -1,0 +1,85 @@
+---
+title: 'CI/CD Integration'
+description: 'Automate deployments with CI/CD pipelines'
+icon: 'robot'
+---
+
+## Overview
+
+Learn how to integrate ntcli into your CI/CD pipelines for automated MCP server deployments.
+
+## GitHub Actions Example
+
+```yaml
+name: Deploy MCP Server
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          
+      - name: Install ntcli
+        run: npm install -g @nimbletools/ntcli
+        
+      - name: Authenticate
+        run: ntcli auth login --non-interactive
+        env:
+          NTCLI_TOKEN: ${{ secrets.NTCLI_TOKEN }}
+          
+      - name: Deploy to staging
+        run: |
+          ntcli workspace switch staging
+          ntcli server deploy my-mcp-server --version ${{ github.sha }}
+          
+      - name: Deploy to production
+        if: github.ref == 'refs/heads/main'
+        run: |
+          ntcli workspace switch production  
+          ntcli server deploy my-mcp-server --version ${{ github.sha }}
+```
+
+## Environment Variables
+
+Set these secrets in your CI/CD system:
+
+| Variable | Description |
+|----------|-------------|
+| `NTCLI_TOKEN` | Non-expiring workspace token |
+| `NTCLI_API_URL` | API endpoint (usually default) |
+
+## Token Setup
+
+```bash
+# Generate CI/CD token
+ntcli workspace switch production
+ntcli token refresh --no-expiry
+ntcli token show  # Copy token to CI/CD secrets
+```
+
+## Related Guides
+
+<CardGroup cols={2}>
+  <Card
+    title="Best Practices"
+    icon="star"
+    href="/guides/best-practices"
+  >
+    Security and workflow recommendations
+  </Card>
+  <Card
+    title="Advanced Usage"
+    icon="code"
+    href="/examples/advanced-usage"
+  >
+    Power user workflows
+  </Card>
+</CardGroup>

@@ -1,0 +1,331 @@
+---
+title: "Quick Start"
+description: "Get up and running with ntcli in under 5 minutes"
+icon: "rocket"
+---
+
+Get up and running with ntcli in under 5 minutes. This guide walks you through installing ntcli, deploying your first MCP server, and integrating it with Claude Desktop.
+
+## Prerequisites
+
+- Node.js 20+ installed
+- A NimbleTools account (sign up during authentication)
+
+## Installation
+
+```bash
+npm install -g @nimbletools/ntcli
+```
+
+<Callout type="info">
+  Need help with installation? See our detailed [Installation
+  Guide](/installation).
+</Callout>
+
+## Complete Walkthrough
+
+### Step 1: Authenticate
+
+Start by authenticating with the NimbleTools platform:
+
+```bash
+ntcli auth login
+```
+
+This will:
+
+1. Open your browser for OAuth authentication
+2. Create or sign in to your NimbleTools account
+3. Store authentication credentials locally
+
+<Callout type="success">
+  **First time?** The OAuth flow will guide you through creating a new account
+  if needed.
+</Callout>
+
+### Step 2: Create and Activate a Workspace
+
+Create a new workspace for your project:
+
+```bash
+ntcli workspace create my-project --description "My first MCP project"
+```
+
+This automatically sets the new workspace as active. You can verify with:
+
+```bash
+ntcli workspace list
+```
+
+### Step 3: Browse Available MCP Servers
+
+Explore the community registry to see what MCP servers are available:
+
+```bash
+ntcli registry list
+```
+
+You'll see servers like:
+
+- `nationalparks-mcp` - Search and explore US National Parks
+- `finnhub-mcp` - Stock market data and financial information
+- `reverse-text-mcp` - Simple text manipulation tools
+
+Get details about a specific server:
+
+```bash
+ntcli registry show nationalparks-mcp
+```
+
+### Step 4: Deploy an MCP Server
+
+Deploy the National Parks MCP server:
+
+```bash
+ntcli server deploy nationalparks-mcp
+```
+
+This will:
+
+- Pull the server definition from the registry
+- Deploy it to the cloud with auto-scaling
+- Make it available at your workspace endpoint
+
+### Step 5: Set Required API Keys
+
+The National Parks service requires an API key. Set it as a workspace secret:
+
+```bash
+ntcli secrets set NPS_API_KEY=YOUR_API_KEY
+```
+
+<Callout type="tip">
+  **Get your free API key** at [National Park Service API
+  Documentation](https://www.nps.gov/subjects/developer/api-documentation.htm).
+  Registration is free and instant.
+</Callout>
+
+### Step 6: Test the MCP Server
+
+First, check what tools are available:
+
+```bash
+ntcli mcp tools nationalparks-mcp
+```
+
+Now call a tool to search for parks:
+
+```bash
+ntcli mcp call nationalparks-mcp find_parks --arg stateCode="WY"
+```
+
+You should see results for Wyoming national parks including Yellowstone and Grand Teton.
+
+Try another example:
+
+```bash
+ntcli mcp call nationalparks-mcp search_parks --arg query="Yellowstone"
+```
+
+### Step 7: Generate Claude Desktop Configuration
+
+Generate the configuration needed to integrate with Claude Desktop:
+
+```bash
+ntcli server claude-config nationalparks-mcp
+```
+
+This outputs JSON configuration that you need to add to your Claude Desktop config file.
+
+## Claude Desktop Integration
+
+<Tabs>
+  <Tab title="macOS">
+    1. **Copy the JSON output from the previous command**
+    
+    2. **Open Claude Desktop config file**:
+       ```bash
+       open ~/Library/Application\ Support/Claude/claude_desktop_config.json
+       ```
+    
+    3. **Add the configuration to the `mcpServers` section**:
+       ```json
+       {
+         "mcpServers": {
+           "nationalparks-mcp": {
+             "command": "npx",
+             "args": [
+               "@nimbletools/mcp-http-bridge",
+               "--endpoint",
+               "https://mcp.nimbletools.ai/v1/workspaces/{your-workspace-id}/servers/nationalparks-mcp/mcp",
+               "--token",
+               "your-workspace-token",
+               "--insecure"
+             ]
+           }
+         }
+       }
+       ```
+    
+    4. **Restart Claude Desktop**
+  </Tab>
+  <Tab title="Linux">
+    1. **Copy the JSON output from the previous command**
+    
+    2. **Open Claude Desktop config file**:
+       ```bash
+       nano ~/.config/claude/claude_desktop_config.json
+       ```
+    
+    3. **Add the configuration** (same as macOS example above)
+    
+    4. **Restart Claude Desktop**
+  </Tab>
+  <Tab title="Windows">
+    1. **Copy the JSON output from the previous command**
+    
+    2. **Open Claude Desktop config file**:
+       ```cmd
+       notepad %APPDATA%\Claude\claude_desktop_config.json
+       ```
+    
+    3. **Add the configuration** (same as macOS example above)
+    
+    4. **Restart Claude Desktop**
+  </Tab>
+</Tabs>
+
+<Callout type="success">
+  **Test it out!** After restarting Claude Desktop, ask it something like "Find
+  national parks in Wyoming" or "What can you tell me about Yellowstone National
+  Park?"
+</Callout>
+
+## Next Steps
+
+### Advanced Features
+
+<CardGroup cols={2}>
+  <Card
+    title="Scale Your Servers"
+    icon="chart-line"
+    href="/commands/server/scale"
+  >
+    ```bash
+    ntcli server scale nationalparks-mcp 3 
+    ```
+  </Card>
+  <Card title="View Server Logs" icon="file-text" href="/commands/server/logs">
+    ```bash
+    ntcli server logs nationalparks-mcp --lines 100
+    ```
+  </Card>
+  <Card
+    title="Manage Multiple Workspaces"
+    icon="folder"
+    href="/commands/workspace/list"
+  >
+    ```bash
+    ntcli workspace switch production
+    ```
+  </Card>
+  <Card title="Non-Expiring Tokens" icon="key" href="/commands/token/refresh">
+    ```bash 
+    ntcli token refresh --no-expiry
+    ```
+  </Card>
+</CardGroup>
+
+### Integration Examples
+
+<Steps>
+  <Step title="LangChain Integration">
+    Use deployed MCP servers directly in LangChain applications. See our
+    [LangChain Integration Guide](/examples/langchain-integration).
+  </Step>
+  <Step title="CI/CD Integration">
+    Set up automated deployments and token management. See our [CI/CD
+    Guide](/guides/ci-cd).
+  </Step>
+  <Step title="Custom MCP Servers">
+    Deploy your own custom MCP servers to the platform. See our [Development
+    Guide](https://github.com/nimbletools/ntcli/blob/main/DEVELOPMENT.md).
+  </Step>
+</Steps>
+
+## Common Commands Reference
+
+Here are the most commonly used commands you'll work with:
+
+### Authentication & Workspaces
+
+```bash
+ntcli auth status                    # Check authentication status
+ntcli workspace list                 # List all workspaces
+ntcli workspace switch <name>        # Switch active workspace
+```
+
+### Server Management
+
+```bash
+ntcli server list                    # List deployed servers
+ntcli server info <server-id>        # Get server details
+ntcli server remove <server-id>      # Remove a server
+```
+
+### MCP Testing
+
+```bash
+ntcli mcp connect <server-id>        # Test MCP connection
+ntcli mcp tools <server-id>          # List available tools
+ntcli mcp call <server-id> <tool>    # Call a specific tool
+```
+
+### Registry & Secrets
+
+```bash
+ntcli registry list                  # Browse available servers
+ntcli secrets list                   # List workspace secrets
+ntcli secrets set KEY=value          # Set a secret
+```
+
+## Need Help?
+
+<CardGroup cols={2}>
+  <Card title="Command Help" icon="question-circle">
+    Use `--help` with any command: ```bash ntcli --help ntcli server deploy
+    --help ```
+  </Card>
+  <Card title="Troubleshooting" icon="wrench" href="/guides/troubleshooting">
+    Common issues and solutions for deployment and integration problems.
+  </Card>
+  <Card
+    title="GitHub Issues"
+    icon="github"
+    href="https://github.com/nimbletools/ntcli/issues"
+  >
+    Report bugs or request features on our GitHub repository.
+  </Card>
+  <Card
+    title="Community Support"
+    icon="slack"
+    href="https://join.slack.com/t/nimblebrain-users/shared_invite/zt-2jpyzxgvl-7_kFJQHyJSmJzWXmYK8cMg"
+  >
+    Join our Slack community for help and discussions.
+  </Card>
+</CardGroup>
+
+## What's Next?
+
+You now have a complete MCP server running and integrated with Claude Desktop! Here are some suggested next steps:
+
+1. **Explore more servers**: Try deploying `finnhub-mcp` for stock data or create your own
+2. **Set up production workflows**: Use non-expiring tokens and CI/CD integration
+3. **Build applications**: Use the deployed servers in LangChain or other AI applications
+4. **Monitor and scale**: Use logging and scaling features for production workloads
+
+<Callout type="success">
+  **Congratulations!** You've successfully deployed your first MCP server with
+  ntcli. The server is now running in the cloud and ready to enhance your AI
+  applications.
+</Callout>

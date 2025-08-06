@@ -1,0 +1,63 @@
+---
+title: 'ntcli workspace select'
+description: 'Interactively select and switch workspace'
+icon: 'hand-pointer'
+---
+
+## Overview
+
+Interactively select a workspace from a list using arrow keys and enter. Provides a user-friendly way to switch workspaces without remembering exact names.
+
+## Syntax
+
+```bash
+ntcli workspace select [options]
+```
+
+## Options
+
+<ResponseField name="-v, --verbose" type="boolean">
+  Show detailed workspace information in the selection list
+</ResponseField>
+
+## Examples
+
+### Interactive Selection
+
+```bash
+ntcli workspace select
+```
+
+**Interactive Prompt:**
+```
+? Select workspace: (Use arrow keys)
+❯ data-analysis (active)
+  production
+  development
+  staging
+```
+
+### Verbose Selection
+
+```bash
+ntcli workspace select --verbose
+```
+
+## Related Commands
+
+<CardGroup cols={2}>
+  <Card
+    title="workspace list"
+    icon="list"
+    href="/commands/workspace/list"
+  >
+    List all workspaces
+  </Card>
+  <Card
+    title="workspace switch"
+    icon="right-left"
+    href="/commands/workspace/switch"
+  >
+    Switch to workspace by name
+  </Card>
+</CardGroup>

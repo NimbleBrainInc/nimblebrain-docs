@@ -1,0 +1,98 @@
+---
+title: 'ntcli workspace switch'
+description: 'Switch to a different workspace'
+icon: 'right-left'
+---
+
+## Overview
+
+Switch the active workspace to a different one. All subsequent commands will operate on the newly selected workspace.
+
+## Syntax
+
+```bash
+ntcli workspace switch <name>
+```
+
+## Aliases
+
+```bash
+ntcli workspace use <name>    # Alternative command
+ntcli ws switch <name>        # Command group alias  
+ntcli ws use <name>           # Combined aliases
+```
+
+## Arguments
+
+<ResponseField name="name" type="string" required>
+  Name of the workspace to switch to (must exist)
+</ResponseField>
+
+## Options
+
+<ResponseField name="-v, --verbose" type="boolean">
+  Show detailed information about the workspace switch
+</ResponseField>
+
+## Examples
+
+### Basic Switch
+
+```bash
+ntcli workspace switch production
+```
+
+### Using Alias
+
+```bash
+ntcli workspace use production
+```
+
+### Verbose Switch
+
+```bash
+ntcli workspace switch staging --verbose
+```
+
+<CodeGroup>
+
+```bash Switch Workspace
+ntcli workspace switch production
+```
+
+```bash Alternative Syntax
+ntcli workspace use production
+```
+
+```bash Short Alias
+ntcli ws switch prod
+```
+
+</CodeGroup>
+
+## What Happens
+
+When you switch workspaces:
+
+1. **Active workspace changes** - All commands now target the new workspace
+2. **Tokens are updated** - Workspace-specific access tokens are loaded
+3. **Context is preserved** - The switch persists across terminal sessions
+
+## Related Commands
+
+<CardGroup cols={2}>
+  <Card
+    title="workspace list"
+    icon="list"
+    href="/commands/workspace/list"
+  >
+    List all available workspaces
+  </Card>
+  <Card
+    title="workspace select"
+    icon="hand-pointer"
+    href="/commands/workspace/select"
+  >
+    Interactively select a workspace
+  </Card>
+</CardGroup>

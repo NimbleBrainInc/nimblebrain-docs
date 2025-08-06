@@ -1,0 +1,228 @@
+---
+title: 'ntcli auth login'
+description: 'Authenticate with Clerk OAuth'
+icon: 'right-to-bracket'
+---
+
+## Overview
+
+Authenticate with the NimbleTools platform using Clerk OAuth. This command opens your browser to complete the OAuth flow and stores authentication credentials locally.
+
+## Syntax
+
+```bash
+ntcli auth login [options]
+```
+
+## Options
+
+<ResponseField name="-p, --port" type="number">
+  Port for local callback server. Default: `41247`
+</ResponseField>
+
+<ResponseField name="-t, --timeout" type="number">
+  Authentication timeout in milliseconds. Default: `60000` (60 seconds)
+</ResponseField>
+
+<ResponseField name="-v, --verbose" type="boolean">
+  Enable verbose output to show detailed authentication flow
+</ResponseField>
+
+## Examples
+
+### Basic Authentication
+
+```bash
+ntcli auth login
+```
+
+This will:
+1. Start a local callback server on the default port (41247)
+2. Open your default browser to the NimbleTools OAuth page
+3. Wait for you to complete authentication
+4. Store the credentials locally for future use
+
+### Custom Port
+
+```bash
+ntcli auth login --port 3000
+```
+
+Use a custom port for the OAuth callback server. Useful if the default port is already in use.
+
+### Extended Timeout
+
+```bash
+ntcli auth login --timeout 120000
+```
+
+Extend the authentication timeout to 2 minutes (120,000 milliseconds) for slower authentication flows.
+
+### Verbose Output
+
+```bash
+ntcli auth login --verbose
+```
+
+Show detailed information about the authentication process, including:
+- Callback server startup
+- OAuth URLs and parameters
+- Token exchange details
+
+<CodeGroup>
+
+```bash Basic Login
+ntcli auth login
+```
+
+```bash Custom Port
+ntcli auth login --port 8080
+```
+
+```bash Verbose Login
+ntcli auth login --verbose --timeout 90000
+```
+
+</CodeGroup>
+
+## Authentication Flow
+
+<Steps>
+  <Step title="Start Local Server">
+    ntcli starts a local HTTP server to receive the OAuth callback
+  </Step>
+  <Step title="Open Browser">
+    Your default browser opens to the NimbleTools OAuth page
+  </Step>
+  <Step title="Complete OAuth">
+    Sign in with your existing account or create a new one
+  </Step>
+</Steps>
+
+## OAuth Provider Details
+
+ntcli uses **Clerk** as the OAuth provider, supporting:
+
+- **Email/Password** authentication
+- **Social logins** (Google, GitHub, etc.)
+- **Magic links** for passwordless authentication
+- **Multi-factor authentication** (MFA)
+
+## Credential Storage
+
+Authentication credentials are stored securely:
+
+<Tabs>
+  <Tab title="macOS">
+    Stored in the **macOS Keychain** using the `keytar` library
+  </Tab>
+  <Tab title="Linux">
+    Stored in **Secret Service API** (GNOME Keyring, KDE Wallet)
+  </Tab>
+  <Tab title="Windows">
+    Stored in **Windows Credential Manager**
+  </Tab>
+</Tabs>
+
+<Callout type="info">
+  Credentials include both your NimbleTools JWT token and workspace-specific access tokens for API calls.
+</Callout>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Browser doesn't open automatically">
+    **Cause**: System doesn't have a default browser configured or browser launch failed.
+    
+    **Solution**: Copy the URL from the terminal output and open it manually in your browser.
+  </Accordion>
+  
+  <Accordion title="Port already in use">
+    **Cause**: The default port (41247) is being used by another application.
+    
+    **Solution**: Use a different port with `--port` option:
+    ```bash
+    ntcli auth login --port 3000
+    ```
+  </Accordion>
+  
+  <Accordion title="Timeout during authentication">
+    **Cause**: Authentication took longer than the timeout period.
+    
+    **Solution**: Increase timeout and try again:
+    ```bash
+    ntcli auth login --timeout 120000
+    ```
+  </Accordion>
+  
+  <Accordion title="Network connection issues">
+    **Cause**: Firewall or proxy blocking OAuth requests.
+    
+    **Solution**: 
+    1. Check firewall settings for the callback port
+    2. Configure proxy settings if needed
+    3. Use `--verbose` to see detailed error messages
+  </Accordion>
+</AccordionGroup>
+
+## Environment Variables
+
+The following environment variables affect authentication:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `CLERK_OAUTH_CLIENT_ID` | OAuth client ID | *Set automatically* |
+| `CLERK_DOMAIN` | Clerk domain | *Set automatically* |
+| `NTCLI_DEFAULT_PORT` | Default callback port | `41247` |
+
+<Callout type="warning">
+  These variables are typically managed automatically. Only modify them if you're working with a custom NimbleTools deployment.
+</Callout>
+
+## Security Considerations
+
+- **Local callback server**: Only runs during authentication and shuts down immediately after
+- **HTTPS enforcement**: All OAuth flows use HTTPS for security
+- **Automatic cleanup**: Failed authentication attempts clean up temporary servers
+
+## Related Commands
+
+<CardGroup cols={2}>
+  <Card
+    title="auth status"
+    icon="circle-info"
+    href="/commands/auth/status"
+  >
+    Check current authentication status and token validity
+  </Card>
+  <Card
+    title="auth logout"
+    icon="right-from-bracket"
+    href="/commands/auth/logout"
+  >
+    Clear stored authentication credentials
+  </Card>
+  <Card
+    title="workspace create"
+    icon="folder-plus"
+    href="/commands/workspace/create"
+  >
+    Create your first workspace after authentication
+  </Card>
+  <Card
+    title="token refresh"
+    icon="arrows-rotate"
+    href="/commands/token/refresh"
+  >
+    Refresh workspace-specific access tokens
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+After successful authentication:
+
+1. **Check status**: `ntcli auth status`
+2. **Create workspace**: `ntcli workspace create my-project`
+3. **Browse servers**: `ntcli registry list`
+4. **Deploy server**: `ntcli server deploy nationalparks-mcp`

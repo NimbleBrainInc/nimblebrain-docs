@@ -1,0 +1,514 @@
+---
+title: 'Complete Workflow Example'
+description: 'End-to-end example from setup to Claude Desktop integration'
+icon: 'list-check'
+---
+
+## Overview
+
+This example demonstrates a complete workflow using ntcli from initial setup through Claude Desktop integration. We'll deploy multiple MCP servers, configure secrets, and set up production-ready scaling.
+
+## Prerequisites
+
+- Node.js 20+ installed
+- NPM or Yarn package manager
+- A NimbleTools account (created during authentication)
+
+## Step-by-Step Workflow
+
+### 1. Installation and Setup
+
+<Steps>
+  <Step title="Install ntcli">
+    ```bash
+    npm install -g @nimbletools/ntcli
+    ntcli --version
+    ```
+  </Step>
+  <Step title="Authenticate">
+    ```bash
+    ntcli auth login
+    # Follow OAuth flow in browser
+    ```
+  </Step>
+  <Step title="Verify authentication">
+    ```bash
+    ntcli auth status
+    ```
+  </Step>
+</Steps>
+
+### 2. Workspace Management
+
+<Steps>
+  <Step title="Create development workspace">
+    ```bash
+    ntcli workspace create data-analysis --description "Data analysis and research workspace"
+    ```
+  </Step>
+  <Step title="Create production workspace">
+    ```bash
+    ntcli workspace create production --description "Production MCP servers"
+    ```
+  </Step>
+  <Step title="List workspaces">
+    ```bash
+    ntcli workspace list
+    ```
+    
+    Expected output:
+    ```
+    📁 Workspaces:
+    
+    ✅ data-analysis (active)
+       Description: Data analysis and research workspace
+       Created: 2024-01-15
+    
+    📁 production  
+       Description: Production MCP servers
+       Created: 2024-01-15
+    ```
+  </Step>
+</Steps>
+
+### 3. Browse and Deploy MCP Servers
+
+<Steps>
+  <Step title="Explore available servers">
+    ```bash
+    ntcli registry list
+    ```
+    
+    You'll see servers like:
+    - `nationalparks-mcp` - US National Parks data
+    - `finnhub-mcp` - Stock market data
+    - `reverse-text-mcp` - Text manipulation tools
+  </Step>
+  <Step title="Get detailed server information">
+    ```bash
+    ntcli registry show nationalparks-mcp
+    ```
+    
+    This shows capabilities, required environment variables, and documentation.
+  </Step>
+  <Step title="Deploy National Parks server">
+    ```bash
+    ntcli server deploy nationalparks-mcp
+    ```
+    
+    Wait for successful deployment message.
+  </Step>
+  <Step title="Deploy additional servers">
+    ```bash
+    ntcli server deploy finnhub-mcp
+    ntcli server deploy reverse-text-mcp
+    ```
+  </Step>
+</Steps>
+
+### 4. Configure Secrets and Environment Variables
+
+<Steps>
+  <Step title="Set National Parks API key">
+    ```bash
+    # Get free API key from https://www.nps.gov/subjects/developer/api-documentation.htm
+    ntcli secrets set NPS_API_KEY=your-nps-api-key-here
+    ```
+  </Step>
+  <Step title="Set Finnhub API key">
+    ```bash  
+    # Get free API key from https://finnhub.io/register
+    ntcli secrets set FINNHUB_API_KEY=your-finnhub-api-key-here
+    ```
+  </Step>
+  <Step title="Verify secrets">
+    ```bash
+    ntcli secrets list
+    ```
+    
+    Expected output:
+    ```
+    🔐 Secrets in workspace 'data-analysis':
+    
+    NPS_API_KEY=***************
+    FINNHUB_API_KEY=***************
+    ```
+  </Step>
+</Steps>
+
+### 5. Test MCP Server Functionality
+
+<Steps>
+  <Step title="Test National Parks server">
+    ```bash
+    # List available tools
+    ntcli mcp tools nationalparks-mcp
+    
+    # Search for parks in Wyoming
+    ntcli mcp call nationalparks-mcp find_parks --arg stateCode="WY"
+    
+    # Search for specific park
+    ntcli mcp call nationalparks-mcp search_parks --arg query="Yellowstone"
+    ```
+  </Step>
+  <Step title="Test Finnhub server">
+    ```bash
+    # List available tools
+    ntcli mcp tools finnhub-mcp
+    
+    # Get stock quote
+    ntcli mcp call finnhub-mcp get_quote --arg symbol="AAPL"
+    
+    # Get company profile
+    ntcli mcp call finnhub-mcp get_company_profile --arg symbol="TSLA"
+    ```
+  </Step>
+  <Step title="Test text manipulation server">
+    ```bash
+    # List available tools
+    ntcli mcp tools reverse-text-mcp
+    
+    # Reverse text
+    ntcli mcp call reverse-text-mcp reverse_text --arg text="Hello World"
+    
+    # Convert to uppercase
+    ntcli mcp call reverse-text-mcp to_uppercase --arg text="hello world"
+    ```
+  </Step>
+</Steps>
+
+### 6. Production Setup
+
+<Steps>
+  <Step title="Switch to production workspace">
+    ```bash
+    ntcli workspace switch production
+    ```
+  </Step>
+  <Step title="Deploy servers with production configuration">
+    ```bash
+    # Deploy to production workspace
+    ntcli server deploy nationalparks-mcp
+    ntcli server deploy finnhub-mcp
+    ```
+  </Step>
+  <Step title="Set production secrets">
+    ```bash
+    ntcli secrets set NPS_API_KEY=your-production-nps-key
+    ntcli secrets set FINNHUB_API_KEY=your-production-finnhub-key
+    ```
+  </Step>
+  <Step title="Verify production deployment">
+    ```bash
+    ntcli server list --verbose
+    ```
+  </Step>
+</Steps>
+
+### 7. Generate Long-Lived Tokens
+
+<Steps>
+  <Step title="Create non-expiring token for development">
+    ```bash
+    ntcli workspace switch data-analysis
+    ntcli token refresh --no-expiry
+    ntcli token show
+    ```
+    
+    Save this token for CI/CD or long-running applications.
+  </Step>
+  <Step title="Create production token">
+    ```bash
+    ntcli workspace switch production
+    ntcli token refresh --no-expiry
+    ntcli token show
+    ```
+  </Step>
+</Steps>
+
+### 8. Claude Desktop Integration
+
+<Steps>
+  <Step title="Generate Claude Desktop configuration">
+    ```bash
+    # Switch to desired workspace
+    ntcli workspace switch data-analysis
+    
+    # Generate config for each server
+    ntcli server claude-config nationalparks-mcp
+    ntcli server claude-config finnhub-mcp
+    ntcli server claude-config reverse-text-mcp
+    ```
+  </Step>
+  <Step title="Combine configurations">
+    Create a complete Claude Desktop config file:
+    
+    <CodeGroup>
+    ```json macOS: ~/Library/Application Support/Claude/claude_desktop_config.json
+    {
+      "mcpServers": {
+        "nationalparks-mcp": {
+          "command": "npx",
+          "args": [
+            "@nimbletools/mcp-http-bridge",
+            "--endpoint",
+            "https://mcp.nimbletools.ai/v1/workspaces/your-workspace-id/servers/nationalparks-mcp/mcp",
+            "--token",
+            "your-workspace-token",
+            "--insecure"
+          ]
+        },
+        "finnhub-mcp": {
+          "command": "npx",
+          "args": [
+            "@nimbletools/mcp-http-bridge",
+            "--endpoint", 
+            "https://mcp.nimbletools.ai/v1/workspaces/your-workspace-id/servers/finnhub-mcp/mcp",
+            "--token",
+            "your-workspace-token",
+            "--insecure"
+          ]
+        },
+        "reverse-text-mcp": {
+          "command": "npx",
+          "args": [
+            "@nimbletools/mcp-http-bridge",
+            "--endpoint",
+            "https://mcp.nimbletools.ai/v1/workspaces/your-workspace-id/servers/reverse-text-mcp/mcp", 
+            "--token",
+            "your-workspace-token",
+            "--insecure"
+          ]
+        }
+      }
+    }
+    ```
+    
+    ```json Linux: ~/.config/claude/claude_desktop_config.json
+    {
+      "mcpServers": {
+        "nationalparks-mcp": {
+          "command": "npx",
+          "args": [
+            "@nimbletools/mcp-http-bridge",
+            "--endpoint",
+            "https://mcp.nimbletools.ai/v1/workspaces/your-workspace-id/servers/nationalparks-mcp/mcp",
+            "--token",
+            "your-workspace-token",
+            "--insecure"
+          ]
+        }
+      }
+    }
+    ```
+    </CodeGroup>
+  </Step>
+  <Step title="Restart Claude Desktop">
+    Restart Claude Desktop to load the new configuration.  
+  </Step>
+</Steps>
+
+### 9. Test Claude Desktop Integration
+
+<Steps>
+  <Step title="Test National Parks integration">
+    Ask Claude: "Find national parks in Wyoming and tell me about Yellowstone"
+  </Step>
+  <Step title="Test stock data integration">
+    Ask Claude: "Get the current stock price for Apple and Tesla, and compare their performance"
+  </Step>
+  <Step title="Test text manipulation">
+    Ask Claude: "Reverse this text: 'Hello from NimbleTools' and then convert it to uppercase"
+  </Step>
+</Steps>
+
+## Advanced Workflow Examples
+
+### Scaling and Monitoring
+
+<CodeGroup>
+
+```bash Production Scaling
+# Scale up for high traffic
+ntcli workspace switch production
+ntcli server scale nationalparks-mcp 5
+ntcli server scale finnhub-mcp 3
+
+# Monitor performance
+ntcli server logs nationalparks-mcp --lines 100 --follow
+ntcli server info nationalparks-mcp --verbose
+```
+
+```bash Development Testing
+# Switch to development for testing
+ntcli workspace switch data-analysis
+
+# Test new server versions
+ntcli server deploy experimental-mcp --version beta
+ntcli mcp tools experimental-mcp
+ntcli mcp call experimental-mcp test_function --arg input="test data"
+```
+
+```bash Multi-Environment Management
+# Update secrets across environments
+for workspace in data-analysis production; do
+  ntcli workspace switch $workspace
+  ntcli secrets set NEW_API_KEY=updated-key-value
+  echo "Updated secrets in $workspace"
+done
+
+# Deploy to multiple environments
+for workspace in data-analysis production; do
+  ntcli workspace switch $workspace
+  ntcli server deploy new-mcp-server
+  echo "Deployed to $workspace"
+done
+```
+
+</CodeGroup>
+
+### CI/CD Integration Example
+
+```bash
+#!/bin/bash
+# deploy.sh - Example deployment script
+
+set -e
+
+# Authenticate (assumes CI environment variables are set)
+ntcli auth login --non-interactive
+
+# Deploy to staging
+ntcli workspace switch staging
+ntcli server deploy my-mcp-server --version $BUILD_VERSION
+ntcli secrets set API_KEY=$STAGING_API_KEY
+
+# Run tests
+ntcli mcp call my-mcp-server health_check
+if [ $? -eq 0 ]; then
+  echo "Staging tests passed"
+  
+  # Deploy to production
+  ntcli workspace switch production
+  ntcli server deploy my-mcp-server --version $BUILD_VERSION
+  ntcli secrets set API_KEY=$PRODUCTION_API_KEY
+  
+  # Scale for production load
+  ntcli server scale my-mcp-server 3
+  
+  echo "Production deployment complete"
+else
+  echo "Staging tests failed, aborting production deployment"
+  exit 1
+fi
+```
+
+## Monitoring and Maintenance
+
+### Regular Maintenance Tasks
+
+<AccordionGroup>
+  <Accordion title="Weekly Health Checks">
+    ```bash
+    # Check all workspace servers
+    for workspace in $(ntcli workspace list --json | jq -r '.[].name'); do
+      echo "Checking workspace: $workspace"
+      ntcli workspace switch $workspace
+      ntcli server list
+      
+      # Test MCP connectivity
+      ntcli mcp connect --timeout 10000
+    done
+    ```
+  </Accordion>
+  
+  <Accordion title="Token Rotation">
+    ```bash
+    # Rotate tokens monthly for security
+    ntcli workspace switch production
+    ntcli token refresh --no-expiry
+    
+    # Update Claude Desktop config with new token
+    ntcli server claude-config nationalparks-mcp
+    ```
+  </Accordion>
+  
+  <Accordion title="Log Analysis">
+    ```bash
+    # Check for errors in server logs
+    ntcli server logs nationalparks-mcp --lines 1000 | grep -i error
+    ntcli server logs finnhub-mcp --lines 1000 | grep -i error
+    
+    # Monitor resource usage
+    ntcli server info nationalparks-mcp --verbose
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Complete Command Summary
+
+Here's a reference of all commands used in this workflow:
+
+<Tabs>
+  <Tab title="Setup & Auth">
+    ```bash
+    npm install -g @nimbletools/ntcli
+    ntcli --version
+    ntcli auth login
+    ntcli auth status
+    ntcli auth logout  # When needed
+    ```
+  </Tab>
+  <Tab title="Workspaces">
+    ```bash
+    ntcli workspace create <name> --description "desc"
+    ntcli workspace list
+    ntcli workspace switch <name>
+    ntcli workspace select  # Interactive
+    ntcli workspace delete <name> --force
+    ```
+  </Tab>
+  <Tab title="Registry & Servers">
+    ```bash
+    ntcli registry list
+    ntcli registry show <server-id>
+    ntcli server deploy <server-id>
+    ntcli server list
+    ntcli server info <server-id>
+    ntcli server scale <server-id> <replicas>
+    ntcli server logs <server-id>
+    ntcli server remove <server-id>
+    ```
+  </Tab>
+  <Tab title="Secrets & Tokens">
+    ```bash
+    ntcli secrets set KEY=value
+    ntcli secrets list
+    ntcli secrets unset KEY
+    ntcli token refresh --no-expiry
+    ntcli token show
+    ```
+  </Tab>
+  <Tab title="MCP Testing">
+    ```bash
+    ntcli mcp connect <server-id>
+    ntcli mcp tools <server-id>
+    ntcli mcp call <server-id> <tool> --arg key=value
+    ntcli server claude-config <server-id> --insecure
+    ```
+  </Tab>
+</Tabs>
+
+## Next Steps
+
+After completing this workflow, you can:
+
+1. **Explore more MCP servers** from the community registry
+2. **Build custom applications** using the deployed servers via HTTP API
+3. **Set up monitoring and alerting** for production workloads
+4. **Create custom MCP servers** and deploy them to the platform
+5. **Integrate with CI/CD pipelines** for automated deployments
+
+<Callout type="success">
+  **Congratulations!** You now have a complete, production-ready MCP deployment with Claude Desktop integration. Your AI assistant can now access real-time data from multiple sources securely and reliably.
+</Callout>

@@ -1,0 +1,229 @@
+---
+title: "Installation"
+description: "Install ntcli and set up your development environment"
+icon: "download"
+---
+
+## Prerequisites
+
+Before installing ntcli, ensure you have the following prerequisites:
+
+<CardGroup cols={2}>
+  <Card title="Node.js 20+" icon="node-js">
+    ntcli requires Node.js version 20 or higher
+  </Card>
+  <Card title="NPM or Yarn" icon="cube">
+    Package manager for installing ntcli globally
+  </Card>
+</CardGroup>
+
+<Callout type="info">
+  Check your Node.js version with `node --version`. If you need to upgrade,
+  visit [nodejs.org](https://nodejs.org/) or use a version manager like
+  [nvm](https://github.com/nvm-sh/nvm).
+</Callout>
+
+## Install ntcli
+
+### NPM (Recommended)
+
+Install ntcli globally using NPM:
+
+```bash
+npm install -g @nimbletools/ntcli
+```
+
+### Yarn
+
+Alternatively, install using Yarn:
+
+```bash
+yarn global add @nimbletools/ntcli
+```
+
+### Verify Installation
+
+Verify that ntcli is installed correctly:
+
+```bash
+ntcli --version
+```
+
+You should see the version number displayed. You can also run:
+
+```bash
+ntcli --help
+```
+
+This will show all available commands and options.
+
+## Install from Source
+
+For development or to use the latest unreleased features:
+
+<Steps>
+  <Step title="Clone the repository">
+    ```
+    bash git clone https://github.com/nimbletools/ntcli.git 
+    cd ntcli 
+    ```
+  </Step>
+  <Step title="Install dependencies">
+    ```bash
+    npm install
+    ```
+  </Step>
+  <Step title="Build the project">
+    ```bash
+    npm run build
+    ```
+  </Step>
+  <Step title="Link globally">
+    ```bash
+    npm link
+    ```
+  </Step>
+  <Step title="Verify installation">
+    ```bash
+    ntcli --version
+    ```
+  </Step>
+</Steps>
+
+## Environment Setup
+
+### Optional Configuration
+
+Most environment variables are automatically configured. You may optionally customize these settings:
+
+| Variable             | Description                | Default                      |
+| -------------------- | -------------------------- | ---------------------------- |
+| `NTCLI_API_URL`      | API base URL               | `https://mcp.nimbletools.ai` |
+| `NTCLI_DEFAULT_PORT` | OAuth callback server port | `41247`                      |
+
+## Platform-Specific Notes
+
+<Tabs>
+  <Tab title="macOS">
+    **Using Homebrew (Coming Soon)** 
+
+    ```bash 
+    # brew install
+    nimbletools/tap/ntcli 
+    ``` 
+    
+    **Using NPM** 
+    
+    ```bash
+    npm install -g @nimbletools/ntcli
+    ``` 
+    
+    **Path Issues** 
+
+    If `ntcli` command is not found, ensure `/usr/local/bin` (or your npm global bin directory) is in your PATH:
+    
+    ```bash 
+    echo $PATH npm config get prefix
+    ```
+  </Tab>
+  <Tab title="Linux">
+    **Using NPM** 
+    
+    ```bash 
+    npm install -g @nimbletools/ntcli
+    ```
+    
+    **Ubuntu/Debian** 
+    
+    You may need to install Node.js first: 
+    
+    ```bash 
+    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - sudo apt-get install -y nodejs
+    ``` 
+    
+    **Permission Issues**
+    
+    If you get permission errors, configure npm to use a different directory: 
+    
+    ```bash
+    mkdir ~/.npm-global 
+    npm config set prefix '~/.npm-global' 
+    echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc source ~/.bashrc 
+    ```
+  </Tab>
+  <Tab title="Windows">
+    **Using NPM** ```bash npm install -g @nimbletools/ntcli ``` **Using
+    Chocolatey (Coming Soon)** ```bash # choco install ntcli ``` **PowerShell
+    Execution Policy** If you encounter execution policy issues: ```powershell
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser ```
+  </Tab>
+</Tabs>
+
+## Updating ntcli
+
+To update to the latest version:
+
+```bash
+npm update -g @nimbletools/ntcli
+```
+
+Or reinstall:
+
+```bash
+npm uninstall -g @nimbletools/ntcli
+npm install -g @nimbletools/ntcli
+```
+
+## Troubleshooting
+
+### Common Issues
+
+<AccordionGroup>
+  <Accordion title="Command not found: ntcli">
+    **Cause**: `ntcli` is not in your system PATH. 
+
+    **Solutions**: 
+      1. Check if npm global bin directory is in PATH: `npm config get prefix`
+      2. Add npm global bin to PATH: `export PATH=$(npm config get prefix)/bin:$PATH`
+      3. Reinstall with `sudo` (not recommended): `sudo npm install -g @nimbletools/ntcli`
+  </Accordion>
+
+  <Accordion title="Permission denied errors">
+    **Cause**: NPM trying to install to system directories without proper permissions. 
+    
+    **Solutions**:
+      1. Configure npm to use a user directory (recommended)
+      2. Use a Node.js version manager like nvm 
+      3. Use `sudo` (not recommended for security reasons)
+  </Accordion>
+
+  <Accordion title="Old version after update">
+    **Cause**: Multiple versions installed or cached. 
+    
+    **Solutions**:
+    1. Clear npm cache: `npm cache clean --force` 
+    2. Completely uninstall and reinstall
+    3. Check installed location: `which ntcli`
+  </Accordion>
+</AccordionGroup>
+
+### Getting Help
+
+If you encounter issues during installation:
+
+1. **Check our troubleshooting guide**: [Troubleshooting](/guides/troubleshooting)
+2. **Open an issue**: [GitHub Issues](https://github.com/nimbletools/ntcli/issues)
+3. **Join our community**: [Slack](https://join.slack.com/t/nimblebrain-users/shared_invite/zt-2jpyzxgvl-7_kFJQHyJSmJzWXmYK8cMg)
+
+## Next Steps
+
+Once ntcli is installed:
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Get up and running with ntcli in under 5 minutes
+  </Card>
+  <Card title="Authentication" icon="key" href="/commands/auth/login">
+    Learn how to authenticate with the NimbleTools platform
+  </Card>
+</CardGroup>
