@@ -1,0 +1,180 @@
+---
+title: 'ntcli token create'
+description: 'Generate new workspace token without storing locally'
+icon: 'plus'
+---
+
+## Overview
+
+Generate a new workspace token for the current workspace without storing it locally. This command is useful for creating tokens for CI/CD systems, scripts, or other automation tools.
+
+## Syntax
+
+```bash
+ntcli token create [options]
+```
+
+## Options
+
+<ResponseField name="--expires-in" type="number">
+  Token expiration time in seconds
+  
+  **Default**: `31536000` (1 year)  
+  **Example**: `86400` (24 hours)
+</ResponseField>
+
+<ResponseField name="--format" type="string">
+  Output format for the token
+  
+  **Default**: `text`  
+  **Options**: `text`, `json`
+</ResponseField>
+
+## Examples
+
+### Create Standard Token
+
+```bash
+# Create token with default 1-year expiration
+ntcli token create
+```
+
+**Output:**
+```
+New token created: wst_abc123def456...
+Token JTI: jti_xyz789
+Expires: 2025-08-07T12:00:00Z
+```
+
+### Create Short-Lived Token
+
+```bash
+# Create token that expires in 24 hours
+ntcli token create --expires-in 86400
+```
+
+### Create Non-Expiring Token
+
+```bash
+# Create token that never expires (use with caution)
+ntcli token create
+```
+
+### JSON Output
+
+```bash
+# Get token in JSON format for automation
+ntcli token create --format json
+```
+
+**Output:**
+```json
+{
+  "token": "wst_abc123def456...",
+  "jti": "jti_xyz789",
+  "expires_at": "2025-08-07T12:00:00Z"
+}
+```
+
+## Security Considerations
+
+<Warning>
+  **Token Storage**: This command displays the full token. Store it securely and never commit it to version control.
+</Warning>
+
+### Best Practices
+
+- **Copy Immediately**: Copy the token immediately as it cannot be retrieved again
+- **Secure Storage**: Store tokens in secure credential management systems
+- **Regular Rotation**: Rotate tokens regularly using `ntcli token refresh`
+- **Scope Limitation**: Use workspace-specific tokens rather than global tokens
+
+## CI/CD Integration
+
+### GitHub Actions
+
+```yaml
+- name: Create deployment token
+  run: |
+    TOKEN=$(ntcli token create --expires-in 3600 --format json | jq -r '.token')
+    echo "::add-mask::$TOKEN"
+    echo "DEPLOYMENT_TOKEN=$TOKEN" >> $GITHUB_ENV
+```
+
+### Script Usage
+
+```bash
+#!/bin/bash
+# Create token for deployment script
+TOKEN=$(ntcli token create --expires-in 7200 --format json | jq -r '.token')
+export NTCLI_WORKSPACE_TOKEN="$TOKEN"
+
+# Use token for deployment
+ntcli server deploy my-service
+```
+
+## Error Handling
+
+<AccordionGroup>
+  <Accordion title="Authentication Required">
+    **Error**: `Authentication required. Try running ntcli token refresh`
+    
+    **Solution**: Ensure you have a valid workspace token:
+    ```bash
+    ntcli token refresh
+    ntcli token create
+    ```
+  </Accordion>
+  
+  <Accordion title="Workspace Not Selected">
+    **Error**: `No workspace selected`
+    
+    **Solution**: Select a workspace first:
+    ```bash
+    ntcli workspace switch my-workspace
+    ntcli token create
+    ```
+  </Accordion>
+  
+  <Accordion title="Invalid Expiration">
+    **Error**: `Invalid expiration time`
+    
+    **Solution**: Use a valid expiration time in seconds:
+    ```bash
+    ntcli token create --expires-in 86400  # 24 hours
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Commands
+
+<CardGroup cols={2}>
+  <Card
+    title="token list"
+    icon="list"
+    href="/commands/token/list"
+  >
+    List all workspace tokens
+  </Card>
+  <Card
+    title="token refresh"
+    icon="arrows-rotate"
+    href="/commands/token/refresh"
+  >
+    Refresh current workspace token
+  </Card>
+  <Card
+    title="token revoke"
+    icon="ban"
+    href="/commands/token/revoke"
+  >
+    Revoke specific tokens
+  </Card>
+  <Card
+    title="token show"
+    icon="eye"
+    href="/commands/token/show"
+  >
+    Show current token information
+  </Card>
+</CardGroup>

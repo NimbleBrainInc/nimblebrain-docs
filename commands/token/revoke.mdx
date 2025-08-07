@@ -1,0 +1,267 @@
+---
+title: 'ntcli token revoke'
+description: 'Revoke specific workspace token by JTI'
+icon: 'ban'
+---
+
+## Overview
+
+Revoke a specific workspace token by its JWT ID (JTI). This immediately invalidates the token and prevents further use. This command requires Clerk authentication and cannot revoke tokens using workspace token authentication.
+
+## Syntax
+
+```bash
+ntcli token revoke <jti> [options]
+```
+
+## Arguments
+
+<ResponseField name="jti" type="string" required>
+  JWT ID of the token to revoke
+  
+  **Format**: `jti_*` (e.g., `jti_abc123def456`)  
+  **Source**: Use `ntcli token list` to find JTI values
+</ResponseField>
+
+## Options
+
+<ResponseField name="--force" type="boolean">
+  Skip confirmation prompt
+  
+  **Default**: `false`  
+  **Use case**: Automated scripts and CI/CD pipelines
+</ResponseField>
+
+<ResponseField name="--format" type="string">
+  Output format for the revocation result
+  
+  **Default**: `text`  
+  **Options**: `text`, `json`
+</ResponseField>
+
+## Authentication Requirements
+
+<Warning>
+  **Clerk Authentication Required**: Token revocation requires Clerk authentication, not workspace tokens. You must be logged in with `ntcli auth login`.
+</Warning>
+
+This design prevents workspace tokens from revoking themselves or other tokens, which could lead to security vulnerabilities.
+
+## Examples
+
+### Revoke Specific Token
+
+```bash
+# Revoke a token with confirmation
+ntcli token revoke jti_abc123def456
+```
+
+**Output:**
+```
+Token jti_abc123def456 will be permanently revoked.
+This action cannot be undone.
+
+Are you sure? (y/N): y
+Token jti_abc123def456 revoked successfully.
+```
+
+### Force Revoke (No Confirmation)
+
+```bash
+# Revoke token without confirmation prompt
+ntcli token revoke jti_abc123def456 --force
+```
+
+**Output:**
+```
+Token jti_abc123def456 revoked successfully.
+```
+
+### JSON Output
+
+```bash
+# Get revocation result in JSON format
+ntcli token revoke jti_abc123def456 --force --format json
+```
+
+**Output:**
+```json
+{
+  "jti": "jti_abc123def456",
+  "revoked_at": "2024-08-07T12:30:00Z",
+  "status": "revoked"
+}
+```
+
+## Token Discovery Workflow
+
+### Find Token JTI
+
+```bash
+# List all tokens to find the JTI to revoke
+ntcli token list
+```
+
+**Output:**
+```
+┌─────────────────────┬─────────────────────┬─────────────────────┬─────────┐
+│ JTI                 │ Created             │ Expires             │ Current │
+├─────────────────────┼─────────────────────┼─────────────────────┼─────────┤
+│ jti_abc123def456    │ 2024-08-07 10:30:00 │ 2025-08-07 10:30:00 │ ✓       │
+│ jti_old789xyz012    │ 2024-06-01 09:15:00 │ 2025-06-01 09:15:00 │         │
+└─────────────────────┴─────────────────────┴─────────────────────┴─────────┘
+```
+
+### Revoke Old Token
+
+```bash
+# Revoke the old token
+ntcli token revoke jti_old789xyz012 --force
+```
+
+## Bulk Token Revocation
+
+### Revoke Multiple Tokens
+
+```bash
+#!/bin/bash
+# Script to revoke multiple old tokens
+
+# Get list of token JTIs (excluding current token)
+TOKENS=$(ntcli token list --format json | jq -r '.tokens[] | select(.is_current != true) | .jti')
+
+for token in $TOKENS; do
+    echo "Revoking $token..."
+    ntcli token revoke "$token" --force
+done
+```
+
+### Revoke Expired Tokens
+
+```bash
+# Find and revoke expired tokens
+ntcli token list --show-expired --format json | \
+    jq -r '.tokens[] | select(.status == "expired") | .jti' | \
+    while read jti; do
+        ntcli token revoke "$jti" --force
+    done
+```
+
+## Security Considerations
+
+### Impact of Revocation
+
+<Warning>
+  **Immediate Effect**: Revoked tokens become invalid immediately and cannot be restored.
+</Warning>
+
+<Info>
+  **Current Token**: If you revoke your current token, you'll need to refresh to get a new one.
+</Info>
+
+### What Happens After Revocation
+
+1. **API Calls Fail**: Any systems using the revoked token will receive authentication errors
+2. **CI/CD Impact**: Automated systems using the token will fail
+3. **No Recovery**: Revoked tokens cannot be restored or reactivated
+
+### Best Practices
+
+- **Verify JTI**: Double-check the JTI before revoking to avoid mistakes
+- **Update Systems**: Update any systems using the token before revocation
+- **Monitor Impact**: Check logs for authentication failures after revocation
+- **Document Changes**: Keep records of token revocations for audit purposes
+
+## Error Handling
+
+<AccordionGroup>
+  <Accordion title="Authentication Required">
+    **Error**: `Clerk authentication required for token revocation`
+    
+    **Solution**: Log in with Clerk authentication:
+    ```bash
+    ntcli auth login
+    ntcli token revoke jti_abc123
+    ```
+  </Accordion>
+  
+  <Accordion title="Token Not Found">
+    **Error**: `Token with JTI 'jti_xyz' not found`
+    
+    **Solution**: Verify the JTI exists:
+    ```bash
+    ntcli token list
+    ntcli token revoke jti_correct_value
+    ```
+  </Accordion>
+  
+  <Accordion title="Invalid JTI Format">
+    **Error**: `Invalid JTI format`
+    
+    **Solution**: Use the correct JTI format from token list:
+    ```bash
+    ntcli token list  # Copy JTI exactly
+    ntcli token revoke jti_abc123def456
+    ```
+  </Accordion>
+  
+  <Accordion title="Token Already Revoked">
+    **Error**: `Token is already revoked`
+    
+    **Solution**: The token was previously revoked. Check token list:
+    ```bash
+    ntcli token list --show-expired
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Recovery After Revocation
+
+### If You Revoked Current Token
+
+```bash
+# Your current token was revoked, get a new one
+ntcli token refresh
+```
+
+### If You Revoked CI/CD Token
+
+```bash
+# Create new token for CI/CD system
+NEW_TOKEN=$(ntcli token create --expires-in 31536000 --format json | jq -r '.token')
+echo "Update your CI/CD system with this new token:"
+echo $NEW_TOKEN
+```
+
+## Related Commands
+
+<CardGroup cols={2}>
+  <Card
+    title="token list"
+    icon="list"
+    href="/commands/token/list"
+  >
+    List tokens to find JTI values
+  </Card>
+  <Card
+    title="token create"
+    icon="plus"
+    href="/commands/token/create"
+  >
+    Create replacement tokens
+  </Card>
+  <Card
+    title="token refresh"
+    icon="arrows-rotate"
+    href="/commands/token/refresh"
+  >
+    Refresh current workspace token
+  </Card>
+  <Card
+    title="auth login"
+    icon="right-to-bracket"
+    href="/commands/auth/login"
+  >
+    Clerk authentication for revocation
+  </Card>
+</CardGroup>

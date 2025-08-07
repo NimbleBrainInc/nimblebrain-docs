@@ -26,6 +26,7 @@
             "pages": [
               "concepts/workspaces",
               "concepts/mcp-servers",
+              "concepts/api-architecture",
               "concepts/claude-integration"
             ]
           },
@@ -100,7 +101,10 @@
           {
             "group": "Token Management",
             "pages": [
+              "commands/token/create",
+              "commands/token/list", 
               "commands/token/refresh",
+              "commands/token/revoke",
               "commands/token/show"
             ]
           },
@@ -168,8 +172,8 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://nimbletools.dev"
+      "label": "Home",
+      "href": "https://www.nimbletools.ai"
     }
   },
   "footer": {

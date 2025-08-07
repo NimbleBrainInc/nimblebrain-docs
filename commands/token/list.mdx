@@ -1,0 +1,229 @@
+---
+title: 'ntcli token list'
+description: 'List all active workspace tokens'
+icon: 'list'
+---
+
+## Overview
+
+List all active workspace tokens for the current workspace. This command shows token metadata including JWT ID (JTI), creation time, expiration, and indicates which token is currently being used.
+
+## Syntax
+
+```bash
+ntcli token list [options]
+```
+
+## Options
+
+<ResponseField name="--format" type="string">
+  Output format for the token list
+  
+  **Default**: `table`  
+  **Options**: `table`, `json`
+</ResponseField>
+
+<ResponseField name="--show-expired" type="boolean">
+  Include expired tokens in the list
+  
+  **Default**: `false`  
+  **Use case**: Audit token usage history
+</ResponseField>
+
+## Examples
+
+### List Active Tokens
+
+```bash
+# List all active workspace tokens
+ntcli token list
+```
+
+**Output:**
+```
+┌─────────────────────┬─────────────────────┬─────────────────────┬─────────┐
+│ JTI                 │ Created             │ Expires             │ Current │
+├─────────────────────┼─────────────────────┼─────────────────────┼─────────┤
+│ jti_abc123          │ 2024-08-07 10:30:00 │ 2025-08-07 10:30:00 │ ✓       │
+│ jti_def456          │ 2024-07-15 14:20:00 │ 2025-07-15 14:20:00 │         │
+│ jti_ghi789          │ 2024-06-01 09:15:00 │ Never               │         │
+└─────────────────────┴─────────────────────┴─────────────────────┴─────────┘
+```
+
+### Include Expired Tokens
+
+```bash
+# Show all tokens including expired ones
+ntcli token list --show-expired
+```
+
+**Output:**
+```
+┌─────────────────────┬─────────────────────┬─────────────────────┬─────────┬─────────────┐
+│ JTI                 │ Created             │ Expires             │ Current │ Status      │
+├─────────────────────┼─────────────────────┼─────────────────────┼─────────┼─────────────┤
+│ jti_abc123          │ 2024-08-07 10:30:00 │ 2025-08-07 10:30:00 │ ✓       │ Active      │
+│ jti_def456          │ 2024-07-15 14:20:00 │ 2025-07-15 14:20:00 │         │ Active      │
+│ jti_old123          │ 2024-01-01 12:00:00 │ 2024-06-01 12:00:00 │         │ Expired     │
+└─────────────────────┴─────────────────────┴─────────────────────┴─────────┴─────────────┘
+```
+
+### JSON Output
+
+```bash
+# Get token list in JSON format
+ntcli token list --format json
+```
+
+**Output:**
+```json
+{
+  "tokens": [
+    {
+      "jti": "jti_abc123",
+      "created_at": "2024-08-07T10:30:00Z",
+      "expires_at": "2025-08-07T10:30:00Z",
+      "is_current": true,
+      "status": "active"
+    },
+    {
+      "jti": "jti_def456", 
+      "created_at": "2024-07-15T14:20:00Z",
+      "expires_at": "2025-07-15T14:20:00Z",
+      "is_current": false,
+      "status": "active"
+    }
+  ],
+  "total_active": 2,
+  "current_token_jti": "jti_abc123"
+}
+```
+
+## Understanding Token Information
+
+### Table Columns
+
+| Column | Description |
+|--------|-------------|
+| **JTI** | JWT ID - unique identifier for the token |
+| **Created** | When the token was created |
+| **Expires** | When the token expires ("Never" for non-expiring tokens) |
+| **Current** | ✓ indicates the token currently stored locally |
+| **Status** | Active, Expired, or Revoked (when `--show-expired` is used) |
+
+### Token States
+
+- **Active**: Token is valid and can be used
+- **Expired**: Token has passed its expiration date
+- **Current**: Token currently stored in local configuration
+
+## Token Management Workflow
+
+### Audit Token Usage
+
+```bash
+# Review all tokens for security audit
+ntcli token list --show-expired --format json | jq '.tokens[] | {jti, created_at, expires_at, status}'
+```
+
+### Clean Up Old Tokens
+
+```bash
+# List tokens to identify old ones
+ntcli token list
+
+# Revoke specific old tokens
+ntcli token revoke jti_old123
+ntcli token revoke jti_old456
+```
+
+### Monitor Token Expiration
+
+```bash
+# Check which tokens are expiring soon
+ntcli token list --format json | jq '.tokens[] | select(.expires_at != null) | {jti, expires_at}'
+```
+
+## Security Considerations
+
+<Info>
+  **Token Rotation**: Regularly review and revoke unused tokens to maintain security.
+</Info>
+
+<Warning>
+  **Multiple Active Tokens**: Multiple tokens can be active simultaneously. Revoke unused tokens to reduce attack surface.
+</Warning>
+
+### Best Practices
+
+- **Regular Audits**: Review token list monthly to identify unused tokens
+- **Token Naming**: Use meaningful JTI patterns if creating tokens programmatically  
+- **Expiration Monitoring**: Set up alerts for tokens nearing expiration
+- **Immediate Revocation**: Revoke tokens immediately when no longer needed
+
+## Error Handling
+
+<AccordionGroup>
+  <Accordion title="Authentication Required">
+    **Error**: `Authentication required. Try running ntcli token refresh`
+    
+    **Solution**: You need a valid workspace token to list tokens:
+    ```bash
+    ntcli token refresh
+    ntcli token list
+    ```
+  </Accordion>
+  
+  <Accordion title="Workspace Not Selected">
+    **Error**: `No workspace selected`
+    
+    **Solution**: Select a workspace first:
+    ```bash
+    ntcli workspace switch my-workspace
+    ntcli token list
+    ```
+  </Accordion>
+  
+  <Accordion title="No Tokens Found">
+    **Output**: Empty token list
+    
+    **Solution**: Create a token first:
+    ```bash
+    ntcli token create
+    ntcli token list
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Commands
+
+<CardGroup cols={2}>
+  <Card
+    title="token create"
+    icon="plus"
+    href="/commands/token/create"
+  >
+    Create new workspace tokens
+  </Card>
+  <Card
+    title="token refresh"
+    icon="arrows-rotate"
+    href="/commands/token/refresh"
+  >
+    Refresh current workspace token
+  </Card>
+  <Card
+    title="token revoke"
+    icon="ban"
+    href="/commands/token/revoke"
+  >
+    Revoke specific tokens
+  </Card>
+  <Card
+    title="token show"
+    icon="eye"
+    href="/commands/token/show"
+  >
+    Show current token information
+  </Card>
+</CardGroup>

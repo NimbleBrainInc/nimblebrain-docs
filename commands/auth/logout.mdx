@@ -129,7 +129,7 @@ Regular logout provides several security benefits:
     ```bash
     ntcli auth logout
     ntcli auth login
-    ntcli token refresh --no-expiry
+    ntcli token refresh
     ```
   </Accordion>
 </AccordionGroup>
@@ -165,7 +165,7 @@ To authenticate again after logout:
   </Step>
   <Step title="Refresh Workspace Tokens">
     ```bash
-    ntcli token refresh --no-expiry
+    ntcli token refresh
     ```
   </Step>
 </Steps>
@@ -229,5 +229,5 @@ After logout, you'll need to re-authenticate to use ntcli:
 
 1. **Login**: `ntcli auth login`
 2. **Select workspace**: `ntcli workspace select` or `ntcli workspace create`
-3. **Refresh tokens**: `ntcli token refresh --no-expiry`
+3. **Refresh tokens**: `ntcli token refresh
 4. **Resume work**: Continue with your MCP server management

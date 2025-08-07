@@ -221,7 +221,7 @@ Common workspace management tasks:
 | **List workspaces** | `ntcli workspace list` | View all workspaces and active status |
 | **View servers** | `ntcli server list` | See deployed servers in current workspace |
 | **Check secrets** | `ntcli secrets list` | View configured secrets (values hidden) |
-| **Generate tokens** | `ntcli token refresh --no-expiry` | Create long-lived access tokens |
+| **Generate tokens** | `ntcli token create` | Create long-lived access tokens |
 
 ### Cleanup and Deletion
 
@@ -251,12 +251,12 @@ Each workspace uses isolated access tokens:
 ```bash
 # Generate workspace-specific token
 ntcli workspace switch dev
-ntcli token refresh --no-expiry
+ntcli token refresh
 # Token only works for 'dev' workspace
 
 # Switch workspace, get different token
 ntcli workspace switch prod  
-ntcli token refresh --no-expiry
+ntcli token refresh
 # Token only works for 'prod' workspace
 ```
 

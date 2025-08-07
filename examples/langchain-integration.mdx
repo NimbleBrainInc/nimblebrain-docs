@@ -6,7 +6,7 @@ icon: 'link'
 
 ## Overview
 
-Learn how to integrate deployed MCP servers directly into LangChain applications using HTTP API calls.
+Learn how to integrate deployed MCP servers directly into LangChain applications using HTTP API calls. This approach allows you to leverage NimbleTools' MCP runtime endpoints in your AI applications.
 
 ## Basic Integration
 
@@ -18,7 +18,7 @@ const searchParks = new DynamicTool({
   description: "Search for national parks",
   func: async (query) => {
     const response = await fetch(
-      `https://mcp.nimbletools.ai/v1/workspaces/${workspaceId}/servers/nationalparks-mcp/mcp`,
+      `https://mcp.nimbletools.dev/${workspaceId}/nationalparks-mcp/mcp`,
       {
         method: "POST",
         headers: {
@@ -37,12 +37,132 @@ const searchParks = new DynamicTool({
 });
 ```
 
+### URL Structure
+
+The MCP runtime uses simplified URLs:
+- **Format**: `https://mcp.nimbletools.dev/{workspace-uuid}/{server-id}/mcp`
+- **Example**: `https://mcp.nimbletools.dev/abc123/nationalparks-mcp/mcp`
+
 ## Environment Setup
 
 ```bash
 export NTCLI_WORKSPACE_ID="your-workspace-uuid"
 export NTCLI_WORKSPACE_TOKEN="your-workspace-token"
 export OPENAI_API_KEY="your-openai-key"
+```
+
+### Getting Your Credentials
+
+```bash
+# Get your workspace ID
+ntcli workspace list --format json | jq -r '.[] | select(.is_active == true) | .id'
+
+# Get a workspace token
+ntcli token create --expires-in 7776000 --format json | jq -r '.token'
+```
+
+## Advanced Integration
+
+### Multiple Tools from One Server
+
+```javascript
+import { DynamicTool } from "@langchain/core/tools";
+
+class NPSTools {
+  constructor(workspaceId, workspaceToken) {
+    this.baseUrl = `https://mcp.nimbletools.dev/${workspaceId}/nationalparks-mcp/mcp`;
+    this.headers = {
+      Authorization: `Bearer ${workspaceToken}`,
+      "Content-Type": "application/json",
+    };
+  }
+
+  async callTool(toolName, args) {
+    const response = await fetch(this.baseUrl, {
+      method: "POST",
+      headers: this.headers,
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        method: "tools/call",
+        params: { name: toolName, arguments: args },
+      }),
+    });
+    
+    const result = await response.json();
+    return result.result?.content?.[0]?.text;
+  }
+
+  getTools() {
+    return [
+      new DynamicTool({
+        name: "search_parks",
+        description: "Search for national parks by name or location",
+        func: (query) => this.callTool("search_parks", { query }),
+      }),
+      new DynamicTool({
+        name: "get_park_info",
+        description: "Get detailed information about a specific park",
+        func: (parkCode) => this.callTool("get_park_info", { parkCode }),
+      }),
+      new DynamicTool({
+        name: "get_visitor_centers",
+        description: "Get visitor centers for a park",
+        func: (parkCode) => this.callTool("get_visitor_centers", { parkCode }),
+      }),
+    ];
+  }
+}
+
+// Usage
+const npsTools = new NPSTools(
+  process.env.NTCLI_WORKSPACE_ID,
+  process.env.NTCLI_WORKSPACE_TOKEN
+);
+
+const tools = npsTools.getTools();
+```
+
+### Error Handling
+
+```javascript
+const robustParkSearch = new DynamicTool({
+  name: "search_parks",
+  description: "Search for national parks with error handling",
+  func: async (query) => {
+    try {
+      const response = await fetch(
+        `https://mcp.nimbletools.dev/${workspaceId}/nationalparks-mcp/mcp`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${workspaceToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "tools/call",
+            params: { name: "search_parks", arguments: { query } },
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      
+      if (result.error) {
+        throw new Error(`MCP Error: ${result.error.message}`);
+      }
+
+      return result.result?.content?.[0]?.text || "No results found";
+    } catch (error) {
+      console.error("Park search failed:", error);
+      return `Search failed: ${error.message}`;
+    }
+  },
+});
 ```
 
 ## Related Examples

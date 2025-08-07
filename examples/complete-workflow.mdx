@@ -211,7 +211,7 @@ This example demonstrates a complete workflow using ntcli from initial setup thr
   <Step title="Create non-expiring token for development">
     ```bash
     ntcli workspace switch data-analysis
-    ntcli token refresh --no-expiry
+    ntcli token refresh 
     ntcli token show
     ```
     
@@ -220,7 +220,7 @@ This example demonstrates a complete workflow using ntcli from initial setup thr
   <Step title="Create production token">
     ```bash
     ntcli workspace switch production
-    ntcli token refresh --no-expiry
+    ntcli token refresh 
     ntcli token show
     ```
   </Step>
@@ -426,7 +426,7 @@ fi
     ```bash
     # Rotate tokens monthly for security
     ntcli workspace switch production
-    ntcli token refresh --no-expiry
+    ntcli token refresh 
     
     # Update Claude Desktop config with new token
     ntcli server claude-config nationalparks-mcp
@@ -485,7 +485,7 @@ Here's a reference of all commands used in this workflow:
     ntcli secrets set KEY=value
     ntcli secrets list
     ntcli secrets unset KEY
-    ntcli token refresh --no-expiry
+    ntcli token refresh
     ntcli token show
     ```
   </Tab>

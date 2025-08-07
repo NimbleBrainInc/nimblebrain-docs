@@ -30,11 +30,15 @@ ntcli workspace create my-app-prod
 ### Token Management
 
 ```bash
-# Use non-expiring tokens for CI/CD
-ntcli token refresh --no-expiry
-
 # Rotate tokens regularly
-ntcli token refresh --expires-in 86400  # 24 hours
+ntcli token refresh
+
+# Create new tokens
+ntcli token create
+
+# Revoke unused tokens
+ntcli token list
+ntcli token revoke my-jti
 ```
 
 ### Secret Management

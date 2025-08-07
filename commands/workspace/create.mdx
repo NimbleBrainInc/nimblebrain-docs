@@ -165,7 +165,7 @@ After creating a workspace, you typically want to:
   <Tab title="Generate Tokens">
     ```bash
     # Create non-expiring tokens for CI/CD
-    ntcli token refresh --no-expiry
+    ntcli token refresh 
     
     # View token information
     ntcli token show
@@ -292,7 +292,7 @@ After creating a workspace:
 
 1. **Set secrets**: `ntcli secrets set API_KEY=value`
 2. **Deploy servers**: `ntcli server deploy nationalparks-mcp`
-3. **Generate tokens**: `ntcli token refresh --no-expiry`
+3. **Generate tokens**: `ntcli token refresh 
 4. **Test integration**: `ntcli mcp tools server-name`
 
 <Callout type="success">
