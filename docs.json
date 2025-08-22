@@ -7,7 +7,7 @@
     "light": "#07C983",
     "dark": "#0D9373"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/images/favicon.ico",
   "navigation": {
     "tabs": [
       {
@@ -102,7 +102,7 @@
             "group": "Token Management",
             "pages": [
               "commands/token/create",
-              "commands/token/list", 
+              "commands/token/list",
               "commands/token/refresh",
               "commands/token/revoke",
               "commands/token/show"
@@ -143,7 +143,7 @@
       "anchors": [
         {
           "anchor": "GitHub",
-          "href": "https://github.com/nimbletools/ntcli",
+          "href": "https://github.com/nimblebraininc/ntcli",
           "icon": "github"
         },
         {
@@ -153,15 +153,15 @@
         },
         {
           "anchor": "Community",
-          "href": "https://join.slack.com/t/nimblebrain-users/shared_invite/zt-2jpyzxgvl-7_kFJQHyJSmJzWXmYK8cMg",
+          "href": "https://www.nimbletools.ai/slack",
           "icon": "slack"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.png",
-    "dark": "/logo/dark.png"
+    "light": "/images/logo.png",
+    "dark": "/images/logo.png"
   },
   "navbar": {
     "links": [
@@ -178,8 +178,8 @@
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/nimbletools/ntcli",
-      "slack": "https://join.slack.com/t/nimblebrain-users/shared_invite/zt-2jpyzxgvl-7_kFJQHyJSmJzWXmYK8cMg"
+      "github": "https://github.com/nimblebraininc/ntcli",
+      "slack": "https://www.nimbletools.ai/slack"
     }
   },
   "search": {
