@@ -1,0 +1,411 @@
+---
+title: 'Installation'
+description: 'Install NimbleTools Runtime on your Kubernetes cluster'
+icon: 'download'
+---
+
+Install NimbleTools Runtime on your Kubernetes cluster in minutes using our automated installer or manual Helm setup.
+
+## Prerequisites
+
+Before installing NimbleTools Runtime, ensure you have:
+
+<CardGroup cols={2}>
+  <Card title="Kubernetes Cluster" icon="dharmachakra">
+    k3d, minikube, or any Kubernetes 1.24+
+  </Card>
+  <Card title="Helm 3.0+" icon="helm">
+    Package manager for Kubernetes
+  </Card>
+  <Card title="kubectl" icon="terminal">
+    Kubernetes command-line tool
+  </Card>
+  <Card title="ntcli (optional)" icon="code">
+    NimbleTools CLI for easier management
+  </Card>
+</CardGroup>
+
+## Quick Installation
+
+The fastest way to get started is using our automated installer script:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/NimbleBrainInc/nimbletools-core/refs/heads/main/install.sh | bash
+```
+
+This script will:
+1. Check for required dependencies (helm, k3d, kubectl)
+2. Create a local k3d cluster (if needed)
+3. Install the NimbleTools operator
+4. Deploy the REST API
+5. Configure the service registry
+
+<Callout type="success">
+  The entire installation process takes approximately 2-3 minutes.
+</Callout>
+
+## Manual Installation
+
+For production deployments or custom configurations, follow these steps:
+
+### Step 1: Create Kubernetes Cluster (Local)
+
+If you don't have a Kubernetes cluster, create one locally with k3d:
+
+```bash
+# Install k3d
+curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+
+# Create cluster
+k3d cluster create nimbletools \
+  --api-port 6550 \
+  --servers 1 \
+  --agents 3 \
+  --port "8080:80@loadbalancer"
+
+# Verify cluster
+kubectl cluster-info
+```
+
+### Step 2: Add Helm Repository
+
+```bash
+# Add NimbleTools Helm repository
+helm repo add nimbletools https://nimblebraininc.github.io/nimbletools-core
+
+# Update repo
+helm repo update
+```
+
+### Step 3: Install NimbleTools Operator
+
+```bash
+# Create namespace
+kubectl create namespace nimbletools-system
+
+# Install operator
+helm install nimbletools-operator nimbletools/nimbletools-operator \
+  --namespace nimbletools-system \
+  --set image.tag=latest \
+  --wait
+```
+
+### Step 4: Install NimbleTools API
+
+```bash
+# Install REST API
+helm install nimbletools-api nimbletools/nimbletools-api \
+  --namespace nimbletools-system \
+  --set ingress.enabled=true \
+  --wait
+```
+
+### Step 5: Verify Installation
+
+```bash
+# Check operator status
+kubectl get pods -n nimbletools-system
+
+# Check CRDs
+kubectl get crd mcpservices.nimbletools.ai
+
+# Check API service
+kubectl get svc -n nimbletools-system
+```
+
+Expected output:
+```
+NAME                           READY   STATUS    RESTARTS   AGE
+nimbletools-operator-xxx       1/1     Running   0          2m
+nimbletools-api-xxx            1/1     Running   0          1m
+```
+
+## Production Installation
+
+For production environments, consider these additional configurations:
+
+### High Availability
+
+Deploy multiple replicas of the operator and API:
+
+```bash
+helm install nimbletools-operator nimbletools/nimbletools-operator \
+  --namespace nimbletools-system \
+  --set replicaCount=3 \
+  --set resources.requests.memory="512Mi" \
+  --set resources.requests.cpu="500m" \
+  --wait
+```
+
+### Persistent Storage
+
+Configure persistent volumes for the service registry:
+
+```bash
+helm install nimbletools-operator nimbletools/nimbletools-operator \
+  --namespace nimbletools-system \
+  --set persistence.enabled=true \
+  --set persistence.size=20Gi \
+  --set persistence.storageClass=standard \
+  --wait
+```
+
+### TLS/SSL Configuration
+
+Enable TLS for secure communications:
+
+```bash
+helm install nimbletools-api nimbletools/nimbletools-api \
+  --namespace nimbletools-system \
+  --set ingress.enabled=true \
+  --set ingress.tls.enabled=true \
+  --set ingress.tls.secretName=nimbletools-tls \
+  --set ingress.hosts[0].host=api.nimbletools.example.com \
+  --wait
+```
+
+### Custom Values File
+
+Create a `values.yaml` for complex configurations:
+
+```yaml
+# values.yaml
+replicaCount: 3
+
+image:
+  repository: ghcr.io/nimblebraininc/nimbletools-operator
+  tag: v1.0.0
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "500m"
+  limits:
+    memory: "1Gi"
+    cpu: "1000m"
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: api.nimbletools.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: nimbletools-tls
+      hosts:
+        - api.nimbletools.example.com
+
+persistence:
+  enabled: true
+  size: 20Gi
+  storageClass: standard
+
+monitoring:
+  enabled: true
+  prometheus:
+    enabled: true
+  grafana:
+    enabled: true
+```
+
+Install with custom values:
+
+```bash
+helm install nimbletools-operator nimbletools/nimbletools-operator \
+  --namespace nimbletools-system \
+  -f values.yaml \
+  --wait
+```
+
+## Cloud Provider Installation
+
+<Tabs>
+  <Tab title="AWS EKS">
+    ```bash
+    # Create EKS cluster
+    eksctl create cluster \
+      --name nimbletools \
+      --region us-west-2 \
+      --nodegroup-name standard-workers \
+      --node-type t3.medium \
+      --nodes 3
+
+    # Install NimbleTools
+    helm install nimbletools-operator nimbletools/nimbletools-operator \
+      --namespace nimbletools-system \
+      --create-namespace \
+      --set cloud.provider=aws \
+      --wait
+    ```
+  </Tab>
+  <Tab title="GCP GKE">
+    ```bash
+    # Create GKE cluster
+    gcloud container clusters create nimbletools \
+      --zone us-central1-a \
+      --num-nodes 3 \
+      --machine-type n1-standard-2
+
+    # Install NimbleTools
+    helm install nimbletools-operator nimbletools/nimbletools-operator \
+      --namespace nimbletools-system \
+      --create-namespace \
+      --set cloud.provider=gcp \
+      --wait
+    ```
+  </Tab>
+  <Tab title="Azure AKS">
+    ```bash
+    # Create AKS cluster
+    az aks create \
+      --resource-group nimbletools-rg \
+      --name nimbletools \
+      --node-count 3 \
+      --node-vm-size Standard_DS2_v2
+
+    # Get credentials
+    az aks get-credentials \
+      --resource-group nimbletools-rg \
+      --name nimbletools
+
+    # Install NimbleTools
+    helm install nimbletools-operator nimbletools/nimbletools-operator \
+      --namespace nimbletools-system \
+      --create-namespace \
+      --set cloud.provider=azure \
+      --wait
+    ```
+  </Tab>
+</Tabs>
+
+## Installing ntcli
+
+The NimbleTools CLI simplifies interaction with the runtime:
+
+```bash
+# macOS/Linux
+curl -sSL https://install.nimbletools.ai/cli | bash
+
+# Or with npm
+npm install -g @nimbletools/ntcli
+
+# Verify installation
+ntcli version
+```
+
+Configure ntcli to use your runtime:
+
+```bash
+# Point to local runtime
+ntcli config set endpoint http://localhost:8080
+
+# Or production runtime
+ntcli config set endpoint https://api.nimbletools.example.com
+
+# Verify connection
+ntcli health
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Pods stuck in Pending state">
+    **Cause**: Insufficient cluster resources
+
+    **Solution**:
+    ```bash
+    # Check node resources
+    kubectl describe nodes
+
+    # Increase cluster size (k3d)
+    k3d cluster delete nimbletools
+    k3d cluster create nimbletools --agents 5
+    ```
+  </Accordion>
+
+  <Accordion title="CRDs not found">
+    **Cause**: Operator not installed correctly
+
+    **Solution**:
+    ```bash
+    # Reinstall operator
+    helm uninstall nimbletools-operator -n nimbletools-system
+    helm install nimbletools-operator nimbletools/nimbletools-operator \
+      --namespace nimbletools-system \
+      --wait
+
+    # Verify CRDs
+    kubectl get crd | grep nimbletools
+    ```
+  </Accordion>
+
+  <Accordion title="API not accessible">
+    **Cause**: Ingress not configured or port not forwarded
+
+    **Solution**:
+    ```bash
+    # Port forward API service
+    kubectl port-forward -n nimbletools-system \
+      svc/nimbletools-api 8080:80
+
+    # Access at http://localhost:8080
+    ```
+  </Accordion>
+
+  <Accordion title="Permission errors">
+    **Cause**: RBAC not configured correctly
+
+    **Solution**:
+    ```bash
+    # Check service account
+    kubectl get serviceaccount -n nimbletools-system
+
+    # Check role bindings
+    kubectl get rolebinding,clusterrolebinding -n nimbletools-system
+
+    # Reinstall with proper RBAC
+    helm upgrade nimbletools-operator nimbletools/nimbletools-operator \
+      --namespace nimbletools-system \
+      --set rbac.create=true \
+      --wait
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Quick Start"
+    icon="rocket"
+    href="/runtime/quickstart"
+  >
+    Deploy your first MCP service
+  </Card>
+  <Card
+    title="Architecture"
+    icon="sitemap"
+    href="/runtime/architecture"
+  >
+    Learn how the runtime works
+  </Card>
+  <Card
+    title="MCP Services"
+    icon="cube"
+    href="/runtime/mcp-services"
+  >
+    Learn about service types
+  </Card>
+  <Card
+    title="CLI Reference"
+    icon="terminal"
+    href="/cli/introduction"
+  >
+    Explore ntcli commands
+  </Card>
+</CardGroup>

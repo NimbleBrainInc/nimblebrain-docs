@@ -1,0 +1,391 @@
+---
+title: 'Runtime Quickstart'
+description: 'Deploy your first MCP service with NimbleTools Runtime in under 60 seconds'
+icon: 'rocket'
+---
+
+Get up and running with NimbleTools Runtime by deploying your first MCP service.
+
+## Prerequisites
+
+Before starting, make sure you have:
+
+- ✅ NimbleTools Runtime installed ([Installation Guide](/runtime/installation))
+- ✅ `kubectl` configured and connected to your cluster
+- ✅ `ntcli` installed (optional but recommended)
+
+## Step 1: Verify Runtime Installation
+
+Check that the runtime is running correctly:
+
+```bash
+# Check operator status
+kubectl get pods -n nimbletools-system
+
+# Verify CRDs are installed
+kubectl get crd mcpservices.nimbletools.ai
+```
+
+Expected output:
+```
+NAME                           READY   STATUS    RESTARTS   AGE
+nimbletools-operator-xxx       1/1     Running   0          5m
+nimbletools-api-xxx            1/1     Running   0          5m
+```
+
+## Step 2: Create Your First Workspace
+
+Workspaces provide isolation for your MCP services:
+
+<Tabs>
+  <Tab title="Using ntcli">
+    ```bash
+    # Create workspace
+    ntcli workspace create my-first-workspace
+
+    # Switch to workspace
+    ntcli workspace select my-first-workspace
+
+    # Verify
+    ntcli workspace list
+    ```
+  </Tab>
+  <Tab title="Using kubectl">
+    ```bash
+    # Create namespace
+    kubectl create namespace ws-my-first-workspace
+
+    # Label as workspace
+    kubectl label namespace ws-my-first-workspace \
+      nimbletools.ai/workspace=my-first-workspace
+    ```
+  </Tab>
+</Tabs>
+
+## Step 3: Deploy an MCP Service
+
+Let's deploy the Echo MCP server as an example:
+
+<Tabs>
+  <Tab title="Using ntcli">
+    ```bash
+    # Deploy from registry
+    ntcli server deploy echo
+
+    # Check status
+    ntcli server list
+
+    # View details
+    ntcli server info echo
+    ```
+  </Tab>
+  <Tab title="Using kubectl">
+    Create a file called `echo-service.yaml`:
+    ```yaml
+    apiVersion: nimbletools.ai/v1alpha1
+    kind: MCPService
+    metadata:
+      name: echo
+      namespace: ws-my-first-workspace
+    spec:
+      source:
+        type: npm
+        package: "@modelcontextprotocol/server-echo"
+      scaling:
+        minReplicas: 1
+        maxReplicas: 3
+        targetCPUUtilizationPercentage: 80
+      resources:
+        requests:
+          memory: "128Mi"
+          cpu: "100m"
+        limits:
+          memory: "256Mi"
+          cpu: "200m"
+    ```
+
+    Apply the manifest:
+    ```bash
+    kubectl apply -f echo-service.yaml
+
+    # Check status
+    kubectl get mcpservice -n ws-my-first-workspace
+
+    # View details
+    kubectl describe mcpservice echo -n ws-my-first-workspace
+    ```
+  </Tab>
+</Tabs>
+
+<Callout type="info">
+  The Echo server is a simple MCP tool that echoes back any message you send it. Perfect for testing!
+</Callout>
+
+## Step 4: Monitor Deployment
+
+Watch your service come online:
+
+```bash
+# Watch pods being created
+kubectl get pods -n ws-my-first-workspace -w
+
+# Check service status
+ntcli server info echo
+
+# View logs
+ntcli server logs echo
+```
+
+The first deployment may take 30-60 seconds as the container image is pulled.
+
+## Step 5: Test Your Service
+
+Once deployed, test the service:
+
+<Tabs>
+  <Tab title="Using ntcli">
+    ```bash
+    # List available tools
+    ntcli mcp tools echo
+
+    # Call a tool
+    ntcli mcp call echo echo_message \
+      --input '{"message": "Hello, NimbleTools!"}'
+    ```
+  </Tab>
+  <Tab title="Using curl">
+    ```bash
+    # Port forward the service
+    kubectl port-forward -n ws-my-first-workspace \
+      svc/echo 8080:80
+
+    # List tools
+    curl http://localhost:8080/tools
+
+    # Call tool
+    curl -X POST http://localhost:8080/tools/call \
+      -H "Content-Type: application/json" \
+      -d '{
+        "name": "echo_message",
+        "arguments": {
+          "message": "Hello, NimbleTools!"
+        }
+      }'
+    ```
+  </Tab>
+</Tabs>
+
+Expected response:
+```json
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Echo: Hello, NimbleTools!"
+    }
+  ]
+}
+```
+
+## Step 6: Connect to Claude Desktop
+
+Generate a configuration to use your service in Claude Desktop:
+
+```bash
+# Generate Claude Desktop config
+ntcli server claude-config echo
+```
+
+This outputs configuration you can add to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "echo": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@nimbletools/mcp-http-bridge",
+        "--endpoint",
+        "http://localhost:8080/ws/my-first-workspace/echo/mcp",
+        "--token",
+        "your-workspace-token"
+      ]
+    }
+  }
+}
+```
+
+<Steps>
+  <Step title="Copy the configuration">
+    Copy the generated JSON configuration
+  </Step>
+  <Step title="Open Claude Desktop config">
+    On macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+    On Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+  </Step>
+  <Step title="Add to mcpServers section">
+    Paste the configuration into your config file
+  </Step>
+  <Step title="Restart Claude Desktop">
+    Fully quit and restart Claude Desktop
+  </Step>
+  <Step title="Test in Claude">
+    Ask Claude: "Can you echo 'Hello from NimbleTools'?"
+  </Step>
+</Steps>
+
+## Step 7: Scale Your Service
+
+Watch auto-scaling in action:
+
+```bash
+# Generate load (in a separate terminal)
+for i in {1..100}; do
+  ntcli mcp call echo echo_message \
+    --input "{\"message\": \"Request $i\"}" &
+done
+
+# Watch pods scale up
+kubectl get pods -n ws-my-first-workspace -w
+
+# After load stops, watch scale back down to minimum replicas
+```
+
+## What's Happening?
+
+When you deploy an MCP service with NimbleTools Runtime:
+
+1. **Custom Resource**: A `MCPService` custom resource is created
+2. **Operator Reconciliation**: The operator creates a Deployment, Service, and optional HPA
+3. **Container Startup**: The MCP server starts in a container
+4. **Service Registration**: The service registers with the runtime's service registry
+5. **Auto-scaling**: The service scales based on CPU/memory usage
+6. **Load Balancing**: Requests are distributed across available replicas
+
+## Next Steps
+
+Now that you have your first service running, explore more features:
+
+<CardGroup cols={2}>
+  <Card
+    title="Deploy More Services"
+    icon="server"
+    href="/runtime/mcp-services"
+  >
+    Learn about different service types and configurations
+  </Card>
+  <Card
+    title="Architecture"
+    icon="sitemap"
+    href="/runtime/architecture"
+  >
+    Understand how the runtime works
+  </Card>
+  <Card
+    title="CLI Commands"
+    icon="terminal"
+    href="/cli/introduction"
+  >
+    Explore all ntcli commands
+  </Card>
+  <Card
+    title="GitHub"
+    icon="github"
+    href="https://github.com/NimbleBrainInc/nimbletools-core"
+  >
+    View source and contribute
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Service stuck in Pending">
+    **Possible causes:**
+    - Container image not found
+    - Insufficient cluster resources
+    - Image pull errors
+
+    **Solution:**
+    ```bash
+    # Check pod events
+    kubectl describe pod -n ws-my-first-workspace -l app=echo
+
+    # View operator logs
+    kubectl logs -n nimbletools-system -l app=nimbletools-operator
+    ```
+  </Accordion>
+
+  <Accordion title="Tools not showing in Claude Desktop">
+    **Possible causes:**
+    - Claude Desktop not restarted
+    - Invalid token
+    - Port forwarding not active
+
+    **Solution:**
+    ```bash
+    # Verify service is running
+    ntcli server info echo
+
+    # Regenerate token
+    ntcli token create --name claude-desktop
+
+    # Test connection manually
+    curl http://localhost:8080/ws/my-first-workspace/echo/tools
+    ```
+  </Accordion>
+
+  <Accordion title="Service not scaling down">
+    **Possible causes:**
+    - CPU/memory usage still above target threshold
+    - Active connections keeping load high
+    - Scale-down cooldown period (default 5 minutes)
+
+    **Solution:**
+    ```bash
+    # Check current scaling config and metrics
+    kubectl get hpa -n ws-my-first-workspace
+
+    # View detailed HPA status
+    kubectl describe hpa echo -n ws-my-first-workspace
+
+    # Check pod metrics
+    kubectl top pods -n ws-my-first-workspace
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Learn More
+
+<CardGroup cols={2}>
+  <Card
+    title="Architecture"
+    icon="sitemap"
+    href="/runtime/architecture"
+  >
+    Understand how the runtime works
+  </Card>
+  <Card
+    title="CLI Commands"
+    icon="terminal"
+    href="/cli/introduction"
+  >
+    Explore all ntcli commands
+  </Card>
+  <Card
+    title="GitHub"
+    icon="github"
+    href="https://github.com/NimbleBrainInc/nimbletools-core"
+  >
+    View source and contribute
+  </Card>
+  <Card
+    title="Community"
+    icon="discord"
+    href="https://www.nimbletools.ai/discord"
+  >
+    Get help from the community
+  </Card>
+</CardGroup>

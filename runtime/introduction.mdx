@@ -1,0 +1,173 @@
+---
+title: 'NimbleTools Runtime'
+description: 'Open-source platform for deploying MCP tools as production-ready services'
+icon: 'cube'
+---
+
+**NimbleTools Core** is an open-source runtime that enables you to deploy Model Context Protocol (MCP) tools as scalable, production-ready HTTP services in under 60 seconds.
+
+## What is NimbleTools Runtime?
+
+NimbleTools Runtime provides a Kubernetes-native platform for deploying and managing MCP services. It automatically handles scaling, networking, and service discovery, allowing you to focus on building great AI tools.
+
+<CardGroup cols={2}>
+  <Card title="Universal Deployment" icon="rocket">
+    Deploy any MCP tool - Python, Go, stdio, or HTTP
+  </Card>
+  <Card title="Auto-Scaling" icon="chart-line">
+    Automatically scale replicas based on demand
+  </Card>
+  <Card title="Production Ready" icon="leaf">
+    Built for production workloads
+  </Card>
+  <Card title="Production Ready" icon="shield-check">
+    Built-in security, monitoring, and multi-tenancy
+  </Card>
+</CardGroup>
+
+## Key Features
+
+### 60-Second Deployment
+
+Deploy command-line MCP tools as HTTP services with a single command:
+
+```bash
+ntcli server deploy my-mcp-tool
+```
+
+### Kubernetes-Native
+
+Built on Kubernetes with custom resource definitions (CRDs) for MCP services:
+
+- **MCPService CRD**: Define and manage MCP services declaratively
+- **Operator Pattern**: Automated reconciliation and health management
+- **Service Registry**: Built-in discovery and routing
+
+### Automatic Scaling
+
+Automatically scale services based on demand:
+
+- Horizontal pod autoscaling based on CPU/memory
+- Configure min and max replicas
+- Scale up during high load, scale down when idle
+
+### Multi-Workspace Support
+
+Isolate services and resources by workspace:
+
+- Separate namespaces per workspace
+- Resource quotas and limits
+- Team-based access control
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────┐
+│                   ntcli / API                    │
+└───────────────┬─────────────────────────────────┘
+                │
+┌───────────────▼─────────────────────────────────┐
+│         NimbleTools Operator                     │
+│  - MCPService CRD Controller                     │
+│  - Auto-scaling Manager                          │
+│  - Service Registry                              │
+└───────────────┬─────────────────────────────────┘
+                │
+┌───────────────▼─────────────────────────────────┐
+│            Kubernetes Cluster                    │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐      │
+│  │   Pod    │  │   Pod    │  │   Pod    │      │
+│  │ MCP Tool │  │ MCP Tool │  │ MCP Tool │      │
+│  └──────────┘  └──────────┘  └──────────┘      │
+└─────────────────────────────────────────────────┘
+```
+
+## Use Cases
+
+<AccordionGroup>
+  <Accordion title="Share AI Tools Across Teams">
+    Deploy internal MCP tools once and make them available to all team members through Claude Desktop, Claude Code, or other MCP clients.
+  </Accordion>
+  <Accordion title="Production MCP Services">
+    Run MCP tools in production with automatic scaling, monitoring, and high availability.
+  </Accordion>
+  <Accordion title="Local Development">
+    Test and develop MCP services locally with k3d before deploying to production.
+  </Accordion>
+  <Accordion title="Self-Hosted MCP Platform">
+    Run your own MCP platform on-premises or in your cloud account with full control.
+  </Accordion>
+</AccordionGroup>
+
+## Runtime vs Studio vs CLI
+
+| Feature | Runtime | Studio | CLI |
+|---------|---------|--------|-----|
+| **Deployment** | Self-hosted | Cloud-hosted | Local client |
+| **Open Source** | ✅ Yes | ❌ No | ✅ Yes |
+| **UI** | ❌ No | ✅ Yes | ❌ No |
+| **Auto-scaling** | ✅ Yes | ✅ Yes | ❌ N/A |
+| **Kubernetes** | Required | Managed | Not required |
+| **Best For** | Self-hosting | Quick start | Development |
+
+<Callout type="info">
+  **Studio uses Runtime under the hood**: NimbleBrain Studio is powered by NimbleTools Runtime, providing a managed experience with UI, playbooks, and additional features.
+</Callout>
+
+## Getting Started
+
+Ready to deploy your first MCP service?
+
+<CardGroup cols={2}>
+  <Card
+    title="Installation"
+    icon="download"
+    href="/runtime/installation"
+  >
+    Install NimbleTools Runtime on your Kubernetes cluster
+  </Card>
+  <Card
+    title="Quick Start"
+    icon="rocket"
+    href="/runtime/quickstart"
+  >
+    Deploy your first MCP service in 60 seconds
+  </Card>
+  <Card
+    title="Architecture"
+    icon="sitemap"
+    href="/runtime/architecture"
+  >
+    Learn how NimbleTools Runtime works
+  </Card>
+  <Card
+    title="GitHub Repository"
+    icon="github"
+    href="https://github.com/NimbleBrainInc/nimbletools-core"
+  >
+    View the source code and contribute
+  </Card>
+</CardGroup>
+
+## Community & Support
+
+<CardGroup cols={2}>
+  <Card
+    title="Discord Community"
+    icon="discord"
+    href="https://www.nimbletools.ai/discord"
+  >
+    Join our Discord for help and discussions
+  </Card>
+  <Card
+    title="GitHub Issues"
+    icon="github"
+    href="https://github.com/NimbleBrainInc/nimbletools-core/issues"
+  >
+    Report bugs or request features
+  </Card>
+</CardGroup>
+
+## License
+
+NimbleTools Runtime is open-source software licensed under Apache 2.0.

@@ -19,44 +19,44 @@ icon: 'sparkles'
 
 ## What is NimbleBrain Studio?
 
-NimbleBrain Studio provides a complete visual management experience for the NimbleTools MCP Platform:
+NimbleBrain Studio is a web-based platform that provides visual management for MCP servers and AI-powered workflows:
 
-- **Visual Workspace Management**: Create, switch, and manage workspaces through an intuitive UI
-- **One-Click Server Deployment**: Browse the MCP registry and deploy servers instantly
-- **Integrated Monitoring**: View logs, health status, and metrics in real-time
-- **Seamless Claude Integration**: Generate Claude Desktop configurations with a single click
-- **Team Collaboration**: Share workspaces and manage access across your team
+- **Playbooks**: Create and manage AI-powered workflows with natural language instructions
+- **Toolbox**: Install and manage MCP servers from the community registry
+- **Visual Workspace Management**: Create, switch, and manage isolated workspace environments
+- **Integrated Monitoring**: Track execution history, view logs, and monitor activity
+- **API Tokens**: Generate secure tokens for programmatic access and Claude Desktop integration
 
 ## Key Features
 
 <CardGroup cols={2}>
   <Card
-    title="Dashboard Overview"
-    icon="grid"
-    href="/studio/dashboard"
+    title="Playbooks"
+    icon="play"
+    href="/studio/playbooks"
   >
-    Monitor all your workspaces, servers, and deployments from a unified view
+    Create AI-powered workflows with natural language instructions
   </Card>
   <Card
-    title="Server Management"
-    icon="server"
-    href="/studio/server-management"
+    title="Toolbox"
+    icon="toolbox"
+    href="/studio/toolbox"
   >
-    Deploy, scale, and manage MCP servers with visual controls
+    Install and manage MCP servers from the community registry
   </Card>
   <Card
     title="Workspace Management"
     icon="folder-tree"
     href="/studio/workspace-management"
   >
-    Create isolated environments and manage resources visually
+    Create isolated environments for your playbooks and tools
   </Card>
   <Card
-    title="Secrets & Security"
-    icon="lock"
-    href="/studio/secrets-management"
+    title="API Tokens"
+    icon="key"
+    href="/studio/api-keys"
   >
-    Securely store API keys and credentials with encrypted storage
+    Generate tokens for programmatic access and Claude Desktop
   </Card>
 </CardGroup>
 
@@ -81,11 +81,12 @@ Both Studio and the [NimbleTools CLI](/cli/introduction) provide access to the s
 | Feature | Studio | CLI |
 |---------|--------|-----|
 | **Workspace Management** | ✅ Visual UI | ✅ Command line |
-| **Server Deployment** | ✅ One-click | ✅ Single command |
+| **MCP Server Management** | ✅ One-click install | ✅ Single command |
+| **Playbooks** | ✅ Visual workflow builder | ❌ Not available |
 | **Monitoring & Logs** | ✅ Real-time dashboard | ✅ Stream to terminal |
-| **Claude Integration** | ✅ Copy config | ✅ Generate config |
-| **Automation** | ❌ Not available | ✅ CI/CD pipelines |
-| **Best For** | Quick setup, visual monitoring | Scripts, automation, power users |
+| **Claude Integration** | ✅ Generate tokens | ✅ Generate config |
+| **Automation** | ✅ Scheduled playbooks | ✅ CI/CD pipelines |
+| **Best For** | Workflows, visual monitoring | Scripts, automation, power users |
 
 <Callout type="tip">
   **Use Both!** Most users find a hybrid approach works best - use Studio for visual management and monitoring, and CLI for automation and scripts.
@@ -95,16 +96,16 @@ Both Studio and the [NimbleTools CLI](/cli/introduction) provide access to the s
 
 <Steps>
   <Step title="Sign Up">
-    Create your NimbleBrain Studio account at [studio.nimbletools.ai](https://studio.nimbletools.ai)
+    Create your NimbleBrain Studio account at [studio.nimblebrain.ai](https://studio.nimblebrain.ai)
   </Step>
-  <Step title="Create a Workspace">
-    Set up your first isolated workspace environment
+  <Step title="Install MCP Servers">
+    Browse the Toolbox and install MCP servers from the community registry
   </Step>
-  <Step title="Deploy a Server">
-    Browse the registry and deploy your first MCP server
+  <Step title="Create a Playbook">
+    Build your first AI-powered workflow with natural language instructions
   </Step>
-  <Step title="Connect to Claude">
-    Generate and copy your Claude Desktop configuration
+  <Step title="Generate API Token">
+    Create a token for Claude Desktop or programmatic access
   </Step>
 </Steps>
 
@@ -127,21 +128,21 @@ Both Studio and the [NimbleTools CLI](/cli/introduction) provide access to the s
     Complete walkthrough of Studio features
   </Card>
   <Card
-    title="Dashboard Overview"
-    icon="chart-line"
-    href="/studio/dashboard"
+    title="Playbooks"
+    icon="workflow"
+    href="/studio/playbooks"
   >
-    Learn about the Studio dashboard
+    Create AI-powered workflows
   </Card>
   <Card
-    title="Claude Desktop Setup"
-    icon="robot"
-    href="/studio/claude-desktop"
+    title="Toolbox"
+    icon="toolbox"
+    href="/studio/toolbox"
   >
-    Connect your servers to Claude Desktop
+    Manage your MCP servers
   </Card>
   <Card
-    title="API Keys & Tokens"
+    title="API Tokens"
     icon="key"
     href="/studio/api-keys"
   >

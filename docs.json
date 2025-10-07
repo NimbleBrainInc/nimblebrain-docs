@@ -1,11 +1,11 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "NimbleBrain Platform",
+  "name": "NimbleBrain MCP Platform",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373"
+    "primary": "#0070ff",
+    "light": "#00d4ff",
+    "dark": "#0050ff"
   },
   "favicon": "/images/favicon.ico",
   "navigation": {
@@ -23,18 +23,41 @@
           {
             "group": "Core Features",
             "pages": [
-              "studio/dashboard",
-              "studio/server-management",
+              "studio/playbooks",
+              "studio/toolbox",
               "studio/workspace-management",
-              "studio/secrets-management",
-              "studio/monitoring"
+              "studio/api-keys",
+              "studio/activity-logs"
             ]
           },
           {
             "group": "Integrations",
             "pages": [
+              "studio/integrations",
               "studio/claude-desktop",
-              "studio/api-keys"
+              "studio/claude-code",
+              "studio/cursor",
+              "studio/langchain"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Runtime",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "runtime/introduction",
+              "runtime/installation",
+              "runtime/quickstart"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "runtime/architecture",
+              "runtime/mcp-services"
             ]
           }
         ]
@@ -173,7 +196,7 @@
       "anchors": [
         {
           "anchor": "GitHub",
-          "href": "https://github.com/nimblebraininc/ntcli",
+          "href": "https://github.com/NimbleBrainInc/nimbletools-core",
           "icon": "github"
         },
         {
@@ -182,16 +205,16 @@
           "icon": "cube"
         },
         {
-          "anchor": "Community",
-          "href": "https://www.nimbletools.ai/slack",
-          "icon": "slack"
+          "anchor": "Discord",
+          "href": "https://www.nimblebrain.ai/discord",
+          "icon": "discord"
         }
       ]
     }
   },
   "logo": {
-    "light": "/images/logo.png",
-    "dark": "/images/logo.png"
+    "light": "/images/nimblebrain-icon-color.png",
+    "dark": "/images/nimblebrain-icon-white.png"
   },
   "navbar": {
     "links": [
@@ -203,21 +226,16 @@
     "primary": {
       "type": "button",
       "label": "Home",
-      "href": "https://www.nimbletools.ai"
+      "href": "https://www.nimblebrain.ai"
     }
   },
   "footer": {
     "socials": {
       "github": "https://github.com/nimblebraininc/ntcli",
-      "slack": "https://www.nimbletools.ai/slack"
+      "discord": "https://www.nimblebrain.ai/discor"
     }
   },
   "search": {
     "prompt": "Search NimbleBrain documentation..."
-  },
-  "feedback": {
-    "thumbsRating": true,
-    "suggestEdit": true,
-    "raiseIssue": true
   }
 }

@@ -4,17 +4,22 @@ description: 'Create and manage isolated workspace environments in NimbleBrain S
 icon: 'folder-tree'
 ---
 
-Workspaces provide isolated environments for organizing MCP servers, secrets, and team access.
+<img
+  src="/images/studio/workspace-switcher.png"
+  alt="Workspace switcher"
+/>
+
+Workspaces provide isolated environments for organizing playbooks, MCP servers (toolbox), and API tokens.
 
 ## What are Workspaces?
 
 Workspaces are isolated containers that include:
 
-- **Deployed MCP Servers**: Each workspace has its own set of servers
-- **Secrets & Configuration**: API keys and environment variables are workspace-scoped
-- **Access Tokens**: Authentication tokens are unique per workspace
-- **Team Access**: Control who can access and manage workspace resources
-- **Resource Quotas**: CPU, memory, and storage limits per workspace
+- **Playbooks**: AI-powered workflows with natural language instructions
+- **Toolbox**: Installed MCP servers and their configurations
+- **API Tokens**: Authentication tokens unique to each workspace
+- **Activity Logs**: Audit trail of all workspace actions
+- **AI Credits**: Usage tracking and billing per workspace
 
 <Callout type="tip">
   Think of workspaces like separate projects or environments (dev, staging, production).
@@ -24,19 +29,21 @@ Workspaces are isolated containers that include:
 
 <Steps>
   <Step title="Open Workspace Menu">
-    Click the workspace dropdown in the top-left corner
+    Click the workspace dropdown in the sidebar (shows current workspace name)
   </Step>
-  <Step title="Click Create Workspace">
-    Select **+ Create New Workspace**
+  <Step title="Click Manage Workspaces">
+    Click the **Manage Workspaces** button at the bottom of the dropdown
+  </Step>
+  <Step title="Create New Workspace">
+    Click **+ Create Workspace** or similar option
   </Step>
   <Step title="Enter Details">
     Fill in the workspace information:
-    - **Name**: Lowercase, alphanumeric with hyphens (e.g., `my-project-dev`)
-    - **Description**: Optional description for the workspace
-    - **Region**: Data center region (defaults to US-East)
+    - **Name**: Display name for the workspace
+    - **Description** (optional): Purpose of the workspace
   </Step>
   <Step title="Create">
-    Click **Create Workspace** - you'll automatically switch to the new workspace
+    Click **Create** - the workspace will be created and appear in your list
   </Step>
 </Steps>
 
@@ -255,31 +262,31 @@ Make sure to:
 
 <CardGroup cols={2}>
   <Card
-    title="Server Management"
-    icon="server"
-    href="/studio/server-management"
+    title="Playbooks"
+    icon="play"
+    href="/studio/playbooks"
   >
-    Deploy and manage servers in workspaces
+    Create AI-powered workflows in workspaces
   </Card>
   <Card
-    title="Secrets Management"
-    icon="lock"
-    href="/studio/secrets-management"
+    title="Toolbox"
+    icon="toolbox"
+    href="/studio/toolbox"
   >
-    Configure workspace-scoped secrets
+    Manage MCP servers in workspaces
   </Card>
   <Card
-    title="API Keys & Tokens"
+    title="API Tokens"
     icon="key"
     href="/studio/api-keys"
   >
     Generate tokens for programmatic access
   </Card>
   <Card
-    title="CLI Concepts: Workspaces"
-    icon="terminal"
-    href="/cli/concepts/workspaces"
+    title="Activity Logs"
+    icon="list"
+    href="/studio/activity-logs"
   >
-    Learn about workspaces in the CLI
+    Track all workspace activity
   </Card>
 </CardGroup>

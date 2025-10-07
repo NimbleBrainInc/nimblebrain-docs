@@ -1,10 +1,15 @@
 ---
-title: 'API Keys & Tokens'
-description: 'Generate and manage authentication tokens for CLI and programmatic access'
+title: 'API Tokens'
+description: 'Generate and manage authentication tokens for workspace access'
 icon: 'key'
 ---
 
-Generate workspace tokens for CLI authentication, API access, and CI/CD pipelines.
+<img
+  src="/images/studio/api-tokens.png"
+  alt="API Tokens management"
+/>
+
+Generate workspace tokens for programmatic access, Claude Desktop integration, and CLI authentication.
 
 ## Token Overview
 
@@ -25,49 +30,34 @@ Workspace tokens provide programmatic access to your NimbleBrain workspace:
   </Card>
 </CardGroup>
 
-## Token Types
+## Token Information
 
-<Tabs>
-  <Tab title="Standard Token">
-    **Expiration**: 30 days
-    **Use Case**: Personal CLI usage, development
-    **Refresh**: Can be refreshed before expiration
+Each token includes:
 
-    Best for day-to-day development work
-  </Tab>
-  <Tab title="Long-Lived Token">
-    **Expiration**: 1 year
-    **Use Case**: CI/CD pipelines, production services
-    **Refresh**: Cannot be refreshed (regenerate when expired)
+- **Token ID**: A unique identifier (e.g., `abc343a5-604...`)
+- **Status**: Active or Revoked
+- **Created Date**: When the token was generated
+- **Description**: Optional label to identify the token's purpose
 
-    Best for automation that shouldn't require frequent updates
-  </Tab>
-  <Tab title="Read-Only Token">
-    **Expiration**: 30 or 365 days
-    **Use Case**: Monitoring, metrics collection
-    **Permissions**: View-only access (cannot deploy or modify)
-
-    Best for dashboards and monitoring tools
-  </Tab>
-</Tabs>
+<Callout type="info">
+  **Security Note**: API tokens provide programmatic access to this workspace. Keep them secure and rotate regularly. Tokens are only shown once upon creation.
+</Callout>
 
 ## Creating Tokens
 
 <Steps>
   <Step title="Navigate to API Tokens">
-    Go to Settings → API Tokens
+    Click "API Tokens" in the sidebar under Workspace Settings
   </Step>
-  <Step title="Click Generate Token">
-    Click **+ Generate New Token**
+  <Step title="Click Create Token">
+    Click the blue **Create Token** button
   </Step>
   <Step title="Configure Token">
     Fill in token details:
-    - **Name/Description**: Identify the token's purpose
-    - **Type**: Standard, Long-Lived, or Read-Only
-    - **Expiration**: Auto-set based on type (or custom)
+    - **Name/Description**: Optional label to identify the token's purpose (e.g., "Claude Desktop", "CI/CD")
   </Step>
   <Step title="Generate & Copy">
-    Click **Generate Token** and **immediately copy it**
+    Click **Create** and **immediately copy the token value**
   </Step>
 </Steps>
 
@@ -196,24 +186,24 @@ Extend the expiration of Standard tokens:
   Only **Standard tokens** can be refreshed. Long-Lived tokens must be regenerated when they expire.
 </Callout>
 
-### Revoking Tokens
+### Deleting Tokens
 
 Immediately invalidate a token:
 
 <Steps>
   <Step title="Locate Token">
-    Find the token in Settings → API Tokens
+    Find the token in the API Tokens list
   </Step>
-  <Step title="Click Revoke">
-    Click the **Revoke** button (trash icon)
+  <Step title="Click Delete">
+    Click the **Delete Token** button (trash icon)
   </Step>
-  <Step title="Confirm Revocation">
+  <Step title="Confirm Deletion">
     Confirm - the token will be immediately invalidated
   </Step>
 </Steps>
 
 <Callout type="danger">
-  Revoking a token immediately stops all services using it. Update integrations with a new token first!
+  Deleting a token immediately stops all services using it. Update integrations with a new token first!
 </Callout>
 
 ## Token Security
