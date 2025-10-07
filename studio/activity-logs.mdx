@@ -1,0 +1,328 @@
+---
+title: 'Activity Logs'
+description: 'Track all workspace activity and changes with comprehensive audit logs'
+icon: 'list-check'
+---
+
+<img
+  src="/images/studio/activity-logs.png"
+  alt="Activity Logs view"
+/>
+
+**Activity Logs** (also called Audit Logs) provide a complete audit trail of all actions taken within your workspace, helping you track changes, debug issues, and maintain security compliance.
+
+## What are Activity Logs?
+
+Activity Logs record every significant action in your workspace:
+
+- **Workspace Changes**: Creation, deletion, and configuration updates
+- **Playbook Activity**: Creation, updates, and executions
+- **Toolbox Actions**: Server installations, uninstalls, and restarts
+- **API Token Management**: Token creation and deletion
+- **User Actions**: Who performed each action and when
+
+## Log Overview
+
+<img
+  src="/images/studio/activity-logs.png"
+  alt="Activity logs overview"
+/>
+
+The Activity Logs page displays:
+
+<ResponseField name="Total Actions" type="number">
+  Count of all logged actions in the selected time period
+</ResponseField>
+
+<ResponseField name="Success Rate" type="percentage">
+  Percentage of actions that completed successfully
+</ResponseField>
+
+<ResponseField name="Successful" type="number">
+  Count of successful actions
+</ResponseField>
+
+<ResponseField name="Failed" type="number">
+  Count of failed actions
+</ResponseField>
+
+## Filtering Logs
+
+Use filters to find specific activities:
+
+### By Status
+
+<ResponseField name="All Status" default>
+  Show all log entries
+</ResponseField>
+
+<ResponseField name="Success">
+  Show only successful actions
+</ResponseField>
+
+<ResponseField name="Failed">
+  Show only failed actions
+</ResponseField>
+
+### By Resource Type
+
+Filter by the type of resource that was acted upon:
+
+- **All Resources**: Show everything
+- **Workspace**: Workspace creation and updates
+- **Assistant**: AI assistant interactions
+- **Playbook**: Playbook operations
+- **Toolbox**: MCP server management
+- **API Token**: Token management
+- **Organization**: Organization-level changes
+- **Settings**: Configuration updates
+
+### By Time Range
+
+<ResponseField name="All Time">
+  Show all historical logs
+</ResponseField>
+
+<ResponseField name="Last 24 Hours">
+  Recent activity from the past day
+</ResponseField>
+
+<ResponseField name="Last 7 Days">
+  Activity from the past week
+</ResponseField>
+
+<ResponseField name="Last 30 Days" default>
+  Activity from the past month (default)
+</ResponseField>
+
+<ResponseField name="Last 90 Days">
+  Activity from the past quarter
+</ResponseField>
+
+### Search Logs
+
+Use the search box to find specific:
+- User names
+- Resource names
+- Actions
+- IP addresses
+
+## Log Entry Details
+
+Each log entry shows:
+
+<CardGroup cols={2}>
+  <Card title="Icon" icon="icons">
+    Visual indicator of the action type
+    - 🏢 Workspace
+    - ▶️ Execution
+    - ✏️ Update
+    - 📋 Creation
+    - ⬇️ Installation
+  </Card>
+  <Card title="User" icon="user">
+    Who performed the action (name and email)
+  </Card>
+  <Card title="Action" icon="bolt">
+    What was done (e.g., "Created playbook", "Installed tool")
+  </Card>
+  <Card title="Resource" icon="cube">
+    The resource that was affected (name in quotes)
+  </Card>
+  <Card title="Timestamp" icon="clock">
+    When the action occurred (relative and absolute time)
+  </Card>
+  <Card title="Resource Type" icon="tag">
+    The category of the resource (workspace, playbook, toolbox)
+  </Card>
+  <Card title="IP Address" icon="network-wired">
+    The IP address from which the action was performed
+  </Card>
+  <Card title="Status" icon="check-circle">
+    Success indicator (✅) or failure (❌)
+  </Card>
+</CardGroup>
+
+### Expanding Log Entries
+
+Click on a log entry to see additional details:
+- Full timestamp
+- Complete resource path
+- Error messages (if failed)
+- Related resources
+- Request metadata
+
+## Common Log Actions
+
+### Workspace Actions
+
+- **Created workspace**: New workspace was created
+- **Updated workspace**: Workspace settings were modified
+- **Deleted workspace**: Workspace was permanently removed
+
+### Playbook Actions
+
+- **Created playbook**: New playbook was created
+- **Updated playbook**: Playbook instructions or configuration changed
+- **Executed playbook**: Playbook was run
+- **Deleted playbook**: Playbook was removed
+
+### Toolbox Actions
+
+- **Installed tool**: MCP server was installed from catalog
+- **Uninstalled tool**: MCP server was removed
+- **Restarted tool**: MCP server was restarted
+- **Configured tool**: Server settings were updated
+
+### Token Actions
+
+- **Created token**: New API token was generated
+- **Deleted token**: API token was revoked
+
+## Using Logs for Debugging
+
+Activity Logs help diagnose issues:
+
+<Steps>
+  <Step title="Identify the Problem">
+    Note when the issue started occurring
+  </Step>
+  <Step title="Filter by Time">
+    Set the time range to cover the period when the issue began
+  </Step>
+  <Step title="Filter by Resource">
+    Select the resource type related to the issue (e.g., Playbook, Toolbox)
+  </Step>
+  <Step title="Look for Failures">
+    Filter by "Failed" status to see what went wrong
+  </Step>
+  <Step title="Review Details">
+    Click on failed entries to see error messages and context
+  </Step>
+</Steps>
+
+## Exporting Logs
+
+Export logs for compliance or offline analysis:
+
+<Steps>
+  <Step title="Apply Filters">
+    Set filters to select the logs you want to export
+  </Step>
+  <Step title="Click Export">
+    Click the **Export** button in the top right
+  </Step>
+  <Step title="Choose Format">
+    Select format (CSV or JSON)
+  </Step>
+  <Step title="Download">
+    Download the exported file
+  </Step>
+</Steps>
+
+<Callout type="info">
+  Exported logs include all visible columns plus additional metadata not shown in the UI.
+</Callout>
+
+## Retention Period
+
+<AccordionGroup>
+  <Accordion title="Community Plan">
+    Logs are retained for 30 days
+  </Accordion>
+  <Accordion title="Team Plan">
+    Logs are retained for 90 days
+  </Accordion>
+  <Accordion title="Enterprise Plan">
+    Logs are retained for 1 year or custom retention period
+  </Accordion>
+</AccordionGroup>
+
+## Security & Compliance
+
+Activity Logs support:
+
+<CardGroup cols={2}>
+  <Card title="Audit Trail" icon="shield-check">
+    Complete record of all workspace changes
+  </Card>
+  <Card title="User Attribution" icon="user-check">
+    Track who made each change
+  </Card>
+  <Card title="IP Tracking" icon="location-dot">
+    Record the source IP for all actions
+  </Card>
+  <Card title="Compliance" icon="file-contract">
+    Meet SOC 2, ISO 27001, and GDPR requirements
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Logs not appearing">
+    - **Refresh the page**: Click the "Refresh" button
+    - **Check filters**: Make sure filters aren't too restrictive
+    - **Check time range**: Expand the time range to see older logs
+  </Accordion>
+  <Accordion title="Can't find a specific action">
+    - **Use search**: Try searching for the resource name or user
+    - **Check resource type**: Make sure the correct resource filter is selected
+    - **Expand time range**: The action might be older than the current filter
+  </Accordion>
+  <Accordion title="Export not working">
+    - **Check permissions**: Make sure you have export permissions
+    - **Reduce filter range**: Try exporting a smaller time range
+    - **Try different format**: Switch between CSV and JSON
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Regular Review">
+    Review activity logs weekly to catch unexpected changes or security issues
+  </Accordion>
+  <Accordion title="Monitor Failed Actions">
+    Set up alerts for failed actions that indicate system issues
+  </Accordion>
+  <Accordion title="Export for Compliance">
+    Regularly export logs for long-term archival and compliance
+  </Accordion>
+  <Accordion title="Use Filters Effectively">
+    Save time by using resource type and status filters to focus on relevant logs
+  </Accordion>
+</AccordionGroup>
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card
+    title="Playbooks"
+    icon="play"
+    href="/studio/playbooks"
+  >
+    View playbook execution logs
+  </Card>
+  <Card
+    title="Toolbox"
+    icon="toolbox"
+    href="/studio/toolbox"
+  >
+    Track server installations and changes
+  </Card>
+  <Card
+    title="Workspace Management"
+    icon="folder"
+    href="/studio/workspace-management"
+  >
+    Manage workspace access and security
+  </Card>
+  <Card
+    title="API Tokens"
+    icon="key"
+    href="/studio/api-keys"
+  >
+    Track token creation and usage
+  </Card>
+</CardGroup>

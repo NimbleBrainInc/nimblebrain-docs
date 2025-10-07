@@ -1,0 +1,86 @@
+---
+title: 'ntcli auth status'
+description: 'Check current authentication status and token validity'
+icon: 'circle-info'
+---
+
+## Overview
+
+Check your current authentication status with the NimbleTools platform, including token validity and user information.
+
+## Syntax
+
+```bash
+ntcli auth status
+```
+
+## Examples
+
+### Basic Status Check
+
+```bash
+ntcli auth status
+```
+
+**When authenticated:**
+```
+✅ Authenticated as john@example.com
+User ID: user_abc123
+Account: Personal
+Logged in: 2024-01-15 10:30:00 UTC
+Token expires: Never (non-expiring)
+```
+
+**When not authenticated:**
+```
+❌ Not authenticated
+Please run 'ntcli auth login' to authenticate
+```
+
+## What Gets Checked
+
+The status command verifies:
+
+<CardGroup cols={2}>
+  <Card title="JWT Token" icon="key">
+    Validates your stored NimbleTools JWT token
+  </Card>
+  <Card title="Token Expiry" icon="clock">
+    Checks if the token is still valid and when it expires
+  </Card>
+  <Card title="User Profile" icon="user">
+    Displays your account information
+  </Card>
+  <Card title="API Connectivity" icon="wifi">
+    Tests connection to the NimbleTools API
+  </Card>
+</CardGroup>
+
+## Status Information
+
+| Field | Description |
+|-------|-------------|
+| **Email** | Your NimbleTools account email |
+| **User ID** | Unique user identifier |
+| **Account Type** | Personal or Organization account |
+| **Login Time** | When you last authenticated |
+| **Token Expiry** | When your authentication expires |
+
+## Related Commands
+
+<CardGroup cols={2}>
+  <Card
+    title="auth login"
+    icon="right-to-bracket"
+    href="/cli/commands/auth/login"
+  >
+    Authenticate with NimbleTools platform
+  </Card>
+  <Card
+    title="token show"
+    icon="eye"
+    href="/cli/commands/token/show" 
+  >
+    Show workspace token information
+  </Card>
+</CardGroup>

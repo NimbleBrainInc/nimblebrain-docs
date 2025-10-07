@@ -1,0 +1,50 @@
+---
+title: 'MCP Services'
+description: 'Understanding and configuring MCP services'
+icon: 'cube'
+---
+
+Learn how to configure and deploy different types of MCP services with NimbleTools Runtime.
+
+## Service Types
+
+NimbleTools Runtime supports multiple MCP server types:
+
+<CardGroup cols={2}>
+  <Card title="NPM Packages" icon="npm">
+    Deploy MCP servers published to npm
+  </Card>
+  <Card title="Container Images" icon="docker">
+    Use pre-built container images
+  </Card>
+  <Card title="Stdio Servers" icon="terminal">
+    Standard input/output based servers
+  </Card>
+  <Card title="HTTP Servers" icon="globe">
+    HTTP-based MCP implementations
+  </Card>
+</CardGroup>
+
+## Basic Service Configuration
+
+```yaml
+apiVersion: nimbletools.ai/v1alpha1
+kind: MCPService
+metadata:
+  name: my-service
+spec:
+  source:
+    type: npm
+    package: "@example/mcp-server"
+```
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card title="Architecture" icon="sitemap" href="/runtime/architecture">
+    Learn how services work
+  </Card>
+  <Card title="Quick Start" icon="rocket" href="/runtime/quickstart">
+    Deploy your first service
+  </Card>
+</CardGroup>

@@ -1,139 +1,192 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "NimbleTools CLI",
+  "name": "NimbleBrain MCP Platform",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373"
+    "primary": "#0070ff",
+    "light": "#00d4ff",
+    "dark": "#0050ff"
   },
   "favicon": "/images/favicon.ico",
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentation",
+        "tab": "Studio",
         "groups": [
           {
             "group": "Get Started",
             "pages": [
-              "introduction",
-              "installation",
-              "quickstart"
+              "studio/introduction",
+              "studio/quickstart"
+            ]
+          },
+          {
+            "group": "Core Features",
+            "pages": [
+              "studio/playbooks",
+              "studio/toolbox",
+              "studio/workspace-management",
+              "studio/api-keys",
+              "studio/activity-logs"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "studio/integrations",
+              "studio/claude-desktop",
+              "studio/claude-code",
+              "studio/cursor",
+              "studio/langchain"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Runtime",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "runtime/introduction",
+              "runtime/installation",
+              "runtime/quickstart"
             ]
           },
           {
             "group": "Core Concepts",
             "pages": [
-              "concepts/workspaces",
-              "concepts/mcp-servers",
-              "concepts/api-architecture",
-              "concepts/claude-integration"
-            ]
-          },
-          {
-            "group": "Configuration",
-            "pages": [
-              "configuration/environment-variables",
-              "configuration/authentication"
+              "runtime/architecture",
+              "runtime/mcp-services"
             ]
           }
         ]
       },
       {
-        "tab": "Commands",
+        "tab": "CLI Reference",
         "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "cli/introduction",
+              "cli/installation",
+              "cli/quickstart"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "cli/concepts/workspaces",
+              "cli/concepts/mcp-servers",
+              "cli/concepts/authentication"
+            ]
+          },
           {
             "group": "Authentication",
             "pages": [
-              "commands/auth/login",
-              "commands/auth/logout",
-              "commands/auth/status",
-              "commands/auth/signup"
+              "cli/commands/auth/login",
+              "cli/commands/auth/logout",
+              "cli/commands/auth/status",
+              "cli/commands/auth/signup"
             ]
           },
           {
             "group": "Workspace Management",
             "pages": [
-              "commands/workspace/create",
-              "commands/workspace/list",
-              "commands/workspace/switch",
-              "commands/workspace/select",
-              "commands/workspace/delete",
-              "commands/workspace/clear",
-              "commands/workspace/debug",
-              "commands/workspace/sync"
+              "cli/commands/workspace/create",
+              "cli/commands/workspace/list",
+              "cli/commands/workspace/switch",
+              "cli/commands/workspace/select",
+              "cli/commands/workspace/delete",
+              "cli/commands/workspace/clear",
+              "cli/commands/workspace/debug",
+              "cli/commands/workspace/sync"
             ]
           },
           {
             "group": "Server Management",
             "pages": [
-              "commands/server/deploy",
-              "commands/server/list",
-              "commands/server/info",
-              "commands/server/scale",
-              "commands/server/remove",
-              "commands/server/claude-config"
+              "cli/commands/server/deploy",
+              "cli/commands/server/list",
+              "cli/commands/server/info",
+              "cli/commands/server/scale",
+              "cli/commands/server/remove",
+              "cli/commands/server/logs",
+              "cli/commands/server/claude-config"
             ]
           },
           {
             "group": "MCP Client",
             "pages": [
-              "commands/mcp/connect",
-              "commands/mcp/tools",
-              "commands/mcp/call"
+              "cli/commands/mcp/connect",
+              "cli/commands/mcp/tools",
+              "cli/commands/mcp/call"
             ]
           },
           {
             "group": "Registry",
             "pages": [
-              "commands/registry/list",
-              "commands/registry/show"
+              "cli/commands/registry/list",
+              "cli/commands/registry/show"
             ]
           },
           {
             "group": "Secrets Management",
             "pages": [
-              "commands/secrets/list",
-              "commands/secrets/set",
-              "commands/secrets/unset"
+              "cli/commands/secrets/list",
+              "cli/commands/secrets/set",
+              "cli/commands/secrets/unset"
             ]
           },
           {
             "group": "Token Management",
             "pages": [
-              "commands/token/create",
-              "commands/token/list",
-              "commands/token/refresh",
-              "commands/token/revoke",
-              "commands/token/show"
+              "cli/commands/token/create",
+              "cli/commands/token/list",
+              "cli/commands/token/refresh",
+              "cli/commands/token/revoke",
+              "cli/commands/token/show"
             ]
           },
           {
             "group": "Utilities",
             "pages": [
-              "commands/health"
+              "cli/commands/utilities/health"
             ]
           }
         ]
       },
       {
-        "tab": "Examples",
+        "tab": "Developers",
         "groups": [
           {
-            "group": "Examples & Integrations",
+            "group": "Platform Architecture",
             "pages": [
-              "examples/complete-workflow",
-              "examples/claude-desktop",
-              "examples/langchain-integration",
-              "examples/advanced-usage"
+              "dev/api-architecture",
+              "dev/environment-variables"
             ]
           },
           {
-            "group": "Guides",
+            "group": "Integrations",
             "pages": [
-              "guides/troubleshooting",
-              "guides/best-practices",
-              "guides/ci-cd"
+              "dev/claude-desktop-integration",
+              "dev/examples/langchain-integration"
+            ]
+          },
+          {
+            "group": "Advanced Topics",
+            "pages": [
+              "dev/ci-cd",
+              "dev/best-practices",
+              "dev/troubleshooting"
+            ]
+          },
+          {
+            "group": "Examples",
+            "pages": [
+              "dev/examples/complete-workflow",
+              "dev/examples/claude-desktop",
+              "dev/examples/advanced-usage"
             ]
           }
         ]
@@ -143,7 +196,7 @@
       "anchors": [
         {
           "anchor": "GitHub",
-          "href": "https://github.com/nimblebraininc/ntcli",
+          "href": "https://github.com/NimbleBrainInc/nimbletools-core",
           "icon": "github"
         },
         {
@@ -152,16 +205,16 @@
           "icon": "cube"
         },
         {
-          "anchor": "Community",
-          "href": "https://www.nimbletools.ai/slack",
-          "icon": "slack"
+          "anchor": "Discord",
+          "href": "https://www.nimblebrain.ai/discord",
+          "icon": "discord"
         }
       ]
     }
   },
   "logo": {
-    "light": "/images/logo.png",
-    "dark": "/images/logo.png"
+    "light": "/images/nimblebrain-icon-color.png",
+    "dark": "/images/nimblebrain-icon-white.png"
   },
   "navbar": {
     "links": [
@@ -173,21 +226,16 @@
     "primary": {
       "type": "button",
       "label": "Home",
-      "href": "https://www.nimbletools.ai"
+      "href": "https://www.nimblebrain.ai"
     }
   },
   "footer": {
     "socials": {
       "github": "https://github.com/nimblebraininc/ntcli",
-      "slack": "https://www.nimbletools.ai/slack"
+      "discord": "https://www.nimblebrain.ai/discor"
     }
   },
   "search": {
-    "prompt": "Search ntcli documentation..."
-  },
-  "feedback": {
-    "thumbsRating": true,
-    "suggestEdit": true,
-    "raiseIssue": true
+    "prompt": "Search NimbleBrain documentation..."
   }
 }

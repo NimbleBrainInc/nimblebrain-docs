@@ -1,0 +1,250 @@
+---
+title: 'Studio Quickstart'
+description: 'Get started with NimbleBrain Studio in under 5 minutes'
+icon: 'rocket'
+---
+
+Get started with NimbleBrain Studio and create your first AI-powered playbook with this step-by-step guide.
+
+## Prerequisites
+
+- A web browser (Chrome, Firefox, Safari, or Edge)
+- A GitHub or Google account for authentication
+
+<Callout type="info">
+  No installation required! NimbleBrain Studio runs entirely in your browser.
+</Callout>
+
+## Step 1: Create Your Account
+
+<Steps>
+  <Step title="Navigate to Studio">
+    Visit [studio.nimblebrain.ai](https://studio.nimblebrain.ai)
+  </Step>
+  <Step title="Sign Up">
+    Click "Sign Up" and authenticate with GitHub or Google
+  </Step>
+  <Step title="Complete Profile">
+    Fill in your organization name and preferences
+  </Step>
+</Steps>
+
+## Step 2: Explore the Interface
+
+<img
+  src="/images/studio/playbooks-main-view.png"
+  alt="NimbleBrain Studio main interface"
+/>
+
+When you first log in, you'll see your default workspace with two main sections:
+
+<CardGroup cols={2}>
+  <Card title="Playbooks" icon="play">
+    Create AI-powered workflows with natural language instructions
+  </Card>
+  <Card title="Toolbox" icon="toolbox">
+    Install and manage MCP servers from the community registry
+  </Card>
+</CardGroup>
+
+## Step 3: Install Your First MCP Server
+
+Let's install an MCP server from the Toolbox.
+
+<Steps>
+  <Step title="Navigate to Toolbox">
+    Click "Toolbox" in the sidebar navigation
+  </Step>
+  <Step title="Browse the Catalog">
+    Click "Browse Catalog" to see all available MCP servers organized by category
+  </Step>
+  <Step title="Select a Server">
+    Choose a server that interests you - for example, the "Echo" server for testing
+  </Step>
+  <Step title="Install">
+    Click "Install" - the server will be added to your workspace's installed servers
+  </Step>
+</Steps>
+
+<img
+  src="/images/studio/toolbox-browse-catalog.png"
+  alt="MCP Server Catalog"
+/>
+
+<Callout type="success">
+  Installed servers can be connected to various AI clients like Claude Desktop, Claude Code, and Cursor!
+</Callout>
+
+## Step 4: Create Your First Playbook
+
+Now let's create an AI-powered playbook.
+
+<Steps>
+  <Step title="Navigate to Playbooks">
+    Click "Playbooks" in the sidebar navigation
+  </Step>
+  <Step title="Create New Playbook">
+    Click the "Create Playbook" button
+  </Step>
+  <Step title="Add Instructions">
+    Write natural language instructions for what you want the AI to do. For example:
+    ```
+    Research the latest trends in AI development and
+    summarize the top 5 most important developments.
+    ```
+  </Step>
+  <Step title="Configure Settings">
+    In the Configuration tab, adjust:
+    - Model selection (e.g., Claude 3.5 Sonnet)
+    - Temperature (creativity level)
+    - Max tokens (response length)
+  </Step>
+  <Step title="Save Playbook">
+    Give your playbook a name and save it
+  </Step>
+</Steps>
+
+<img
+  src="/images/studio/playbook-detail-instructions.png"
+  alt="Playbook Instructions"
+/>
+
+## Step 5: Execute Your Playbook
+
+<Steps>
+  <Step title="Run the Playbook">
+    Click the "Execute" or "Run" button on your playbook
+  </Step>
+  <Step title="Monitor Progress">
+    Watch as the AI executes your instructions step by step
+  </Step>
+  <Step title="View Results">
+    See the complete output and any tool calls made during execution
+  </Step>
+  <Step title="Review History">
+    Check the "Recent Executions" tab to see all past runs with detailed steps
+  </Step>
+</Steps>
+
+<img
+  src="/images/studio/playbook-recent-executions.png"
+  alt="Playbook Execution History"
+/>
+
+## Step 6: Connect to Claude Desktop
+
+Connect your installed MCP servers to Claude Desktop.
+
+<Steps>
+  <Step title="Go to Toolbox">
+    Navigate to Toolbox and find your installed server
+  </Step>
+  <Step title="Click Connect">
+    Click the "Connect" button on any installed server
+  </Step>
+  <Step title="Choose Claude Desktop">
+    Select "Claude Desktop" from the integration options
+  </Step>
+  <Step title="Copy Configuration">
+    Copy the generated JSON configuration
+  </Step>
+  <Step title="Open Claude Config File">
+    On macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+    On Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+  </Step>
+  <Step title="Add Configuration">
+    Add the configuration to the `mcpServers` section of your config file
+  </Step>
+  <Step title="Restart Claude Desktop">
+    Fully quit and restart Claude Desktop to load the new configuration
+  </Step>
+</Steps>
+
+<img
+  src="/images/studio/connect-modal-claude-desktop.png"
+  alt="Claude Desktop Connection"
+/>
+
+<Callout type="warning">
+  Make sure to back up your existing Claude configuration before making changes!
+</Callout>
+
+## Next Steps
+
+Congratulations! You've installed your first MCP server and created a playbook.
+
+<CardGroup cols={2}>
+  <Card
+    title="Explore Playbooks"
+    icon="play"
+    href="/studio/playbooks"
+  >
+    Learn more about creating AI-powered workflows
+  </Card>
+  <Card
+    title="Browse Toolbox"
+    icon="toolbox"
+    href="/studio/toolbox"
+  >
+    Discover and install more MCP servers
+  </Card>
+  <Card
+    title="Client Integrations"
+    icon="plug"
+    href="/studio/integrations"
+  >
+    Connect to Claude Code, Cursor, and other AI clients
+  </Card>
+  <Card
+    title="Generate API Tokens"
+    icon="key"
+    href="/studio/api-keys"
+  >
+    Create tokens for programmatic access via CLI or API
+  </Card>
+</CardGroup>
+
+## Common Issues
+
+<AccordionGroup>
+  <Accordion title="Playbook execution fails">
+    - Check that your instructions are clear and specific
+    - Verify you have sufficient AI credits in your workspace
+    - Review the execution logs for error details
+  </Accordion>
+  <Accordion title="Claude Desktop doesn't show MCP tools">
+    - Verify Claude Desktop was fully restarted (quit and relaunch)
+    - Check that the configuration file has valid JSON syntax
+    - Ensure your workspace token is properly set in the config
+  </Accordion>
+  <Accordion title="Can't find an installed server">
+    - Make sure you're viewing the "Installed" tab in Toolbox
+    - Check that you're in the correct workspace
+    - Try refreshing the page
+  </Accordion>
+  <Accordion title="MCP server connection timeout">
+    - The server may be starting up (cold start) - wait 5-10 seconds and retry
+    - Check your internet connection
+    - Verify the server is shown as "Running" in Toolbox
+  </Accordion>
+</AccordionGroup>
+
+## Need Help?
+
+<CardGroup cols={2}>
+  <Card
+    title="Troubleshooting"
+    icon="wrench"
+    href="/dev/troubleshooting"
+  >
+    Check our comprehensive troubleshooting guide
+  </Card>
+  <Card
+    title="Activity Logs"
+    icon="list-check"
+    href="/studio/activity-logs"
+  >
+    View audit logs of all workspace actions
+  </Card>
+</CardGroup>

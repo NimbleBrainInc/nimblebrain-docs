@@ -1,0 +1,439 @@
+---
+title: 'API Tokens'
+description: 'Generate and manage authentication tokens for workspace access'
+icon: 'key'
+---
+
+<img
+  src="/images/studio/api-tokens.png"
+  alt="API Tokens management"
+/>
+
+Generate workspace tokens for programmatic access, Claude Desktop integration, and CLI authentication.
+
+## Token Overview
+
+Workspace tokens provide programmatic access to your NimbleBrain workspace:
+
+<CardGroup cols={2}>
+  <Card title="CLI Authentication" icon="terminal">
+    Use tokens to authenticate the NimbleTools CLI (ntcli)
+  </Card>
+  <Card title="API Access" icon="code">
+    Call the NimbleTools API from scripts and applications
+  </Card>
+  <Card title="CI/CD Pipelines" icon="gears">
+    Automate deployments in GitHub Actions, GitLab CI, etc.
+  </Card>
+  <Card title="MCP Client" icon="plug">
+    Authenticate MCP server connections in Claude Desktop
+  </Card>
+</CardGroup>
+
+## Token Information
+
+Each token includes:
+
+- **Token ID**: A unique identifier (e.g., `abc343a5-604...`)
+- **Status**: Active or Revoked
+- **Created Date**: When the token was generated
+- **Description**: Optional label to identify the token's purpose
+
+<Callout type="info">
+  **Security Note**: API tokens provide programmatic access to this workspace. Keep them secure and rotate regularly. Tokens are only shown once upon creation.
+</Callout>
+
+## Creating Tokens
+
+<Steps>
+  <Step title="Navigate to API Tokens">
+    Click "API Tokens" in the sidebar under Workspace Settings
+  </Step>
+  <Step title="Click Create Token">
+    Click the blue **Create Token** button
+  </Step>
+  <Step title="Configure Token">
+    Fill in token details:
+    - **Name/Description**: Optional label to identify the token's purpose (e.g., "Claude Desktop", "CI/CD")
+  </Step>
+  <Step title="Generate & Copy">
+    Click **Create** and **immediately copy the token value**
+  </Step>
+</Steps>
+
+<Callout type="danger">
+  **Important**: Token values are only shown once! If you lose it, you'll need to generate a new token.
+</Callout>
+
+## Using Tokens
+
+### With NimbleTools CLI
+
+Set your token as an environment variable:
+
+```bash
+# Set token for current session
+export NTCLI_TOKEN=your-workspace-token
+
+# Verify authentication
+ntcli auth status
+
+# Or use the login command
+ntcli auth login --token your-workspace-token
+```
+
+Make it permanent by adding to your shell profile:
+
+```bash
+# Add to ~/.bashrc, ~/.zshrc, or ~/.profile
+echo 'export NTCLI_TOKEN=your-workspace-token' >> ~/.zshrc
+source ~/.zshrc
+```
+
+### With Claude Desktop
+
+Tokens are automatically included in generated Claude Desktop configurations:
+
+```json
+{
+  "mcpServers": {
+    "server-name": {
+      "command": "npx",
+      "args": ["-y", "@nimbletools/mcp-client", "https://..."],
+      "env": {
+        "NTCLI_TOKEN": "your-workspace-token"
+      }
+    }
+  }
+}
+```
+
+### With API Requests
+
+Include tokens in API request headers:
+
+```bash
+# Using curl
+curl -H "Authorization: Bearer your-workspace-token" \
+     https://api.nimbletools.dev/v1/workspaces/{uuid}/servers
+
+# Using httpie
+http https://api.nimbletools.dev/v1/workspaces/{uuid}/servers \
+     Authorization:"Bearer your-workspace-token"
+```
+
+```javascript
+// Using fetch in JavaScript
+const response = await fetch('https://api.nimbletools.dev/v1/workspaces/{uuid}/servers', {
+  headers: {
+    'Authorization': 'Bearer your-workspace-token'
+  }
+});
+```
+
+```python
+# Using requests in Python
+import requests
+
+headers = {'Authorization': 'Bearer your-workspace-token'}
+response = requests.get(
+    'https://api.nimbletools.dev/v1/workspaces/{uuid}/servers',
+    headers=headers
+)
+```
+
+## Managing Tokens
+
+### Viewing Active Tokens
+
+See all tokens for the current workspace:
+
+<Steps>
+  <Step title="Open Token List">
+    Navigate to Settings → API Tokens
+  </Step>
+  <Step title="Review Tokens">
+    View token list showing:
+    - Token name/description
+    - Type (Standard, Long-Lived, Read-Only)
+    - Created date
+    - Expiration date
+    - Last used date
+  </Step>
+</Steps>
+
+<Callout type="info">
+  Token values are never displayed after creation. You'll only see token metadata.
+</Callout>
+
+### Refreshing Tokens
+
+Extend the expiration of Standard tokens:
+
+<Steps>
+  <Step title="Find Token">
+    Locate the token in the token list
+  </Step>
+  <Step title="Click Refresh">
+    Click the **Refresh** button (only available for Standard tokens)
+  </Step>
+  <Step title="Confirm Refresh">
+    Confirm to extend expiration by another 30 days
+  </Step>
+</Steps>
+
+<Callout type="warning">
+  Only **Standard tokens** can be refreshed. Long-Lived tokens must be regenerated when they expire.
+</Callout>
+
+### Deleting Tokens
+
+Immediately invalidate a token:
+
+<Steps>
+  <Step title="Locate Token">
+    Find the token in the API Tokens list
+  </Step>
+  <Step title="Click Delete">
+    Click the **Delete Token** button (trash icon)
+  </Step>
+  <Step title="Confirm Deletion">
+    Confirm - the token will be immediately invalidated
+  </Step>
+</Steps>
+
+<Callout type="danger">
+  Deleting a token immediately stops all services using it. Update integrations with a new token first!
+</Callout>
+
+## Token Security
+
+### Best Practices
+
+<AccordionGroup>
+  <Accordion title="Never Commit Tokens to Git">
+    Add tokens to `.gitignore` and use environment variables instead:
+    ```bash
+    # .gitignore
+    .env
+    .env.local
+    *_token.txt
+    ```
+  </Accordion>
+
+  <Accordion title="Use Read-Only Tokens for Monitoring">
+    Create separate read-only tokens for dashboards and monitoring tools. This limits damage if a token is compromised.
+  </Accordion>
+
+  <Accordion title="Rotate Tokens Regularly">
+    Rotate tokens every 90 days for production workspaces:
+    1. Generate new token
+    2. Update services to use new token
+    3. Verify services work with new token
+    4. Revoke old token
+  </Accordion>
+
+  <Accordion title="Use Different Tokens per Service">
+    Create separate tokens for each CI/CD pipeline or service. This allows selective revocation without affecting other services.
+  </Accordion>
+
+  <Accordion title="Monitor Token Usage">
+    Regularly check "Last Used" dates and revoke unused tokens to reduce attack surface.
+  </Accordion>
+</AccordionGroup>
+
+### Storing Tokens Securely
+
+<Tabs>
+  <Tab title="Development">
+    Use environment variables in `.env` files (don't commit them):
+    ```bash
+    # .env
+    NTCLI_TOKEN=your-token-here
+    ```
+  </Tab>
+  <Tab title="CI/CD">
+    Store in encrypted secrets:
+    - **GitHub Actions**: Repository Secrets
+    - **GitLab CI**: CI/CD Variables (masked)
+    - **CircleCI**: Project Environment Variables
+  </Tab>
+  <Tab title="Production">
+    Use secret management services:
+    - AWS Secrets Manager
+    - HashiCorp Vault
+    - Google Secret Manager
+    - Azure Key Vault
+  </Tab>
+</Tabs>
+
+## CI/CD Integration
+
+### GitHub Actions
+
+```yaml
+name: Deploy MCP Server
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install ntcli
+        run: npm install -g @nimbletools/ntcli
+
+      - name: Deploy server
+        env:
+          NTCLI_TOKEN: ${{ secrets.NTCLI_TOKEN }}
+        run: |
+          ntcli workspace select my-workspace
+          ntcli server deploy my-server
+```
+
+### GitLab CI
+
+```yaml
+deploy:
+  image: node:20
+  script:
+    - npm install -g @nimbletools/ntcli
+    - ntcli workspace select my-workspace
+    - ntcli server deploy my-server
+  variables:
+    NTCLI_TOKEN: $NTCLI_TOKEN
+  only:
+    - main
+```
+
+### CircleCI
+
+```yaml
+version: 2.1
+
+jobs:
+  deploy:
+    docker:
+      - image: cimg/node:20.0
+    steps:
+      - checkout
+      - run: npm install -g @nimbletools/ntcli
+      - run: |
+          export NTCLI_TOKEN=$NTCLI_TOKEN
+          ntcli workspace select my-workspace
+          ntcli server deploy my-server
+
+workflows:
+  main:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only: main
+```
+
+## Token Expiration Handling
+
+### Automatic Refresh (CLI)
+
+The CLI can automatically refresh Standard tokens:
+
+```bash
+# Enable auto-refresh
+ntcli config set auto-refresh-token true
+
+# The CLI will automatically refresh your token before it expires
+```
+
+### Manual Refresh
+
+For services that don't auto-refresh:
+
+<Steps>
+  <Step title="Monitor Expiration">
+    Set a calendar reminder 7 days before token expiration
+  </Step>
+  <Step title="Generate New Token">
+    Create a new token in Studio
+  </Step>
+  <Step title="Update Services">
+    Update environment variables or CI/CD secrets
+  </Step>
+  <Step title="Verify">
+    Test that services work with new token
+  </Step>
+  <Step title="Revoke Old Token">
+    Revoke the old token after verifying the new one works
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Error: Invalid token">
+    **Causes**:
+    - Token expired
+    - Token was revoked
+    - Token is for wrong workspace
+
+    **Solution**:
+    - Generate a new token in Studio
+    - Update your environment variables
+    - Verify you're using the correct workspace
+  </Accordion>
+
+  <Accordion title="Error: Permission denied">
+    **Causes**:
+    - Using read-only token for write operation
+    - Token doesn't have required permissions
+
+    **Solution**:
+    - Generate a Standard or Long-Lived token (not Read-Only)
+    - Verify the token is for the correct workspace
+  </Accordion>
+
+  <Accordion title="Token not working in Claude Desktop">
+    **Causes**:
+    - Token not properly set in config file
+    - Claude Desktop not restarted
+
+    **Solution**:
+    - Verify `NTCLI_TOKEN` is in the `env` section
+    - Fully quit and restart Claude Desktop
+  </Accordion>
+</AccordionGroup>
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card
+    title="Workspace Management"
+    icon="folder"
+    href="/studio/workspace-management"
+  >
+    Learn about workspace isolation and security
+  </Card>
+  <Card
+    title="CLI Authentication"
+    icon="terminal"
+    href="/cli/concepts/authentication"
+  >
+    Authenticate the NimbleTools CLI
+  </Card>
+  <Card
+    title="API Architecture"
+    icon="network-wired"
+    href="/dev/api-architecture"
+  >
+    Understand API authentication flows
+  </Card>
+  <Card
+    title="CI/CD Guide"
+    icon="gears"
+    href="/dev/ci-cd"
+  >
+    Automate deployments with CI/CD
+  </Card>
+</CardGroup>

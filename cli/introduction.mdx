@@ -1,0 +1,158 @@
+---
+title: 'NimbleTools CLI'
+description: 'Command-line interface for the NimbleTools MCP Platform - deploy, manage, and integrate MCP servers with Claude Desktop'
+icon: 'terminal'
+---
+
+<img
+  className="block dark:hidden"
+  src="/images/og-image.png"
+  alt="NimbleTools CLI Hero Light"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/og-image.png"
+  alt="NimbleTools CLI Hero Dark"
+/>
+
+The **NimbleTools CLI** (ntcli) is a powerful command-line interface for the NimbleTools MCP Platform. Deploy, manage, and integrate Model Context Protocol (MCP) servers with Claude Desktop and other AI applications.
+
+## Features
+
+<CardGroup cols={2}>
+  <Card
+    title="Deploy MCP Servers"
+    icon="rocket"
+    href="/cli/quickstart"
+  >
+    Deploy MCP servers from a community registry to Kubernetes with scale-to-zero serverless execution.
+  </Card>
+  <Card
+    title="Workspace Management"
+    icon="folder-tree"
+    href="/cli/concepts/workspaces"
+  >
+    Manage isolated environments with workspace-scoped access tokens and secure credential injection.
+  </Card>
+  <Card
+    title="Claude Desktop Integration"
+    icon="robot"
+    href="/dev/claude-desktop-integration"
+  >
+    Generate Claude Desktop configurations automatically for seamless AI assistant integration.
+  </Card>
+  <Card
+    title="MCP Client Tools"
+    icon="wrench"
+    href="/cli/commands/mcp/connect"
+  >
+    Test and interact with deployed MCP servers using built-in client commands.
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+Get up and running in under 5 minutes:
+
+<Steps>
+  <Step title="Install ntcli">
+    ```bash
+    npm install -g @nimbletools/ntcli
+    ```
+  </Step>
+  <Step title="Authenticate">
+    ```bash
+    ntcli auth login
+    ```
+  </Step>
+  <Step title="Create a workspace">
+    ```bash
+    ntcli workspace create my-project
+    ```
+  </Step>
+  <Step title="Deploy an MCP server">
+    ```bash
+    ntcli server deploy nationalparks-mcp
+    ```
+  </Step>
+</Steps>
+
+<Card
+  title="Complete Walkthrough"
+  icon="play"
+  href="/cli/quickstart"
+>
+  Follow our detailed quickstart guide with examples and Claude Desktop integration.
+</Card>
+
+## Core Concepts
+
+<CardGroup cols={3}>
+  <Card
+    title="Workspaces"
+    icon="folder"
+    href="/cli/concepts/workspaces"
+  >
+    Isolated environments for your MCP servers with secure credential management.
+  </Card>
+  <Card
+    title="MCP Servers"
+    icon="server"
+    href="/cli/concepts/mcp-servers"
+  >
+    Serverless Model Context Protocol servers with auto-scaling and health monitoring.
+  </Card>
+  <Card
+    title="Claude Integration"
+    icon="brain"
+    href="/dev/claude-desktop-integration"
+  >
+    Seamless integration with Claude Desktop and other AI applications.
+  </Card>
+</CardGroup>
+
+## Architecture
+
+The NimbleTools MCP Platform provides:
+
+- **🔐 Multi-tenant security** with workspace isolation and OAuth authentication
+- **⚡ Scale-to-zero** serverless execution with KEDA auto-scaling  
+- **🌍 Community ecosystem** with open source MCP registry
+- **🛠️ Production ready** monitoring, logging, and health checks
+
+<Callout type="info">
+  **New to MCP?** The Model Context Protocol enables AI assistants to securely connect to data sources and tools. Learn more in our [MCP Servers concept guide](/cli/concepts/mcp-servers).
+</Callout>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Installation Guide"
+    icon="download"
+    href="/cli/installation"
+  >
+    Install ntcli and set up your development environment.
+  </Card>
+  <Card
+    title="Command Reference"
+    icon="book"
+    href="/cli/commands/auth/login"
+  >
+    Explore all available commands with detailed examples and options.
+  </Card>
+  <Card
+    title="Examples"
+    icon="code"
+    href="/dev/examples/complete-workflow"
+  >
+    See real-world examples including LangChain integration and advanced workflows.
+  </Card>
+  <Card
+    title="Troubleshooting"
+    icon="wrench"
+    href="/dev/troubleshooting"
+  >
+    Common issues and solutions for deployment and integration problems.
+  </Card>
+</CardGroup>

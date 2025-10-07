@@ -1,0 +1,151 @@
+---
+title: 'NimbleBrain Studio'
+description: 'Visual interface for managing MCP servers, workspaces, and AI integrations'
+icon: 'sparkles'
+---
+
+<img
+  className="block dark:hidden"
+  src="/images/og-image.png"
+  alt="NimbleBrain Studio Hero Light"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/og-image.png"
+  alt="NimbleBrain Studio Hero Dark"
+/>
+
+**NimbleBrain Studio** is a powerful web-based platform for managing Model Context Protocol (MCP) servers, workspaces, and AI integrations. Deploy and configure MCP servers with a visual interface, no command line required.
+
+## What is NimbleBrain Studio?
+
+NimbleBrain Studio is a web-based platform that provides visual management for MCP servers and AI-powered workflows:
+
+- **Playbooks**: Create and manage AI-powered workflows with natural language instructions
+- **Toolbox**: Install and manage MCP servers from the community registry
+- **Visual Workspace Management**: Create, switch, and manage isolated workspace environments
+- **Integrated Monitoring**: Track execution history, view logs, and monitor activity
+- **API Tokens**: Generate secure tokens for programmatic access and Claude Desktop integration
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card
+    title="Playbooks"
+    icon="play"
+    href="/studio/playbooks"
+  >
+    Create AI-powered workflows with natural language instructions
+  </Card>
+  <Card
+    title="Toolbox"
+    icon="toolbox"
+    href="/studio/toolbox"
+  >
+    Install and manage MCP servers from the community registry
+  </Card>
+  <Card
+    title="Workspace Management"
+    icon="folder-tree"
+    href="/studio/workspace-management"
+  >
+    Create isolated environments for your playbooks and tools
+  </Card>
+  <Card
+    title="API Tokens"
+    icon="key"
+    href="/studio/api-keys"
+  >
+    Generate tokens for programmatic access and Claude Desktop
+  </Card>
+</CardGroup>
+
+## Who Should Use Studio?
+
+<AccordionGroup>
+  <Accordion title="AI Engineers & Developers">
+    Quickly prototype and deploy MCP servers without managing infrastructure. Focus on building AI applications, not DevOps.
+  </Accordion>
+  <Accordion title="Product Teams">
+    Non-technical team members can deploy and configure MCP servers without touching the command line.
+  </Accordion>
+  <Accordion title="Enterprise Teams">
+    Manage multiple workspaces, control access, and monitor deployments across your organization.
+  </Accordion>
+</AccordionGroup>
+
+## Studio vs CLI
+
+Both Studio and the [NimbleTools CLI](/cli/introduction) provide access to the same platform capabilities:
+
+| Feature | Studio | CLI |
+|---------|--------|-----|
+| **Workspace Management** | ✅ Visual UI | ✅ Command line |
+| **MCP Server Management** | ✅ One-click install | ✅ Single command |
+| **Playbooks** | ✅ Visual workflow builder | ❌ Not available |
+| **Monitoring & Logs** | ✅ Real-time dashboard | ✅ Stream to terminal |
+| **Claude Integration** | ✅ Generate tokens | ✅ Generate config |
+| **Automation** | ✅ Scheduled playbooks | ✅ CI/CD pipelines |
+| **Best For** | Workflows, visual monitoring | Scripts, automation, power users |
+
+<Callout type="tip">
+  **Use Both!** Most users find a hybrid approach works best - use Studio for visual management and monitoring, and CLI for automation and scripts.
+</Callout>
+
+## Get Started
+
+<Steps>
+  <Step title="Sign Up">
+    Create your NimbleBrain Studio account at [studio.nimblebrain.ai](https://studio.nimblebrain.ai)
+  </Step>
+  <Step title="Install MCP Servers">
+    Browse the Toolbox and install MCP servers from the community registry
+  </Step>
+  <Step title="Create a Playbook">
+    Build your first AI-powered workflow with natural language instructions
+  </Step>
+  <Step title="Generate API Token">
+    Create a token for Claude Desktop or programmatic access
+  </Step>
+</Steps>
+
+<Card
+  title="Studio Quickstart"
+  icon="rocket"
+  href="/studio/quickstart"
+>
+  Follow our interactive quickstart guide to deploy your first MCP server in under 5 minutes
+</Card>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Quickstart Guide"
+    icon="play"
+    href="/studio/quickstart"
+  >
+    Complete walkthrough of Studio features
+  </Card>
+  <Card
+    title="Playbooks"
+    icon="workflow"
+    href="/studio/playbooks"
+  >
+    Create AI-powered workflows
+  </Card>
+  <Card
+    title="Toolbox"
+    icon="toolbox"
+    href="/studio/toolbox"
+  >
+    Manage your MCP servers
+  </Card>
+  <Card
+    title="API Tokens"
+    icon="key"
+    href="/studio/api-keys"
+  >
+    Generate tokens for programmatic access
+  </Card>
+</CardGroup>

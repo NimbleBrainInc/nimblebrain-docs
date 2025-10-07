@@ -1,0 +1,264 @@
+---
+title: 'Playbooks'
+description: 'Create and manage AI-powered workflows with natural language instructions'
+icon: 'play'
+---
+
+<img
+  src="/images/studio/playbooks-main-view.png"
+  alt="Playbooks main view"
+/>
+
+**Playbooks** are AI-powered workflows that automate complex tasks using natural language instructions. They execute using Claude AI and can leverage any MCP servers installed in your Toolbox.
+
+## What are Playbooks?
+
+Playbooks allow you to:
+
+- **Automate workflows** with natural language instructions
+- **Use MCP tools** installed in your Toolbox to access external APIs and services
+- **Track execution history** with detailed logs and results
+- **Schedule runs** or trigger them manually
+- **Configure AI parameters** like model, temperature, and timeouts
+
+## Creating a Playbook
+
+<Steps>
+  <Step title="Navigate to Playbooks">
+    Click "Playbooks" in the sidebar navigation
+  </Step>
+  <Step title="Click New Playbook">
+    Click the "New Playbook" button in the top right
+  </Step>
+  <Step title="Enter Playbook Details">
+    Provide a name and description for your playbook
+  </Step>
+  <Step title="Write Instructions">
+    Write natural language instructions describing what the playbook should do
+  </Step>
+  <Step title="Save">
+    Click "Create" to save your playbook
+  </Step>
+</Steps>
+
+<Callout type="tip">
+  Playbooks have access to all MCP servers installed in your Toolbox. Make sure to install the necessary servers first!
+</Callout>
+
+## Playbook Instructions
+
+<img
+  src="/images/studio/playbook-detail-instructions.png"
+  alt="Playbook instructions"
+/>
+
+Instructions are written in natural language and tell the AI what to do. Be specific about:
+
+- **What data to gather**: Which APIs or tools to use
+- **How to process it**: Any transformations or analysis needed
+- **What to output**: The format and content of the result
+
+### Example Instructions
+
+```
+You are a stock advisor given the reports provided by Finnhub.
+You ingest articles from Finnhub and recommend the top 3 stocks
+expected to provide the greatest returns over the next week.
+```
+
+<Callout type="info">
+  **Natural Language Instructions**: Write instructions as if you were explaining the task to a human. The AI will interpret and execute them using available tools.
+</Callout>
+
+## Playbook Configuration
+
+<img
+  src="/images/studio/playbook-detail-configuration.png"
+  alt="Playbook configuration"
+/>
+
+Configure how your playbook executes:
+
+<ResponseField name="Status" type="toggle">
+  Enable or disable the playbook. Disabled playbooks cannot be executed.
+</ResponseField>
+
+<ResponseField name="Model" type="select">
+  The Claude model to use for execution (e.g., `claude-sonnet-4-20250514`)
+</ResponseField>
+
+<ResponseField name="Temperature" type="number">
+  Controls randomness (0.0-1.0). Lower values are more focused and deterministic.
+  - **0.0-0.3**: Precise, factual tasks
+  - **0.4-0.7**: Balanced (default: 0.7)
+  - **0.8-1.0**: Creative, exploratory tasks
+</ResponseField>
+
+<ResponseField name="Max Tokens" type="number">
+  Maximum tokens for the response (default: 4096)
+</ResponseField>
+
+<ResponseField name="Timeout" type="number">
+  Maximum execution time in seconds (default: 300)
+</ResponseField>
+
+## Running a Playbook
+
+<Steps>
+  <Step title="Open Playbook">
+    Click on a playbook from the list
+  </Step>
+  <Step title="Click Run">
+    Click the green "Run" button in the top right
+  </Step>
+  <Step title="Monitor Execution">
+    Watch the execution progress in real-time
+  </Step>
+  <Step title="View Results">
+    See the execution result and any tool calls made
+  </Step>
+</Steps>
+
+<Callout type="success">
+  Playbooks execute asynchronously. You can navigate away and check the results later in the Recent Executions tab.
+</Callout>
+
+## Recent Executions
+
+<img
+  src="/images/studio/playbook-recent-executions.png"
+  alt="Playbook recent executions"
+/>
+
+The Recent Executions tab shows a history of all playbook runs:
+
+- **Execution status**: Completed, failed, or in progress
+- **Timestamp**: When the playbook was executed
+- **Duration**: How long the execution took
+- **Executor**: Who triggered the execution
+- **Detailed steps**: Expand to see reasoning, tool calls, and results
+
+### Execution Details
+
+Each execution shows:
+
+<AccordionGroup>
+  <Accordion title="Executed By">
+    The user who triggered the execution and their email address
+  </Accordion>
+  <Accordion title="Start Time & Duration">
+    When the execution started and how long it took to complete
+  </Accordion>
+  <Accordion title="Instructions">
+    The natural language instructions that were executed
+  </Accordion>
+  <Accordion title="Execution Result">
+    The final output from the AI, including any recommendations or findings
+  </Accordion>
+  <Accordion title="Execution Steps">
+    A detailed breakdown of each step:
+    - **Reasoning**: The AI's thought process
+    - **Tool Calls**: Which MCP tools were invoked
+    - **Results**: The output from each step
+  </Accordion>
+</AccordionGroup>
+
+## Playbook Status
+
+Playbooks can have the following statuses:
+
+<CardGroup cols={2}>
+  <Card title="🟢 Active" icon="circle-check">
+    Playbook is enabled and can be executed
+  </Card>
+  <Card title="⚫ Inactive" icon="circle-pause">
+    Playbook is disabled and cannot be executed
+  </Card>
+</CardGroup>
+
+## Playbook Management
+
+### Edit a Playbook
+
+1. Click on the playbook to open it
+2. Navigate to the Instructions or Configuration tab
+3. Make your changes
+4. Changes are saved automatically
+
+### Delete a Playbook
+
+1. Click on the playbook to open it
+2. Click the menu icon (three dots) in the top right
+3. Select "Delete Playbook"
+4. Confirm deletion
+
+<Callout type="warning">
+  Deleting a playbook will also delete all execution history. This action cannot be undone.
+</Callout>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Be Specific" icon="target">
+    Write clear, detailed instructions about what you want the playbook to do
+  </Card>
+  <Card title="Install Tools First" icon="toolbox">
+    Make sure required MCP servers are installed in your Toolbox before creating playbooks
+  </Card>
+  <Card title="Test Thoroughly" icon="flask">
+    Run your playbook multiple times to ensure consistent results
+  </Card>
+  <Card title="Monitor Executions" icon="chart-line">
+    Check execution logs to understand what tools were called and why
+  </Card>
+</CardGroup>
+
+## Common Use Cases
+
+<AccordionGroup>
+  <Accordion title="Data Analysis">
+    Gather data from APIs, analyze trends, and generate insights
+  </Accordion>
+  <Accordion title="Report Generation">
+    Collect information from multiple sources and compile reports
+  </Accordion>
+  <Accordion title="Monitoring & Alerts">
+    Check systems or data sources and notify when conditions are met
+  </Accordion>
+  <Accordion title="Research Automation">
+    Search multiple databases and summarize findings
+  </Accordion>
+</AccordionGroup>
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card
+    title="Toolbox"
+    icon="toolbox"
+    href="/studio/toolbox"
+  >
+    Install MCP servers to give your playbooks new capabilities
+  </Card>
+  <Card
+    title="Activity Logs"
+    icon="list"
+    href="/studio/activity-logs"
+  >
+    Track all playbook executions across your workspace
+  </Card>
+  <Card
+    title="Workspace Management"
+    icon="folder"
+    href="/studio/workspace-management"
+  >
+    Manage workspaces to organize your playbooks
+  </Card>
+  <Card
+    title="API Tokens"
+    icon="key"
+    href="/studio/api-keys"
+  >
+    Generate tokens for programmatic playbook execution
+  </Card>
+</CardGroup>

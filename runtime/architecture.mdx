@@ -1,0 +1,110 @@
+---
+title: 'Architecture'
+description: 'Understanding how NimbleTools Runtime works under the hood'
+icon: 'sitemap'
+---
+
+Learn about the architecture and components of NimbleTools Runtime.
+
+## Overview
+
+NimbleTools Runtime is built on Kubernetes using the operator pattern and custom resource definitions (CRDs).
+
+## Core Components
+
+### NimbleTools Operator
+
+The operator is the heart of the runtime, responsible for:
+
+- Watching for `MCPService` resources
+- Creating and managing Kubernetes resources (Deployments, Services, HPAs)
+- Reconciling desired state with actual state
+- Managing service lifecycle
+
+### MCPService CRD
+
+Custom Resource Definition for defining MCP services declaratively:
+
+```yaml
+apiVersion: nimbletools.ai/v1alpha1
+kind: MCPService
+metadata:
+  name: my-service
+  namespace: ws-workspace
+spec:
+  source:
+    type: npm
+    package: "@example/mcp-server"
+  scaling:
+    minReplicas: 1
+    maxReplicas: 5
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+```
+
+### Service Registry
+
+Built-in service discovery and routing:
+
+- Maintains catalog of all deployed MCP services
+- Routes requests to appropriate services
+- Handles service health checks
+- Provides API for service lookup
+
+### REST API
+
+HTTP API for programmatic access:
+
+- Service deployment and management
+- Tool invocation
+- Workspace management
+- Metrics and monitoring
+
+## Request Flow
+
+```
+Client (Claude/CLI)
+       │
+       ▼
+REST API / HTTP Bridge
+       │
+       ▼
+Service Registry
+       │
+       ▼
+Kubernetes Service
+       │
+       ▼
+MCP Server Pod
+```
+
+## Scaling Architecture
+
+NimbleTools Runtime uses Kubernetes Horizontal Pod Autoscaler (HPA) for automatic scaling:
+
+1. **Baseline Replicas**: Services maintain a minimum number of replicas
+2. **Scale Up**: High CPU/memory load triggers creation of additional replicas
+3. **Scale Down**: Low utilization gradually reduces replicas to minimum
+4. **Load Balancing**: Traffic distributed across all available replicas
+
+## Multi-Tenancy
+
+Workspaces provide isolation through Kubernetes namespaces:
+
+- Each workspace gets its own namespace (`ws-{workspace-name}`)
+- Resource quotas prevent resource exhaustion
+- Network policies isolate traffic
+- RBAC controls access
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card title="Installation" icon="download" href="/runtime/installation">
+    Set up the runtime
+  </Card>
+  <Card title="MCP Services" icon="cube" href="/runtime/mcp-services">
+    Learn about service types
+  </Card>
+</CardGroup>

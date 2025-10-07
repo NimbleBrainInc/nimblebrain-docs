@@ -1,0 +1,421 @@
+---
+title: 'Environment Variables'
+description: 'Configure ntcli behavior with environment variables'
+icon: 'gear'
+---
+
+## Overview
+
+ntcli uses environment variables to configure various aspects of its behavior, from API endpoints to authentication settings. Most variables have sensible defaults and are managed automatically.
+
+## Authentication Variables
+
+### OAuth Configuration (Optional)
+
+These variables are automatically configured for the production environment and rarely need to be modified:
+
+<ResponseField name="CLERK_OAUTH_CLIENT_ID" type="string">
+  Clerk OAuth client ID for authentication
+  
+  **Default**: Automatically configured for production  
+  **When to modify**: Custom Clerk environment only (advanced use cases)
+</ResponseField>
+
+<ResponseField name="CLERK_DOMAIN" type="string">
+  Clerk domain for OAuth authentication
+  
+  **Default**: Automatically configured for production  
+  **When to modify**: Custom Clerk environment only (advanced use cases)
+</ResponseField>
+
+<Callout type="info">
+  **Automatic Configuration**: These OAuth variables are automatically set for the production NimbleTools environment. You generally never need to modify them unless you're working with a custom Clerk environment for advanced development or enterprise deployments.
+</Callout>
+
+## API Configuration
+
+### Dual-Domain Architecture
+
+NimbleTools uses a dual-domain architecture separating management operations from MCP runtime operations:
+
+<ResponseField name="NTCLI_MANAGEMENT_API_URL" type="string">
+  Management API endpoint for workspaces, tokens, secrets, and server management
+  
+  **Default**: `https://api.nimbletools.dev`  
+  **Purpose**: Workspace operations, token management, server deployment
+</ResponseField>
+
+<ResponseField name="NTCLI_MCP_API_URL" type="string">
+  MCP Runtime endpoint for MCP protocol operations
+  
+  **Default**: `https://mcp.nimbletools.dev`  
+  **Purpose**: MCP tool calls, server communication
+</ResponseField>
+
+
+<ResponseField name="NTCLI_DEFAULT_PORT" type="number">
+  Default port for OAuth callback server
+  
+  **Default**: `41247`  
+  **Range**: `1024-65535` (unprivileged ports)
+</ResponseField>
+
+### Debug and Development
+
+<ResponseField name="NTCLI_DEBUG" type="boolean">
+  Enable detailed HTTP debugging output
+  
+  **Default**: `false`  
+  **Values**: `1`, `true`, `yes` (to enable)
+</ResponseField>
+
+<ResponseField name="NODE_ENV" type="string">
+  Node.js environment setting
+  
+  **Default**: `production`  
+  **Values**: `development`, `staging`, `production`
+</ResponseField>
+
+<ResponseField name="NODE_TLS_REJECT_UNAUTHORIZED" type="string">
+  Disable TLS certificate validation (development only)
+  
+  **Default**: `1` (enabled)  
+  **Values**: `0` (disable validation), `1` (enable validation)  
+  **Use case**: Local development with self-signed certificates
+</ResponseField>
+
+## Usage Examples
+
+### Development Environment
+
+Set up ntcli for local development:
+
+```bash
+# Development API endpoints
+export NTCLI_MANAGEMENT_API_URL=https://dev-api.nimbletools.dev
+export NTCLI_MCP_API_URL=https://dev-mcp.nimbletools.dev
+
+# Enable debug output
+export NTCLI_DEBUG=1
+
+# Use alternative callback port
+export NTCLI_DEFAULT_PORT=3000
+
+# Development environment
+export NODE_ENV=development
+
+# Disable TLS validation for self-signed certificates (development only)
+export NODE_TLS_REJECT_UNAUTHORIZED=0
+```
+
+<Callout type="warning">
+  **Security Warning**: Only use `NODE_TLS_REJECT_UNAUTHORIZED=0` in local development environments with self-signed certificates. Never use this in production as it disables important security validations.
+</Callout>
+
+### CI/CD Environment
+
+Configure ntcli for automated deployments:
+
+```bash
+# Production API endpoints (defaults)
+export NTCLI_MANAGEMENT_API_URL=https://api.nimbletools.dev
+export NTCLI_MCP_API_URL=https://mcp.nimbletools.dev
+
+# Disable debug output (default)
+export NTCLI_DEBUG=0
+
+# Production environment
+export NODE_ENV=production
+
+# Use standard callback port (default)
+export NTCLI_DEFAULT_PORT=41247
+```
+
+### Corporate/Enterprise
+
+Configure for enterprise deployments:
+
+```bash
+# Custom enterprise endpoints
+export NTCLI_MANAGEMENT_API_URL=https://ntcli-api.company.com
+export NTCLI_MCP_API_URL=https://ntcli-mcp.company.com
+
+# Custom OAuth settings (if needed)
+export CLERK_DOMAIN=company-auth.clerk.accounts.dev
+export CLERK_OAUTH_CLIENT_ID=custom_client_id
+
+# Corporate callback port
+export NTCLI_DEFAULT_PORT=8080
+```
+
+## Setting Environment Variables
+
+### Temporary (Current Session)
+
+<Tabs>
+  <Tab title="Bash/Zsh">
+    ```bash
+    export NTCLI_MANAGEMENT_API_URL=https://dev-api.nimbletools.dev
+    export NTCLI_MCP_API_URL=https://dev-mcp.nimbletools.dev
+    export NTCLI_DEBUG=1
+    ntcli auth login
+    ```
+  </Tab>
+  <Tab title="Fish">
+    ```fish
+    set -x NTCLI_MANAGEMENT_API_URL https://dev-api.nimbletools.dev
+    set -x NTCLI_MCP_API_URL https://dev-mcp.nimbletools.dev
+    set -x NTCLI_DEBUG 1
+    ntcli auth login
+    ```
+  </Tab>
+  <Tab title="PowerShell">
+    ```powershell
+    $env:NTCLI_MANAGEMENT_API_URL = "https://dev-api.nimbletools.dev"
+    $env:NTCLI_MCP_API_URL = "https://dev-mcp.nimbletools.dev"
+    $env:NTCLI_DEBUG = "1"
+    ntcli auth login
+    ```
+  </Tab>
+  <Tab title="Command Prompt">
+    ```cmd
+    set NTCLI_MANAGEMENT_API_URL=https://dev-api.nimbletools.dev
+    set NTCLI_MCP_API_URL=https://dev-mcp.nimbletools.dev
+    set NTCLI_DEBUG=1
+    ntcli auth login
+    ```
+  </Tab>
+</Tabs>
+
+### Persistent (Shell Profile)
+
+<Tabs>
+  <Tab title="Bash">
+    Add to `~/.bashrc` or `~/.bash_profile`:
+    ```bash
+    # NimbleTools CLI Configuration
+    export NTCLI_MANAGEMENT_API_URL=https://api.nimbletools.dev
+    export NTCLI_MCP_API_URL=https://mcp.nimbletools.dev
+    export NTCLI_DEFAULT_PORT=41247
+    ```
+  </Tab>
+  <Tab title="Zsh">
+    Add to `~/.zshrc`:
+    ```bash
+    # NimbleTools CLI Configuration
+    export NTCLI_MANAGEMENT_API_URL=https://api.nimbletools.dev
+    export NTCLI_MCP_API_URL=https://mcp.nimbletools.dev
+    export NTCLI_DEFAULT_PORT=41247
+    ```
+  </Tab>
+  <Tab title="Fish">
+    Add to `~/.config/fish/config.fish`:
+    ```fish
+    # NimbleTools CLI Configuration
+    set -x NTCLI_MANAGEMENT_API_URL https://api.nimbletools.dev
+    set -x NTCLI_MCP_API_URL https://mcp.nimbletools.dev
+    set -x NTCLI_DEFAULT_PORT 41247
+    ```
+  </Tab>
+</Tabs>
+
+### Using .env Files
+
+Create a `.env` file in your project directory:
+
+```bash
+# .env file
+NTCLI_MANAGEMENT_API_URL=https://api.nimbletools.dev
+NTCLI_MCP_API_URL=https://mcp.nimbletools.dev
+NTCLI_DEBUG=0
+NTCLI_DEFAULT_PORT=41247
+NODE_ENV=production
+```
+
+Then load it before running ntcli:
+
+```bash
+# Load .env file and run command
+export $(cat .env | xargs) && ntcli auth login
+```
+
+## Environment Variable Precedence
+
+Variables are resolved in the following order (highest to lowest priority):
+
+1. **Command-line flags** (e.g., `--port 3000`)
+2. **Environment variables** (e.g., `NTCLI_DEFAULT_PORT=3000`)
+3. **Configuration files** (future feature)
+4. **Built-in defaults**
+
+### Example Priority Resolution
+
+```bash
+# Environment variable sets default
+export NTCLI_DEFAULT_PORT=8080
+
+# Command-line flag overrides environment variable
+ntcli auth login --port 3000
+# Uses port 3000, not 8080
+```
+
+## Debug Output Control
+
+### Enable Debug Mode
+
+```bash
+export NTCLI_DEBUG=1
+ntcli auth login --verbose
+```
+
+Debug mode shows:
+- HTTP request/response details
+- Authentication flow steps  
+- API endpoint resolutions
+- Token exchange information
+- Error stack traces
+
+### Debug Output Example
+
+```bash
+$ NTCLI_DEBUG=1 ntcli auth login
+[DEBUG] Starting OAuth flow...
+[DEBUG] Callback server starting on port 41247
+[DEBUG] Opening browser to: https://clerk.nimbletools.ai/oauth/authorize?...
+[DEBUG] Received callback with code: abc123...
+[DEBUG] Exchanging code for tokens...
+[DEBUG] Authentication successful
+```
+
+## Validation and Troubleshooting
+
+### Check Current Configuration
+
+```bash
+# View all environment variables
+env | grep NTCLI
+
+# Check specific variables
+echo $NTCLI_MANAGEMENT_API_URL
+echo $NTCLI_MCP_API_URL
+echo $NTCLI_DEFAULT_PORT
+echo $NTCLI_DEBUG
+```
+
+### Test Configuration
+
+```bash
+# Test API connectivity
+ntcli health
+
+# Test authentication with debug
+NTCLI_DEBUG=1 ntcli auth status
+
+# Test with custom endpoints
+NTCLI_MANAGEMENT_API_URL=https://dev-api.nimbletools.dev ntcli health
+```
+
+### Common Issues
+
+<AccordionGroup>
+  <Accordion title="API endpoint not reachable">
+    **Symptoms**: Connection timeout, DNS resolution errors
+    
+    **Check**:
+    ```bash
+    echo $NTCLI_MANAGEMENT_API_URL
+    echo $NTCLI_MCP_API_URL
+    curl -I $NTCLI_MANAGEMENT_API_URL/health
+    ```
+    
+    **Solution**: Verify the API URLs are correct and accessible
+  </Accordion>
+  
+  <Accordion title="OAuth callback port in use">
+    **Symptoms**: "Port already in use" error during login
+    
+    **Check**:
+    ```bash
+    echo $NTCLI_DEFAULT_PORT
+    lsof -i :$NTCLI_DEFAULT_PORT  # Check if port is used
+    ```
+    
+    **Solution**: Use a different port or stop the conflicting process
+  </Accordion>
+  
+  <Accordion title="Authentication failures">
+    **Symptoms**: OAuth errors, invalid client ID
+    
+    **Check**:
+    ```bash
+    echo $CLERK_OAUTH_CLIENT_ID
+    echo $CLERK_DOMAIN
+    ```
+    
+    **Solution**: Reset OAuth variables or contact support
+  </Accordion>
+</AccordionGroup>
+
+## Security Considerations
+
+### Sensitive Variables
+
+Some environment variables contain sensitive information:
+
+| Variable | Sensitivity | Recommendation |
+|----------|-------------|----------------|
+| `CLERK_OAUTH_CLIENT_ID` | Medium | Don't share publicly |
+| `CLERK_DOMAIN` | Low | Safe to share |
+| `NTCLI_MANAGEMENT_API_URL` | Low | Safe to share |
+| `NTCLI_MCP_API_URL` | Low | Safe to share |
+| `NTCLI_DEBUG` | Low | Disable in production |
+
+### Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Development" icon="code">
+    Use separate OAuth clients and API endpoints for development
+  </Card>
+  <Card title="Production" icon="shield">
+    Disable debug mode and use production OAuth settings
+  </Card>
+  <Card title="CI/CD" icon="robot">
+    Store sensitive variables in secure CI/CD secret management
+  </Card>
+  <Card title="Teams" icon="users">
+    Document environment setup in team onboarding guides
+  </Card>
+</CardGroup>
+
+## Related Configuration
+
+<CardGroup cols={2}>
+  <Card
+    title="Authentication Setup"
+    icon="key"
+    href="/cli/concepts/authentication"
+  >
+    Configure OAuth and authentication settings
+  </Card>
+  <Card
+    title="Troubleshooting"
+    icon="wrench"
+    href="/dev/troubleshooting"
+  >
+    Common configuration and environment issues
+  </Card>
+  <Card
+    title="CI/CD Guide"
+    icon="robot"
+    href="/dev/ci-cd"
+  >
+    Configure ntcli for automated deployments
+  </Card>
+  <Card
+    title="Auth Commands"
+    icon="right-to-bracket"
+    href="/cli/commands/auth/login"
+  >
+    Authentication command reference
+  </Card>
+</CardGroup>

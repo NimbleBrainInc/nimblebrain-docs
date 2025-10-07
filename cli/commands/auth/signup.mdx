@@ -1,0 +1,115 @@
+---
+title: 'ntcli auth signup'
+description: 'Sign up for a new NimbleTools account with Clerk OAuth'
+icon: 'user-plus'
+---
+
+## Overview
+
+Create a new NimbleTools account using Clerk OAuth. This command opens your browser for account creation and stores authentication credentials locally.
+
+## Syntax
+
+```bash
+ntcli auth signup [options]
+```
+
+## Options
+
+<ResponseField name="-p, --port" type="number">
+  Port for local callback server. Default: `41247`
+</ResponseField>
+
+<ResponseField name="-t, --timeout" type="number">
+  Authentication timeout in milliseconds. Default: `60000` (60 seconds)
+</ResponseField>
+
+<ResponseField name="-v, --verbose" type="boolean">
+  Enable verbose output to show detailed signup flow
+</ResponseField>
+
+## Examples
+
+### Basic Signup
+
+```bash
+ntcli auth signup
+```
+
+This will:
+1. Start a local callback server
+2. Open your browser to the NimbleTools signup page
+3. Guide you through account creation
+4. Store the new credentials locally
+
+### Custom Port
+
+```bash
+ntcli auth signup --port 3000
+```
+
+### Verbose Signup
+
+```bash
+ntcli auth signup --verbose
+```
+
+<CodeGroup>
+
+```bash Basic Signup
+ntcli auth signup
+```
+
+```bash Custom Port & Verbose
+ntcli auth signup --port 8080 --verbose
+```
+
+</CodeGroup>
+
+## Signup vs Login
+
+| Command | Purpose | When to Use |
+|---------|---------|-------------|
+| `ntcli auth signup` | Create new account | First time using NimbleTools |
+| `ntcli auth login` | Sign in to existing account | Already have an account |
+
+Both commands support the same OAuth providers and options.
+
+## Account Creation Process
+
+<Steps>
+  <Step title="Start Local Server">
+    ntcli starts a local callback server for OAuth
+  </Step>
+  <Step title="Open Browser">
+    Your browser opens to the NimbleTools signup page
+  </Step>
+  <Step title="Choose Auth Method">
+    Select email/password, Google, GitHub, or other providers
+  </Step>
+  <Step title="Complete Registration">
+    Fill out account details and verify email if required
+  </Step>
+  <Step title="Store Credentials">
+    Authentication tokens are stored securely locally
+  </Step>
+</Steps>
+
+## Related Commands
+
+<CardGroup cols={2}>
+  <Card
+    title="auth login"
+    icon="right-to-bracket"
+    href="/cli/commands/auth/login"
+  >
+    Sign in to existing account
+  </Card>
+  <Card
+    title="auth status"
+    icon="circle-info"
+    href="/cli/commands/auth/status"
+  >
+    Check authentication status
+  </Card>
+</CardGroup>
