@@ -1,0 +1,150 @@
+---
+title: 'NimbleBrain Studio'
+description: 'Visual interface for managing MCP servers, workspaces, and AI integrations'
+icon: 'sparkles'
+---
+
+<img
+  className="block dark:hidden"
+  src="/images/og-image.png"
+  alt="NimbleBrain Studio Hero Light"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/og-image.png"
+  alt="NimbleBrain Studio Hero Dark"
+/>
+
+**NimbleBrain Studio** is a powerful web-based platform for managing Model Context Protocol (MCP) servers, workspaces, and AI integrations. Deploy and configure MCP servers with a visual interface, no command line required.
+
+## What is NimbleBrain Studio?
+
+NimbleBrain Studio provides a complete visual management experience for the NimbleTools MCP Platform:
+
+- **Visual Workspace Management**: Create, switch, and manage workspaces through an intuitive UI
+- **One-Click Server Deployment**: Browse the MCP registry and deploy servers instantly
+- **Integrated Monitoring**: View logs, health status, and metrics in real-time
+- **Seamless Claude Integration**: Generate Claude Desktop configurations with a single click
+- **Team Collaboration**: Share workspaces and manage access across your team
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card
+    title="Dashboard Overview"
+    icon="grid"
+    href="/studio/dashboard"
+  >
+    Monitor all your workspaces, servers, and deployments from a unified view
+  </Card>
+  <Card
+    title="Server Management"
+    icon="server"
+    href="/studio/server-management"
+  >
+    Deploy, scale, and manage MCP servers with visual controls
+  </Card>
+  <Card
+    title="Workspace Management"
+    icon="folder-tree"
+    href="/studio/workspace-management"
+  >
+    Create isolated environments and manage resources visually
+  </Card>
+  <Card
+    title="Secrets & Security"
+    icon="lock"
+    href="/studio/secrets-management"
+  >
+    Securely store API keys and credentials with encrypted storage
+  </Card>
+</CardGroup>
+
+## Who Should Use Studio?
+
+<AccordionGroup>
+  <Accordion title="AI Engineers & Developers">
+    Quickly prototype and deploy MCP servers without managing infrastructure. Focus on building AI applications, not DevOps.
+  </Accordion>
+  <Accordion title="Product Teams">
+    Non-technical team members can deploy and configure MCP servers without touching the command line.
+  </Accordion>
+  <Accordion title="Enterprise Teams">
+    Manage multiple workspaces, control access, and monitor deployments across your organization.
+  </Accordion>
+</AccordionGroup>
+
+## Studio vs CLI
+
+Both Studio and the [NimbleTools CLI](/cli/introduction) provide access to the same platform capabilities:
+
+| Feature | Studio | CLI |
+|---------|--------|-----|
+| **Workspace Management** | ✅ Visual UI | ✅ Command line |
+| **Server Deployment** | ✅ One-click | ✅ Single command |
+| **Monitoring & Logs** | ✅ Real-time dashboard | ✅ Stream to terminal |
+| **Claude Integration** | ✅ Copy config | ✅ Generate config |
+| **Automation** | ❌ Not available | ✅ CI/CD pipelines |
+| **Best For** | Quick setup, visual monitoring | Scripts, automation, power users |
+
+<Callout type="tip">
+  **Use Both!** Most users find a hybrid approach works best - use Studio for visual management and monitoring, and CLI for automation and scripts.
+</Callout>
+
+## Get Started
+
+<Steps>
+  <Step title="Sign Up">
+    Create your NimbleBrain Studio account at [studio.nimbletools.ai](https://studio.nimbletools.ai)
+  </Step>
+  <Step title="Create a Workspace">
+    Set up your first isolated workspace environment
+  </Step>
+  <Step title="Deploy a Server">
+    Browse the registry and deploy your first MCP server
+  </Step>
+  <Step title="Connect to Claude">
+    Generate and copy your Claude Desktop configuration
+  </Step>
+</Steps>
+
+<Card
+  title="Studio Quickstart"
+  icon="rocket"
+  href="/studio/quickstart"
+>
+  Follow our interactive quickstart guide to deploy your first MCP server in under 5 minutes
+</Card>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Quickstart Guide"
+    icon="play"
+    href="/studio/quickstart"
+  >
+    Complete walkthrough of Studio features
+  </Card>
+  <Card
+    title="Dashboard Overview"
+    icon="chart-line"
+    href="/studio/dashboard"
+  >
+    Learn about the Studio dashboard
+  </Card>
+  <Card
+    title="Claude Desktop Setup"
+    icon="robot"
+    href="/studio/claude-desktop"
+  >
+    Connect your servers to Claude Desktop
+  </Card>
+  <Card
+    title="API Keys & Tokens"
+    icon="key"
+    href="/studio/api-keys"
+  >
+    Generate tokens for programmatic access
+  </Card>
+</CardGroup>

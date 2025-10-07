@@ -1,0 +1,233 @@
+---
+title: 'ntcli auth logout'
+description: 'Clear stored authentication credentials'
+icon: 'right-from-bracket'
+---
+
+## Overview
+
+Clear all stored authentication credentials from your system. This includes your NimbleTools JWT token and any cached workspace tokens.
+
+## Syntax
+
+```bash
+ntcli auth logout
+```
+
+## Examples
+
+### Basic Logout
+
+```bash
+ntcli auth logout
+```
+
+This will:
+1. Remove all stored authentication tokens
+2. Clear workspace token cache
+3. Confirm successful logout
+
+<CodeGroup>
+
+```bash Logout
+ntcli auth logout
+```
+
+```bash Verify Logout
+ntcli auth status
+# Should show: Not authenticated
+```
+
+</CodeGroup>
+
+## What Gets Cleared
+
+When you run `ntcli auth logout`, the following credentials are removed:
+
+<CardGroup cols={2}>
+  <Card title="NimbleTools JWT" icon="key">
+    Your main authentication token used for platform access
+  </Card>
+  <Card title="Workspace Tokens" icon="folder-open">
+    All cached workspace-specific access tokens
+  </Card>
+  <Card title="OAuth Tokens" icon="shield">
+    Clerk OAuth refresh tokens and session data
+  </Card>
+  <Card title="User Profile" icon="user">
+    Cached user profile information
+  </Card>
+</CardGroup>
+
+## Credential Storage Locations
+
+Credentials are removed from secure system storage:
+
+<Tabs>
+  <Tab title="macOS">
+    **macOS Keychain**
+    - Location: `~/Library/Keychains/login.keychain`
+    - Service: `ntcli-auth`
+    - Items: JWT tokens, OAuth tokens, user data
+  </Tab>
+  <Tab title="Linux">
+    **Secret Service API**
+    - GNOME Keyring: `~/.local/share/keyrings/`
+    - KDE Wallet: KDE system wallet
+    - Service: `ntcli-auth`
+  </Tab>
+  <Tab title="Windows">
+    **Windows Credential Manager**
+    - Location: Control Panel → Credential Manager
+    - Target: `ntcli-auth`
+    - Type: Generic credentials
+  </Tab>
+</Tabs>
+
+## Security Benefits
+
+Regular logout provides several security benefits:
+
+- **Token Invalidation**: Prevents use of cached tokens if device is compromised
+- **Session Management**: Clears browser-based OAuth sessions
+- **Multi-Device Security**: Prevents token reuse across different machines
+- **Compliance**: Meets security requirements for shared or managed systems
+
+<Callout type="info">
+  Logout only clears local credentials. Your account and workspaces remain active on the NimbleTools platform.
+</Callout>
+
+## When to Use Logout
+
+<AccordionGroup>
+  <Accordion title="Switching Accounts">
+    When you need to authenticate with a different NimbleTools account:
+    ```bash
+    ntcli auth logout
+    ntcli auth login  # Login with different account
+    ```
+  </Accordion>
+  
+  <Accordion title="Security Best Practices">
+    On shared or public computers:
+    ```bash
+    # After completing your work
+    ntcli auth logout
+    ```
+  </Accordion>
+  
+  <Accordion title="Troubleshooting Authentication">
+    When experiencing authentication issues:
+    ```bash
+    ntcli auth logout
+    ntcli auth login  # Fresh authentication
+    ```
+  </Accordion>
+  
+  <Accordion title="Token Refresh Issues">
+    When workspace tokens are corrupted or expired:
+    ```bash
+    ntcli auth logout
+    ntcli auth login
+    ntcli token refresh
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Verification
+
+After logout, verify that credentials were cleared:
+
+```bash
+ntcli auth status
+```
+
+Expected output:
+```
+❌ Not authenticated
+Please run 'ntcli auth login' to authenticate
+```
+
+## Re-authentication
+
+To authenticate again after logout:
+
+<Steps>
+  <Step title="Login">
+    ```bash
+    ntcli auth login
+    ```
+  </Step>
+  <Step title="Verify Status">
+    ```bash
+    ntcli auth status
+    ```
+  </Step>
+  <Step title="Refresh Workspace Tokens">
+    ```bash
+    ntcli token refresh
+    ```
+  </Step>
+</Steps>
+
+## Logout vs Token Management
+
+Understanding the difference between logout and token operations:
+
+| Command | Effect | Use Case |
+|---------|--------|----------|
+| `ntcli auth logout` | Clears all credentials | Complete logout, account switching |
+| `ntcli token refresh` | Refreshes workspace tokens only | Token expired, need new permissions |
+| `ntcli auth status` | Shows current status | Check authentication state |
+
+## Error Handling
+
+<AccordionGroup>
+  <Accordion title="Already logged out">
+    **Message**: "No credentials found to clear"
+    
+    **Action**: This is normal - you're already logged out
+  </Accordion>
+</AccordionGroup>
+
+## Related Commands
+
+<CardGroup cols={2}>
+  <Card
+    title="auth login"
+    icon="right-to-bracket" 
+    href="/cli/commands/auth/login"
+  >
+    Authenticate with NimbleTools platform
+  </Card>
+  <Card
+    title="auth status"
+    icon="circle-info"
+    href="/cli/commands/auth/status"
+  >
+    Check current authentication status
+  </Card>
+  <Card
+    title="token refresh"
+    icon="arrows-rotate"
+    href="/cli/commands/token/refresh"
+  >
+    Refresh workspace access tokens
+  </Card>
+  <Card
+    title="workspace clear"
+    icon="folder-xmark"
+    href="/cli/commands/workspace/clear"
+  >
+    Clear active workspace selection
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+After logout, you'll need to re-authenticate to use ntcli:
+
+1. **Login**: `ntcli auth login`
+2. **Select workspace**: `ntcli workspace select` or `ntcli workspace create`
+3. **Refresh tokens**: `ntcli token refresh
+4. **Resume work**: Continue with your MCP server management

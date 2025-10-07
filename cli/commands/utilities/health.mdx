@@ -1,0 +1,98 @@
+---
+title: 'ntcli health'
+description: 'Check API health status and connectivity'
+icon: 'heart-pulse'
+---
+
+## Overview
+
+Check the health status of the NimbleTools API and verify connectivity from your system.
+
+## Syntax
+
+```bash
+ntcli health
+```
+
+## Examples
+
+### Basic Health Check
+
+```bash
+ntcli health
+```
+
+**When API is healthy:**
+```
+✅ NimbleTools API is healthy
+Status: OK
+Response time: 45ms
+Version: v1.2.3
+```
+
+**When API has issues:**
+```
+❌ NimbleTools API health check failed
+Error: Connection timeout
+Please check your internet connection and try again
+```
+
+## What Gets Tested
+
+The health check verifies:
+
+<CardGroup cols={2}>
+  <Card title="API Connectivity" icon="wifi">
+    Tests connection to the NimbleTools API endpoint
+  </Card>
+  <Card title="Response Time" icon="clock">
+    Measures API response latency
+  </Card>
+  <Card title="Service Status" icon="circle-check">
+    Verifies API services are operational
+  </Card>
+  <Card title="Version Info" icon="tag">
+    Shows current API version
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection timeout">
+    **Cause**: Network connectivity issues or API downtime
+    
+    **Solutions**:
+    1. Check internet connection
+    2. Verify API endpoint: `echo $NTCLI_API_URL`
+    3. Try alternative network
+  </Accordion>
+  
+  <Accordion title="DNS resolution failed">
+    **Cause**: DNS issues or incorrect API URL
+    
+    **Solutions**:
+    1. Test DNS: `nslookup mcp.nimbletools.ai`
+    2. Try different DNS server
+    3. Check proxy settings
+  </Accordion>
+</AccordionGroup>
+
+## Related Commands
+
+<CardGroup cols={2}>
+  <Card
+    title="auth status"
+    icon="circle-info"
+    href="/cli/commands/auth/status"
+  >
+    Check authentication status
+  </Card>
+  <Card
+    title="Environment Variables"
+    icon="gear"
+    href="/dev/environment-variables"
+  >
+    Configure API endpoint and settings
+  </Card>
+</CardGroup>

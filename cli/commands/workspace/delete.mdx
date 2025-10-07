@@ -1,0 +1,76 @@
+---
+title: 'ntcli workspace delete'
+description: 'Delete a workspace and all its resources'
+icon: 'trash'
+---
+
+## Overview
+
+Delete a workspace and all its associated resources including MCP servers, secrets, and access tokens. This operation is irreversible.
+
+## Syntax
+
+```bash
+ntcli workspace delete <name> [options]
+```
+
+## Aliases
+
+```bash
+ntcli workspace rm <name>     # Short alias
+ntcli ws delete <name>        # Command group alias
+ntcli ws rm <name>            # Combined aliases
+```
+
+## Arguments
+
+<ResponseField name="name" type="string" required>
+  Name of the workspace to delete
+</ResponseField>
+
+## Options
+
+<ResponseField name="-f, --force" type="boolean">
+  Skip confirmation prompt and delete immediately
+</ResponseField>
+
+<ResponseField name="-v, --verbose" type="boolean">
+  Show detailed information about what will be deleted
+</ResponseField>
+
+## Examples
+
+### Basic Deletion
+
+```bash
+ntcli workspace delete old-project
+```
+
+### Force Delete (No Confirmation)
+
+```bash
+ntcli workspace delete old-project --force
+```
+
+<Callout type="warning">
+  **Destructive Operation**: This permanently deletes all servers, secrets, and data in the workspace.
+</Callout>
+
+## Related Commands
+
+<CardGroup cols={2}>
+  <Card
+    title="workspace list"
+    icon="list"
+    href="/cli/commands/workspace/list"
+  >
+    List all workspaces
+  </Card>
+  <Card
+    title="workspace create"
+    icon="plus"
+    href="/cli/commands/workspace/create"
+  >
+    Create a new workspace
+  </Card>
+</CardGroup>

@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "NimbleTools CLI",
+  "name": "NimbleBrain Platform",
   "colors": {
     "primary": "#0D9373",
     "light": "#07C983",
@@ -11,129 +11,159 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentation",
+        "tab": "Studio",
         "groups": [
           {
             "group": "Get Started",
             "pages": [
-              "introduction",
-              "installation",
-              "quickstart"
+              "studio/introduction",
+              "studio/quickstart"
+            ]
+          },
+          {
+            "group": "Core Features",
+            "pages": [
+              "studio/dashboard",
+              "studio/server-management",
+              "studio/workspace-management",
+              "studio/secrets-management",
+              "studio/monitoring"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "studio/claude-desktop",
+              "studio/api-keys"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "CLI Reference",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "cli/introduction",
+              "cli/installation",
+              "cli/quickstart"
             ]
           },
           {
             "group": "Core Concepts",
             "pages": [
-              "concepts/workspaces",
-              "concepts/mcp-servers",
-              "concepts/api-architecture",
-              "concepts/claude-integration"
+              "cli/concepts/workspaces",
+              "cli/concepts/mcp-servers",
+              "cli/concepts/authentication"
             ]
           },
           {
-            "group": "Configuration",
-            "pages": [
-              "configuration/environment-variables",
-              "configuration/authentication"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Commands",
-        "groups": [
-          {
             "group": "Authentication",
             "pages": [
-              "commands/auth/login",
-              "commands/auth/logout",
-              "commands/auth/status",
-              "commands/auth/signup"
+              "cli/commands/auth/login",
+              "cli/commands/auth/logout",
+              "cli/commands/auth/status",
+              "cli/commands/auth/signup"
             ]
           },
           {
             "group": "Workspace Management",
             "pages": [
-              "commands/workspace/create",
-              "commands/workspace/list",
-              "commands/workspace/switch",
-              "commands/workspace/select",
-              "commands/workspace/delete",
-              "commands/workspace/clear",
-              "commands/workspace/debug",
-              "commands/workspace/sync"
+              "cli/commands/workspace/create",
+              "cli/commands/workspace/list",
+              "cli/commands/workspace/switch",
+              "cli/commands/workspace/select",
+              "cli/commands/workspace/delete",
+              "cli/commands/workspace/clear",
+              "cli/commands/workspace/debug",
+              "cli/commands/workspace/sync"
             ]
           },
           {
             "group": "Server Management",
             "pages": [
-              "commands/server/deploy",
-              "commands/server/list",
-              "commands/server/info",
-              "commands/server/scale",
-              "commands/server/remove",
-              "commands/server/claude-config"
+              "cli/commands/server/deploy",
+              "cli/commands/server/list",
+              "cli/commands/server/info",
+              "cli/commands/server/scale",
+              "cli/commands/server/remove",
+              "cli/commands/server/logs",
+              "cli/commands/server/claude-config"
             ]
           },
           {
             "group": "MCP Client",
             "pages": [
-              "commands/mcp/connect",
-              "commands/mcp/tools",
-              "commands/mcp/call"
+              "cli/commands/mcp/connect",
+              "cli/commands/mcp/tools",
+              "cli/commands/mcp/call"
             ]
           },
           {
             "group": "Registry",
             "pages": [
-              "commands/registry/list",
-              "commands/registry/show"
+              "cli/commands/registry/list",
+              "cli/commands/registry/show"
             ]
           },
           {
             "group": "Secrets Management",
             "pages": [
-              "commands/secrets/list",
-              "commands/secrets/set",
-              "commands/secrets/unset"
+              "cli/commands/secrets/list",
+              "cli/commands/secrets/set",
+              "cli/commands/secrets/unset"
             ]
           },
           {
             "group": "Token Management",
             "pages": [
-              "commands/token/create",
-              "commands/token/list",
-              "commands/token/refresh",
-              "commands/token/revoke",
-              "commands/token/show"
+              "cli/commands/token/create",
+              "cli/commands/token/list",
+              "cli/commands/token/refresh",
+              "cli/commands/token/revoke",
+              "cli/commands/token/show"
             ]
           },
           {
             "group": "Utilities",
             "pages": [
-              "commands/health"
+              "cli/commands/utilities/health"
             ]
           }
         ]
       },
       {
-        "tab": "Examples",
+        "tab": "Developers",
         "groups": [
           {
-            "group": "Examples & Integrations",
+            "group": "Platform Architecture",
             "pages": [
-              "examples/complete-workflow",
-              "examples/claude-desktop",
-              "examples/langchain-integration",
-              "examples/advanced-usage"
+              "dev/api-architecture",
+              "dev/environment-variables"
             ]
           },
           {
-            "group": "Guides",
+            "group": "Integrations",
             "pages": [
-              "guides/troubleshooting",
-              "guides/best-practices",
-              "guides/ci-cd"
+              "dev/claude-desktop-integration",
+              "dev/examples/langchain-integration"
+            ]
+          },
+          {
+            "group": "Advanced Topics",
+            "pages": [
+              "dev/ci-cd",
+              "dev/best-practices",
+              "dev/troubleshooting"
+            ]
+          },
+          {
+            "group": "Examples",
+            "pages": [
+              "dev/examples/complete-workflow",
+              "dev/examples/claude-desktop",
+              "dev/examples/advanced-usage"
             ]
           }
         ]
@@ -183,7 +213,7 @@
     }
   },
   "search": {
-    "prompt": "Search ntcli documentation..."
+    "prompt": "Search NimbleBrain documentation..."
   },
   "feedback": {
     "thumbsRating": true,

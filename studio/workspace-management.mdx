@@ -1,0 +1,285 @@
+---
+title: 'Workspace Management'
+description: 'Create and manage isolated workspace environments in NimbleBrain Studio'
+icon: 'folder-tree'
+---
+
+Workspaces provide isolated environments for organizing MCP servers, secrets, and team access.
+
+## What are Workspaces?
+
+Workspaces are isolated containers that include:
+
+- **Deployed MCP Servers**: Each workspace has its own set of servers
+- **Secrets & Configuration**: API keys and environment variables are workspace-scoped
+- **Access Tokens**: Authentication tokens are unique per workspace
+- **Team Access**: Control who can access and manage workspace resources
+- **Resource Quotas**: CPU, memory, and storage limits per workspace
+
+<Callout type="tip">
+  Think of workspaces like separate projects or environments (dev, staging, production).
+</Callout>
+
+## Creating Workspaces
+
+<Steps>
+  <Step title="Open Workspace Menu">
+    Click the workspace dropdown in the top-left corner
+  </Step>
+  <Step title="Click Create Workspace">
+    Select **+ Create New Workspace**
+  </Step>
+  <Step title="Enter Details">
+    Fill in the workspace information:
+    - **Name**: Lowercase, alphanumeric with hyphens (e.g., `my-project-dev`)
+    - **Description**: Optional description for the workspace
+    - **Region**: Data center region (defaults to US-East)
+  </Step>
+  <Step title="Create">
+    Click **Create Workspace** - you'll automatically switch to the new workspace
+  </Step>
+</Steps>
+
+### Workspace Naming Rules
+
+- Must be lowercase
+- Can contain letters, numbers, and hyphens
+- Must start with a letter
+- 3-32 characters long
+- Must be unique across your organization
+
+<Callout type="info">
+  Workspace names are used in server URLs: `https://mcp.nimbletools.dev/{workspace-id}/{server-id}/mcp`
+</Callout>
+
+## Switching Workspaces
+
+Quickly switch between workspaces:
+
+<Steps>
+  <Step title="Open Workspace Dropdown">
+    Click the current workspace name in the top-left
+  </Step>
+  <Step title="Select Workspace">
+    Choose from your list of workspaces
+  </Step>
+  <Step title="Dashboard Updates">
+    The entire Studio interface updates to show the selected workspace
+  </Step>
+</Steps>
+
+<Callout type="tip">
+  Use keyboard shortcut `Cmd/Ctrl + Shift + W` to quickly open the workspace switcher
+</Callout>
+
+## Workspace Settings
+
+Access workspace settings from the **Settings** tab:
+
+### General Settings
+
+<ResponseField name="Workspace Name" type="string">
+  Display name for the workspace (can be changed)
+</ResponseField>
+
+<ResponseField name="Workspace ID" type="string" readOnly>
+  Immutable UUID identifier used in URLs
+</ResponseField>
+
+<ResponseField name="Description" type="string">
+  Optional description to help identify the workspace purpose
+</ResponseField>
+
+<ResponseField name="Region" type="string">
+  Data center region (cannot be changed after creation)
+</ResponseField>
+
+### Access Control
+
+Manage team member access to this workspace:
+
+| Role | Permissions |
+|------|-------------|
+| **Owner** | Full access including deletion and billing |
+| **Admin** | Manage servers, secrets, and team members |
+| **Developer** | Deploy servers, view logs, manage secrets |
+| **Viewer** | Read-only access to servers and configuration |
+
+<Steps>
+  <Step title="Navigate to Team">
+    Go to Settings → Team Members
+  </Step>
+  <Step title="Invite Member">
+    Click **Invite Member** and enter their email
+  </Step>
+  <Step title="Set Role">
+    Choose the appropriate role for the team member
+  </Step>
+  <Step title="Send Invitation">
+    Click **Send Invite** - they'll receive an email invitation
+  </Step>
+</Steps>
+
+### Resource Quotas
+
+View and manage resource limits for the workspace:
+
+<CardGroup cols={3}>
+  <Card title="Max Servers" icon="server">
+    Total number of deployable servers
+  </Card>
+  <Card title="Max Replicas" icon="clone">
+    Combined replica count across all servers
+  </Card>
+  <Card title="Storage" icon="database">
+    Total storage for logs and data
+  </Card>
+</CardGroup>
+
+<Callout type="info">
+  Resource quotas vary by plan. [Upgrade your plan](https://studio.nimbletools.ai/billing) to increase limits.
+</Callout>
+
+## Workspace Tokens
+
+Generate tokens for CLI and API access:
+
+### Token Types
+
+<Tabs>
+  <Tab title="Standard Token">
+    - Expires after 30 days
+    - Used for CLI authentication
+    - Can be refreshed
+  </Tab>
+  <Tab title="Long-Lived Token">
+    - Expires after 1 year
+    - Used for CI/CD pipelines
+    - Cannot be refreshed (must be regenerated)
+  </Tab>
+  <Tab title="Read-Only Token">
+    - View-only access to workspace
+    - Cannot deploy or modify servers
+    - Used for monitoring integrations
+  </Tab>
+</Tabs>
+
+### Generating Tokens
+
+<Steps>
+  <Step title="Open Token Management">
+    Navigate to Settings → API Tokens
+  </Step>
+  <Step title="Create New Token">
+    Click **Generate Token** button
+  </Step>
+  <Step title="Configure Token">
+    - Select token type
+    - Set expiration (if applicable)
+    - Add description/label
+  </Step>
+  <Step title="Copy Token">
+    **Important**: Copy the token immediately - it won't be shown again!
+  </Step>
+</Steps>
+
+<Callout type="warning">
+  Store tokens securely. Anyone with a token can access your workspace!
+</Callout>
+
+### Using Tokens with CLI
+
+```bash
+# Set the token as an environment variable
+export NTCLI_TOKEN=your-workspace-token
+
+# Or use the login command
+ntcli auth login --token your-workspace-token
+
+# Verify authentication
+ntcli auth status
+```
+
+## Deleting Workspaces
+
+<Callout type="danger">
+  **This action cannot be undone!** All servers, secrets, and configuration will be permanently deleted.
+</Callout>
+
+<Steps>
+  <Step title="Open Workspace Settings">
+    Navigate to Settings → Danger Zone
+  </Step>
+  <Step title="Click Delete Workspace">
+    Scroll to the bottom and click **Delete Workspace**
+  </Step>
+  <Step title="Confirm Deletion">
+    Type the workspace name to confirm
+  </Step>
+  <Step title="Delete">
+    Click **Permanently Delete Workspace**
+  </Step>
+</Steps>
+
+### Before Deleting
+
+Make sure to:
+
+- ✅ Remove all servers (or they'll be forcibly terminated)
+- ✅ Export any logs or data you need
+- ✅ Update any integrations using this workspace
+- ✅ Notify team members with access
+- ✅ Revoke all workspace tokens
+
+## Workspace Best Practices
+
+<AccordionGroup>
+  <Accordion title="Separate Environments">
+    Create distinct workspaces for development, staging, and production. This prevents accidental changes to production servers.
+  </Accordion>
+  <Accordion title="Descriptive Naming">
+    Use clear names like `company-app-prod` or `john-experiments` to quickly identify workspace purposes.
+  </Accordion>
+  <Accordion title="Least Privilege Access">
+    Grant team members the minimum role necessary. Use Viewer role for stakeholders who only need visibility.
+  </Accordion>
+  <Accordion title="Regular Token Rotation">
+    Rotate workspace tokens every 30-90 days. Revoke old tokens after rotation.
+  </Accordion>
+  <Accordion title="Monitor Resource Usage">
+    Regularly check resource quotas to ensure you have headroom for growth.
+  </Accordion>
+</AccordionGroup>
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card
+    title="Server Management"
+    icon="server"
+    href="/studio/server-management"
+  >
+    Deploy and manage servers in workspaces
+  </Card>
+  <Card
+    title="Secrets Management"
+    icon="lock"
+    href="/studio/secrets-management"
+  >
+    Configure workspace-scoped secrets
+  </Card>
+  <Card
+    title="API Keys & Tokens"
+    icon="key"
+    href="/studio/api-keys"
+  >
+    Generate tokens for programmatic access
+  </Card>
+  <Card
+    title="CLI Concepts: Workspaces"
+    icon="terminal"
+    href="/cli/concepts/workspaces"
+  >
+    Learn about workspaces in the CLI
+  </Card>
+</CardGroup>

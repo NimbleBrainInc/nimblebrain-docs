@@ -1,0 +1,199 @@
+---
+title: 'Studio Quickstart'
+description: 'Deploy your first MCP server in under 5 minutes with NimbleBrain Studio'
+icon: 'rocket'
+---
+
+Get started with NimbleBrain Studio and deploy your first MCP server with this step-by-step guide.
+
+## Prerequisites
+
+- A web browser (Chrome, Firefox, Safari, or Edge)
+- A GitHub or Google account for authentication
+
+<Callout type="info">
+  No installation required! NimbleBrain Studio runs entirely in your browser.
+</Callout>
+
+## Step 1: Create Your Account
+
+<Steps>
+  <Step title="Navigate to Studio">
+    Visit [studio.nimbletools.ai](https://studio.nimbletools.ai)
+  </Step>
+  <Step title="Sign Up">
+    Click "Sign Up" and authenticate with GitHub or Google
+  </Step>
+  <Step title="Complete Profile">
+    Fill in your organization name and preferences
+  </Step>
+</Steps>
+
+## Step 2: Create Your First Workspace
+
+Workspaces provide isolated environments for your MCP servers.
+
+<Steps>
+  <Step title="Open Workspace Panel">
+    From the dashboard, click "Create Workspace" or use the workspace dropdown
+  </Step>
+  <Step title="Enter Details">
+    ```
+    Name: my-first-workspace
+    Description: My first MCP workspace
+    ```
+  </Step>
+  <Step title="Create">
+    Click "Create Workspace" - you'll be automatically switched to the new workspace
+  </Step>
+</Steps>
+
+<Callout type="tip">
+  Workspace names must be lowercase and can contain hyphens. They'll be used in your server URLs.
+</Callout>
+
+## Step 3: Deploy an MCP Server
+
+Let's deploy a sample MCP server from the community registry.
+
+<Steps>
+  <Step title="Browse Registry">
+    Click "Deploy Server" from the dashboard or navigate to the Registry tab
+  </Step>
+  <Step title="Select a Server">
+    Search for "nationalparks-mcp" - a simple server for US National Parks data
+  </Step>
+  <Step title="Review Configuration">
+    Review the server details:
+    - Server capabilities
+    - Required secrets (none for this server)
+    - Resource requirements
+  </Step>
+  <Step title="Deploy">
+    Click "Deploy Server" and wait 30-60 seconds for provisioning
+  </Step>
+</Steps>
+
+<Callout type="success">
+  Your server will auto-scale from 0 to multiple replicas based on demand!
+</Callout>
+
+## Step 4: Monitor Your Server
+
+<Steps>
+  <Step title="View Server Status">
+    From the Servers tab, you'll see your deployed server with status indicators
+  </Step>
+  <Step title="Check Health">
+    Click on the server to view detailed health metrics and logs
+  </Step>
+  <Step title="View Logs">
+    Navigate to the Logs tab to see real-time server activity
+  </Step>
+</Steps>
+
+## Step 5: Connect to Claude Desktop
+
+Now let's connect your MCP server to Claude Desktop.
+
+<Steps>
+  <Step title="Generate Configuration">
+    From your server details page, click "Claude Desktop Config"
+  </Step>
+  <Step title="Copy Configuration">
+    Click "Copy to Clipboard" to copy your complete Claude configuration
+  </Step>
+  <Step title="Open Claude Config File">
+    On macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+    On Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+  </Step>
+  <Step title="Paste Configuration">
+    Replace or merge the configuration with your existing settings
+  </Step>
+  <Step title="Restart Claude Desktop">
+    Quit and restart Claude Desktop to load the new configuration
+  </Step>
+</Steps>
+
+<Callout type="warning">
+  Make sure to back up your existing Claude configuration before replacing it!
+</Callout>
+
+## Step 6: Test Your Integration
+
+<Steps>
+  <Step title="Open Claude Desktop">
+    Launch Claude Desktop after restarting
+  </Step>
+  <Step title="Verify Tools">
+    Look for the 🔌 icon indicating MCP tools are available
+  </Step>
+  <Step title="Try a Query">
+    Ask Claude: "What national parks are in California?"
+  </Step>
+  <Step title="Watch Tool Calls">
+    Claude will use your MCP server to fetch real-time park data!
+  </Step>
+</Steps>
+
+## Next Steps
+
+Congratulations! You've deployed your first MCP server and connected it to Claude Desktop.
+
+<CardGroup cols={2}>
+  <Card
+    title="Deploy More Servers"
+    icon="server"
+    href="/studio/server-management"
+  >
+    Explore the registry and deploy additional MCP servers
+  </Card>
+  <Card
+    title="Add Secrets"
+    icon="key"
+    href="/studio/secrets-management"
+  >
+    Configure API keys for servers that need authentication
+  </Card>
+  <Card
+    title="Monitor & Scale"
+    icon="chart-line"
+    href="/studio/monitoring"
+  >
+    Learn about monitoring, logs, and scaling options
+  </Card>
+  <Card
+    title="Generate API Tokens"
+    icon="code"
+    href="/studio/api-keys"
+  >
+    Create tokens for programmatic access via CLI or API
+  </Card>
+</CardGroup>
+
+## Common Issues
+
+<AccordionGroup>
+  <Accordion title="Server stuck in 'Deploying' status">
+    Wait up to 2 minutes for initial deployment. If it persists, check the deployment logs for errors.
+  </Accordion>
+  <Accordion title="Claude Desktop doesn't show MCP tools">
+    - Verify Claude Desktop was fully restarted
+    - Check that the configuration file has valid JSON syntax
+    - Ensure your workspace token hasn't expired (refresh from Studio)
+  </Accordion>
+  <Accordion title="Tool calls fail in Claude Desktop">
+    - Check server health status in Studio
+    - Verify any required secrets are configured
+    - View server logs for error messages
+  </Accordion>
+</AccordionGroup>
+
+<Card
+  title="Need Help?"
+  icon="question"
+  href="/dev/troubleshooting"
+>
+  Check our comprehensive troubleshooting guide
+</Card>
