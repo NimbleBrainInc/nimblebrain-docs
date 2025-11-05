@@ -1,0 +1,892 @@
+---
+title: 'Abstract API'
+description: 'Comprehensive data validation, enrichment, and intelligence services for business operations'
+icon: 'database'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="circle-check">
+    Abstract API provides enterprise-grade data validation and enrichment services including email/phone validation, IP intelligence, timezone conversion, currency exchange, company enrichment, and web scraping - all accessible through natural language in NimbleBrain Studio.
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    - **Data Quality**: Validate emails, phone numbers, and VAT numbers
+    - **Risk Management**: Detect VPN/proxy usage and fraud indicators
+    - **Business Intelligence**: Enrich company data and monitor competitors
+    - **Global Operations**: Convert currencies and timezones accurately
+    - **Content Automation**: Scrape websites and generate screenshots
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+<Steps>
+  <Step title="Get Your API Keys">
+    **Important**: Abstract API requires **separate API keys for each service** you want to use.
+
+    1. Visit [Abstract API Dashboard](https://app.abstractapi.com/api)
+    2. Sign up or log in to your account
+    3. Get API keys for the services you need:
+       - Email Validation
+       - Phone Validation
+       - VAT Validation
+       - IP Geolocation
+       - Timezone Services
+       - Holiday Lookup
+       - Currency Exchange
+       - Company Enrichment
+       - Web Scraping
+       - Screenshot Generation
+    4. Copy each API key you plan to use
+
+    **Note**: You only need keys for services you'll actually use. Free tier available for all services.
+  </Step>
+
+  <Step title="Add to NimbleBrain Studio">
+    1. Open **NimbleBrain Studio**
+    2. Go to **Settings** → **MCP Servers**
+    3. Click **Add Server** → **Abstract API**
+    4. Configure your API keys:
+       - Add keys for each service you want to use
+       - Key names: `ABSTRACT_EMAIL_API_KEY`, `ABSTRACT_PHONE_API_KEY`, etc.
+       - Only configure the services you need
+    5. Click **Save** and verify connection status shows "Connected"
+
+    **Setup time**: 2-3 minutes (depending on how many services you configure)
+  </Step>
+
+  <Step title="Test It Out">
+    Try asking in Studio:
+
+    *"Validate the email address support@example.com and check if it's deliverable"*
+
+    Studio will use the `validate_email` tool to check email format, domain validity, MX records, and deliverability score.
+  </Step>
+</Steps>
+
+## Available Tools
+
+Abstract API provides 15 tools across 10 different service categories:
+
+### Data Validation
+
+<Accordion title="validate_email - Verify email deliverability and quality">
+  **What it does**: Validates email addresses with comprehensive deliverability checks including format validation, domain verification, MX records, SMTP validation, and detection of disposable/role-based emails.
+
+  **Returns**:
+  - Email address validated
+  - Autocorrect suggestion if typo detected
+  - Deliverability status (DELIVERABLE, UNDELIVERABLE, RISKY, UNKNOWN)
+  - Quality score (0-1)
+  - Format validation results
+  - Free email provider detection
+  - Disposable email detection
+  - Role-based email detection (info@, support@)
+  - Catch-all domain detection
+  - MX record verification
+  - SMTP validation
+
+  **Use cases**:
+  - Form validation
+  - Email list cleaning
+  - Fraud prevention
+  - Marketing database quality
+
+  **API Key Required**: `ABSTRACT_EMAIL_API_KEY`
+
+  **Rate Limits**:
+  - Free: 100/month
+  - Starter: $9/mo (5,000/mo)
+  - Professional: $49/mo (50,000/mo)
+</Accordion>
+
+<Accordion title="validate_phone - Validate phone numbers with carrier info">
+  **What it does**: Validates phone numbers globally, identifies carrier, determines phone type (mobile/landline), and provides location information.
+
+  **Parameters**:
+  - `phone` (required): Phone number to validate
+  - `country_code` (optional): ISO 3166-1 alpha-2 country code for better validation
+
+  **Returns**:
+  - Phone number validated
+  - Validity status
+  - Formatted versions (international, local, E164)
+  - Country information
+  - Location name
+  - Phone type (mobile, landline, voip)
+  - Carrier name
+
+  **Use cases**:
+  - User onboarding validation
+  - SMS delivery optimization
+  - Fraud detection
+  - Contact database enrichment
+
+  **API Key Required**: `ABSTRACT_PHONE_API_KEY`
+
+  **Rate Limits**:
+  - Free: 250/month
+  - Starter: $9/mo (5,000/mo)
+  - Professional: $49/mo (50,000/mo)
+</Accordion>
+
+<Accordion title="validate_vat - Validate EU VAT numbers">
+  **What it does**: Validates European Union VAT numbers and returns associated company information.
+
+  **Parameters**:
+  - `vat_number` (required): VAT number to validate (e.g., "SE556656688001")
+
+  **Returns**:
+  - VAT number validated
+  - Validity status
+  - Company name
+  - Company address
+  - Country information
+
+  **Use cases**:
+  - B2B transaction validation
+  - Tax compliance
+  - Invoice verification
+  - Customer onboarding
+
+  **API Key Required**: `ABSTRACT_VAT_API_KEY`
+
+  **Rate Limits**:
+  - Free: 250/month
+  - Starter: $9/mo (5,000/mo)
+  - Professional: $49/mo (50,000/mo)
+</Accordion>
+
+### IP Intelligence
+
+<Accordion title="geolocate_ip - Get location from IP address">
+  **What it does**: Returns comprehensive geolocation data for any IP address including city, region, country, coordinates, timezone, currency, and ISP information.
+
+  **Parameters**:
+  - `ip_address` (required): IP address to geolocate
+  - `fields` (optional): Comma-separated fields to return (e.g., "city,country,timezone")
+
+  **Returns**:
+  - IP address queried
+  - City, region, country information
+  - GeoNames IDs for data linking
+  - Postal code
+  - Coordinates (latitude, longitude)
+  - EU membership status
+  - Continent information
+  - Timezone details
+  - Currency information
+  - Country flag
+  - ISP/connection details
+
+  **Use cases**:
+  - Content personalization
+  - Fraud detection
+  - Analytics and reporting
+  - Compliance and geo-fencing
+
+  **API Key Required**: `ABSTRACT_IP_API_KEY`
+
+  **Rate Limits**:
+  - Free: 20,000/month
+  - Starter: $9/mo (100,000/mo)
+  - Professional: $49/mo (500,000/mo)
+</Accordion>
+
+<Accordion title="get_ip_info - Get detailed IP information">
+  **What it does**: Provides complete IP information including ISP, autonomous system number, connection type, and network details.
+
+  **Parameters**:
+  - `ip_address` (required): IP address to query
+
+  **Returns**:
+  - All geolocation data (same as geolocate_ip)
+  - ISP name
+  - ASN (Autonomous System Number)
+  - Connection type (Corporate, Cellular, Cable/DSL, etc.)
+  - Network information
+
+  **Use cases**:
+  - Network diagnostics
+  - Security analysis
+  - ISP identification
+  - Connection type detection
+
+  **API Key Required**: `ABSTRACT_IP_API_KEY`
+</Accordion>
+
+<Accordion title="geolocate_ip_security - IP geolocation with security analysis">
+  **What it does**: Analyzes IP addresses to detect VPN usage, proxy servers, Tor exit nodes, and datacenter hosting, along with full geolocation data.
+
+  **Parameters**:
+  - `ip_address` (required): IP address to analyze
+
+  **Returns**:
+  - All geolocation data
+  - Security information:
+    - VPN detection
+    - Proxy detection
+    - Tor exit node detection
+    - Datacenter hosting detection
+    - Threat score
+
+  **Use cases**:
+  - Fraud prevention
+  - Account security
+  - Payment verification
+  - Access control
+
+  **API Key Required**: `ABSTRACT_IP_API_KEY`
+
+  **Rate Limits**: Same as geolocate_ip
+</Accordion>
+
+### Time & Location
+
+<Accordion title="get_timezone - Get timezone from location or coordinates">
+  **What it does**: Returns current time and timezone information for a location name or coordinate pair.
+
+  **Parameters** (either location OR coordinates required):
+  - `location` (optional): Location name (e.g., "New York", "Paris")
+  - `latitude` (optional): Latitude coordinate
+  - `longitude` (optional): Longitude coordinate
+
+  **Returns**:
+  - Requested location/coordinates
+  - Timezone name (e.g., "America/New_York")
+  - Timezone abbreviation (e.g., "EST")
+  - UTC offset in seconds
+  - Current datetime in timezone
+  - Current date, time components
+  - GMT offset
+  - Daylight saving time status
+
+  **Use cases**:
+  - Scheduling coordination
+  - Meeting time display
+  - Content delivery timing
+  - User experience localization
+
+  **API Key Required**: `ABSTRACT_TIMEZONE_API_KEY`
+
+  **Rate Limits**:
+  - Free: 1,000/month
+  - Starter: $9/mo (10,000/mo)
+  - Professional: $49/mo (100,000/mo)
+</Accordion>
+
+<Accordion title="convert_timezone - Convert time between timezones">
+  **What it does**: Converts a datetime from one timezone to another, automatically handling daylight saving time transitions.
+
+  **Parameters**:
+  - `base_location` (required): Source location/timezone
+  - `base_datetime` (required): Datetime in ISO 8601 format (e.g., "2025-01-15T14:30:00")
+  - `target_location` (required): Target location/timezone
+
+  **Returns**:
+  - Base location and timezone details
+  - Base datetime
+  - Target location and timezone details
+  - Converted datetime
+  - DST handling information
+
+  **Use cases**:
+  - Meeting scheduling
+  - Event time conversion
+  - Global coordination
+  - Travel planning
+
+  **API Key Required**: `ABSTRACT_TIMEZONE_API_KEY`
+</Accordion>
+
+<Accordion title="get_holidays - Get public holidays by country">
+  **What it does**: Returns list of public holidays for any country and year, with optional filtering by month and day.
+
+  **Parameters**:
+  - `country` (required): ISO 3166-1 alpha-2 country code (e.g., "US", "GB", "FR")
+  - `year` (required): Year (e.g., 2025)
+  - `month` (optional): Month (1-12) to filter results
+  - `day` (optional): Day (1-31) to filter results
+
+  **Returns**:
+  - List of holidays with:
+    - Holiday name (English and local)
+    - Description
+    - Country and location
+    - Holiday type (National, Religious, Observance)
+    - Date components
+    - Day of week
+
+  **Use cases**:
+  - Business planning
+  - Delivery scheduling
+  - Marketing campaign timing
+  - HR management
+
+  **API Key Required**: `ABSTRACT_HOLIDAYS_API_KEY`
+
+  **Rate Limits**:
+  - Free: 1,000/month
+  - Starter: $9/mo (10,000/mo)
+  - Professional: $49/mo (100,000/mo)
+</Accordion>
+
+### Financial
+
+<Accordion title="get_exchange_rates - Get live currency exchange rates">
+  **What it does**: Returns live exchange rates for a base currency against all available currencies or a specific target currency.
+
+  **Parameters**:
+  - `base` (optional): Base currency code (default: "USD")
+  - `target` (optional): Target currency code (returns only that rate if specified)
+
+  **Returns**:
+  - Base currency code
+  - Last updated timestamp
+  - Exchange rates dictionary (170+ currencies)
+
+  **Use cases**:
+  - E-commerce pricing
+  - Financial reporting
+  - Multi-currency displays
+  - Rate monitoring
+
+  **API Key Required**: `ABSTRACT_EXCHANGE_API_KEY`
+
+  **Rate Limits**:
+  - Free: 1,000/month
+  - Starter: $9/mo (10,000/mo)
+  - Professional: $49/mo (100,000/mo)
+</Accordion>
+
+<Accordion title="convert_currency - Convert amounts between currencies">
+  **What it does**: Converts an amount from one currency to another using live or historical exchange rates.
+
+  **Parameters**:
+  - `base` (required): Base currency code (e.g., "USD")
+  - `target` (required): Target currency code (e.g., "EUR")
+  - `amount` (required): Amount to convert
+  - `date` (optional): Historical date in YYYY-MM-DD format
+
+  **Returns**:
+  - Base and target currency codes
+  - Original amount
+  - Converted amount
+  - Exchange rate used
+  - Last updated timestamp
+  - Historical date if specified
+
+  **Use cases**:
+  - Payment processing
+  - Invoice generation
+  - Price calculations
+  - Financial analytics
+
+  **API Key Required**: `ABSTRACT_EXCHANGE_API_KEY`
+</Accordion>
+
+### Web & Business
+
+<Accordion title="get_company_info - Enrich company data from domain">
+  **What it does**: Returns comprehensive company information from a domain name including industry, employee count, founding year, and social profiles.
+
+  **Parameters**:
+  - `domain` (required): Company domain (e.g., "google.com", "microsoft.com")
+
+  **Returns**:
+  - Company name
+  - Domain
+  - Year founded
+  - Industry classification
+  - Employee count
+  - City/locality
+  - Country
+  - LinkedIn profile URL
+  - Company logo URL
+
+  **Use cases**:
+  - Lead enrichment
+  - CRM data enhancement
+  - Competitive analysis
+  - Sales intelligence
+
+  **API Key Required**: `ABSTRACT_COMPANY_API_KEY`
+
+  **Rate Limits**:
+  - Free: 250/month
+  - Starter: $9/mo (5,000/mo)
+  - Professional: $49/mo (50,000/mo)
+</Accordion>
+
+<Accordion title="scrape_url - Extract structured data from websites">
+  **What it does**: Scrapes web pages and extracts content, links, images, and metadata. Can optionally render JavaScript for dynamic sites.
+
+  **Parameters**:
+  - `url` (required): URL to scrape
+  - `render_js` (optional): Render JavaScript (default: false)
+
+  **Returns**:
+  - URL scraped
+  - Extracted text content
+  - Raw HTML
+  - List of links found
+  - List of images found
+  - Page metadata (title, description, keywords)
+
+  **Use cases**:
+  - Content monitoring
+  - Competitive analysis
+  - Price tracking
+  - Data collection
+
+  **API Key Required**: `ABSTRACT_SCRAPE_API_KEY`
+
+  **Rate Limits**:
+  - Free: 1,000/month
+  - Starter: $9/mo (10,000/mo)
+  - Professional: $49/mo (100,000/mo)
+</Accordion>
+
+<Accordion title="generate_screenshot - Capture website screenshots">
+  **What it does**: Generates high-quality screenshots of websites at specified dimensions, with option to capture full page or viewport only.
+
+  **Parameters**:
+  - `url` (required): URL to screenshot
+  - `width` (optional): Width in pixels (default: 1920)
+  - `height` (optional): Height in pixels (default: 1080)
+  - `full_page` (optional): Capture full page (default: false)
+
+  **Returns**:
+  - Success status
+  - URL captured
+  - Image data (base64 encoded)
+  - Content type
+  - Additional notes
+
+  **Use cases**:
+  - Website monitoring
+  - Visual archiving
+  - Compliance documentation
+  - Design review
+
+  **API Key Required**: `ABSTRACT_SCREENSHOT_API_KEY`
+
+  **Rate Limits**:
+  - Free: 100/month
+  - Starter: $9/mo (2,000/mo)
+  - Professional: $49/mo (20,000/mo)
+</Accordion>
+
+## Authentication
+
+Abstract API uses a **service-specific API key model** - each service requires its own API key:
+
+| Service | Environment Variable | Free Tier | Paid Plans Start |
+|---------|---------------------|-----------|------------------|
+| Email Validation | `ABSTRACT_EMAIL_API_KEY` | 100/month | $9/mo (5,000) |
+| Phone Validation | `ABSTRACT_PHONE_API_KEY` | 250/month | $9/mo (5,000) |
+| VAT Validation | `ABSTRACT_VAT_API_KEY` | 250/month | $9/mo (5,000) |
+| IP Geolocation | `ABSTRACT_IP_API_KEY` | 20,000/month | $9/mo (100,000) |
+| Timezone Services | `ABSTRACT_TIMEZONE_API_KEY` | 1,000/month | $9/mo (10,000) |
+| Holiday Lookup | `ABSTRACT_HOLIDAYS_API_KEY` | 1,000/month | $9/mo (10,000) |
+| Currency Exchange | `ABSTRACT_EXCHANGE_API_KEY` | 1,000/month | $9/mo (10,000) |
+| Company Enrichment | `ABSTRACT_COMPANY_API_KEY` | 250/month | $9/mo (5,000) |
+| Web Scraping | `ABSTRACT_SCRAPE_API_KEY` | 1,000/month | $9/mo (10,000) |
+| Screenshot | `ABSTRACT_SCREENSHOT_API_KEY` | 100/month | $9/mo (2,000) |
+
+**Important Notes**:
+- You only need API keys for services you plan to use
+- Each service has separate rate limits and pricing
+- Free tier available for all services
+- Get keys from [Abstract API Dashboard](https://app.abstractapi.com/api)
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Email List Validation">
+    **Business Context**: You have a marketing email list and need to validate deliverability before sending a campaign to avoid bounces and protect sender reputation.
+
+    **Natural Language Prompt**:
+    *"Validate these email addresses and tell me which ones are deliverable: john@example.com, support@company.com, test123@temporarymail.com"*
+
+    **What Happens**:
+    1. Studio uses `validate_email` for each address
+    2. Checks format, domain, MX records, SMTP validation
+    3. Detects disposable emails (temporarymail.com)
+    4. Identifies role-based emails (support@)
+    5. Returns deliverability scores for each
+
+    **Results You Get**:
+    - john@example.com: DELIVERABLE (0.95 quality score)
+    - support@company.com: DELIVERABLE but role-based (0.80 quality)
+    - test123@temporarymail.com: UNDELIVERABLE - disposable (0.10 quality)
+
+    **Business Value**: Reduce bounce rate from 15% to &lt;2%, protect sender reputation, improve campaign ROI
+
+    **Time**: &lt;2 seconds per email
+  </Tab>
+
+  <Tab title="Fraud Detection">
+    **Business Context**: You operate an e-commerce platform and need to detect suspicious orders from VPN/proxy users to prevent fraud.
+
+    **Natural Language Prompt**:
+    *"Check if the IP address 192.0.2.146 is using a VPN or proxy, and show me the real location"*
+
+    **What Happens**:
+    1. Studio uses `geolocate_ip_security`
+    2. Analyzes IP for VPN, proxy, Tor, datacenter indicators
+    3. Returns geolocation data
+    4. Provides threat score
+
+    **Results You Get**:
+    - IP: 192.0.2.146
+    - Location: London, UK (but VPN detected)
+    - Real location: Unknown (masked by VPN)
+    - Threat Score: High
+    - Connection Type: Datacenter
+    - Recommendation: Flag for manual review
+
+    **Business Value**: Reduce fraud losses by 40%, improve payment success rate, protect customer accounts
+
+    **Time**: &lt;1 second
+  </Tab>
+
+  <Tab title="Global Scheduling">
+    **Business Context**: Your team is scheduling a global meeting and needs to find a time that works across New York, London, and Tokyo.
+
+    **Natural Language Prompt**:
+    *"If it's 2:00 PM on January 20, 2025 in New York, what time is it in London and Tokyo?"*
+
+    **What Happens**:
+    1. Studio uses `get_timezone` for each location
+    2. Uses `convert_timezone` to convert 2:00 PM EST to BST and JST
+    3. Returns local times with DST handling
+
+    **Results You Get**:
+    - New York: 2:00 PM EST (UTC-5)
+    - London: 7:00 PM GMT (UTC+0)
+    - Tokyo: 4:00 AM JST (UTC+9, next day)
+
+    **Follow-up**: *"What's a better meeting time that's during business hours for all three?"*
+
+    **Business Value**: Eliminate scheduling confusion, improve global team coordination, respect work-life balance
+
+    **Time**: &lt;1 second
+  </Tab>
+
+  <Tab title="International Pricing">
+    **Business Context**: You're launching a SaaS product globally and need to convert your $99 USD subscription price to local currencies with current exchange rates.
+
+    **Natural Language Prompt**:
+    *"Convert $99 USD to EUR, GBP, JPY, and AUD using today's exchange rates"*
+
+    **What Happens**:
+    1. Studio uses `get_exchange_rates` with base="USD"
+    2. Uses `convert_currency` for each target currency
+    3. Returns converted amounts with current rates
+
+    **Results You Get**:
+    - USD: $99.00 (base)
+    - EUR: €89.10 (rate: 0.9000)
+    - GBP: £76.23 (rate: 0.7700)
+    - JPY: ¥14,355 (rate: 145.00)
+    - AUD: $148.50 (rate: 1.5000)
+
+    **Business Value**: Transparent local pricing, reduce cart abandonment, increase international conversions
+
+    **Time**: &lt;1 second for all conversions
+  </Tab>
+
+  <Tab title="Lead Enrichment">
+    **Business Context**: Your sales team receives a lead from "acme-corp.com" and needs to qualify the opportunity before outreach.
+
+    **Natural Language Prompt**:
+    *"Get me company information for acme-corp.com including employee count, industry, and LinkedIn profile"*
+
+    **What Happens**:
+    1. Studio uses `get_company_info` with domain
+    2. Enriches with company data from multiple sources
+    3. Returns structured business intelligence
+
+    **Results You Get**:
+    - Company: Acme Corporation
+    - Industry: Software Development
+    - Employees: 5,000-10,000
+    - Founded: 2005
+    - Location: San Francisco, CA
+    - LinkedIn: linkedin.com/company/acme-corp
+    - Logo URL: [company logo]
+
+    **Business Value**: Faster lead qualification, better outreach personalization, higher conversion rates
+
+    **Time**: &lt;2 seconds
+  </Tab>
+
+  <Tab title="Contact Verification">
+    **Business Context**: You need to verify a new customer's phone number and email before activating their account to ensure you can reach them for support and billing.
+
+    **Natural Language Prompt**:
+    *"Verify this contact information: phone +1-555-123-4567, email sarah@company.io - make sure both are valid"*
+
+    **What Happens**:
+    1. Studio uses `validate_phone` with country code US
+    2. Uses `validate_email` for email validation
+    3. Returns comprehensive verification results
+
+    **Results You Get**:
+    - Phone: +1-555-123-4567
+      - Valid: Yes
+      - Type: Mobile
+      - Carrier: Verizon Wireless
+      - Location: New York, US
+    - Email: sarah@company.io
+      - Valid: Yes
+      - Deliverability: DELIVERABLE (0.92 quality)
+      - Free Email: No
+      - Disposable: No
+
+    **Business Value**: Reduce failed deliveries, improve customer communication, prevent fake accounts
+
+    **Time**: &lt;2 seconds total
+  </Tab>
+
+  <Tab title="Compliance & Invoicing">
+    **Business Context**: You're processing a B2B invoice for an EU customer and need to validate their VAT number for tax compliance.
+
+    **Natural Language Prompt**:
+    *"Validate the VAT number SE556656688001 and confirm the company name"*
+
+    **What Happens**:
+    1. Studio uses `validate_vat`
+    2. Queries VIES database
+    3. Returns company information
+
+    **Results You Get**:
+    - VAT Number: SE556656688001
+    - Valid: Yes
+    - Company: Spotify AB
+    - Address: Regeringsgatan 19, 111 53 Stockholm
+    - Country: Sweden (SE)
+
+    **Business Value**: Ensure tax compliance, prevent invoice errors, faster payment processing
+
+    **Time**: &lt;2 seconds
+  </Tab>
+
+  <Tab title="Market Research">
+    **Business Context**: You're analyzing competitor pricing and need to monitor their website for changes to pricing pages.
+
+    **Natural Language Prompt**:
+    *"Scrape competitor-site.com/pricing and extract all text content and pricing information"*
+
+    **What Happens**:
+    1. Studio uses `scrape_url` with render_js=true
+    2. Extracts structured content
+    3. Parses pricing information
+
+    **Results You Get**:
+    - URL: competitor-site.com/pricing
+    - Extracted Content: [full text content]
+    - Pricing Plans Found:
+      - Basic: $29/month
+      - Pro: $79/month
+      - Enterprise: Contact Sales
+    - Links: [all page links]
+    - Metadata: Page title, description
+
+    **Follow-up**: *"Generate a screenshot of their pricing page for our records"*
+
+    **Business Value**: Competitive intelligence, pricing strategy insights, market positioning
+
+    **Time**: 2-5 seconds (with JS rendering)
+  </Tab>
+
+  <Tab title="Holiday-Aware Scheduling">
+    **Business Context**: You're planning a global marketing campaign and need to avoid public holidays in your target markets.
+
+    **Natural Language Prompt**:
+    *"What are the public holidays in the United States, United Kingdom, and Germany during Q1 2025?"*
+
+    **What Happens**:
+    1. Studio uses `get_holidays` for each country
+    2. Filters for January-March 2025
+    3. Returns holiday lists with types
+
+    **Results You Get**:
+    - **United States**:
+      - Jan 1: New Year's Day (National)
+      - Jan 20: Inauguration Day (Federal)
+      - Feb 17: Presidents Day (National)
+    - **United Kingdom**:
+      - Jan 1: New Year's Day (National)
+      - Apr 18: Good Friday (National)
+      - Apr 21: Easter Monday (National)
+    - **Germany**:
+      - Jan 1: Neujahr (National)
+      - Apr 18: Karfreitag (National)
+      - Apr 21: Ostermontag (National)
+
+    **Business Value**: Optimize campaign timing, respect cultural observances, improve engagement rates
+
+    **Time**: &lt;1 second per country
+  </Tab>
+</Tabs>
+
+## Troubleshooting
+
+<Accordion title="Server shows 'Not Connected' in Studio">
+  **Solution**:
+  1. Go to **Settings** → **MCP Servers** → **Abstract API**
+  2. Click **Edit**
+  3. Verify you've configured API keys for at least one service
+  4. Check API key format (no extra spaces or characters)
+  5. Click **Test Connection**
+  6. If still failing, try removing and re-adding the server
+
+  **Common Issue**: Forgot to add API keys after adding the server
+</Accordion>
+
+<Accordion title="Tool returns 'No API key configured for [service]'">
+  **Solution**:
+  This means you're trying to use a service that doesn't have an API key configured.
+
+  1. Go to [Abstract API Dashboard](https://app.abstractapi.com/api)
+  2. Get an API key for the specific service (e.g., email, phone, IP)
+  3. Go to **Settings** → **MCP Servers** → **Abstract API** → **Edit**
+  4. Add the new service-specific API key
+  5. Save and test again
+
+  **Remember**: Each service needs its own API key
+</Accordion>
+
+<Accordion title="Email validation returns UNKNOWN deliverability">
+  **Reasons**:
+  - Email server doesn't support SMTP verification
+  - Catch-all domain (accepts all emails)
+  - Server temporarily unavailable
+
+  **Solution**:
+  - Check `is_valid_format` - if true, format is correct
+  - Review `quality_score` - higher is better
+  - Look at `is_mx_found` - if false, domain has no mail server
+  - Consider RISKY as potentially undeliverable
+</Accordion>
+
+<Accordion title="Phone validation fails or returns invalid">
+  **Solution**:
+  1. Ensure phone number includes country code
+  2. Try passing `country_code` parameter explicitly
+  3. Use international format (e.g., +1-555-123-4567)
+  4. Some VoIP and temporary numbers may not validate
+
+  **Example**:
+  - Bad: "555-123-4567"
+  - Good: "+1-555-123-4567" with country_code="US"
+</Accordion>
+
+<Accordion title="IP geolocation returns limited data">
+  **Reasons**:
+  - Private IP addresses (192.168.x.x, 10.x.x.x) won't have geolocation
+  - Some fields require specific API plan tier
+  - Security/privacy features require premium access
+
+  **Solution**:
+  - Use public IP addresses only
+  - Check your Abstract API plan tier
+  - Upgrade plan for enhanced features like security detection
+</Accordion>
+
+<Accordion title="Timezone conversion incorrect for DST">
+  **Solution**:
+  Abstract API automatically handles DST transitions. If results seem wrong:
+
+  1. Verify your datetime format is ISO 8601 (YYYY-MM-DDTHH:MM:SS)
+  2. Check the date - DST rules change on specific dates
+  3. Confirm both locations support DST
+  4. Some regions don't observe DST (Arizona, Hawaii, etc.)
+
+  **Note**: API uses IANA timezone database (most accurate)
+</Accordion>
+
+<Accordion title="Currency conversion returns unexpected rates">
+  **Explanation**:
+  Exchange rates fluctuate constantly and may differ from other sources due to:
+  - Different update frequencies
+  - Different data providers
+  - Real-time vs. delayed rates
+
+  **Solution**:
+  - Check `last_updated` timestamp in response
+  - Use `date` parameter for historical rates
+  - Rates update every 60 seconds on paid plans
+  - Free tier updates hourly
+</Accordion>
+
+<Accordion title="Company enrichment returns incomplete data">
+  **Reasons**:
+  - Small/private companies have limited public data
+  - Recently founded companies (less than 6 months)
+  - Non-standard domain names
+
+  **Solution**:
+  - Try the main company domain (not subdomain)
+  - Some fields may be null for smaller companies
+  - Data quality improves for public companies and well-known brands
+</Accordion>
+
+<Accordion title="Web scraping returns empty content">
+  **Solutions**:
+  1. Try with `render_js=true` for JavaScript-heavy sites
+  2. Some sites block scrapers - returns will be limited
+  3. Check if site requires authentication
+  4. Verify URL is publicly accessible
+
+  **Note**: Scraping respects robots.txt and rate limits
+</Accordion>
+
+<Accordion title="Screenshot generation fails or times out">
+  **Solutions**:
+  1. Verify URL is publicly accessible (no login required)
+  2. Reduce dimensions if timeout occurs
+  3. Try `full_page=false` for faster capture
+  4. Some sites block automated screenshots
+
+  **Typical Timeouts**:
+  - Viewport: 5-10 seconds
+  - Full page: 15-30 seconds
+</Accordion>
+
+<Accordion title="Rate limit exceeded errors">
+  **Solution**:
+  Each service has separate rate limits based on your plan tier.
+
+  1. Check current usage: Go to [Abstract API Dashboard](https://app.abstractapi.com/api)
+  2. View limits by service
+  3. Upgrade plan for higher limits
+  4. Rate limits reset monthly
+
+  **Free Tier Limits** (examples):
+  - IP Geolocation: 20,000/month
+  - Email Validation: 100/month
+  - Phone Validation: 250/month
+</Accordion>
+
+## Links & Resources
+
+- [Abstract API Documentation](https://www.abstractapi.com/api)
+- [API Dashboard](https://app.abstractapi.com/api) - Get API keys and monitor usage
+- [Pricing Plans](https://www.abstractapi.com/api/pricing) - Compare tiers and features
+- [NimbleBrain Studio](https://www.nimblebrain.ai) - AI workspace with MCP integration
+- [GitHub Repository](https://github.com/NimbleBrainInc/mcp-abstract) - Server source code
+
+### Related Servers
+
+Looking for complementary data intelligence tools?
+
+- **[IPInfo](/docs/mcp-servers/data-intelligence/ipinfo)** - Alternative IP intelligence with 23 specialized tools, privacy detection, ASN lookups, WHOIS data
+- **[DeepL](/docs/mcp-servers/language/deepl)** - Professional translation for handling international data and communications
+- **[Finnhub](/docs/mcp-servers/finance/finnhub)** - Financial data and company fundamentals for market research
+
+**Pro Tip**: Combine Abstract API with IPInfo for comprehensive IP intelligence - use Abstract for basic geolocation and Abstract's security features for VPN detection, while using IPInfo for detailed ASN, carrier, and WHOIS information.

@@ -1,0 +1,1269 @@
+---
+title: 'DeepL MCP Server'
+description: 'Professional-grade AI translation and language detection in 30+ languages'
+icon: 'language'
+category: 'Language & Translation'
+difficulty: 'Beginner'
+required_auth: true
+api_provider:
+  name: 'DeepL'
+  url: 'https://www.deepl.com'
+  signup_url: 'https://www.deepl.com/pro-api'
+tags: ['translation', 'language', 'localization', 'multilingual', 'ai-translation', 'deepl', 'glossaries', 'document-translation']
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="language">
+    DeepL MCP Server provides professional-grade neural machine translation powered by DeepL's industry-leading AI. Translate text and documents across 30+ languages with superior quality and context awareness.
+
+    **Key Features:**
+    - Professional AI translation in 30+ languages
+    - Automatic language detection
+    - Document translation (PDF, DOCX, PPTX, XLSX, HTML, TXT)
+    - Formality control (formal/informal tone)
+    - Custom glossaries for consistent terminology
+    - Context-aware translations
+    - Real-time usage tracking
+    - Superior quality to Google Translate
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **Business Scenarios:**
+
+    - **Customer Support**: Handle international inquiries in customers' native languages
+    - **Content Localization**: Adapt marketing materials for global markets
+    - **Document Translation**: Translate contracts, reports, and business documents
+    - **Email Communication**: Compose professional messages in any language
+    - **Real-Time Chat**: Enable multilingual team collaboration
+    - **Product Launches**: Localize product descriptions and marketing copy
+    - **Legal Documents**: Maintain accuracy in legal terminology
+    - **Technical Documentation**: Translate manuals and guides
+  </Card>
+</CardGroup>
+
+---
+
+## Quick Start
+
+<Steps>
+  <Step title="Get Your API Key">
+    Sign up for a DeepL API account at [deepl.com/pro-api](https://www.deepl.com/pro-api)
+
+    **Free Tier Includes:**
+    - 500,000 characters per month
+    - All 30+ language pairs
+    - Document translation
+    - No credit card required for trial
+
+    After signing up:
+    1. Verify your email address
+    2. Log in to your DeepL account
+    3. Navigate to **Account Settings**
+    4. Find your **Authentication Key for DeepL API**
+    5. Copy the key (it will look like `abc123:fx` for Free or `abc123` for Pro)
+
+    <Info>
+      DeepL offers both Free and Pro API tiers. The Free tier is perfect for getting started and handles most business use cases.
+    </Info>
+  </Step>
+
+  <Step title="Add to NimbleBrain Studio">
+    In NimbleBrain Studio:
+
+    1. Navigate to **MCP Servers** in the sidebar
+    2. Click **Add Server**
+    3. Search for "DeepL" in the server registry
+    4. Click **Configure**
+    5. Paste your API key in the **DEEPL_API_KEY** field
+    6. Click **Save & Enable**
+
+    <Info>
+      The server will automatically connect and become available in your AI assistant within seconds. Studio automatically detects whether you're using Free or Pro API based on your key format.
+    </Info>
+  </Step>
+
+  <Step title="Test the Connection">
+    In your Studio chat, try this prompt:
+
+```text
+"Translate 'Hello, how are you?' to Spanish"
+```
+
+    You should see the professional translation: **"Hola, ¿cómo estás?"**
+
+    <Tip>
+      Look for the 🔧 tool usage indicator in Studio to confirm the DeepL server is working correctly.
+    </Tip>
+  </Step>
+</Steps>
+
+---
+
+## Available Tools
+
+<AccordionGroup>
+  <Accordion title="translate_text" icon="language">
+    Translate text between any supported language pair with professional quality and context awareness.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | text | string or list | Yes | Text to translate (single string or array for batch) |
+    | target_lang | string | Yes | Target language code (e.g., "DE", "FR", "ES", "JA") |
+    | source_lang | string | No | Source language code (auto-detected if not provided) |
+    | formality | string | No | Formality level: default, more, less, prefer_more, prefer_less |
+    | preserve_formatting | boolean | No | Preserve original formatting (default: false) |
+    | tag_handling | string | No | Tag handling mode: xml, html |
+    | split_sentences | string | No | Sentence splitting: 0 (none), 1 (default), nonewlines |
+
+    **Returns:**
+    ```json
+    {
+      "translations": [
+        {
+          "detected_source_language": "EN",
+          "text": "Hola, ¿cómo estás?"
+        }
+      ]
+    }
+    ```
+
+    **Example Usage:**
+
+```text
+"Translate this marketing copy to German with formal tone: 'Welcome to our platform. We're excited to help you succeed.'"
+```
+
+    <Tip>
+      Use formality control ("more" or "less") for languages that support formal/informal distinctions like German, French, Spanish, Italian, Dutch, and Polish.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="translate_with_glossary" icon="book">
+    Translate text using a custom glossary to ensure consistent terminology across translations.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | text | string or list | Yes | Text to translate |
+    | target_lang | string | Yes | Target language code |
+    | glossary_id | string | Yes | ID of the glossary to use |
+    | source_lang | string | No | Source language code (optional) |
+    | formality | string | No | Formality level |
+
+    **Returns:**
+    ```json
+    {
+      "translations": [
+        {
+          "detected_source_language": "EN",
+          "text": "Translated text with glossary terms applied"
+        }
+      ]
+    }
+    ```
+
+    **Example Usage:**
+
+```text
+"Translate this product description using our technical glossary: 'Our smartphone features advanced AI processing.'"
+```
+
+    <Note>
+      Glossaries ensure brand names, technical terms, and product names are translated consistently. Create a glossary first using the `create_glossary` tool.
+    </Note>
+  </Accordion>
+
+  <Accordion title="detect_language" icon="magnifying-glass">
+    Automatically detect the language of any text with high accuracy.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | text | string | Yes | Text to detect language for |
+
+    **Returns:**
+    ```json
+    {
+      "detected_language": "FR",
+      "text": "Bonjour le monde"
+    }
+    ```
+
+    **Example Usage:**
+
+```text
+"What language is this: 'Guten Tag, wie geht es Ihnen?'"
+```
+
+    **Response:**
+    Detected language: German (DE)
+
+    <Tip>
+      Use language detection before translation when handling user-submitted content in unknown languages.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="list_languages" icon="globe">
+    Get a complete list of all supported source and target languages with their capabilities.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | language_type | string | No | Type of languages to list: "source" or "target" (default: "target") |
+
+    **Returns:**
+    ```json
+    {
+      "languages": [
+        {
+          "language": "DE",
+          "name": "German",
+          "supports_formality": true
+        },
+        {
+          "language": "FR",
+          "name": "French",
+          "supports_formality": true
+        }
+      ]
+    }
+    ```
+
+    **Example Usage:**
+
+```text
+"What languages does DeepL support for translation?"
+```
+
+    <Note>
+      DeepL supports 30+ languages including all major European languages (German, French, Spanish, Italian, etc.) and Asian languages (Japanese, Chinese, Korean).
+    </Note>
+  </Accordion>
+
+  <Accordion title="get_usage" icon="chart-line">
+    Monitor your API usage and character limits in real-time.
+
+    **Parameters:**
+    None required.
+
+    **Returns:**
+    ```json
+    {
+      "character_count": 125000,
+      "character_limit": 500000,
+      "document_count": 5,
+      "document_limit": 20
+    }
+    ```
+
+    **Example Usage:**
+
+```text
+"How much of my DeepL character limit have I used this month?"
+```
+
+    <Tip>
+      Check your usage regularly to avoid hitting character limits. Studio also displays usage metrics in the server settings.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="list_glossaries" icon="list">
+    View all your custom glossaries for consistent terminology management.
+
+    **Parameters:**
+    None required.
+
+    **Returns:**
+    ```json
+    {
+      "glossaries": [
+        {
+          "glossary_id": "abc123",
+          "name": "Product Terms EN-DE",
+          "ready": true,
+          "source_lang": "EN",
+          "target_lang": "DE",
+          "creation_time": "2024-01-15T10:30:00Z",
+          "entry_count": 25
+        }
+      ]
+    }
+    ```
+
+    **Example Usage:**
+
+```text
+"Show me all my DeepL glossaries"
+```
+
+    <Note>
+      Glossaries are perfect for maintaining consistent translation of brand names, product terms, and technical vocabulary across all your content.
+    </Note>
+  </Accordion>
+
+  <Accordion title="create_glossary" icon="plus">
+    Create a custom glossary to ensure consistent translation of specific terms.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | name | string | Yes | Descriptive name for the glossary |
+    | source_lang | string | Yes | Source language code |
+    | target_lang | string | Yes | Target language code |
+    | entries | object | Yes | Dictionary of source:target term pairs |
+    | entries_format | string | No | Format: "tsv" or "csv" (default: "tsv") |
+
+    **Returns:**
+    ```json
+    {
+      "glossary_id": "abc123",
+      "name": "Product Terms EN-DE",
+      "ready": true,
+      "source_lang": "EN",
+      "target_lang": "DE",
+      "creation_time": "2024-01-15T10:30:00Z",
+      "entry_count": 3
+    }
+    ```
+
+    **Example Usage:**
+
+```text
+"Create a glossary called 'Tech Terms' for English to Spanish with these terms:
+- smartphone → smartphone (keep in English)
+- app → aplicación
+- cloud → nube"
+```
+
+    <Tip>
+      Create separate glossaries for different language pairs and content types (marketing, technical, legal) for maximum flexibility.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="get_glossary" icon="book-open">
+    Retrieve detailed information about a specific glossary.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | glossary_id | string | Yes | Unique glossary identifier |
+
+    **Returns:**
+    ```json
+    {
+      "glossary_id": "abc123",
+      "name": "Product Terms EN-DE",
+      "ready": true,
+      "source_lang": "EN",
+      "target_lang": "DE",
+      "creation_time": "2024-01-15T10:30:00Z",
+      "entry_count": 25
+    }
+    ```
+
+    **Example Usage:**
+
+```text
+"Show me the details of glossary abc123"
+```
+  </Accordion>
+
+  <Accordion title="delete_glossary" icon="trash">
+    Delete a glossary that's no longer needed.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | glossary_id | string | Yes | ID of glossary to delete |
+
+    **Returns:**
+    ```json
+    {
+      "success": true
+    }
+    ```
+
+    **Example Usage:**
+
+```text
+"Delete the glossary with ID abc123"
+```
+
+    <Warning>
+      Deleting a glossary is permanent. Make sure you don't need it before deletion.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="translate_document" icon="file">
+    Translate entire documents while preserving formatting (PDF, DOCX, PPTX, XLSX, HTML, TXT).
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | document_path | string | Yes | Path or URL to the document |
+    | target_lang | string | Yes | Target language code |
+    | source_lang | string | No | Source language code (auto-detected if not provided) |
+    | formality | string | No | Formality level |
+    | filename | string | No | Original filename for format detection |
+
+    **Returns:**
+    ```json
+    {
+      "document_id": "doc123",
+      "document_key": "key456",
+      "note": "Use these IDs to check status and download"
+    }
+    ```
+
+    **Example Usage:**
+
+```text
+"Translate my quarterly report from English to German, maintaining the professional tone"
+```
+
+    <Note>
+      Document translation happens asynchronously. Use `get_document_status` to check progress and `download_translated_document` to get the result.
+    </Note>
+
+    <Info>
+      **Supported Formats:** PDF (text-based), DOCX, PPTX, XLSX, HTML, TXT. Scanned PDFs require OCR processing first.
+    </Info>
+  </Accordion>
+
+  <Accordion title="get_document_status" icon="clock">
+    Check the status of an ongoing document translation.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | document_id | string | Yes | Document ID from upload |
+    | document_key | string | Yes | Document key from upload |
+
+    **Returns:**
+    ```json
+    {
+      "document_id": "doc123",
+      "status": "done",
+      "seconds_remaining": 0,
+      "billed_characters": 1500,
+      "error_message": null
+    }
+    ```
+
+    **Status Values:** queued, translating, done, error
+
+    **Example Usage:**
+
+```text
+"Check the status of document doc123 with key key456"
+```
+  </Accordion>
+
+  <Accordion title="download_translated_document" icon="download">
+    Download a completed document translation.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | document_id | string | Yes | Document ID |
+    | document_key | string | Yes | Document key |
+
+    **Returns:**
+    ```json
+    {
+      "success": true,
+      "document_id": "doc123",
+      "content_type": "application/pdf",
+      "size": 245000,
+      "note": "Document ready for download"
+    }
+    ```
+
+    **Example Usage:**
+
+```text
+"Download the translated document doc123 with key key456"
+```
+
+    <Tip>
+      Only call this after confirming the document status is "done" to avoid errors.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Authentication
+
+<Info>
+  **API Key Required**: This server requires a DeepL API key to function.
+</Info>
+
+### Getting Your API Key
+
+1. Visit [deepl.com/pro-api](https://www.deepl.com/pro-api)
+2. Click **Sign Up** or **Log In**
+3. Choose your plan:
+   - **Free API**: 500,000 characters/month, no credit card required
+   - **Pro API**: Pay-as-you-go starting at $25 per 1M characters
+4. Verify your email address
+5. Go to **Account Settings** in your DeepL dashboard
+6. Find **Authentication Key for DeepL API**
+7. Copy your API key
+
+**API Key Format:**
+- Free tier keys end with `:fx` (e.g., `abc123def456:fx`)
+- Pro keys don't have the `:fx` suffix (e.g., `abc123def456`)
+- The server automatically detects the correct endpoint based on your key
+
+<Tip>
+  Start with the Free API tier - it provides 500,000 characters per month, which is sufficient for most business use cases (approximately 100,000 words).
+</Tip>
+
+### Rate Limits & Pricing
+
+| Plan | Characters/Month | Cost | Best For |
+|------|------------------|------|----------|
+| Free API | 500,000 | $0 | Testing, small projects, individual use |
+| Pro API | Unlimited | $25 per 1M chars | Business use, high volume, teams |
+
+**Character Counting:**
+- Spaces and punctuation count toward your limit
+- HTML/XML tags are not counted
+- Source text is counted, not target text
+- Example: "Hello world" = 11 characters (including space)
+
+**Document Translation Limits:**
+- Free API: Limited document uploads per month
+- Pro API: Higher document limits based on plan
+- File size limits apply (typically 30MB maximum)
+
+<Warning>
+  Monitor your usage regularly. Studio displays your current usage in the server settings, or use the `get_usage` tool to check programmatically.
+</Warning>
+
+### Managing Your API Key in Studio
+
+Your API key is securely stored in NimbleBrain Studio. To update it:
+
+1. Go to **Settings** → **MCP Servers**
+2. Find "DeepL" in your server list
+3. Click **Edit Configuration**
+4. Update your **DEEPL_API_KEY** field
+5. Click **Save**
+
+<Info>
+  Studio automatically manages server connections - no manual restarts required. Changes take effect immediately.
+</Info>
+
+---
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Customer Support">
+    **Scenario:** Respond to international customer inquiries in their native language
+
+    **Prompt:**
+
+```text
+"A customer sent this message in German: 'Ich habe ein Problem mit meiner Bestellung vom 15. Januar. Sie ist noch nicht angekommen.'
+
+Please translate it to English, then help me draft a professional response. Once I approve, translate my response back to German."
+```
+
+    **What happens:**
+    1. Translates customer message: "I have a problem with my order from January 15. It hasn't arrived yet."
+    2. You compose a response in English with the assistant's help
+    3. Translates your response to German with professional formality
+    4. Maintains courteous, professional tone throughout
+
+    **Time:** ~2 seconds per translation
+    **API calls:** 2 (incoming + outgoing)
+
+    <Tip>
+      DeepL automatically maintains appropriate formality levels for customer service contexts. For extra control, specify "formal" or "informal" tone based on your brand voice.
+    </Tip>
+  </Tab>
+
+  <Tab title="Content Localization">
+    **Scenario:** Launch marketing campaigns in multiple markets simultaneously
+
+    **Prompt:**
+
+```text
+"Translate this marketing copy to French, Spanish, German, and Japanese with formal business tone:
+
+'Transform your business with AI-powered automation. Start your free 30-day trial today. No credit card required.'"
+```
+
+    **What happens:**
+    - Translates to all four languages in one request
+    - Maintains marketing impact and persuasiveness
+    - Preserves call-to-action clarity
+    - Adapts cultural nuances for each market
+    - Uses formal business tone across all languages
+
+    **Time:** ~3 seconds
+    **API calls:** 4 (one per language)
+
+    **Results:**
+    - 🇫🇷 French: Professional and persuasive
+    - 🇪🇸 Spanish: Culturally appropriate
+    - 🇩🇪 German: Formal business style
+    - 🇯🇵 Japanese: Respectful business language
+
+    <Note>
+      DeepL's AI understands marketing context and maintains persuasive tone better than literal translations.
+    </Note>
+  </Tab>
+
+  <Tab title="Document Translation">
+    **Scenario:** Translate business contracts and reports while preserving formatting
+
+    **Prompt:**
+
+```text
+"I need to translate our Q4 financial report (PDF) from English to German for our Berlin office. It contains tables, charts, and financial terminology. Please maintain the professional format and accuracy."
+```
+
+    **What happens:**
+    1. Uploads document for translation
+    2. DeepL preserves all formatting, tables, and charts
+    3. Translates financial terminology accurately
+    4. Maintains document structure and layout
+    5. Provides document ID and key for tracking
+
+    **Time:** 1-5 minutes depending on document size
+    **API calls:** 1 upload + periodic status checks
+
+    **Supported Formats:**
+    - PDF (text-based, not scanned)
+    - Microsoft Word (DOCX)
+    - PowerPoint (PPTX)
+    - Excel (XLSX)
+    - HTML files
+    - Plain text (TXT)
+
+    <Warning>
+      Scanned PDFs (images of text) are not supported. Convert to text-based PDF first using OCR software.
+    </Warning>
+  </Tab>
+
+  <Tab title="Email Communication">
+    **Scenario:** Handle international business correspondence professionally
+
+    **Prompt:**
+
+```text
+"I received this email from our Italian partner:
+
+'Gentile signore, vorremmo discutere la proposta per il nuovo progetto. Potremmo organizzare una riunione la prossima settimana?'
+
+Translate it and help me draft a professional response saying we're available Tuesday or Thursday morning. Then translate my response to Italian."
+```
+
+    **What happens:**
+    1. Translates incoming email: "Dear Sir, we would like to discuss the proposal for the new project. Could we arrange a meeting next week?"
+    2. Helps draft appropriate English response
+    3. Translates response to Italian with business formality
+    4. Maintains professional courtesies and tone
+
+    **Time:** ~2-3 seconds
+    **API calls:** 2
+
+    <Tip>
+      DeepL excels at professional correspondence, automatically maintaining appropriate business formality and cultural courtesies.
+    </Tip>
+  </Tab>
+
+  <Tab title="Real-Time Chat">
+    **Scenario:** Enable multilingual team collaboration
+
+    **Prompt:**
+
+```text
+"I'm in a Slack conversation with our Portuguese-speaking developer. Translate our conversation:
+
+Them: 'O código está pronto para revisão. Encontrei um problema com a API.'
+Me: 'Great! Can you describe the API issue? I'll review the code this afternoon.'
+Them: [Next message]"
+```
+
+    **What happens:**
+    - Translates incoming Portuguese: "The code is ready for review. I found an issue with the API."
+    - You respond in English naturally
+    - Translates your responses to Portuguese in real-time
+    - Maintains conversational, professional tone
+    - Preserves technical terminology
+
+    **Time:** ~1 second per message
+    **API calls:** 1 per message (bidirectional)
+
+    <Note>
+      DeepL's context awareness means technical terms like "API" and "code" are handled appropriately in context.
+    </Note>
+  </Tab>
+
+  <Tab title="Glossary Usage">
+    **Scenario:** Maintain consistent brand and product terminology
+
+    **Prompt:**
+
+```text
+"Create a glossary for our product translations English to Spanish:
+- CloudSync → CloudSync (keep in English)
+- dashboard → panel de control
+- premium tier → nivel premium
+- analytics → analíticas
+
+Then translate: 'Upgrade to our premium tier to unlock advanced analytics features in your CloudSync dashboard.'"
+```
+
+    **What happens:**
+    1. Creates custom glossary with your brand terms
+    2. Stores glossary for future use
+    3. Translates text using glossary for consistency
+    4. Result: "Actualiza al nivel premium para desbloquear funciones avanzadas de analíticas en tu panel de control CloudSync."
+    5. Glossary can be reused for all future translations
+
+    **Time:** ~2 seconds
+    **API calls:** 1 (glossary creation) + 1 (translation)
+
+    <Tip>
+      Create glossaries for each language pair and content type. Use them across all your marketing, product, and support content for perfect consistency.
+    </Tip>
+  </Tab>
+
+  <Tab title="Language Detection">
+    **Scenario:** Handle user-submitted content in unknown languages
+
+    **Prompt:**
+
+```text
+"Users are submitting reviews in different languages. Identify and translate these:
+
+1. 'Excelente producto, muy recomendable'
+2. 'Excellent produit, je recommande vivement'
+3. 'Ausgezeichnetes Produkt, sehr empfehlenswert'
+4. '優れた製品、強くお勧めします'"
+```
+
+    **What happens:**
+    1. Detects language of each review automatically
+    2. Identifies: Spanish, French, German, Japanese
+    3. Translates all to English
+    4. Shows confidence levels for each detection
+
+    **Results:**
+    - All translate to: "Excellent product, highly recommended"
+    - Demonstrates consistency across languages
+
+    **Time:** ~2 seconds total
+    **API calls:** 4 (detection is included in translation)
+
+    <Note>
+      DeepL's language detection is highly accurate and works even with short text snippets, slang, and mixed-language content.
+    </Note>
+  </Tab>
+
+  <Tab title="Bulk Translation">
+    **Scenario:** Efficiently translate multiple related items
+
+    **Prompt:**
+
+```text
+"Translate these product descriptions to German for our e-commerce site:
+
+1. Premium leather wallet with RFID protection
+2. Stainless steel smartwatch with fitness tracking
+3. Wireless noise-cancelling headphones
+4. Portable solar charger for outdoor use
+5. Ergonomic laptop stand with cooling"
+```
+
+    **What happens:**
+    - Processes all items in a single API request
+    - Maintains consistency across descriptions
+    - Preserves product terminology
+    - Optimizes character usage (more efficient than 5 separate requests)
+    - Translates with appropriate formality for e-commerce
+
+    **Time:** ~2 seconds for all items
+    **API calls:** 1 (batch request)
+
+    **Character savings:** Batch requests are more efficient than individual translations
+
+    <Tip>
+      Group related translations together to optimize both speed and character usage. Perfect for product catalogs, FAQ pages, and menu items.
+    </Tip>
+  </Tab>
+</Tabs>
+
+<Note>
+  All examples work in NimbleBrain Studio's natural language interface - no code required!
+</Note>
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Character Limit Exceeded" icon="triangle-exclamation">
+    **Error Message:**
+
+```
+403 Forbidden - Character limit exceeded
+```
+
+    **Cause:** You've exceeded your monthly character limit (500,000 for Free API, or your Pro plan limit)
+
+    **Solutions:**
+
+    1. **Check your current usage:**
+       - Use Studio's server settings to view usage metrics
+       - Or ask: "How much of my DeepL quota have I used?"
+
+    2. **Wait for limit reset:**
+       - Free tier resets on the 1st of each month
+       - Pro tier depends on your billing cycle
+
+    3. **Upgrade your plan:**
+       - Visit [deepl.com/pro-api](https://www.deepl.com/pro-api)
+       - Upgrade to Pro API ($25 per 1M characters)
+
+    4. **Optimize usage:**
+       - Use batch translations to reduce overhead
+       - Avoid translating the same text multiple times
+       - Cache common translations in your application
+       - Remove unnecessary formatting before translation
+
+    <Tip>
+      Set up usage alerts in Studio to notify you when approaching your limit. Monitor usage regularly with the `get_usage` tool.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Invalid API Key" icon="key">
+    **Error Message:**
+
+```
+401 Unauthorized - Invalid API key
+```
+
+    **Cause:** API key is incorrect, expired, or improperly formatted
+
+    **Solutions:**
+
+    1. **Verify your API key:**
+       - Log in to your DeepL account at [deepl.com](https://www.deepl.com)
+       - Go to **Account Settings**
+       - Copy your API key exactly (including `:fx` suffix for Free tier)
+       - Check for no extra spaces or characters
+
+    2. **Update in Studio:**
+       - Go to **Settings** → **MCP Servers**
+       - Find "DeepL" in the list
+       - Click **Edit Configuration**
+       - Paste the correct API key in **DEEPL_API_KEY** field
+       - Click **Save**
+
+    3. **Verify API tier:**
+       - Free API keys end with `:fx`
+       - Pro API keys don't have the suffix
+       - Make sure you're using the correct key for your plan
+
+    4. **Check account status:**
+       - Ensure your DeepL account is active
+       - Verify email address if newly registered
+       - Check for any account suspension notices
+
+    <Warning>
+      Free and Pro API keys use different endpoints. Studio automatically detects the correct endpoint based on your key format (`:fx` suffix = Free API).
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Unsupported Language Pair" icon="globe">
+    **Error Message:**
+
+```
+400 Bad Request - Language not supported
+```
+
+    **Cause:** Requested language is not supported by DeepL, or language pair is invalid
+
+    **Solutions:**
+
+    1. **Check supported languages:**
+       - Ask Studio: "What languages does DeepL support?"
+       - Visit [deepl.com/docs-api](https://www.deepl.com/docs-api/translate-text/)
+
+    2. **Verify language codes:**
+       - Use standard language codes (e.g., "EN", "DE", "FR")
+       - English variants: "EN-US" (American), "EN-GB" (British)
+       - Portuguese variants: "PT-PT" (European), "PT-BR" (Brazilian)
+       - Chinese: "ZH" (simplified)
+
+    3. **Use bridge translation:**
+       - If direct pair isn't supported, translate through English
+       - Example: Language A → English → Language B
+
+    **Supported Languages:**
+
+    **European:** Bulgarian (BG), Czech (CS), Danish (DA), German (DE), Greek (EL), English (EN), Spanish (ES), Estonian (ET), Finnish (FI), French (FR), Hungarian (HU), Indonesian (ID), Italian (IT), Lithuanian (LT), Latvian (LV), Dutch (NL), Polish (PL), Portuguese (PT), Romanian (RO), Russian (RU), Slovak (SK), Slovenian (SL), Swedish (SV), Turkish (TR), Ukrainian (UK)
+
+    **Asian:** Chinese (ZH), Japanese (JA), Korean (KO)
+
+    <Tip>
+      When in doubt about language codes, use the `list_languages` tool to see all supported languages with their codes.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Translation Quality Issues" icon="spell-check">
+    **Issue:** Translation doesn't sound natural or misses context
+
+    **Not an error, but here's how to improve quality:**
+
+    1. **Provide more context:**
+       - Include surrounding sentences
+       - Specify the domain (business, technical, casual)
+       - Mention the target audience
+
+    2. **Use formality control:**
+       - Specify formal or informal tone
+       - Languages with formality: German, French, Spanish, Italian, Dutch, Polish, Russian, Japanese
+
+    3. **Create glossaries:**
+       - Define how specific terms should be translated
+       - Maintain consistency across all content
+       - Especially important for brand names and technical terms
+
+    4. **Better prompts:**
+
+       ❌ **Poor:** "Translate to French: bank"
+
+       ✅ **Better:** "Translate to French (financial context, formal business tone): 'Please check your bank account balance for the recent transaction.'"
+
+    5. **Batch related content:**
+       - Translate related sentences together
+       - DeepL uses context from surrounding text
+       - Better results than translating sentence by sentence
+
+    <Note>
+      DeepL's AI performs best with complete sentences and clear context. The more information you provide about the intended use and audience, the better the translation quality.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Server Not Responding" icon="server">
+    **Error Message:**
+
+```
+Connection timeout
+```
+or
+```
+Server not responding
+```
+
+    **Cause:** Network connectivity issue or service temporarily unavailable
+
+    **Solutions:**
+
+    1. **Check your internet connection:**
+       - Verify you can access other websites
+       - Check your network status
+
+    2. **Verify server status in Studio:**
+       - Go to **Settings** → **MCP Servers**
+       - Find "DeepL" in the list
+       - Check if status shows "Active" or "Inactive"
+
+    3. **Try toggling the server:**
+       - Click "DeepL" in your server list
+       - Toggle it **Off**, wait 5 seconds
+       - Toggle it **On** again
+
+    4. **Check DeepL API status:**
+       - Visit [status.deepl.com](https://status.deepl.com) (if available)
+       - Check DeepL's Twitter/X for service announcements
+
+    5. **Check Studio status:**
+       - Verify NimbleBrain Studio is fully operational
+       - Check for any maintenance notifications
+
+    <Info>
+      Studio manages all server infrastructure automatically - there's no local setup or Docker containers to troubleshoot. If issues persist after toggling, contact support.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Document Translation Failed" icon="file-circle-xmark">
+    **Error Message:**
+
+```
+Document translation failed
+```
+or
+```
+Unsupported file format
+```
+
+    **Cause:** Unsupported format, file too large, or file is corrupted
+
+    **Solutions:**
+
+    1. **Verify file format:**
+       - ✅ Supported: PDF (text-based), DOCX, PPTX, XLSX, HTML, TXT
+       - ❌ Not supported: Scanned PDFs (images), JPG, PNG, audio, video
+
+    2. **Check file size:**
+       - Maximum file size: typically 30MB
+       - For larger files, split into smaller sections
+       - Compress images in Office documents
+
+    3. **Ensure file isn't password-protected:**
+       - Remove password protection before translation
+       - DeepL cannot access encrypted documents
+
+    4. **For scanned PDFs:**
+       - Use OCR software to convert to text-based PDF
+       - Try Adobe Acrobat, Abbyy FineReader, or online OCR tools
+       - Then translate the text-based version
+
+    5. **Try alternative format:**
+       - Convert PDF to DOCX
+       - Save PPTX as PDF
+       - Extract text and translate as plain text
+
+    6. **Check document status:**
+       - Use `get_document_status` to see detailed error
+       - Document may be queued or still processing
+
+    **Document Translation Process:**
+    1. Upload document → Get document_id and document_key
+    2. Check status periodically → Status: queued → translating → done
+    3. Download when status = done
+
+    <Warning>
+      Document translation is asynchronous. Large documents may take several minutes. Don't attempt to download before status shows "done".
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Glossary Not Applied" icon="book-open">
+    **Issue:** Translations don't use glossary terms as expected
+
+    **Cause:** Glossary not ready, wrong language pair, or terms not matching exactly
+
+    **Solutions:**
+
+    1. **Verify glossary is ready:**
+       - Use `list_glossaries` to check status
+       - Look for `"ready": true` in glossary details
+       - Newly created glossaries may take a few seconds to activate
+
+    2. **Check language pair match:**
+       - Glossary source/target must match translation request
+       - If glossary is EN→DE, must translate EN→DE
+       - Cannot use EN→DE glossary for EN→FR translation
+
+    3. **Verify exact term matching:**
+       - Glossary terms must match exactly (case-sensitive)
+       - "Smartphone" ≠ "smartphone"
+       - Include common variations if needed
+
+    4. **Use `translate_with_glossary` tool:**
+       - Don't use regular `translate_text` with glossary ID
+       - Use the dedicated `translate_with_glossary` tool
+       - Provide correct glossary_id parameter
+
+    5. **Check glossary entries:**
+       - Use `get_glossary` to view details
+       - Verify your terms are in the glossary
+       - Ensure entry_count matches expected number
+
+    <Tip>
+      Create comprehensive glossaries with all variations of important terms. Include plural forms, capitalized versions, and common misspellings for best coverage.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Slow Response Times" icon="hourglass">
+    **Issue:** Translations taking longer than expected
+
+    **Expected Performance:**
+    - Short text (< 100 characters): < 1 second
+    - Medium text (100-1000 characters): 1-2 seconds
+    - Large text (1000+ characters): 2-5 seconds
+    - Document translation: 1-10 minutes depending on size
+
+    **If slower than expected:**
+
+    1. **Check text length:**
+       - Very long texts take longer to process
+       - Consider breaking into smaller chunks
+       - Use batch translation for multiple items
+
+    2. **Network latency:**
+       - Check your internet speed
+       - DeepL API is hosted in Europe (faster for EU users)
+       - Studio optimizes routing automatically
+
+    3. **API load:**
+       - DeepL may be experiencing high traffic
+       - Pro API tier gets priority processing
+       - Free tier may have lower priority during peak times
+
+    4. **Optimize requests:**
+       - Batch related translations together
+       - Cache frequently translated content
+       - Avoid unnecessary re-translations
+
+    <Note>
+      Studio automatically handles request optimization and retry logic. If you consistently experience slow responses, consider upgrading to Pro API for priority processing.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="For Best Translation Quality" icon="star">
+    - Provide full sentences with context
+    - Specify formality level when appropriate
+    - Use glossaries for consistent terminology
+    - Batch related content together
+    - Include target audience information
+    - Specify industry or domain when relevant
+  </Card>
+
+  <Card title="For Cost Optimization" icon="piggy-bank">
+    - Monitor usage with `get_usage` tool
+    - Use batch translations when possible
+    - Cache common translations
+    - Remove unnecessary formatting
+    - Avoid re-translating unchanged content
+    - Set up usage alerts in Studio
+  </Card>
+
+  <Card title="For Team Workflows" icon="users">
+    - Create shared glossaries for brand terms
+    - Document your language code standards
+    - Establish formality guidelines per market
+    - Share translated content templates
+    - Set up approval workflows for translations
+    - Track usage across team members
+  </Card>
+
+  <Card title="For Security & Compliance" icon="shield">
+    - Don't translate confidential data without review
+    - Check DeepL's data processing terms
+    - Use Pro tier for business-critical content
+    - Implement human review for legal/medical
+    - Keep API keys secure in Studio
+    - Rotate keys regularly for security
+  </Card>
+</CardGroup>
+
+---
+
+## Supported Languages
+
+DeepL supports 30+ languages with professional quality:
+
+**Full Support (Source & Target):**
+- 🇬🇧 English (EN-US, EN-GB)
+- 🇩🇪 German (DE)
+- 🇫🇷 French (FR)
+- 🇪🇸 Spanish (ES)
+- 🇮🇹 Italian (IT)
+- 🇵🇹 Portuguese (PT-PT, PT-BR)
+- 🇳🇱 Dutch (NL)
+- 🇵🇱 Polish (PL)
+- 🇷🇺 Russian (RU)
+- 🇯🇵 Japanese (JA)
+- 🇨🇳 Chinese Simplified (ZH)
+- 🇰🇷 Korean (KO)
+
+**Additional Languages:**
+Bulgarian (BG), Czech (CS), Danish (DA), Greek (EL), Estonian (ET), Finnish (FI), Hungarian (HU), Indonesian (ID), Lithuanian (LT), Latvian (LV), Romanian (RO), Slovak (SK), Slovenian (SL), Swedish (SV), Turkish (TR), Ukrainian (UK)
+
+**Formality Support:**
+German, French, Spanish, Italian, Dutch, Polish, Russian, Japanese support formal/informal tone control.
+
+<Note>
+  Use the `list_languages` tool to get the most up-to-date list of supported languages and their capabilities.
+</Note>
+
+---
+
+## Links & Resources
+
+<CardGroup cols={2}>
+  <Card title="GitHub Repository" icon="github" href="https://github.com/NimbleBrainInc/mcp-deepl">
+    View source code, report issues, and contribute
+  </Card>
+
+  <Card title="DeepL API Documentation" icon="book" href="https://www.deepl.com/docs-api">
+    Official DeepL API reference and guides
+  </Card>
+
+  <Card title="Get API Key" icon="key" href="https://www.deepl.com/pro-api">
+    Sign up for DeepL API (Free or Pro)
+  </Card>
+
+  <Card title="NimbleBrain Studio" icon="brain" href="https://studio.nimblebrain.ai">
+    Access your Studio workspace
+  </Card>
+
+  <Card title="Report Issues" icon="bug" href="https://github.com/NimbleBrainInc/mcp-deepl/issues">
+    Found a bug? Submit an issue on GitHub
+  </Card>
+
+  <Card title="DeepL Account" icon="user" href="https://www.deepl.com/account">
+    Manage your API keys and usage
+  </Card>
+</CardGroup>
+
+## Related MCP Servers
+
+<CardGroup cols={3}>
+  <Card title="Gmail" icon="envelope" href="/mcp-servers/productivity/gmail">
+    Translate emails automatically
+  </Card>
+
+  <Card title="Slack" icon="slack" href="/mcp-servers/productivity/slack">
+    Real-time message translation
+  </Card>
+
+  <Card title="Google Docs" icon="file-lines" href="/mcp-servers/productivity/google-docs">
+    Translate documents in place
+  </Card>
+
+  <Card title="Google Translate" icon="language" href="/mcp-servers/language/google-translate">
+    Alternative translation service
+  </Card>
+
+  <Card title="Azure Translator" icon="microsoft" href="/mcp-servers/language/azure-translator">
+    Microsoft translation service
+  </Card>
+
+  <Card title="Notion" icon="file-lines" href="/mcp-servers/productivity/notion">
+    Translate Notion content
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://discord.gg/nimblebrain) or email support@nimblebrain.ai

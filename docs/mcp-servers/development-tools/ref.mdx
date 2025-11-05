@@ -1,0 +1,2330 @@
+---
+title: 'Ref MCP Server'
+description: 'Token-efficient access to technical documentation, API references, and library docs'
+icon: 'book-open-reader'
+---
+
+<CardGroup cols={2}>
+  <Card title="Token-Efficient Documentation" icon="microchip">
+    Access 1000s of documentation sites using 60-95% fewer tokens than traditional tools. Smart session-aware filtering keeps your context clean and AI accurate.
+  </Card>
+  <Card title="Never Repeat Results" icon="arrows-rotate">
+    Session-aware de-duplication ensures you never see the same documentation twice. Refine your search naturally without context bloat.
+  </Card>
+</CardGroup>
+
+## Overview
+
+Ref MCP Server gives your AI coding assistant instant access to up-to-date technical documentation for APIs, libraries, frameworks, and services - while using minimal tokens to keep your context window clean and your AI sharp.
+
+**The Problem:** Traditional documentation tools dump 10k-20k+ tokens of mostly irrelevant content into your context. This makes models measurably worse and wastes money on expensive API calls.
+
+**The Solution:** Ref intelligently searches documentation, filters results based on your session history, and returns only the ~500-5k most relevant tokens. The result? 60-95% fewer tokens, better AI responses, and faster development.
+
+**Perfect for:**
+- API integration and implementation
+- Library documentation lookup without leaving your AI assistant
+- Framework reference and best practices
+- Debugging with context from documentation
+- Third-party SDK integration
+- Private codebase documentation search
+- Technical decision-making research
+- Learning new technologies efficiently
+
+**Core capabilities:**
+- **Smart Search**: Search 1000+ indexed documentation sites
+- **Session Awareness**: Never returns duplicate results in the same conversation
+- **Intelligent Filtering**: Returns ~5k relevant tokens from large pages (vs 20k+ with traditional fetch)
+- **Public Documentation**: APIs, libraries, frameworks, databases (free tier)
+- **Private Documentation**: GitHub repos, PDFs, internal wikis (Pro tier)
+- **URL-to-Markdown**: Convert any web page to clean markdown
+- **Fallback Web Search**: Find content not in indexed docs
+
+<Info>
+**Token Efficiency Example:** Looking up a Figma API endpoint takes 439 tokens (54 search + 385 read) vs 10,000+ tokens with traditional tools. That's **95% fewer tokens**.
+</Info>
+
+## Why Ref vs Alternatives?
+
+<AccordionGroup>
+  <Accordion title="vs Context7 and Similar Tools" icon="scale-balanced">
+    **Traditional documentation tools approach:**
+    - Look up a library → automatically returns 10k most relevant tokens
+    - 2 libraries = 20k tokens dumped into context
+    - No filtering or de-duplication
+    - Full documentation dumps whether you need them or not
+
+    **Ref's intelligent approach:**
+    - Session-aware search → finds exact context needed
+    - Returns ~500-5k tokens depending on query specificity
+    - Smart de-duplication across searches prevents repetition
+    - Progressive refinement without token waste
+    - **Average 60% fewer tokens, up to 95% reduction**
+
+    <Tip>
+      **Real Example:** Figma API endpoint lookup = 54 tokens (search) + 385 tokens (read) = **439 total**
+
+      Traditional tool = 10,000+ tokens automatically
+
+      **Savings: 95%**
+    </Tip>
+  </Accordion>
+
+  <Accordion title="vs Manual Web Scraping (fetch)" icon="globe">
+    **Problems with traditional fetch() / web scraping:**
+    - Large documentation pages = 20k+ tokens dumped into context
+    - Mostly irrelevant content included (nav, footers, sidebars)
+    - No de-duplication between searches
+    - Context rot from excessive tokens
+    - Models get measurably worse as context fills up
+
+    **Ref's advantages:**
+    - Pre-indexed documentation sites (instant search)
+    - Smart relevance filtering based on your query
+    - Session history prevents duplicate results
+    - Clean markdown conversion
+    - Returns only the ~5k most relevant tokens
+
+    <Warning>
+      **Research shows:** Models get measurably worse as you add more tokens. Ref keeps your context clean. [Watch this video from Chroma](https://www.youtube.com/watch?v=TUjQuC4ugak) on context rot.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Private Documentation Support" icon="lock">
+    Unlike most documentation tools, Ref supports private documentation:
+
+    **Supported private sources:**
+    - Private GitHub repositories
+    - Custom PDF documentation
+    - Internal wiki pages
+    - Proprietary codebases
+
+    **Perfect for:**
+    - Enterprise internal tools documentation
+    - Private SDK documentation
+    - Custom framework references
+    - Confidential API documentation
+    - Company knowledge bases
+
+    **Setup process:**
+    1. Upgrade to Pro plan ($29/mo)
+    2. Email hello@ref.tools with repository URLs or PDF files
+    3. Grant read access to specified repositories
+    4. Wait 24-48 hours for indexing
+    5. Search with natural language (Ref automatically searches private docs)
+
+    <Info>
+      Private documentation is never shared and only accessible with your API key.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Session-Aware De-Duplication" icon="clock-rotate-left">
+    **How it works:**
+
+    Ref tracks every search and read in your conversation. When you refine your query or ask follow-up questions, Ref automatically filters out results you've already seen.
+
+    **Example workflow:**
+
+    1. "How do I authenticate with the Stripe API?"
+       → Returns authentication overview
+
+    2. "Show me code examples for payment intents"
+       → Returns payment intent examples (NO repetition of auth info)
+
+    3. "What about error handling for declined payments?"
+       → Returns error handling (NO repetition of previous results)
+
+    **Benefits:**
+    - Progressive refinement without duplication
+    - Cleaner context window
+    - More room for relevant information
+    - Better AI responses
+
+    <Tip>
+      This is automatic - you don't need to manage it. Just ask follow-up questions naturally.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+## Quick Start
+
+<Steps>
+  <Step title="Get Your API Key">
+    Sign up for a Ref account at [ref.tools/signup](https://ref.tools/signup)
+
+    **Free Tier Includes:**
+    - Unlimited searches (fair use)
+    - Access to 1000s of public documentation sites
+    - GitHub public repository search
+    - Smart token-efficient retrieval
+    - Session-aware de-duplication
+    - URL-to-markdown conversion
+
+    **After signing up:**
+    1. Check your email and verify your account
+    2. Navigate to [ref.tools/dashboard](https://ref.tools/dashboard)
+    3. Copy your API key from the dashboard
+
+    <Info>
+      Free tier is perfect for individual developers. Paid tiers add private repository indexing and PDF documentation support.
+    </Info>
+  </Step>
+
+  <Step title="Add to NimbleBrain Studio">
+    In NimbleBrain Studio:
+
+    1. Navigate to **MCP Servers** in the sidebar
+    2. Click **Add Server** or **Browse Registry**
+    3. Search for "Ref" in the server registry
+    4. Click **Add to Workspace**
+    5. In the configuration dialog:
+       - Server Name: **Ref**
+       - Environment Variables:
+         - Key: `REF_API_KEY`
+         - Value: [Paste your API key]
+    6. Click **Save & Enable**
+
+    <Tip>
+      Ref uses streamable HTTP transport for optimal performance in Studio. No local server installation needed!
+    </Tip>
+  </Step>
+
+  <Step title="Test the Connection">
+    Open a new playbook in Studio and try this prompt:
+
+    **"Search for documentation on how to authenticate with the Stripe API"**
+
+    You should see concise, relevant documentation with source links. Something like:
+    ```
+    Authentication - Stripe API
+    URL: https://stripe.com/docs/api/authentication
+    Overview: Use personal access tokens or OAuth 2.0...
+    ```
+
+    **Follow-up prompt to test session awareness:**
+
+    **"Show me code examples for creating a payment intent"**
+
+    You should see payment intent examples WITHOUT any repetition of the authentication info from your first search.
+
+    <Note>
+      Notice how Ref never repeats results from your first search - it's session-aware!
+    </Note>
+  </Step>
+</Steps>
+
+## Supported Documentation
+
+Ref indexes 1000+ documentation sites and public repositories, including:
+
+<CardGroup cols={4}>
+  <Card title="Languages" icon="code">
+    - Python
+    - JavaScript/TypeScript
+    - Go
+    - Rust
+    - Java
+    - Ruby
+    - PHP
+    - C#/.NET
+    - Swift
+    - Kotlin
+    - + many more
+  </Card>
+
+  <Card title="Frameworks" icon="layer-group">
+    - React/Next.js
+    - Vue/Nuxt
+    - Angular/Svelte
+    - Django/Flask
+    - FastAPI
+    - Rails
+    - Express/NestJS
+    - Spring Boot
+    - Laravel
+    - ASP.NET Core
+  </Card>
+
+  <Card title="Cloud & APIs" icon="cloud">
+    - AWS Services
+    - Google Cloud
+    - Azure
+    - Stripe
+    - Twilio
+    - SendGrid
+    - OpenAI
+    - Anthropic
+    - GitHub
+    - Firebase/Supabase
+  </Card>
+
+  <Card title="Tools & Databases" icon="database">
+    - Docker
+    - Kubernetes
+    - Terraform
+    - PostgreSQL
+    - MongoDB
+    - Redis
+    - Elasticsearch
+    - Git
+    - n8n
+    - Figma API
+  </Card>
+</CardGroup>
+
+<Note>
+  **Missing a documentation site?** Email hello@ref.tools with the URL and they'll add it to the index. Most popular libraries are already included.
+</Note>
+
+## Available Tools
+
+<AccordionGroup>
+  <Accordion title="ref_search_documentation - Search Technical Documentation" icon="magnifying-glass">
+    Search for relevant documentation from 1000+ indexed sources including public APIs, libraries, frameworks, and private repositories.
+
+    **How it works:**
+    - Searches across indexed documentation sites and GitHub
+    - Intelligently ranks results by relevance to your query
+    - Filters out duplicate content from your session history
+    - Returns concise summaries with source URLs
+    - Uses minimal tokens (~54 tokens for a typical query)
+    - Session-aware: never returns results you've already seen
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | `query` | string | Yes | Full sentence or question about documentation you need. Include programming language and framework/library names for best results. |
+
+    **Returns:**
+    - List of relevant documentation pages
+    - Brief overview/excerpt of each result
+    - URL for each result (use with `ref_read_url` to read full content)
+    - Module ID for tracking
+    - Filtered to remove results from previous searches in this session
+
+    **Natural language examples:**
+
+    **API Integration:**
+    - "How do I handle authentication in the Figma REST API?"
+    - "What's the endpoint for sending SMS with Twilio?"
+    - "How do I create a Stripe payment intent?"
+
+    **Library Documentation:**
+    - "React useEffect cleanup function best practices"
+    - "Python asyncio error handling patterns"
+    - "How do I use React Query for data fetching?"
+
+    **Framework Guides:**
+    - "Next.js server-side rendering vs static generation"
+    - "Django authentication with JWT tokens"
+    - "FastAPI dependency injection examples"
+
+    **Debugging:**
+    - "Solutions for 'Cannot read property of undefined' in React"
+    - "Python asyncio event loop already running error"
+    - "PostgreSQL connection pool exhausted"
+
+    **Example Search Response:**
+```json
+    {
+      "overview": "Authentication - Figma API. Use personal access tokens...",
+      "url": "https://www.figma.com/developers/api#authentication",
+      "moduleId": "figma-api-auth"
+    }
+```
+
+    <Tip>
+      **Token Usage:** A typical search uses ~54 tokens. Compare this to traditional tools that dump 10k+ tokens automatically.
+    </Tip>
+
+    **Advanced Usage:**
+
+    **Specific keywords:**
+    "Search for React hooks documentation, focusing on useEffect and useCallback"
+
+    **Version-specific:**
+    "What changed in Express.js version 5 from v4?"
+
+    **Private documentation (Pro tier):**
+    "Search my private company docs for authentication patterns"
+    (Add `ref_src=private` to query for private docs)
+
+    **API endpoints:**
+    "Find the Twilio endpoint for sending SMS messages"
+
+    **Code examples:**
+    "Show me code examples for PostgreSQL connection pooling in Node.js"
+
+    <Info>
+      **Session Awareness:** Ref tracks your search history. Refining your query won't return duplicate results from previous searches - this keeps your context clean!
+    </Info>
+  </Accordion>
+
+  <Accordion title="ref_read_url - Fetch and Convert Documentation" icon="file-lines">
+    Fetch content from a URL and convert it to clean, readable markdown optimized for LLM consumption.
+
+    **How it works:**
+    - Fetches the web page content
+    - Converts HTML to clean markdown
+    - Uses session search history to filter irrelevant sections
+    - Returns ~5k most relevant tokens from large pages
+    - Prevents 20k+ token dumps that cause context rot
+    - Preserves code blocks and formatting
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | `url` | string | Yes | Full URL of the documentation page to read. Should be a URL from `ref_search_documentation` results for best filtering. |
+
+    **Returns:**
+    - Markdown-formatted content
+    - Intelligently filtered to most relevant sections (~5k tokens)
+    - Preserves code blocks, syntax highlighting, and formatting
+    - Includes page metadata
+    - Clean, LLM-optimized output
+
+    **Natural language examples:**
+
+    **After searching:**
+    "Read the first result about Stripe authentication"
+
+    **With specific URL:**
+    "Read this Stripe API page: https://stripe.com/docs/api/payment_intents/create"
+
+    **For any web page:**
+    "Fetch and read this GitHub README: https://github.com/example/project"
+
+    **For blog posts:**
+    "Read this blog post about React performance optimization"
+
+    **Example Read Response:**
+```markdown
+    # Create a Payment Intent
+
+    Creates a PaymentIntent object. After creating a PaymentIntent...
+
+    ## Parameters
+    - amount (required): Amount intended to be collected by this PaymentIntent
+    - currency (required): Three-letter ISO currency code
+    - payment_method_types (optional): Payment method types to use
+
+    ## Code Example
+
+    import stripe
+    stripe.api_key = "sk_test_..."
+
+    intent = stripe.PaymentIntent.create(
+      amount=2000,
+      currency="usd"
+    )
+
+    ## Returns
+    Returns a PaymentIntent object if successful...
+
+    [~5k tokens of relevant content, filtered based on your search context]
+```
+
+    <Warning>
+      **Without Ref:** Standard web scraping can pull 20k+ tokens from large documentation pages, mostly irrelevant content (navigation, footers, sidebars).
+
+      **With Ref:** Smart filtering returns ~5k most relevant tokens based on your search context. **60-80% token savings.**
+    </Warning>
+
+    **Best Practices:**
+
+    1. **Use with search results:**
+       - First: Search for documentation
+       - Then: Read the most relevant result URL
+       - Benefit: Context-aware filtering gives you exactly what you need
+
+    2. **Works on any URL:**
+       - Documentation sites
+       - GitHub READMEs
+       - Blog posts
+       - Stack Overflow answers
+       - Tutorial sites
+
+    3. **Progressive reading:**
+       - Read one URL at a time
+       - Ask follow-up questions
+       - Read additional URLs as needed
+       - Session awareness prevents duplication
+
+    <Tip>
+      **Token Efficiency:** Reading a documentation page uses ~385-5,000 tokens (depending on page size and relevance filtering) vs 20,000+ tokens with standard fetch.
+    </Tip>
+
+    **Example Workflow:**
+
+    1. **Search:** "Stripe payment intent documentation"
+       → Returns list of relevant pages (~54 tokens)
+
+    2. **Read:** Use `ref_read_url` on the most relevant result
+       → Returns filtered markdown (~385 tokens)
+
+    3. **Total:** ~439 tokens for complete context
+       → Traditional tool: 10,000+ tokens
+       → **Savings: 95%**
+  </Accordion>
+</AccordionGroup>
+
+## Tool Selection Logic
+
+<Note>
+  **You don't need to choose tools manually!**
+
+  Ref's AI agent automatically selects the right tool based on your natural language query:
+
+  - **"How do I..." / "What is..." / "Show me..."** → `ref_search_documentation`
+  - **"Read this URL..." / "Fetch this page..."** → `ref_read_url`
+  - **"Search for..."** → `ref_search_documentation`
+
+  Just ask your question naturally and let Ref handle the rest.
+</Note>
+
+## Authentication & Configuration
+
+<Info>
+  **API Key Required**: This server requires a Ref API key for access to documentation search. Sign up at [ref.tools/signup](https://ref.tools/signup).
+</Info>
+
+### Getting Your API Key
+
+<Steps>
+  <Step title="Create Account">
+    Visit [ref.tools/signup](https://ref.tools/signup) and create an account with your email address.
+  </Step>
+
+  <Step title="Verify Email">
+    Check your email and click the verification link. This is required to access the API.
+  </Step>
+
+  <Step title="Get API Key">
+    Navigate to [ref.tools/dashboard](https://ref.tools/dashboard) and copy your API key from the dashboard.
+  </Step>
+
+  <Step title="Add to Studio">
+    In NimbleBrain Studio:
+    1. Go to **Settings** → **MCP Servers** → **Ref**
+    2. Add environment variable: `REF_API_KEY` = [your key]
+    3. Save changes
+  </Step>
+</Steps>
+
+<Tip>
+  Free tier is unlimited searches (fair use) and includes all public documentation - perfect for most development needs.
+</Tip>
+
+### Rate Limits & Pricing
+
+| Plan | Searches | Features | Price |
+|------|----------|----------|-------|
+| **Free** | Unlimited* | Public docs, GitHub public repos, URL reading, session awareness | **$0** |
+| **Pro** | Unlimited | + Private GitHub repos, PDF docs, priority indexing | **$29/mo** |
+| **Team** | Unlimited | + Team sharing, admin controls, usage analytics | **$99/mo** |
+| **Enterprise** | Unlimited | + Custom indexing, SLA, dedicated support, on-premise | **Custom** |
+
+***Fair use applies to free tier. Contact hello@ref.tools for high-volume needs.*
+
+**Token Usage (not API calls):**
+- Average search: ~54 tokens
+- Average read: ~385-5,000 tokens (intelligently filtered)
+- No duplicate results in same session
+- 60-95% more efficient than alternatives
+
+**Cost comparison (using Claude Opus API pricing):**
+
+Traditional documentation tool:
+- Pulls 10k tokens per library lookup
+- 2 libraries = 20k tokens = $0.30 per conversation
+- 10 step conversation = $3.00 in documentation tokens
+
+Ref:
+- Search + read = ~500-5k tokens per lookup
+- 2 libraries = ~2k tokens = $0.03 per conversation
+- 10 step conversation = $0.30 in documentation tokens
+
+**Savings: 90% on documentation token costs**
+
+<Warning>
+  While searches are unlimited, be mindful of token usage in your LLM context window. Ref optimizes for minimal token consumption.
+</Warning>
+
+### Managing Your API Key in Studio
+
+Your API key is securely stored in NimbleBrain Studio's environment variables.
+
+**To update your API key:**
+
+1. Go to **Settings** → **MCP Servers**
+2. Find "Ref" in your server list
+3. Click **Edit Configuration**
+4. Update the `REF_API_KEY` environment variable
+5. Click **Save**
+6. Restart the server if needed (Studio usually does this automatically)
+
+<Info>
+  Studio uses Ref's streamable HTTP transport for optimal performance - no local server installation or Docker required!
+</Info>
+
+### Private Documentation Setup
+
+To index private GitHub repositories or PDF documentation:
+
+<Steps>
+  <Step title="Upgrade to Pro Plan">
+    Private documentation indexing requires a Pro plan ($29/mo) or higher. Upgrade at [ref.tools/dashboard](https://ref.tools/dashboard).
+  </Step>
+
+  <Step title="Contact Ref Team">
+    Email hello@ref.tools with:
+    - Your Ref account email
+    - GitHub organization name (if applicable)
+    - Repository URLs to index
+    - PDF documentation files to upload (if any)
+    - Internal wiki URLs (if crawlable)
+  </Step>
+
+  <Step title="Grant Access">
+    For GitHub repositories:
+    - Add Ref bot as a collaborator (they'll provide the bot account)
+    - Or provide a fine-grained personal access token with read access
+
+    For PDFs:
+    - Upload files via the process Ref provides
+    - Or email them directly (if not too large)
+  </Step>
+
+  <Step title="Wait for Indexing">
+    Ref will notify you when indexing is complete:
+    - Initial indexing: 24-48 hours
+    - Incremental updates: Automatic
+    - Re-indexing frequency: Configurable
+  </Step>
+
+  <Step title="Search Private Docs">
+    Once indexed, search your private docs naturally:
+    - "Search my private company docs for authentication patterns"
+    - "Find documentation in our internal repos about payment processing"
+    - Add `ref_src=private` to explicitly search only private docs
+    - Or use "all" to search both public and private
+  </Step>
+</Steps>
+
+<Tip>
+  Private documentation is only accessible with your API key and never shared with other users.
+</Tip>
+
+### Security Best Practices
+
+<AccordionGroup>
+  <Accordion title="Protect Your API Key" icon="lock">
+    Your Ref API key grants access to your documentation index and private repos:
+
+    **Do:**
+    - ✅ Store key securely in Studio environment variables
+    - ✅ Never commit keys to version control
+    - ✅ Rotate keys periodically (every 90 days recommended)
+    - ✅ Use separate keys for different environments (dev/staging/prod)
+    - ✅ Monitor usage for unexpected activity in dashboard
+
+    **Don't:**
+    - ❌ Share your API key publicly
+    - ❌ Hardcode keys in source code
+    - ❌ Use production keys in development
+    - ❌ Share keys between team members (use Team plan)
+
+    <Warning>
+      If your key is compromised, regenerate it immediately from your Ref dashboard. Old keys are instantly revoked.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Private Repository Security" icon="shield">
+    When using private repository indexing:
+
+    **Access Control:**
+    - Only grant read access to necessary repositories
+    - Use fine-grained personal access tokens (not full repo access)
+    - Regularly audit indexed repositories in dashboard
+    - Remove access when team members leave
+    - Monitor search queries for sensitive data exposure
+
+    **Data Privacy:**
+    - Ref only indexes repositories you explicitly authorize
+    - Never stores repository credentials
+    - Doesn't re-share your private documentation
+    - Complies with GitHub's data usage policies
+    - Can delete indexed data on request
+
+    <Info>
+      Ref indexes content but never stores your GitHub credentials. Access tokens are used once for indexing and not retained.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Context Window Management" icon="memory">
+    Even with token-efficient search, monitor your context usage:
+
+    **Best Practices:**
+    - Track total tokens in conversation (Studio shows this)
+    - Clear context when switching to unrelated topics
+    - Use specific queries to reduce reads needed
+    - Let Ref's de-duplication work (don't start new conversations unnecessarily)
+    - Monitor for context rot indicators (AI giving worse responses)
+
+    **Signs of context overload:**
+    - AI responses become less relevant
+    - AI starts ignoring instructions
+    - Responses reference wrong information
+    - Increased latency in responses
+
+    **Solutions:**
+    - Start a new conversation
+    - Use more specific queries
+    - Read fewer URLs per conversation
+    - Trust Ref's filtering
+
+    <Tip>
+      Ref's session tracking automatically prevents duplicate results, keeping your context cleaner than manual documentation lookup.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="API Integration">
+    **Scenario:** Implement Stripe payment processing in your application
+
+    **Starting point:** You need to integrate Stripe but haven't used their API before.
+
+    **Step 1: Search for documentation**
+
+    Prompt: **"How do I create a payment intent with the Stripe API?"**
+
+    **What happens:**
+    - Searches Stripe documentation
+    - Returns relevant API endpoints and overview
+    - Includes authentication requirements
+    - Shows brief code examples
+    - ~54 tokens used
+
+    **Response:**
+
+    Authentication & Payment Intents - Stripe API
+    URL: https://stripe.com/docs/api/payment_intents/create
+    Overview: Creates a PaymentIntent object for collecting payment...
+
+    **Step 2: Read specific endpoint**
+
+    Prompt: **"Read the full documentation for creating payment intents"**
+
+    **What happens:**
+    - Fetches Stripe API reference page
+    - Converts to clean markdown
+    - Filters to relevant sections (~385 tokens)
+    - Preserves code examples in multiple languages
+    - Ready to implement
+
+    **Step 3: Handle edge cases**
+
+    Prompt: **"Show me error handling for declined payments"**
+
+    **What happens:**
+    - Searches for error handling (no repetition of Step 1/2 results!)
+    - Returns error codes and handling strategies
+    - Context-aware: focuses on what you haven't seen yet
+
+    **Result:** Complete integration context in less than 500 tokens vs 10k+ with traditional tools
+
+    **Total tokens:** ~600 (search + read + follow-up)
+    **Traditional tool:** 15,000+ tokens
+    **Savings:** 96%
+
+    <Tip>
+      Follow up with: "Show me webhook handling for payment confirmations" - Ref won't repeat previous payment intent documentation!
+    </Tip>
+  </Tab>
+
+  <Tab title="Library Research">
+    **Scenario:** Choose between React state management libraries for a new project
+
+    **Starting point:** You need state management but aren't sure which library to use.
+
+    **Prompt:**
+
+    **"Compare documentation and best practices for Redux vs Zustand for React state management"**
+
+    **What happens:**
+    - Searches both Redux and Zustand documentation
+    - Returns key concepts and architectural differences
+    - Includes setup instructions comparison
+    - Shows usage examples for both
+    - Performance considerations
+    - ~150 tokens for comprehensive comparison
+
+    **Follow-up:**
+
+    **"Show me middleware options for Zustand"**
+
+    **What happens:**
+    - Session-aware search provides Zustand middleware docs
+    - Doesn't repeat basic Zustand info from first search
+    - Focuses on middleware-specific content
+    - ~100 tokens additional
+
+    **Decision prompt:**
+
+    **"What are the main advantages of Zustand over Redux?"**
+
+    **What happens:**
+    - Synthesizes information from previous searches
+    - No additional documentation fetch needed (AI uses existing context)
+    - Or searches for comparison articles if needed
+
+    **Result:** Informed decision in ~250 tokens vs 20k+ for full documentation dumps
+
+    **Time:** 5-10 seconds total
+    **Tokens:** ~250 (vs 25,000+ for traditional approach)
+    **Savings:** 99%
+
+    <Note>
+      Ref's intelligent filtering means you get exactly what you need for decision-making without context overload.
+    </Note>
+  </Tab>
+
+  <Tab title="Debugging Errors">
+    **Scenario:** Fix a cryptic error message in your React application
+
+    **Starting point:** Your app crashes with: `TypeError: Cannot read property 'map' of undefined`
+
+    **Prompt:**
+
+    **"Search for solutions to 'TypeError: Cannot read property map of undefined' in React"**
+
+    **What happens:**
+    - Searches React documentation for common causes
+    - Falls back to web search for community solutions
+    - Finds relevant Stack Overflow answers
+    - Returns common causes and fixes
+    - Includes code examples
+    - ~100 tokens
+
+    **Follow-up (if needed):**
+
+    **"Read the top Stack Overflow answer"**
+
+    **What happens:**
+    - Fetches Stack Overflow page
+    - Converts to markdown
+    - Extracts the accepted answer and relevant comments
+    - Filters out noise (navigation, ads, sidebar)
+    - ~200 tokens for answer + context
+
+    **Implementation:**
+
+    **"Show me how to safely handle undefined arrays in React components"**
+
+    **What happens:**
+    - Searches React best practices
+    - Returns safe rendering patterns
+    - Includes optional chaining, default props, loading states
+    - ~150 tokens
+
+    **Result:** Bug fixed with context and best practices in ~450 tokens
+
+    <Warning>
+      Traditional web scraping would dump entire Stack Overflow pages (10k+ tokens). Ref extracts just the answer and relevant context.
+    </Warning>
+  </Tab>
+
+  <Tab title="Framework Migration">
+    **Scenario:** Migrate an application from Vue 2 to Vue 3
+
+    **Starting point:** You have a Vue 2 app and need to understand breaking changes.
+
+    **Prompt:**
+
+    **"What are the breaking changes when migrating from Vue 2 to Vue 3?"**
+
+    **What happens:**
+    - Searches Vue 3 migration guide
+    - Returns key breaking changes
+    - Lists removed features
+    - New features to adopt
+    - Migration strategies
+    - ~300 tokens for comprehensive overview
+
+    **Progressive migration questions:**
+
+    1. **"How do I migrate Vue 2 filters to Vue 3?"**
+       → Returns filter replacement strategies (~150 tokens)
+
+    2. **"What's the new way to handle global event bus in Vue 3?"**
+       → Returns event bus alternatives like mitt (~180 tokens)
+
+    3. **"Show me Vue 3 composition API vs options API"**
+       → Returns comparison and when to use each (~200 tokens)
+
+    4. **"How do I migrate Vuex to Pinia?"**
+       → Returns Pinia migration guide (~250 tokens)
+
+    **Result:** Complete migration strategy in ~1,080 tokens
+
+    **Total tokens:** ~1,100 (progressive questioning)
+    **Traditional approach:** 30,000+ tokens (full migration docs)
+    **Savings:** 96%
+
+    <Tip>
+      Ref's session awareness means each follow-up question builds on previous context without repetition. This is perfect for large migration projects.
+    </Tip>
+  </Tab>
+
+  <Tab title="SDK Implementation">
+    **Scenario:** Implement AWS S3 file uploads in a Node.js application
+
+    **Starting point:** Need to add file upload functionality.
+
+    **Prompt:**
+
+    **"Show me how to upload files to AWS S3 using the JavaScript SDK"**
+
+    **What happens:**
+    - Searches AWS SDK v3 documentation
+    - Returns S3 client setup instructions
+    - Shows upload methods and examples
+    - Includes authentication config
+    - Provides code examples
+    - ~250 tokens
+
+    **Follow-up for large files:**
+
+    **"What about multipart uploads for large files?"**
+
+    **What happens:**
+    - Searches for multipart upload documentation
+    - Returns multipart-specific APIs
+    - Doesn't repeat basic S3 setup from first search
+    - Shows code examples for multipart
+    - ~200 tokens additional
+
+    **Security concerns:**
+
+    **"How do I set bucket permissions and CORS for public uploads?"**
+
+    **What happens:**
+    - Returns bucket policy examples
+    - CORS configuration
+    - Security best practices
+    - Pre-signed URL alternatives
+    - ~200 tokens
+
+    **Result:** Complete S3 implementation in ~650 tokens
+
+    **Time:** Less than 10 seconds for all queries
+    **Tokens:** ~650 total (vs 30k+ for full AWS SDK docs)
+    **Savings:** 98%
+
+    <Info>
+      Works with any cloud provider: AWS, Google Cloud, Azure, DigitalOcean, etc. Ref indexes all major cloud documentation.
+    </Info>
+  </Tab>
+
+  <Tab title="Private Codebase">
+    **Scenario:** Understand your company's internal authentication framework
+
+    **Starting point:** New to the team, need to implement OAuth in internal service.
+
+    **Requirement:** Pro plan with private repository indexing
+
+    **Prompt:**
+
+    **"Search our private authentication library documentation for OAuth implementation"**
+
+    **What happens:**
+    - Searches your indexed private repositories
+    - Returns internal API documentation
+    - Shows company-specific patterns and conventions
+    - Includes internal code examples
+    - Links to private GitHub files
+    - ~150 tokens
+
+    **Follow-up:**
+
+    **"How do we handle token refresh in our auth library?"**
+
+    **What happens:**
+    - Searches private docs for token refresh patterns
+    - Returns internal implementation details
+    - Shows company-specific refresh flow
+    - References internal services
+    - ~180 tokens
+
+    **Integration:**
+
+    **"Show me how to integrate this auth library with our API gateway"**
+
+    **What happens:**
+    - Searches for integration documentation
+    - Returns internal setup guides
+    - Company-specific configuration
+    - Example from other services
+    - ~200 tokens
+
+    **Result:** Internal framework understanding in ~530 tokens
+
+    **Benefits:**
+    - Faster onboarding for new developers
+    - Consistent patterns across services
+    - Self-service documentation access
+    - No waiting for senior developers
+
+    <Note>
+      Requires Pro plan and private repository indexing setup. Contact hello@ref.tools to get started.
+    </Note>
+  </Tab>
+
+  <Tab title="Dependency Update">
+    **Scenario:** Update Express.js from v4 to v5
+
+    **Starting point:** Need to understand breaking changes before upgrading.
+
+    **Prompt:**
+
+    **"What changed in Express.js version 5? What breaks from v4?"**
+
+    **What happens:**
+    - Searches Express.js changelog and migration guide
+    - Returns breaking changes list
+    - Lists deprecated features
+    - Shows migration path
+    - New features to adopt
+    - ~250 tokens
+
+    **Progressive migration research:**
+
+    1. **"How do I migrate Express 4 middleware to v5?"**
+       → Returns middleware migration guide (~150 tokens)
+
+    2. **"What's the new router syntax in Express 5?"**
+       → Returns router updates (~120 tokens)
+
+    3. **"Show me updated error handling in Express 5"**
+       → Returns error handling changes (~180 tokens)
+
+    4. **"Are there performance improvements in Express 5?"**
+       → Returns performance benchmarks (~100 tokens)
+
+    **Result:** Complete migration strategy without context overload
+
+    **Total tokens:** ~800
+    **Traditional approach:** 20,000+ tokens (full Express docs)
+    **Savings:** 96%
+
+    <Tip>
+      Works for any library: React, Vue, Angular, Django, Rails, etc. Ref tracks changelog and migration guides.
+    </Tip>
+  </Tab>
+
+  <Tab title="Architecture Decision">
+    **Scenario:** Choose between PostgreSQL and MongoDB for a social media application
+
+    **Starting point:** Designing data layer for app with complex relationships.
+
+    **Prompt:**
+
+    **"Compare PostgreSQL vs MongoDB for a social media application with complex relationships"**
+
+    **What happens:**
+    - Searches both databases' documentation
+    - Returns architecture considerations
+    - Shows use case recommendations
+    - Performance characteristics
+    - Scaling considerations
+    - Data modeling differences
+    - ~300 tokens for comparison
+
+    **Deep dive on PostgreSQL:**
+
+    1. **"How does PostgreSQL handle many-to-many relationships?"**
+       → Returns junction table patterns (~150 tokens)
+
+    2. **"Show me connection pooling best practices for PostgreSQL"**
+       → Returns pooling strategies (~180 tokens)
+
+    3. **"What are PostgreSQL's JSONB capabilities?"**
+       → Returns JSONB features for flexibility (~150 tokens)
+
+    **Deep dive on MongoDB:**
+
+    1. **"What are MongoDB's limitations for relational data?"**
+       → Returns embedded vs referenced patterns (~180 tokens)
+
+    2. **"How does MongoDB handle transactions?"**
+       → Returns transaction support and limitations (~150 tokens)
+
+    **Result:** Informed technical decision with comprehensive context
+
+    **Time:** ~15 seconds for comprehensive research
+    **Tokens:** ~1,110 total (vs 50k+ for full database documentation)
+    **Savings:** 98%
+
+    **Decision factors covered:**
+    - Data model fit
+    - Performance requirements
+    - Scaling needs
+    - Developer experience
+    - Operational complexity
+  </Tab>
+
+  <Tab title="Security Audit">
+    **Scenario:** Review and improve authentication implementation security
+
+    **Starting point:** Implementing JWT authentication, want to ensure security.
+
+    **Prompt:**
+
+    **"What are the security best practices for JWT authentication in Node.js?"**
+
+    **What happens:**
+    - Searches Node.js security documentation
+    - Returns JWT security best practices
+    - Shows common vulnerabilities (XSS, CSRF)
+    - Includes secure code examples
+    - OWASP recommendations
+    - ~250 tokens
+
+    **Follow-up on specific concerns:**
+
+    1. **"How do I implement secure token refresh?"**
+       → Returns refresh token patterns (~180 tokens)
+
+    2. **"What's the recommended JWT expiration time?"**
+       → Returns expiration best practices (~100 tokens)
+
+    3. **"Show me secure password hashing with bcrypt"**
+       → Returns bcrypt implementation (~150 tokens)
+
+    4. **"How do I prevent JWT token replay attacks?"**
+       → Returns replay attack prevention (~180 tokens)
+
+    5. **"What's the safest way to store JWTs in browser?"**
+       → Returns storage comparison (localStorage vs httpOnly cookies) (~150 tokens)
+
+    **Result:** Security-hardened authentication implementation
+
+    **Total tokens:** ~1,010
+    **Traditional approach:** 25,000+ tokens (full security guides)
+    **Savings:** 96%
+
+    <Warning>
+      Always verify security recommendations with multiple sources and stay current with latest best practices. Security landscapes change rapidly.
+    </Warning>
+  </Tab>
+
+  <Tab title="Performance Optimization">
+    **Scenario:** Optimize a slow React application with large lists
+
+    **Starting point:** App is sluggish when rendering large data sets.
+
+    **Prompt:**
+
+    **"What are the React performance optimization techniques for large lists?"**
+
+    **What happens:**
+    - Searches React performance documentation
+    - Returns optimization strategies
+    - Shows React.memo usage
+    - Virtual scrolling solutions
+    - Code splitting patterns
+    - ~200 tokens
+
+    **Progressive optimization research:**
+
+    1. **"How do I implement windowing with react-window?"**
+       → Returns react-window setup and examples (~200 tokens)
+
+    2. **"Show me useMemo vs useCallback differences"**
+       → Returns hook comparison and when to use each (~150 tokens)
+
+    3. **"What's the best way to lazy load React components?"**
+       → Returns React.lazy and Suspense patterns (~180 tokens)
+
+    4. **"How do I profile React performance?"**
+       → Returns React DevTools Profiler usage (~150 tokens)
+
+    5. **"Should I use key prop differently for large lists?"**
+       → Returns key prop best practices (~100 tokens)
+
+    **Result:** Multi-faceted performance optimization strategy
+
+    **Total tokens:** ~980
+    **Optimizations covered:**
+    - Virtual scrolling (react-window)
+    - Memoization (React.memo, useMemo, useCallback)
+    - Code splitting (React.lazy)
+    - Profiling and measurement
+    - List rendering best practices
+
+    <Tip>
+      Ref's token efficiency means you can research multiple optimization strategies without hitting context limits. Perfect for complex performance work.
+    </Tip>
+  </Tab>
+
+  <Tab title="Learning New Tech">
+    **Scenario:** Learn n8n automation tool for the first time
+
+    **Starting point:** Never used n8n, need to understand core concepts.
+
+    **Prompt:**
+
+    **"What is n8n and how do I get started with workflow automation?"**
+
+    **What happens:**
+    - Searches n8n documentation
+    - Returns overview and core concepts
+    - Shows basic workflow examples
+    - Setup instructions
+    - Common use cases
+    - ~200 tokens
+
+    **Learning progression:**
+
+    1. **"How do n8n nodes work and how do I connect them?"**
+       → Returns node concepts and connections (~150 tokens)
+
+    2. **"Show me how to use the Code node in n8n"**
+       → Returns Code node documentation and examples (~180 tokens)
+
+    3. **"How do I handle multiple inputs in n8n?"**
+       → Returns Merge node vs Code node approaches (~150 tokens)
+
+    4. **"What's the best way to debug n8n workflows?"**
+       → Returns debugging techniques (~120 tokens)
+
+    5. **"Show me how to deploy n8n workflows to production"**
+       → Returns deployment best practices (~150 tokens)
+
+    **Result:** Comprehensive learning path from zero to production
+
+    **Time:** ~20 seconds for complete learning journey
+    **Tokens:** ~950 total
+    **Traditional approach:** 40,000+ tokens (full n8n documentation)
+    **Savings:** 98%
+
+    **Learning outcomes:**
+    - Core concepts understood
+    - Practical examples reviewed
+    - Best practices learned
+    - Debugging skills acquired
+    - Production deployment knowledge
+
+    <Info>
+      This progressive learning pattern works for any new technology. Start broad, then drill down into specifics as needed.
+    </Info>
+  </Tab>
+</Tabs>
+
+## Real-World Token Savings
+
+<CardGroup cols={2}>
+  <Card title="Simple API Lookup" icon="gauge-high">
+    **Task:** Find Figma Comment API endpoint
+
+    **Traditional:** 10,000+ tokens (full API docs dump)
+    **With Ref:** 439 tokens (54 search + 385 read)
+
+    **Savings: 95% fewer tokens**
+
+    **Cost impact:**
+    - Traditional: $0.15 (Claude Opus)
+    - Ref: $0.007
+    - Save $0.143 per lookup
+  </Card>
+
+  <Card title="Library Comparison" icon="code-compare">
+    **Task:** Compare 2 state management libraries
+
+    **Traditional:** 20,000+ tokens (2x full documentation)
+    **With Ref:** 1,500 tokens (filtered key information)
+
+    **Savings: 92% fewer tokens**
+
+    **Cost impact:**
+    - Traditional: $0.30
+    - Ref: $0.023
+    - Save $0.277 per comparison
+  </Card>
+
+  <Card title="Migration Research" icon="right-left">
+    **Task:** Research framework migration (e.g., Vue 2 to Vue 3)
+
+    **Traditional:** 30,000+ tokens (changelog + full migration guides)
+    **With Ref:** 3,000 tokens (relevant sections only)
+
+    **Savings: 90% fewer tokens**
+
+    **Cost impact:**
+    - Traditional: $0.45
+    - Ref: $0.045
+    - Save $0.405 per migration
+  </Card>
+
+  <Card title="Debugging Session" icon="bug">
+    **Task:** Research error and find solutions
+
+    **Traditional:** 15,000+ tokens (full Stack Overflow pages)
+    **With Ref:** 2,000 tokens (answers only, no noise)
+
+    **Savings: 87% fewer tokens**
+
+    **Cost impact:**
+    - Traditional: $0.225
+    - Ref: $0.03
+    - Save $0.195 per debug session
+  </Card>
+</CardGroup>
+
+**Multi-step project impact:**
+
+Let's say you're building a new feature that requires:
+- 3 API integrations
+- 2 library comparisons
+- 1 debugging session
+- 1 migration research
+
+**Traditional approach:**
+- (3 × 10k) + (2 × 20k) + (1 × 15k) + (1 × 30k) = 115,000 tokens
+- Cost: $1.73 (Claude Opus)
+- Context: Severely degraded, multiple conversations needed
+
+**With Ref:**
+- (3 × 500) + (2 × 1.5k) + (1 × 2k) + (1 × 3k) = 9,500 tokens
+- Cost: $0.143
+- Context: Clean, single conversation possible
+- **Savings: 92% tokens, 92% cost, better AI responses**
+
+<Info>
+  **Why this matters:** Large language models perform measurably worse as context windows fill up. Ref keeps your context clean and your AI assistant accurate, while saving significant API costs.
+</Info>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="No Results Found" icon="circle-question">
+    **Error Message:** "No results found" when searching
+
+    **Common causes:**
+
+    1. **Documentation site not yet indexed**
+       - Ref indexes 1000+ sites but may not have yours yet
+       - Check [supported documentation list](#supported-documentation)
+       - Request indexing by emailing hello@ref.tools
+
+    2. **Query too specific or using wrong terminology**
+       - Try broader search terms
+       - Use official library/framework names
+       - Include programming language in query
+
+    3. **Very new or obscure library**
+       - Recently released libraries may not be indexed yet
+       - Obscure/niche libraries may need manual indexing
+
+    4. **Typo in library name**
+       - Double-check spelling
+       - Try alternate names (e.g., "nodejs" vs "node.js")
+
+    **Solutions:**
+
+    - **Try broader terms:** "React hooks" instead of "React useEffect cleanup unmount"
+    - **Include framework:** "Python asyncio" instead of just "async/await"
+    - **Use official names:** "Vue.js" instead of "Vue3"
+    - **Request indexing:** Email hello@ref.tools with documentation URL
+    - **Use web search:** Ref will automatically fall back to web search if needed
+
+    <Tip>
+      Most popular libraries and frameworks are already indexed. If you get no results for a major library, double-check your query wording.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Invalid API Key" icon="key">
+    **Error Message:** "Ref is not correctly configured" or "401 Unauthorized"
+
+    **Common causes:**
+
+    1. **API key not set in Studio**
+       - Environment variable `REF_API_KEY` missing or empty
+       - Typo in environment variable name
+
+    2. **Invalid or expired API key**
+       - Key was regenerated in dashboard
+       - Key was revoked
+       - Copy/paste error (extra spaces, missing characters)
+
+    3. **Email not verified**
+       - Ref requires email verification before API access
+       - Check your email for verification link
+
+    **Solutions:**
+
+    **Step 1: Verify API key in Studio**
+    1. Go to **Settings** → **MCP Servers** → **Ref**
+    2. Click **Edit Configuration**
+    3. Check that `REF_API_KEY` environment variable exists
+    4. Verify the key value (no quotes, no spaces)
+
+    **Step 2: Regenerate key if needed**
+    1. Log in to [ref.tools/dashboard](https://ref.tools/dashboard)
+    2. Find API Keys section
+    3. Copy your current key OR regenerate new key
+    4. Update in Studio
+
+    **Step 3: Verify email**
+    1. Check your email for verification link from Ref
+    2. Click verification link
+    3. Wait 5 minutes for activation
+    4. Try again
+
+    **Step 4: Test key**
+    - Try a simple search: "React documentation"
+    - If it works, your key is valid
+
+    <Warning>
+      API keys are case-sensitive and should not include quotes or spaces. Copy directly from the Ref dashboard.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Incomplete Documentation" icon="file-slash">
+    **Issue:** Results seem incomplete, truncated, or missing information
+
+    **This is by design!** Ref intentionally filters content to:
+
+    - Remove duplicate information from your session history
+    - Filter irrelevant sections based on your query context
+    - Keep token usage minimal (~5k max per read)
+    - Prevent context rot from excessive tokens
+    - Return only what's needed for your specific question
+
+    **Why this is actually good:**
+
+    - **Better AI responses:** Less noise = more accurate answers
+    - **Faster development:** Get to relevant info immediately
+    - **Cost savings:** 60-95% fewer tokens = lower API costs
+    - **Cleaner context:** Your AI stays focused
+
+    **Solutions if you need more:**
+
+    1. **Ask more specific follow-up questions**
+       - "Show me error handling for this API"
+       - "What are the authentication options?"
+       - "How do I handle rate limits?"
+
+    2. **Read additional URLs**
+       - Search returns multiple results
+       - Read the next most relevant URL
+       - Each read is context-aware
+
+    3. **Request the full page**
+       - "Read the complete documentation for [specific topic]"
+       - Use `ref_read_url` directly on specific URL
+       - Accept higher token usage for completeness
+
+    4. **Trust the filtering**
+       - Ref's AI knows what's relevant
+       - You probably don't need the omitted sections
+       - Follow-up questions fill in gaps as needed
+
+    <Info>
+      If you genuinely need complete raw documentation, use `ref_read_url` on the specific page URL and ask for "complete" content. But consider whether you really need all 20k tokens or if 5k filtered tokens will suffice.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Private Docs Not Found" icon="lock">
+    **Error:** Cannot find private repository documentation
+
+    **Common causes:**
+
+    1. **Not on Pro plan**
+       - Private documentation requires Pro ($29/mo) or higher
+       - Free tier only includes public documentation
+
+    2. **Repository not indexed yet**
+       - Indexing takes 24-48 hours after setup
+       - Check email for indexing confirmation
+
+    3. **Repository access not granted**
+       - Ref bot needs read access to repository
+       - Personal access token may have expired
+
+    4. **Query not specifying private docs**
+       - By default, Ref searches public docs only
+       - Need to include `ref_src=private` in query
+
+    **Solutions:**
+
+    **Step 1: Verify Pro plan**
+    - Log in to [ref.tools/dashboard](https://ref.tools/dashboard)
+    - Check your subscription status
+    - Upgrade if needed
+
+    **Step 2: Confirm indexing status**
+    - Check email for indexing completion notification
+    - Or email hello@ref.tools to check status
+    - Wait full 24-48 hours before troubleshooting
+
+    **Step 3: Verify repository access**
+    - Go to GitHub repository settings
+    - Check that Ref bot has read access
+    - Or verify personal access token is still valid
+
+    **Step 4: Use correct query format**
+    - Include: "Search my private docs for [topic]"
+    - Or add: `ref_src=private` to query
+    - Or use: "Search all docs" to search both public and private
+
+    **Initial setup checklist:**
+    - [ ] Pro plan active
+    - [ ] Repository URL sent to hello@ref.tools
+    - [ ] Read access granted to Ref
+    - [ ] Received indexing confirmation email
+    - [ ] Waited 24-48 hours
+    - [ ] Using `ref_src=private` in queries
+
+    <Note>
+      Private repository indexing requires Pro plan and manual setup. Contact hello@ref.tools to get started.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Repeated Results (Unexpected)" icon="arrows-rotate">
+    **Issue:** Getting the same results again despite session awareness
+
+    **This shouldn't happen!** Ref is specifically designed to never return repeated results in a session.
+
+    **If this occurs:**
+
+    **Possible causes:**
+
+    1. **New conversation started**
+       - Session tracking is per-conversation
+       - New conversation = fresh session
+       - This is expected behavior
+
+    2. **Different query about same topic**
+       - If query is significantly different, may return overlapping results
+       - This is rare but can happen
+
+    3. **Server issue or bug**
+       - Rare session tracking issue
+       - May need to report to Ref team
+
+    **Solutions:**
+
+    **If in same conversation:**
+    1. Note the specific queries that caused repetition
+    2. Check if you accidentally started a new conversation
+    3. Try clearing conversation and testing again
+    4. Report to hello@ref.tools with:
+       - Your query sequence
+       - Results that repeated
+       - Your Ref account email
+
+    **If you want to see previous results again:**
+    - Start a new conversation (intentionally)
+    - Or explicitly ask: "Show me that earlier result about X again"
+    - Or use `ref_read_url` on the same URL again
+
+    **Workaround if needed:**
+    - Phrase your follow-up questions more distinctly
+    - Ask for "different approach" or "alternative methods"
+    - Use `ref_read_url` for specific URLs
+
+    <Tip>
+      If you want to see previous results again for reference, start a new conversation or explicitly ask "show me that earlier result about X again".
+    </Tip>
+  </Accordion>
+
+  <Accordion title="URL Fetch Fails" icon="link-slash">
+    **Error:** "Cannot fetch URL" or timeout error
+
+    **Common causes:**
+
+    1. **URL not publicly accessible**
+       - Behind login wall
+       - Requires authentication
+       - VPN or firewall protected
+
+    2. **Site blocks automated access**
+       - Bot protection (Cloudflare, etc.)
+       - Rate limiting
+       - User-agent filtering
+
+    3. **URL doesn't exist or moved**
+       - 404 Not Found
+       - Redirect to different domain
+       - Site temporarily down
+
+    4. **Network/connectivity issues**
+       - Your internet connection
+       - Site's servers down
+       - DNS issues
+
+    **Solutions:**
+
+    **Step 1: Verify URL in browser**
+    - Open the URL in your web browser
+    - Can you access it without logging in?
+    - Does it load successfully?
+
+    **Step 2: Check URL format**
+    - Ensure URL is complete (includes https://)
+    - No typos in URL
+    - No special characters breaking the URL
+
+    **Step 3: Try alternative approaches**
+    - Search for the topic instead of reading specific URL
+    - Use public documentation alternative
+    - Check if there's a PDF version
+
+    **Step 4: For private/authenticated content**
+    - Add to private documentation index (Pro plan)
+    - Or manually copy content for private use
+    - Or find public equivalent documentation
+
+    **Unsupported URL types:**
+    - ❌ Pages behind login walls
+    - ❌ Paywalled content (Medium, news sites)
+    - ❌ Captcha-protected sites
+    - ❌ Sites blocking bots/scrapers
+    - ❌ Local URLs (localhost, 192.168.x.x)
+    - ❌ Internal company URLs (intranet)
+
+    <Warning>
+      Ref cannot access content requiring authentication unless it's part of your private indexed repositories (Pro plan).
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Slow Response Time" icon="clock">
+    **Issue:** Searches or reads taking longer than expected
+
+    **Typical response times:**
+    - Simple search: less than 1 second
+    - Document read: 1-2 seconds
+    - Complex research: 2-3 seconds
+    - Web fallback: 2-4 seconds
+
+    **If experiencing slow responses:**
+
+    **Common causes:**
+
+    1. **Ref API experiencing high load**
+       - Peak usage times
+       - Temporary infrastructure issues
+
+    2. **Your internet connection**
+       - Slow or unstable connection
+       - High latency to Ref servers
+
+    3. **Complex query requiring multiple sources**
+       - Searching many documentation sites
+       - Large page requiring processing
+
+    4. **Studio connection issues**
+       - MCP server connection problems
+       - Studio performance issues
+
+    **Solutions:**
+
+    **Step 1: Check Ref status**
+    - Visit status.ref.tools (if available)
+    - Check Ref Twitter/X for status updates
+    - Or check #ref channel in NimbleBrain Discord
+
+    **Step 2: Test your connection**
+    - Run speed test
+    - Check latency to ref.tools
+    - Try different network
+
+    **Step 3: Simplify query**
+    - Start with simpler, more specific query
+    - Break complex research into smaller questions
+    - Search one library at a time
+
+    **Step 4: Check Studio**
+    - Restart Studio if needed
+    - Check Studio status page
+    - Try disabling/re-enabling Ref server
+
+    **Step 5: Contact support**
+    - If consistently slow (>10 seconds)
+    - Email hello@ref.tools with:
+       - Your location/region
+       - Example slow queries
+       - Your Ref account email
+
+    <Info>
+      Even "slow" Ref searches (2-3 seconds) are faster than manually browsing documentation websites!
+    </Info>
+  </Accordion>
+
+  <Accordion title="Server Connection Failed" icon="server">
+    **Error:** "Server connection timeout" or "Cannot connect to Ref"
+
+    **Common causes:**
+
+    1. **Studio server not enabled**
+       - Ref server disabled in Studio settings
+       - Server configuration error
+
+    2. **Network/firewall blocking**
+       - Firewall blocking api.ref.tools
+       - Corporate proxy issues
+       - VPN interference
+
+    3. **Ref API temporarily down**
+       - Rare infrastructure issues
+       - Maintenance window
+
+    4. **Invalid configuration**
+       - Wrong URL in server config
+       - Missing required settings
+
+    **Solutions:**
+
+    **Step 1: Check Studio server status**
+    1. Go to **Settings** → **MCP Servers**
+    2. Find "Ref" in server list
+    3. Check if enabled (toggle should be on)
+    4. Look for error indicators
+
+    **Step 2: Restart server**
+    1. In MCP Servers settings
+    2. Click "Ref" server
+    3. Click **Disable**, wait 5 seconds
+    4. Click **Enable**
+    5. Try your query again
+
+    **Step 3: Verify configuration**
+    1. Click **Edit Configuration** on Ref server
+    2. Check server URL: https://api.ref.tools/mcp
+    3. Verify `REF_API_KEY` environment variable exists
+    4. Save if you made changes
+
+    **Step 4: Check network**
+    - Test connection to api.ref.tools in browser
+    - Check firewall settings
+    - Try different network (phone hotspot)
+    - Disable VPN temporarily
+
+    **Step 5: Clear Studio cache**
+    1. Go to Studio **Settings**
+    2. Find **Clear Cache** or similar option
+    3. Restart Studio
+    4. Re-enable Ref server
+
+    **Step 6: Contact support**
+    - Email hello@ref.tools
+    - Include error message
+    - Include your OS and Studio version
+
+    <Info>
+      Ref uses streamable HTTP transport. Studio manages all connection infrastructure automatically - no Docker or local servers needed.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Content Format Issues" icon="file-code">
+    **Issue:** Markdown formatting looks wrong, broken, or unreadable
+
+    **Common causes:**
+
+    1. **Complex source formatting**
+       - Some documentation sites have complex layouts
+       - Tables, diagrams, custom elements
+       - JavaScript-rendered content
+
+    2. **Studio rendering issue**
+       - Markdown renderer in Studio
+       - Special characters not escaped
+
+    3. **Source site structure changed**
+       - Documentation site was redesigned
+       - Ref parser needs updating
+
+    **Expected behavior:**
+    - Clean markdown output
+    - Preserved code blocks with syntax highlighting
+    - Working links
+    - Readable headers and lists
+    - Tables formatted correctly
+
+    **Solutions if formatting is broken:**
+
+    **Step 1: Try the original URL**
+    - Visit the source URL in your browser
+    - Compare with Ref's output
+    - Determine if issue is source or conversion
+
+    **Step 2: Report persistent issues**
+    - Email hello@ref.tools with:
+       - The URL with formatting issues
+       - Screenshot of problem
+       - Expected vs actual output
+       - Your Ref account email
+
+    **Step 3: Use alternative source**
+    - Search for same information from different site
+    - Use official documentation vs community tutorials
+    - Try GitHub README instead of external docs
+
+    **Step 4: Manual extraction (last resort)**
+    - Visit URL directly
+    - Copy relevant content manually
+    - Use AI to help extract key information
+
+    **Known limitations:**
+    - Heavy JavaScript-rendered content may not convert well
+    - Complex interactive documentation may lose functionality
+    - Diagrams and images are not included (markdown only)
+    - Some tables may render suboptimally
+
+    <Tip>
+      Ref continuously improves parsing for popular documentation sites. Reporting issues helps improve formatting for everyone.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+## Links & Resources
+
+<CardGroup cols={2}>
+  <Card title="GitHub Repository" icon="github" href="https://github.com/ref-tools/ref-tools-mcp">
+    View source code, report issues, and contribute to development
+  </Card>
+
+  <Card title="Ref.tools Website" icon="globe" href="https://ref.tools">
+    Official website, blog, and feature announcements
+  </Card>
+
+  <Card title="Sign Up" icon="user-plus" href="https://ref.tools/signup">
+    Create account and get your API key
+  </Card>
+
+  <Card title="Dashboard" icon="chart-line" href="https://ref.tools/dashboard">
+    Manage API keys, view usage, upgrade plan
+  </Card>
+
+  <Card title="Report Issues" icon="bug" href="https://github.com/ref-tools/ref-tools-mcp/issues">
+    Found a bug? Submit an issue on GitHub
+  </Card>
+
+  <Card title="Email Support" icon="envelope" href="mailto:hello@ref.tools">
+    hello@ref.tools - Get help, request indexing, report problems
+  </Card>
+</CardGroup>
+
+## Related MCP Servers
+
+<CardGroup cols={3}>
+  <Card title="GitHub" icon="github" href="/mcp-servers/development/github">
+    Browse repository code, issues, and pull requests
+  </Card>
+
+  <Card title="Tavily" icon="magnifying-glass" href="/mcp-servers/search-research/tavily">
+    AI-powered web search and research
+  </Card>
+
+  <Card title="Echo" icon="terminal" href="/mcp-servers/development/echo">
+    Test and debug MCP server connections
+  </Card>
+</CardGroup>
+
+## Learning Resources
+
+<AccordionGroup>
+  <Accordion title="Token Efficiency Best Practices" icon="microchip">
+    **Maximize Ref's token savings:**
+
+    **1. Use specific queries**
+    - ✅ "React useEffect cleanup function"
+    - ✅ "Stripe payment intent error handling"
+    - ❌ "React hooks" (too broad)
+    - ❌ "Stripe documentation" (too vague)
+
+    **2. Let sessions work for you**
+    - Don't repeat similar questions
+    - Build on previous searches with follow-ups
+    - Trust the de-duplication
+    - Avoid starting new conversations unnecessarily
+
+    **3. Progressive refinement**
+    - Start with overview: "What is Zustand?"
+    - Then specifics: "How do I use Zustand middleware?"
+    - Then edge cases: "Zustand with TypeScript?"
+    - Each query builds without repetition
+
+    **4. Trust the filtering**
+    - Ref knows what's relevant for your query
+    - Don't request "complete documentation"
+    - Follow up with specific questions if needed
+    - Remember: less tokens = better AI responses
+
+    **5. Monitor context usage**
+    - Track total tokens in conversation (Studio shows this)
+    - Start fresh conversation when context feels full
+    - Watch for declining AI response quality
+    - Clear context when switching topics
+
+    **Anti-patterns to avoid:**
+    - ❌ Starting new conversations unnecessarily
+    - ❌ Asking the same question multiple ways
+    - ❌ Requesting full documentation dumps
+    - ❌ Ignoring Ref's smart filtering
+    - ❌ Over-reading URLs (read one at a time)
+
+    **Optimization workflow:**
+
+    1. Search with specific query → ~54 tokens
+    2. Read most relevant URL → ~385 tokens
+    3. Follow-up question → ~54 tokens (new search)
+    4. Read second URL if needed → ~385 tokens
+
+    Total: ~878 tokens for comprehensive understanding
+    vs 20,000+ tokens with traditional approach
+    Savings: 96%
+
+    <Tip>
+      Think of Ref as a research assistant that remembers everything you've already seen. Each follow-up builds on previous context without repetition.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Query Writing Tips" icon="pen-to-square">
+    **Write effective documentation queries:**
+
+    **Good query structure:**
+
+    **1. Be specific**
+    - Include library/framework name
+    - Mention programming language
+    - State your goal or use case
+    - Include version if relevant
+
+    **2. Use question format**
+    - "How do I..." → Implementation guidance
+    - "What is..." → Concept explanation
+    - "Show me..." → Code examples
+    - "Compare..." → Feature comparison
+    - "What's the best way to..." → Best practices
+
+    **3. Add context**
+    - Mention your environment (Node.js, browser, etc.)
+    - Include relevant technologies (TypeScript, React, etc.)
+    - State constraints (performance, security, etc.)
+
+    **4. Focus on your goal**
+    - What are you trying to accomplish?
+    - What problem are you solving?
+    - What feature are you building?
+
+    **Query examples by category:**
+
+    **API Integration:**
+    - ✅ "How do I authenticate with the Stripe API using API keys?"
+    - ✅ "What's the endpoint for creating Twilio SMS messages?"
+    - ❌ "Stripe" (too vague)
+    - ❌ "API documentation" (not specific)
+
+    **Library Usage:**
+    - ✅ "How do I use React Query for data fetching?"
+    - ✅ "Python asyncio error handling best practices"
+    - ❌ "React Query" (no clear goal)
+    - ❌ "Python async" (too broad)
+
+    **Framework Concepts:**
+    - ✅ "Next.js server-side rendering vs static site generation"
+    - ✅ "Django authentication with JWT tokens"
+    - ❌ "Next.js features" (too broad)
+    - ❌ "Django security" (too vague)
+
+    **Debugging:**
+    - ✅ "Solutions for TypeError Cannot read property map of undefined in React"
+    - ✅ "How to fix Python asyncio event loop already running error"
+    - ❌ "Error in my code" (no context)
+    - ❌ "Help with bug" (not specific)
+
+    **Performance:**
+    - ✅ "React performance optimization for large lists"
+    - ✅ "PostgreSQL connection pooling best practices for Node.js"
+    - ❌ "Make app faster" (too vague)
+    - ❌ "Database optimization" (too broad)
+
+    **Migration:**
+    - ✅ "What changed in Express 5 from Express 4 breaking changes"
+    - ✅ "How to migrate Vue 2 filters to Vue 3"
+    - ❌ "New version" (no context)
+    - ❌ "Upgrade help" (not specific)
+
+    <Note>
+      Ref understands natural language - write queries like you're asking a knowledgeable colleague, not a search engine.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Session Management" icon="clock-rotate-left">
+    **Understanding session-aware search:**
+
+    **How sessions work:**
+
+    1. **Session creation**
+       - Each new conversation creates a session
+       - Session tracks all your searches and reads
+       - Persists for the entire conversation
+       - Automatically cleared when you start new conversation
+
+    2. **De-duplication**
+       - Ref remembers every search result returned
+       - Filters out results you've already seen
+       - Allows query refinement without repetition
+       - Keeps context clean and focused
+
+    3. **Progressive refinement**
+       - Each search builds on previous ones
+       - Follow-up questions get new information only
+       - No manual management needed
+       - Automatic and transparent
+
+    **Example session:**
+
+    1. "Python async/await syntax"
+       → Returns basic intro to async/await
+
+    2. "Python async error handling"
+       → Returns error handling (NO repeat of basics)
+
+    3. "Python async performance best practices"
+       → Returns performance tips (NO repeat of previous results)
+
+    4. "How do I use asyncio.gather?"
+       → Returns gather() documentation (NO repeat of anything)
+
+    **Each query gets ~5k new tokens, total ~20k for comprehensive understanding**
+    **vs 50k+ tokens with traditional approach (with massive duplication)**
+
+    **When to start a fresh session:**
+
+    **Good reasons:**
+    - Completely different topic/library
+    - Want to see previous results again
+    - Context window getting full
+    - AI responses degrading in quality
+    - Switching projects or tasks
+
+    **Bad reasons:**
+    - ❌ Think you'll get better results (won't)
+    - ❌ Want to "reset" search quality (unnecessary)
+    - ❌ Afraid of context bloat (Ref prevents this)
+    - ❌ Just finished one query (use same session!)
+
+    **Session benefits:**
+
+    - **Cleaner context:** No repeated information
+    - **Better AI:** More room for relevant content
+    - **Faster research:** Ask follow-ups without waste
+    - **Cost savings:** 60-95% fewer tokens
+    - **Natural flow:** Works like human conversation
+
+    **Session tracking is automatic** - you don't manage it manually!
+
+    <Tip>
+      Session tracking is one of Ref's killer features. It's why you can ask 5-10 related questions without context overload.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Private Documentation Setup" icon="building-lock">
+    **Setting up private repository indexing:**
+
+    **Requirements:**
+    - Pro plan or higher ($29/mo)
+    - GitHub repositories (public or private)
+    - Or PDF documentation files
+    - Read access to repositories
+
+    **Setup process:**
+
+    **Step 1: Upgrade to Pro**
+    1. Log in to [ref.tools/dashboard](https://ref.tools/dashboard)
+    2. Click **Upgrade** or **Billing**
+    3. Choose Pro plan ($29/mo)
+    4. Enter payment information
+    5. Confirm upgrade
+
+    **Step 2: Submit indexing request**
+    Email hello@ref.tools with:
+
+    Subject: Private Documentation Indexing Request
+
+    Ref Account Email: your@email.com
+
+    GitHub Repositories to Index:
+    - https://github.com/yourorg/repo1
+    - https://github.com/yourorg/repo2
+    - https://github.com/yourorg/internal-docs
+
+    PDF Documentation:
+    - [Attach PDFs or provide download links]
+
+    Internal Wiki (if applicable):
+    - https://wiki.yourcompany.com
+    - [Provide access credentials if needed]
+
+    Notes:
+    - Any special instructions or requirements
+    - Preferred re-indexing frequency
+    - Specific branches to index (default: main/master)
+
+    **Step 3: Grant repository access**
+
+    **Option A: Add Ref bot as collaborator**
+    1. Go to repository Settings → Collaborators
+    2. Add Ref bot account (they'll provide username)
+    3. Grant Read access only
+
+    **Option B: Fine-grained personal access token**
+    1. Go to GitHub Settings → Developer settings → Personal access tokens → Fine-grained tokens
+    2. Create new token
+    3. Set repository access to only needed repos
+    4. Grant "Contents: Read-only" permission
+    5. Send token to hello@ref.tools (securely)
+
+    **Step 4: Wait for indexing**
+    - Initial indexing: 24-48 hours
+    - Email confirmation when complete
+    - Incremental updates: Automatic (usually daily)
+    - Re-indexing on significant changes
+
+    **Step 5: Search your private docs**
+
+    In Studio, try:
+    - "Search my private docs for authentication patterns"
+    - "Find documentation in our internal repos about API gateway"
+    - Include `ref_src=private` in query to search only private docs
+    - Or use `ref_src=all` to search both public and private
+
+    **Best practices:**
+
+    **Documentation organization:**
+    - Use clear README.md files in each repo
+    - Organize docs/ folders with logical structure
+    - Use meaningful file names
+    - Include code examples in documentation
+    - Keep documentation up to date
+
+    **Access control:**
+    - Index only necessary repositories
+    - Use fine-grained tokens (not full repo access)
+    - Regularly audit indexed repositories
+    - Remove access when team members leave
+    - Monitor search queries for sensitive data
+
+    **Maintenance:**
+    - Update documentation regularly
+    - Notify Ref of major doc restructures
+    - Request re-indexing after big changes
+    - Use conventional commit messages
+    - Keep important docs in main/master branch
+
+    <Info>
+      Private documentation is never shared with other users and is only accessible with your API key. Ref complies with GitHub's data usage policies.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Supported Documentation Types" icon="books">
+    **What Ref can index and search:**
+
+    **Public sources (Free tier):**
+
+    **Official documentation sites:**
+    - Framework docs (React, Vue, Angular, Django, etc.)
+    - Language references (Python, JavaScript, Go, Rust, etc.)
+    - Library documentation (npm, PyPI, crates.io, etc.)
+    - API references (Stripe, Twilio, AWS, GCP, etc.)
+    - Database documentation (PostgreSQL, MongoDB, Redis, etc.)
+    - Tool guides (Docker, Kubernetes, Terraform, etc.)
+
+    **GitHub public repositories:**
+    - README.md files
+    - docs/ folders
+    - Wiki pages
+    - Code examples
+    - Issue discussions (limited)
+
+    **Community resources:**
+    - Tutorial sites
+    - Blog posts
+    - Stack Overflow (via web search fallback)
+    - Community forums
+    - Technical articles
+
+    **Private sources (Pro+ tier):**
+
+    **Private GitHub repositories:**
+    - Company internal libraries
+    - Proprietary frameworks
+    - Internal API documentation
+    - Custom tool guides
+    - Architecture documentation
+    - Code example repositories
+
+    **PDF documentation:**
+    - API specifications
+    - Technical manuals
+    - Internal wiki exports
+    - Product documentation
+    - Design system guides
+    - Architecture diagrams with text
+
+    **Internal wikis (if crawlable):**
+    - Confluence pages
+    - Notion docs
+    - GitHub wikis (private)
+    - Custom internal wikis
+
+    **NOT supported:**
+
+    **Authentication-required:**
+    - ❌ Content behind login walls
+    - ❌ Paywalled documentation sites
+    - ❌ SSO-protected wikis (unless added as private docs)
+
+    **Dynamic/Interactive:**
+    - ❌ Sites requiring JavaScript to render
+    - ❌ Interactive documentation playgrounds
+    - ❌ Content generated client-side
+    - ❌ Captcha-protected sites
+
+    **Media:**
+    - ❌ Video content (YouTube, courses)
+    - ❌ Audio podcasts
+    - ❌ Images without text
+    - ❌ Diagrams without descriptions
+
+    **Restricted:**
+    - ❌ Sites blocking automated access
+    - ❌ Rate-limited APIs without key
+    - ❌ Geofenced content
+    - ❌ Content violating ToS to scrape
+
+    **Request new documentation:**
+
+    If Ref doesn't have a documentation site you need:
+    1. Email hello@ref.tools
+    2. Include: Full URL to documentation site
+    3. Briefly explain why it's useful
+    4. Most requests added within 1 week
+
+    **Popular sites already indexed:**
+    - ✅ 1000+ documentation sites
+    - ✅ All major frameworks and languages
+    - ✅ Top 100 npm packages
+    - ✅ Top 50 PyPI packages
+    - ✅ Major cloud providers (AWS, GCP, Azure)
+    - ✅ Popular APIs (Stripe, Twilio, SendGrid, etc.)
+
+    <Tip>
+      If you're not sure if a site is indexed, just search for it! Ref will automatically fall back to web search if needed.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Integration with Other Tools" icon="plug">
+    **Using Ref with other MCP servers:**
+
+    Ref works beautifully alongside other MCP servers for powerful workflows:
+
+    **Ref + GitHub Server**
+
+    **Perfect combination:**
+    - **Ref:** Search API documentation
+    - **GitHub:** Read actual code from repositories
+    - **Workflow:** Understand API → See implementation examples
+
+    **Example:**
+
+    1. Ref: "How do I authenticate with GitHub API?"
+       → Returns authentication documentation
+
+    2. GitHub: "Show me authentication code in example-repo"
+       → Returns real implementation
+
+    3. Implement with both docs and code examples
+
+    **Ref + Tavily**
+
+    **Complementary capabilities:**
+    - **Ref:** Technical documentation and API references
+    - **Tavily:** General web search and research
+    - **Workflow:** Technical specs → Broader context
+
+    **Example:**
+
+    1. Ref: "Stripe payment intent API documentation"
+       → Returns official API reference
+
+    2. Tavily: "Stripe payment intent best practices 2025"
+       → Returns blog posts, tutorials, discussions
+
+    3. Combine official docs with community wisdom
+
+    **Ref + PostgreSQL Server**
+
+    **Database development:**
+    - **Ref:** PostgreSQL documentation
+    - **PostgreSQL:** Execute queries and analyze
+    - **Workflow:** Learn syntax → Test queries
+
+    **Example:**
+
+    1. Ref: "PostgreSQL JSON functions documentation"
+       → Returns JSONB operators and functions
+
+    2. PostgreSQL: Execute test queries with JSONB
+       → See real results and performance
+
+    3. Optimize based on docs and actual performance
+
+    **Ref + Any Code Execution Server**
+
+    **Learn and test:**
+    - **Ref:** Get documentation and examples
+    - **Code Server:** Test code immediately
+    - **Workflow:** Read docs → Write code → Test → Refine
+
+    **Multi-server workflow example:**
+
+    Goal: Implement Stripe payments with PostgreSQL storage
+
+    1. Ref: "Stripe payment intent creation"
+    2. Ref: "PostgreSQL transaction best practices"
+    3. Code: Write payment processing function
+    4. PostgreSQL: Test database schema and queries
+    5. Ref: "Stripe webhook handling"
+    6. Code: Implement webhook endpoint
+    7. Test end-to-end
+
+    **Benefits of multiple MCP servers:**
+
+    - **Specialized capabilities:** Each server does one thing well
+    - **Complementary features:** Tools work together naturally
+    - **Flexible workflows:** Combine as needed for your task
+    - **Context sharing:** AI maintains context across servers
+    - **Single conversation:** No switching between interfaces
+
+    <Note>
+      NimbleBrain Studio allows multiple MCP servers simultaneously. Enable all the servers you need and use them together seamlessly.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+---
+
+<Note>
+  **Need help?** Join the [NimbleBrain Discord](https://discord.gg/nimblebrain) or email support@nimblebrain.ai
+
+  **Ref support:** Email hello@ref.tools for Ref-specific questions, indexing requests, or private documentation setup
+</Note>

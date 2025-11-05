@@ -1,0 +1,936 @@
+---
+title: 'National Parks MCP Server'
+description: 'Discover and explore US National Parks with real-time park data, alerts, and visitor information'
+icon: 'mountain-sun'
+category: 'Travel & Recreation'
+difficulty: 'Beginner'
+required_auth: true
+api_provider:
+  name: 'National Park Service'
+  url: 'https://www.nps.gov/subjects/developer/'
+  signup_url: 'https://www.nps.gov/subjects/developer/get-started.htm'
+tags: ['national-parks', 'travel', 'recreation', 'outdoor', 'usa']
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="mountain-sun">
+    Access comprehensive information about all 423 US National Parks through the official National Park Service API. Get real-time data on park details, visitor centers, campgrounds, events, and alerts.
+
+    **Key Features:**
+    - Search and discover parks by state, activities, or keywords
+    - Real-time park information including hours, fees, and contacts
+    - Current alerts for closures, hazards, and safety information
+    - Visitor center details with operating hours and amenities
+    - Campground information with reservation details
+    - Upcoming events and ranger-led programs
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    Perfect for building AI-powered travel assistants and outdoor recreation planning tools.
+
+    **Examples:**
+    - Trip planning and itinerary creation across multiple parks
+    - Real-time alerts and closure monitoring
+    - Educational research about park history and features
+    - Accessibility and facility information for visitors
+    - Event discovery and ranger program scheduling
+    - Campground availability and amenity comparison
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+<Steps>
+  <Step title="Get Your API Key">
+    Request a free NPS API key at [nps.gov/subjects/developer/get-started.htm](https://www.nps.gov/subjects/developer/get-started.htm)
+
+    **Free Tier Includes:**
+    - 1,000 API calls per hour
+    - Access to all 423 national parks
+    - Real-time alerts and park information
+    - Historical and current event data
+    - No credit card required
+
+    You'll receive your API key via email within minutes after submitting the form.
+  </Step>
+
+  <Step title="Add to NimbleBrain Studio">
+    In NimbleBrain Studio:
+
+    1. Navigate to **MCP Servers** in the sidebar
+    2. Click **Add Server**
+    3. Search for "National Parks" in the server registry
+    4. Click **Configure**
+    5. Paste your API key in the **NPS_API_KEY** field
+    6. Click **Save & Enable**
+
+    <Info>
+      The server will automatically connect and become available in your AI assistant within seconds.
+    </Info>
+  </Step>
+
+  <Step title="Test the Connection">
+    In your Studio chat, try this prompt:
+
+```text
+"Tell me about Yellowstone National Park"
+```
+
+    You should see detailed park information including description, location, entrance fees, operating hours, contact information, and available activities.
+
+    <Tip>
+      Look for the 🔧 tool usage indicator in Studio to confirm the server is working correctly.
+    </Tip>
+  </Step>
+</Steps>
+
+## Available Tools
+
+<AccordionGroup>
+  <Accordion title="findParks" icon="magnifying-glass">
+    Search for national parks based on state, name, activities, or other criteria. Perfect for discovering parks that match specific interests or locations.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | stateCode | string | No | Filter parks by state code (e.g., "CA" for California). Multiple states can be comma-separated (e.g., "CA,OR,WA") |
+    | q | string | No | Search term to filter parks by name or description |
+    | limit | number | No | Maximum number of parks to return (default: 10, max: 50) |
+    | start | number | No | Start position for results (useful for pagination) |
+    | activities | string | No | Filter by available activities (e.g., "hiking,camping") |
+
+    **Returns:**
+    JSON object containing:
+    - `total` - Total number of matching parks
+    - `limit` - Number of results returned
+    - `start` - Starting position for pagination
+    - `parks` - Array of park objects with details
+
+    **Example Usage:**
+
+```text
+"Find all national parks in California"
+```
+
+    **Example Response:**
+
+```json
+{
+  "total": 9,
+  "limit": 10,
+  "start": 0,
+  "parks": [
+    {
+      "parkCode": "yose",
+      "fullName": "Yosemite National Park",
+      "description": "Not just a great valley, but a shrine to human foresight...",
+      "states": "CA",
+      "latitude": "37.865101",
+      "longitude": "-119.538330",
+      "activities": ["Hiking", "Camping", "Rock Climbing"]
+    }
+  ]
+}
+```
+
+    <Tip>
+      Use multiple state codes to plan multi-state road trips: "Show me parks in Utah, Arizona, and Colorado that have camping"
+    </Tip>
+  </Accordion>
+
+  <Accordion title="getParkDetails" icon="circle-info">
+    Get comprehensive information about a specific national park including full descriptions, operating hours, entrance fees, contact information, and available activities.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | parkCode | string | Yes | The park code of the national park (e.g., "yose" for Yosemite, "grca" for Grand Canyon) |
+
+    **Returns:**
+    Detailed park information including:
+    - Full name and description
+    - Location (state, latitude/longitude)
+    - Operating hours and seasons
+    - Entrance fees and passes
+    - Contact information (phone, email)
+    - Available activities and amenities
+    - Directions and accessibility info
+    - Images and multimedia
+
+    **Example Usage:**
+
+```text
+"What's the entrance fee for Grand Canyon National Park?"
+```
+
+    **Example Response:**
+
+```json
+{
+  "parkCode": "grca",
+  "fullName": "Grand Canyon National Park",
+  "description": "Grand Canyon National Park, in Arizona...",
+  "states": "AZ",
+  "directionsInfo": "South Rim: Open all year, is located 60 miles...",
+  "directionsUrl": "http://www.nps.gov/grca/planyourvisit/directions.htm",
+  "operatingHours": [
+    {
+      "name": "South Rim",
+      "description": "Open all year",
+      "standardHours": {
+        "monday": "All Day",
+        "tuesday": "All Day"
+      }
+    }
+  ],
+  "entranceFees": [
+    {
+      "cost": "35.00",
+      "description": "Admits one single, private, non-commercial vehicle...",
+      "title": "Private Vehicle"
+    }
+  ],
+  "contacts": {
+    "phoneNumbers": [{"phoneNumber": "9286381500"}],
+    "emailAddresses": [{"emailAddress": "grca_information@nps.gov"}]
+  },
+  "activities": [
+    {"name": "Hiking"},
+    {"name": "Camping"},
+    {"name": "Backpacking"}
+  ]
+}
+```
+
+    <Tip>
+      Park codes are typically 4-letter abbreviations. Use the findParks tool first if you don't know the park code. See the appendix at the bottom for popular park codes.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="getAlerts" icon="triangle-exclamation">
+    Get current alerts for national parks including closures, hazards, warnings, and important visitor information. Essential for trip planning to avoid unexpected closures.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | parkCode | string | No | Filter alerts by park code (e.g., "yose" for Yosemite). Multiple parks can be comma-separated (e.g., "yose,grca") |
+    | limit | number | No | Maximum number of alerts to return (default: 10, max: 50) |
+    | start | number | No | Start position for results (useful for pagination) |
+    | q | string | No | Search term to filter alerts by title or description |
+
+    **Returns:**
+    JSON object containing:
+    - `total` - Total number of alerts
+    - `alerts` - Array of alert objects with:
+      - `title` - Alert headline
+      - `description` - Detailed alert information
+      - `category` - Type of alert (Danger, Caution, Information, Park Closure)
+      - `parkCode` - Associated park
+      - `lastIndexedDate` - When alert was last updated
+
+    **Example Usage:**
+
+```text
+"Are there any closures or alerts at Yosemite right now?"
+```
+
+    **Example Response:**
+
+```json
+{
+  "total": 3,
+  "alerts": [
+    {
+      "title": "Tioga Road Closed for the Season",
+      "category": "Park Closure",
+      "description": "Tioga Road (Highway 120 through the park) is closed...",
+      "parkCode": "yose",
+      "lastIndexedDate": "2025-01-15T10:30:00Z"
+    },
+    {
+      "title": "Winter Weather Advisory",
+      "category": "Caution",
+      "description": "Carry tire chains and know how to install them...",
+      "parkCode": "yose",
+      "lastIndexedDate": "2025-01-14T08:15:00Z"
+    }
+  ]
+}
+```
+
+    <Tip>
+      Always check alerts before visiting, especially during winter or extreme weather conditions. Road closures can significantly impact travel plans.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="getVisitorCenters" icon="building">
+    Get information about visitor centers including locations, operating hours, contact details, and available amenities. Visitor centers provide orientation, educational exhibits, and ranger assistance.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | parkCode | string | No | Filter visitor centers by park code (e.g., "yose" for Yosemite). Multiple parks can be comma-separated (e.g., "yose,grca") |
+    | limit | number | No | Maximum number of visitor centers to return (default: 10, max: 50) |
+    | start | number | No | Start position for results (useful for pagination) |
+    | q | string | No | Search term to filter visitor centers by name or description |
+
+    **Returns:**
+    JSON object containing visitor center details:
+    - Name and description
+    - Physical address and directions
+    - Operating hours by season
+    - Contact information
+    - Available amenities and services
+    - Accessibility information
+
+    **Example Usage:**
+
+```text
+"What visitor centers are at Yellowstone and when are they open?"
+```
+
+    **Example Response:**
+
+```json
+{
+  "total": 5,
+  "visitorCenters": [
+    {
+      "name": "Old Faithful Visitor Education Center",
+      "description": "Open year-round, this LEED-certified building...",
+      "parkCode": "yell",
+      "addresses": [
+        {
+          "type": "Physical",
+          "line1": "Upper Geyser Basin",
+          "city": "Yellowstone National Park",
+          "stateCode": "WY"
+        }
+      ],
+      "operatingHours": [
+        {
+          "name": "Winter Hours",
+          "description": "December through March",
+          "standardHours": {
+            "monday": "9:00AM - 5:00PM",
+            "tuesday": "9:00AM - 5:00PM"
+          }
+        }
+      ],
+      "contacts": {
+        "phoneNumbers": [{"phoneNumber": "3073442751"}]
+      },
+      "amenities": ["Bookstore", "Exhibits", "Restrooms"]
+    }
+  ]
+}
+```
+
+    <Tip>
+      Visitor centers are great first stops for park orientation, trail maps, and current conditions. Many offer educational films and ranger-led programs.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="getCampgrounds" icon="campground">
+    Get information about available campgrounds including amenities, fees, reservation requirements, and operating seasons. Essential for planning overnight stays in national parks.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | parkCode | string | No | Filter campgrounds by park code (e.g., "yose" for Yosemite). Multiple parks can be comma-separated (e.g., "yose,grca") |
+    | limit | number | No | Maximum number of campgrounds to return (default: 10, max: 50) |
+    | start | number | No | Start position for results (useful for pagination) |
+    | q | string | No | Search term to filter campgrounds by name or description |
+
+    **Returns:**
+    JSON object containing campground information:
+    - Name and description
+    - Number of campsites
+    - Amenities (water, electricity, dump station, etc.)
+    - Fees and reservation requirements
+    - Operating seasons
+    - RV size limits
+    - Accessibility features
+
+    **Example Usage:**
+
+```text
+"Find campgrounds in Zion National Park with electrical hookups"
+```
+
+    **Example Response:**
+
+```json
+{
+  "total": 3,
+  "campgrounds": [
+    {
+      "name": "Watchman Campground",
+      "description": "Located near the South Entrance...",
+      "parkCode": "zion",
+      "numberOfSitesReservable": "95",
+      "numberOfSitesFirstComeFirstServe": "0",
+      "fees": [
+        {
+          "cost": "30.00",
+          "description": "Per night for standard campsite",
+          "title": "Standard Site"
+        }
+      ],
+      "amenities": {
+        "toilets": ["Flush Toilets"],
+        "showers": ["None"],
+        "potableWater": ["Yes"],
+        "electricalHookups": ["Yes"]
+      },
+      "reservations": {
+        "required": true,
+        "url": "https://www.recreation.gov"
+      },
+      "accessibility": {
+        "wheelchairAccess": "Yes",
+        "rvAllowed": "Yes",
+        "rvMaxLength": "40"
+      }
+    }
+  ]
+}
+```
+
+    <Tip>
+      Popular campgrounds require reservations months in advance, especially during peak summer season. Check availability early when planning your trip.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="getEvents" icon="calendar-days">
+    Find upcoming events at parks including ranger-led programs, educational talks, guided hikes, and special ceremonies. Great for enriching your park visit with expert-led experiences.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | parkCode | string | No | Filter events by park code (e.g., "yose" for Yosemite). Multiple parks can be comma-separated (e.g., "yose,grca") |
+    | limit | number | No | Maximum number of events to return (default: 10, max: 50) |
+    | start | number | No | Start position for results (useful for pagination) |
+    | dateStart | string | No | Start date for filtering events (format: YYYY-MM-DD) |
+    | dateEnd | string | No | End date for filtering events (format: YYYY-MM-DD) |
+    | q | string | No | Search term to filter events by title or description |
+
+    **Returns:**
+    JSON object containing event information:
+    - Event title and description
+    - Date and time information
+    - Location within the park
+    - Duration and meeting point
+    - Registration requirements
+    - Cost (most are free)
+    - Appropriate age groups
+
+    **Example Usage:**
+
+```text
+"What ranger programs are happening at Acadia National Park this weekend?"
+```
+
+    **Example Response:**
+
+```json
+{
+  "total": 8,
+  "events": [
+    {
+      "title": "Sunrise at Cadillac Mountain",
+      "description": "Join a park ranger for a guided sunrise experience...",
+      "parkCode": "acad",
+      "dateStart": "2025-01-20T05:30:00Z",
+      "dateEnd": "2025-01-20T07:00:00Z",
+      "duration": "90 minutes",
+      "location": "Cadillac Mountain Summit",
+      "isFree": true,
+      "isRegistrationRequired": false,
+      "types": ["Guided Tour", "Ranger Program"],
+      "category": "Astronomy"
+    },
+    {
+      "title": "Tidepool Exploration",
+      "description": "Discover marine life in the rocky intertidal zone...",
+      "parkCode": "acad",
+      "dateStart": "2025-01-21T10:00:00Z",
+      "dateEnd": "2025-01-21T11:30:00Z",
+      "duration": "90 minutes",
+      "location": "Sand Beach",
+      "isFree": true,
+      "isRegistrationRequired": true,
+      "contactPhoneNumber": "207-288-3338"
+    }
+  ]
+}
+```
+
+    <Tip>
+      Ranger programs are usually free and provide incredible insights into park history, geology, and wildlife. Check for events when planning your visit to enhance the experience.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+## Authentication
+
+<Info>
+  **API Key Required**: This server requires a National Park Service API key to function.
+</Info>
+
+### Getting Your API Key
+
+1. Visit [nps.gov/subjects/developer/get-started.htm](https://www.nps.gov/subjects/developer/get-started.htm)
+2. Fill out the API key request form with your name and email
+3. Agree to the terms of service
+4. Receive your API key via email (usually within 5-10 minutes)
+5. Add it to your Studio server configuration
+
+### Rate Limits
+
+| Plan | Requests/Hour | Monthly Limit | Price |
+|------|---------------|---------------|-------|
+| Free | 1,000 | Unlimited | $0 |
+
+<Warning>
+  The NPS API uses hourly rate limits. If you exceed 1,000 requests per hour, you'll receive a 429 error. Monitor your usage in Studio's server settings and adjust your query frequency if needed.
+</Warning>
+
+### Managing Your API Key in Studio
+
+Your API key is securely stored in NimbleBrain Studio. To update it:
+
+1. Go to **Settings** → **MCP Servers**
+2. Find "National Parks" in your server list
+3. Click **Edit Configuration**
+4. Update your API key in the NPS_API_KEY field
+5. Click **Save**
+
+<Tip>
+  Studio automatically manages server connections - no manual restarts required. Changes take effect immediately.
+</Tip>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Trip Planning">
+    **Scenario:** Plan a family vacation to national parks
+
+    **Prompt:**
+
+```text
+"I want to visit national parks in California next summer. Show me a list with their main attractions and best times to visit."
+```
+
+    **What happens:**
+    - Searches for parks in California
+    - Retrieves park details for each result
+    - Provides descriptions, activities, and operating hours
+    - Includes seasonal information and best visit times
+
+    **Time:** ~5 seconds
+    **API calls:** 1 search + 1 per park
+
+    <Tip>
+      Studio's AI can help narrow down options based on your specific interests: "Show me California parks with hiking and waterfalls"
+    </Tip>
+  </Tab>
+
+  <Tab title="Park Discovery">
+    **Scenario:** Find parks matching specific interests
+
+    **Prompt:**
+
+```text
+"Find national parks in the Pacific Northwest that have waterfalls and allow camping"
+```
+
+    **What happens:**
+    - Searches by region and activities
+    - Filters for camping amenities
+    - Returns matching parks with details
+    - Includes campground information
+
+    **Time:** ~3 seconds
+    **API calls:** 2-3
+  </Tab>
+
+  <Tab title="Current Conditions">
+    **Scenario:** Check alerts before visiting
+
+    **Prompt:**
+
+```text
+"Are there any alerts, closures, or safety warnings at Yosemite National Park right now?"
+```
+
+    **What happens:**
+    - Retrieves real-time alerts for the park
+    - Shows road closures and hazards
+    - Provides safety warnings
+    - Includes visitor advisories
+
+    **Time:** ~1 second
+    **API calls:** 1
+
+    <Warning>
+      Always check alerts before visiting - conditions can change rapidly due to weather, fires, or wildlife activity.
+    </Warning>
+  </Tab>
+
+  <Tab title="Educational Research">
+    **Scenario:** Learn about park history and features
+
+    **Prompt:**
+
+```text
+"Tell me about the geological features, wildlife, and history of Grand Canyon National Park"
+```
+
+    **What happens:**
+    - Fetches comprehensive park details
+    - Provides geological and natural history
+    - Describes wildlife and ecosystems
+    - Includes cultural and historical context
+
+    **Time:** ~2 seconds
+    **API calls:** 1
+  </Tab>
+
+  <Tab title="Visitor Planning">
+    **Scenario:** Get practical visit information
+
+    **Prompt:**
+
+```text
+"What visitor centers are at Yellowstone, when are they open, and what amenities do they have?"
+```
+
+    **What happens:**
+    - Lists all visitor centers in the park
+    - Provides hours of operation
+    - Shows contact information and locations
+    - Describes available amenities and services
+
+    **Time:** ~2 seconds
+    **API calls:** 1
+
+    <Tip>
+      Hours may vary by season - Studio's AI will note seasonal variations in the response.
+    </Tip>
+  </Tab>
+
+  <Tab title="Campground Comparison">
+    **Scenario:** Compare camping options across multiple parks
+
+    **Prompt:**
+
+```text
+"Compare campgrounds at Zion, Bryce Canyon, and Arches. Which ones take reservations and have RV hookups?"
+```
+
+    **What happens:**
+    - Retrieves campground data for all three parks
+    - Compares amenities (RV hookups, reservations, fees)
+    - Highlights differences between options
+    - Provides reservation information
+
+    **Time:** ~3 seconds
+    **API calls:** 1
+
+    <Tip>
+      Studio can help you filter by specific needs: "Show me campgrounds with electric hookups and showers"
+    </Tip>
+  </Tab>
+
+  <Tab title="Event Discovery">
+    **Scenario:** Find ranger programs and educational events
+
+    **Prompt:**
+
+```text
+"What ranger programs and events are happening at Acadia National Park next weekend?"
+```
+
+    **What happens:**
+    - Searches events for specified date range
+    - Shows program descriptions and times
+    - Provides registration details if required
+    - Includes location information
+
+    **Time:** ~2 seconds
+    **API calls:** 1
+  </Tab>
+</Tabs>
+
+<Note>
+  All examples work in NimbleBrain Studio's natural language interface - no code or configuration required!
+</Note>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Rate Limit Exceeded" icon="triangle-exclamation">
+    **Error Message:**
+
+```
+429 Too Many Requests - API rate limit exceeded
+```
+
+    **Cause:** You've exceeded 1,000 requests per hour
+
+    **Solutions:**
+    - Wait until the next hour for your limit to reset (hourly rate limits)
+    - Space out your requests over time in Studio conversations
+    - Batch related requests in single prompts: "Tell me about Yosemite and check for alerts"
+    - Reduce the number of parks you're querying simultaneously
+
+    **To check your usage:**
+    1. Go to Studio Settings → MCP Servers
+    2. Click on National Parks
+    3. View API usage metrics
+
+    <Tip>
+      Studio shows real-time API usage. The 1,000 requests/hour limit is generous for most use cases.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Invalid API Key" icon="key">
+    **Error Message:**
+
+```
+401 Unauthorized - Invalid API key
+```
+
+    **Cause:** API key is missing, incorrect, expired, or revoked
+
+    **Solutions:**
+    - Verify your API key in Studio server settings (no extra spaces)
+    - Ensure you copied the entire API key from the email
+    - Request a new API key from [nps.gov/subjects/developer/get-started.htm](https://www.nps.gov/subjects/developer/get-started.htm)
+    - Check your email for any revocation notices
+
+    **To update in Studio:**
+    1. Settings → MCP Servers → National Parks
+    2. Click **Edit Configuration**
+    3. Paste new API key in NPS_API_KEY field
+    4. Click **Save**
+    5. Test with: "Tell me about Yellowstone"
+
+    **Common Mistakes:**
+    - Extra spaces before/after the API key when pasting
+    - Copying only part of the API key from the email
+    - Using an API key from a different NPS account
+
+    <Info>
+      Studio validates your API key automatically when you save. You'll see a success message if it's correct.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Park Not Found" icon="magnifying-glass">
+    **Error Message:**
+
+```
+Park not found or invalid park code
+```
+
+    **Cause:** Invalid or non-existent park code provided
+
+    **Solutions:**
+    - Use `findParks` tool to search for the correct park code by name
+    - Verify the park code format (usually 4 lowercase letters, e.g., "yose", "grca")
+    - Check if the location is actually a National Park (not a state park or other designation)
+    - Try searching by full park name instead of abbreviation
+    - Refer to the park code appendix at the bottom of this page
+
+    **Examples of Correct Park Codes:**
+    - Yosemite: `yose` (not YOSE or yosemite)
+    - Grand Canyon: `grca` (not grand-canyon)
+    - Yellowstone: `yell` (not yellow)
+    - Great Smoky Mountains: `grsm` (not smoky-mountains)
+
+    **Tip:** When in doubt, use `findParks` with a search term: "Find parks matching Yosemite"
+  </Accordion>
+
+  <Accordion title="Invalid State Code" icon="map-location-dot">
+    **Error Message:**
+
+```
+Invalid state code(s): XY
+```
+
+    **Cause:** Invalid US state code provided in search filters
+
+    **Solutions:**
+    - Use standard two-letter US state codes (e.g., "CA", "NY", "TX")
+    - Ensure state codes are uppercase (though the server converts them)
+    - Verify comma-separated format for multiple states: "CA,OR,WA" (no spaces)
+    - Check for typos in state abbreviations
+
+    **Valid State Code Examples:**
+    - California: `CA`
+    - New York: `NY`
+    - Texas: `TX`
+    - Multiple states: `CA,OR,WA` or `UT,AZ,CO`
+  </Accordion>
+
+  <Accordion title="Server Not Responding" icon="server">
+    **Error Message:**
+
+```
+Server is not responding
+```
+or
+```
+Failed to connect to MCP server
+```
+
+    **Cause:** Network connectivity issue or server temporarily unavailable
+
+    **Solutions:**
+    - Check your internet connection
+    - Verify the server is enabled in Studio (Settings → MCP Servers)
+    - Try disabling and re-enabling the server in Studio
+
+    **Quick Fix in Studio:**
+    1. Go to **Settings** → **MCP Servers**
+    2. Find "National Parks" in the list
+    3. Toggle it **Off**, wait 5 seconds
+    4. Toggle it **On** again
+
+    <Info>
+      Studio manages all server infrastructure automatically - there's no local setup or Docker containers to troubleshoot. If issues persist, check your API key validity at https://www.nps.gov/subjects/developer/get-started.htm
+    </Info>
+  </Accordion>
+
+  <Accordion title="Empty or Missing Data" icon="circle-question">
+    **Error Message:**
+
+```
+No data available
+```
+or fields return null/empty arrays
+
+    **Cause:** Data not available for the requested resource
+
+    **Possible Reasons:**
+    - Park doesn't have any current alerts (this is good!)
+    - No upcoming events scheduled in the specified date range
+    - Visitor centers or campgrounds closed for the season
+    - Park code is valid but specific resource type not available
+    - Search query too restrictive (no matches found)
+
+    **Solutions:**
+    - Verify the park code is correct using `getParkDetails`
+    - Expand date range for event searches
+    - Check if facilities are seasonal (many close in winter)
+    - Remove or adjust search filters (`q` parameter)
+    - Try a different, more established park as a test
+    - Use broader search criteria or remove activity filters
+
+    **Note:** Empty results are normal for some queries (e.g., parks with no current alerts is expected and positive)
+  </Accordion>
+
+  <Accordion title="Slow Response Times" icon="clock">
+    **Symptoms:**
+    - Requests taking longer than 5-10 seconds
+    - Timeouts when fetching data
+    - Intermittent slow responses
+
+    **Cause:** Network latency, NPS API delays, or high server load
+
+    **Solutions:**
+    - Check your internet connection speed and stability
+    - Verify NPS API status (check [status.nps.gov](https://www.nps.gov) for outages)
+    - Reduce number of simultaneous requests
+    - Use smaller `limit` values for initial queries (e.g., limit=5 instead of 50)
+    - Try again in a few moments (may be temporary API congestion)
+    - Implement local caching for frequently accessed data
+
+    **Expected Response Times:**
+    - Single park search: 1-2 seconds
+    - Park details: 1-2 seconds
+    - Alerts: &lt;1 second
+    - Visitor centers: 1-2 seconds
+    - Campgrounds: 1-2 seconds
+    - Events: 1-2 seconds
+    - Multiple park queries: 3-5 seconds
+  </Accordion>
+</AccordionGroup>
+
+## Links & Resources
+
+<CardGroup cols={2}>
+  <Card title="GitHub Repository" icon="github" href="https://github.com/NimbleBrainInc/mcp-server-nationalparks">
+    View source code, report issues, and contribute to the project
+  </Card>
+
+  <Card title="NPS API Documentation" icon="book" href="https://www.nps.gov/subjects/developer/api-documentation.htm">
+    Official National Park Service API reference and data coverage
+  </Card>
+
+  <Card title="Docker Image" icon="docker" href="https://github.com/NimbleBrainInc/mcp-server-nationalparks/pkgs/container/mcp-server-nationalparks">
+    Pull the latest container image from GitHub Container Registry
+  </Card>
+
+  <Card title="Report Issues" icon="bug" href="https://github.com/NimbleBrainInc/mcp-server-nationalparks/issues">
+    Found a bug or have a feature request? Submit an issue on GitHub
+  </Card>
+</CardGroup>
+
+## Related MCP Servers
+
+<CardGroup cols={3}>
+  <Card title="Weather API" icon="cloud-sun" href="/mcp-servers/data/weather">
+    Check weather forecasts for your park visits
+  </Card>
+
+  <Card title="Google Maps" icon="map" href="/mcp-servers/travel/google-maps">
+    Get directions and calculate travel times between parks
+  </Card>
+
+  <Card title="Calendly" icon="calendar" href="/mcp-servers/productivity/calendly">
+    Schedule and coordinate group trips to parks
+  </Card>
+</CardGroup>
+
+---
+
+## Appendix: Popular National Parks and Park Codes
+
+| Park Name | Park Code | State(s) |
+|-----------|-----------|----------|
+| Yosemite | yose | CA |
+| Grand Canyon | grca | AZ |
+| Yellowstone | yell | WY, MT, ID |
+| Zion | zion | UT |
+| Great Smoky Mountains | grsm | TN, NC |
+| Acadia | acad | ME |
+| Olympic | olym | WA |
+| Rocky Mountain | romo | CO |
+| Joshua Tree | jotr | CA |
+| Sequoia & Kings Canyon | seki | CA |
+| Glacier | glac | MT |
+| Grand Teton | grte | WY |
+| Bryce Canyon | brca | UT |
+| Arches | arch | UT |
+| Mount Rainier | mora | WA |
+| Shenandoah | shen | VA |
+| Crater Lake | crla | OR |
+| Denali | dena | AK |
+| Everglades | ever | FL |
+| Death Valley | deva | CA, NV |
+
+For a complete list of all 423 national parks and their codes, visit [nps.gov/findapark](https://www.nps.gov/findapark/index.htm) or use the `findParks` tool with no filters.
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://discord.gg/nimblebrain) or email support@nimblebrain.ai

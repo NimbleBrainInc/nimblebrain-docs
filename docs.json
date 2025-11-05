@@ -190,6 +190,86 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "MCP Servers",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "docs/mcp-servers/overview"
+            ]
+          },
+          {
+            "group": "Development Tools",
+            "pages": [
+              "docs/mcp-servers/development/echo",
+              "docs/mcp-servers/development/github",
+              "docs/mcp-servers/development-tools/ref"
+            ]
+          },
+          {
+            "group": "Utilities",
+            "pages": [
+              "docs/mcp-servers/utilities/reverse-text"
+            ]
+          },
+          {
+            "group": "Document Processing",
+            "pages": [
+              "docs/mcp-servers/document-processing/pdfco"
+            ]
+          },
+          {
+            "group": "Search & Research",
+            "pages": [
+              "docs/mcp-servers/search-research/tavily"
+            ]
+          },
+          {
+            "group": "Data Intelligence",
+            "pages": [
+              "docs/mcp-servers/data-intelligence/abstract",
+              "docs/mcp-servers/data-intelligence/ipinfo"
+            ]
+          },
+          {
+            "group": "Data Analytics",
+            "pages": [
+              "docs/mcp-servers/data-analytics/clickhouse"
+            ]
+          },
+          {
+            "group": "Databases",
+            "pages": [
+              "docs/mcp-servers/databases/postgresql"
+            ]
+          },
+          {
+            "group": "Finance",
+            "pages": [
+              "mcp-servers/finance/finnhub"
+            ]
+          },
+          {
+            "group": "Language & Translation",
+            "pages": [
+              "docs/mcp-servers/language/deepl"
+            ]
+          },
+          {
+            "group": "Travel & Recreation",
+            "pages": [
+              "mcp-servers/travel/nationalparks"
+            ]
+          },
+          {
+            "group": "Weather & Climate",
+            "pages": [
+              "mcp-servers/weather/openweathermap"
+            ]
+          }
+        ]
       }
     ],
     "global": {
