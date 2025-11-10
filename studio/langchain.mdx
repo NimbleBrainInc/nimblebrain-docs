@@ -43,7 +43,7 @@ from langchain.agents import initialize_agent, AgentType
 import requests
 
 # Configure MCP connection
-MCP_ENDPOINT = "https://mcp.nimbletools.ai/{workspace-id}/{server-name}/mcp"
+MCP_ENDPOINT = "https://mcp.nimbletools.dev/{workspace-id}/{server-name}/mcp"
 MCP_TOKEN = "YOUR_WORKSPACE_TOKEN"
 
 def call_mcp_tool(tool_name: str, **kwargs):
@@ -81,8 +81,8 @@ agent = initialize_agent(
 ## Getting Your Configuration
 
 <Steps>
-  <Step title="Navigate to Toolbox">
-    Go to the Toolbox section in NimbleBrain Studio
+  <Step title="Navigate to Connections">
+    Go to the Connections section in NimbleBrain Studio
   </Step>
   <Step title="Find Your Server">
     Locate the MCP server you want to connect
@@ -110,7 +110,7 @@ import requests
 import os
 
 # MCP Configuration
-MCP_ENDPOINT = "https://mcp.nimbletools.ai/ws-my-workspace/knowledge-base/mcp"
+MCP_ENDPOINT = "https://mcp.nimbletools.dev/ws-my-workspace/knowledge-base/mcp"
 MCP_TOKEN = os.getenv("NIMBLEBRAIN_TOKEN")
 
 def search_knowledge_base(query: str) -> str:
@@ -194,7 +194,7 @@ class MCPTool extends Tool {
 // Initialize
 const tools = [
   new MCPTool(
-    "https://mcp.nimbletools.ai/ws-my-workspace/knowledge-base/mcp",
+    "https://mcp.nimbletools.dev/ws-my-workspace/knowledge-base/mcp",
     process.env.NIMBLEBRAIN_TOKEN!
   )
 ];
@@ -255,7 +255,7 @@ Add robust error handling:
 def call_mcp_tool(server: str, tool_name: str, **kwargs):
     """Call an MCP tool with error handling"""
     try:
-        endpoint = f"https://mcp.nimbletools.ai/{WORKSPACE_ID}/{server}/mcp"
+        endpoint = f"https://mcp.nimbletools.dev/{WORKSPACE_ID}/{server}/mcp"
         headers = {"Authorization": f"Bearer {MCP_TOKEN}"}
 
         response = requests.post(
@@ -323,7 +323,7 @@ def call_mcp_tool_cached(tool_name: str, query: str):
     - Long-running tool
 
     **Solution:**
-    - Check server status in Toolbox
+    - Check server status in Connections
     - Increase timeout value
     - Verify network connectivity
   </Accordion>
@@ -376,9 +376,9 @@ def call_mcp_tool_cached(tool_name: str, query: str):
 
 <CardGroup cols={2}>
   <Card
-    title="Toolbox"
-    icon="toolbox"
-    href="/studio/toolbox"
+    title="Connections"
+    icon="plug"
+    href="/studio/connections"
   >
     Install and manage MCP servers
   </Card>

@@ -40,7 +40,7 @@ NimbleBrain supports integration with:
 
 <Steps>
   <Step title="Install an MCP Server">
-    Navigate to Toolbox and install an MCP server from the catalog
+    Navigate to Connections and install an MCP server from the catalog
   </Step>
   <Step title="Click Connect">
     On any installed server, click the **Connect** button
@@ -90,7 +90,7 @@ NimbleBrain supports integration with:
       "args": [
         "@nimbletools/mcp-http-bridge",
         "--endpoint",
-        "https://mcp.nimbletools.ai/{workspace-id}/{server-name}/mcp",
+        "https://mcp.nimbletools.dev/{workspace-id}/{server-name}/mcp",
         "--token",
         "YOUR_WORKSPACE_TOKEN"
       ],
@@ -147,7 +147,7 @@ NimbleBrain supports integration with:
       "args": [
         "@nimbletools/mcp-http-bridge",
         "--endpoint",
-        "https://mcp.nimbletools.ai/{workspace-id}/{server-name}/mcp",
+        "https://mcp.nimbletools.dev/{workspace-id}/{server-name}/mcp",
         "--token",
         "YOUR_WORKSPACE_TOKEN"
       ]
@@ -197,7 +197,7 @@ NimbleBrain supports integration with:
       "args": [
         "@nimbletools/mcp-http-bridge",
         "--endpoint",
-        "https://mcp.nimbletools.ai/{workspace-id}/{server-name}/mcp",
+        "https://mcp.nimbletools.dev/{workspace-id}/{server-name}/mcp",
         "--token",
         "YOUR_WORKSPACE_TOKEN"
       ]
@@ -241,7 +241,7 @@ from langchain.agents import initialize_agent, AgentType
 import requests
 
 # Configure MCP connection
-MCP_ENDPOINT = "https://mcp.nimbletools.ai/{workspace-id}/{server-name}/mcp"
+MCP_ENDPOINT = "https://mcp.nimbletools.dev/{workspace-id}/{server-name}/mcp"
 MCP_TOKEN = "YOUR_WORKSPACE_TOKEN"
 
 def call_mcp_tool(tool_name: str, **kwargs):
@@ -282,7 +282,7 @@ All integrations require two key pieces of information:
 
 <ResponseField name="Endpoint" type="string">
   The MCP server endpoint URL in the format:
-  `https://mcp.nimbletools.ai/{workspace-id}/{server-name}/mcp`
+  `https://mcp.nimbletools.dev/{workspace-id}/{server-name}/mcp`
 </ResponseField>
 
 <ResponseField name="Access Token" type="string">
@@ -359,7 +359,7 @@ All integrations require two key pieces of information:
     - Endpoint URL incorrect
 
     **Solution**:
-    - Check server status in Toolbox (should show "Running")
+    - Check server status in Connections (should show "Running")
     - Generate a new token if expired
     - Verify endpoint URL matches the one in Studio
   </Accordion>
@@ -384,7 +384,7 @@ All integrations require two key pieces of information:
 
     **Solution**:
     - Wait 5-10 seconds for cold start
-    - Check server logs in Toolbox
+    - Check server logs in Connections
     - Verify server endpoint is accessible
   </Accordion>
 </AccordionGroup>
@@ -397,7 +397,7 @@ The `@nimbletools/mcp-http-bridge` package supports additional options:
 
 ```bash
 npx @nimbletools/mcp-http-bridge \
-  --endpoint "https://mcp.nimbletools.ai/..." \
+  --endpoint "https://mcp.nimbletools.dev/..." \
   --token "YOUR_TOKEN" \
   --timeout 30000 \
   --retry 3
@@ -416,7 +416,7 @@ npx @nimbletools/mcp-http-bridge \
 You can also integrate directly via HTTP without the bridge:
 
 ```javascript
-const response = await fetch('https://mcp.nimbletools.ai/{workspace-id}/{server-name}/mcp', {
+const response = await fetch('https://mcp.nimbletools.dev/{workspace-id}/{server-name}/mcp', {
   method: 'POST',
   headers: {
     'Authorization': `Bearer ${YOUR_TOKEN}`,
@@ -436,9 +436,9 @@ const response = await fetch('https://mcp.nimbletools.ai/{workspace-id}/{server-
 
 <CardGroup cols={2}>
   <Card
-    title="Toolbox"
-    icon="toolbox"
-    href="/studio/toolbox"
+    title="Connections"
+    icon="plug"
+    href="/studio/connections"
   >
     Install and manage MCP servers
   </Card>

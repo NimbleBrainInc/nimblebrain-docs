@@ -17,7 +17,7 @@ Activity Logs record every significant action in your workspace:
 
 - **Workspace Changes**: Creation, deletion, and configuration updates
 - **Playbook Activity**: Creation, updates, and executions
-- **Toolbox Actions**: Server installations, uninstalls, and restarts
+- **Connections Actions**: Server installations, uninstalls, and restarts
 - **API Token Management**: Token creation and deletion
 - **User Actions**: Who performed each action and when
 
@@ -72,7 +72,7 @@ Filter by the type of resource that was acted upon:
 - **Workspace**: Workspace creation and updates
 - **Assistant**: AI assistant interactions
 - **Playbook**: Playbook operations
-- **Toolbox**: MCP server management
+- **Connections**: MCP server management
 - **API Token**: Token management
 - **Organization**: Organization-level changes
 - **Settings**: Configuration updates
@@ -133,7 +133,7 @@ Each log entry shows:
     When the action occurred (relative and absolute time)
   </Card>
   <Card title="Resource Type" icon="tag">
-    The category of the resource (workspace, playbook, toolbox)
+    The category of the resource (workspace, playbook, connections)
   </Card>
   <Card title="IP Address" icon="network-wired">
     The IP address from which the action was performed
@@ -167,7 +167,7 @@ Click on a log entry to see additional details:
 - **Executed playbook**: Playbook was run
 - **Deleted playbook**: Playbook was removed
 
-### Toolbox Actions
+### Connections Actions
 
 - **Installed tool**: MCP server was installed from catalog
 - **Uninstalled tool**: MCP server was removed
@@ -191,7 +191,7 @@ Activity Logs help diagnose issues:
     Set the time range to cover the period when the issue began
   </Step>
   <Step title="Filter by Resource">
-    Select the resource type related to the issue (e.g., Playbook, Toolbox)
+    Select the resource type related to the issue (e.g., Playbook, Connections)
   </Step>
   <Step title="Look for Failures">
     Filter by "Failed" status to see what went wrong
@@ -305,9 +305,9 @@ Activity Logs support:
     View playbook execution logs
   </Card>
   <Card
-    title="Toolbox"
-    icon="toolbox"
-    href="/studio/toolbox"
+    title="Connections"
+    icon="plug"
+    href="/studio/connections"
   >
     Track server installations and changes
   </Card>

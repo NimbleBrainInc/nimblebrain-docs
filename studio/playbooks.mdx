@@ -5,23 +5,61 @@ icon: 'play'
 ---
 
 <img
-  src="/images/studio/playbooks-main-view.png"
+  src="/images/studio/playbooklist.png"
   alt="Playbooks main view"
 />
 
-**Playbooks** are AI-powered workflows that automate complex tasks using natural language instructions. They execute using Claude AI and can leverage any MCP servers installed in your Toolbox.
+**Playbooks** are AI-powered workflows that automate complex tasks using natural language instructions. They execute using Claude AI and can leverage any MCP servers installed in your workspace via Connections.
+
+<Note>
+**New Way to Build**: Instead of creating playbooks manually, most users now build them conversationally with [NIRA](/studio/nira). This page explains what playbooks are and how to edit them.
+</Note>
+
+<Info>
+**Understanding the Hierarchy:**
+- **Agents** orchestrate multiple playbooks → [Learn about Agents](/studio/agents)
+- **Playbooks** (you are here) are individual automation tasks
+- **MCP Tools** are the building blocks playbooks use → [Browse Connections](/studio/connections)
+</Info>
 
 ## What are Playbooks?
 
 Playbooks allow you to:
 
 - **Automate workflows** with natural language instructions
-- **Use MCP tools** installed in your Toolbox to access external APIs and services
+- **Use MCP tools** installed via Connections to access external APIs and services
 - **Track execution history** with detailed logs and results
 - **Schedule runs** or trigger them manually
 - **Configure AI parameters** like model, temperature, and timeouts
 
-## Creating a Playbook
+## Creating Playbooks with NIRA
+
+The easiest way to create a playbook is to ask NIRA in the sidebar. Simply describe what you want to automate and NIRA will build the playbook for you.
+
+<img
+  src="/images/studio/playbooknira.png"
+  alt="Creating a playbook with NIRA"
+/>
+
+### Example: Git Repository Email Alert
+
+In this example, we asked NIRA:
+
+> "Could you make me a new playbook to send me an email whenever my git repo is updated?"
+
+NIRA automatically:
+- Created a new playbook with appropriate instructions
+- Selected the necessary MCP servers (GitHub for monitoring, email for notifications)
+- Generated the natural language instructions for the playbook
+- Configured the playbook settings
+
+You can then review, modify, and deploy the playbook that NIRA created. This conversational approach is much faster than manually configuring everything.
+
+<Tip>
+**Pro tip**: Be specific about timing, triggers, and outputs when asking NIRA. For example: "Check my main branch every hour" or "Send emails to admin@company.com"
+</Tip>
+
+## Creating a Playbook Manually
 
 <Steps>
   <Step title="Navigate to Playbooks">
@@ -42,13 +80,13 @@ Playbooks allow you to:
 </Steps>
 
 <Callout type="tip">
-  Playbooks have access to all MCP servers installed in your Toolbox. Make sure to install the necessary servers first!
+  Playbooks have access to all MCP servers installed via Connections. Make sure to install the necessary servers first!
 </Callout>
 
 ## Playbook Instructions
 
 <img
-  src="/images/studio/playbook-detail-instructions.png"
+  src="/images/studio/playbooks-example.png"
   alt="Playbook instructions"
 />
 
@@ -73,7 +111,7 @@ expected to provide the greatest returns over the next week.
 ## Playbook Configuration
 
 <img
-  src="/images/studio/playbook-detail-configuration.png"
+  src="/images/studio/playbookconfig.png"
   alt="Playbook configuration"
 />
 
@@ -126,7 +164,7 @@ Configure how your playbook executes:
 ## Recent Executions
 
 <img
-  src="/images/studio/playbook-recent-executions.png"
+  src="/images/studio/playbook-execution.png"
   alt="Playbook recent executions"
 />
 
@@ -202,8 +240,8 @@ Playbooks can have the following statuses:
   <Card title="Be Specific" icon="target">
     Write clear, detailed instructions about what you want the playbook to do
   </Card>
-  <Card title="Install Tools First" icon="toolbox">
-    Make sure required MCP servers are installed in your Toolbox before creating playbooks
+  <Card title="Install Tools First" icon="plug">
+    Make sure required MCP servers are installed via Connections before creating playbooks
   </Card>
   <Card title="Test Thoroughly" icon="flask">
     Run your playbook multiple times to ensure consistent results
@@ -234,9 +272,9 @@ Playbooks can have the following statuses:
 
 <CardGroup cols={2}>
   <Card
-    title="Toolbox"
-    icon="toolbox"
-    href="/studio/toolbox"
+    title="Connections"
+    icon="plug"
+    href="/studio/connections"
   >
     Install MCP servers to give your playbooks new capabilities
   </Card>

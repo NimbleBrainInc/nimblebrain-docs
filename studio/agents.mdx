@@ -1,0 +1,500 @@
+---
+title: 'Agents - Multi-Playbook Orchestration'
+description: 'Coordinate multiple playbooks under intelligent agents that run on schedules and manage complex workflows'
+icon: 'diagram-project'
+---
+
+# Agents
+
+Agents are intelligent orchestrators that manage multiple playbooks simultaneously, enabling complex multi-step workflows that span different tools and data sources.
+
+<Note>
+**Think of it this way:**
+- **Playbook** = Single automation task (e.g., "fetch weather")
+- **Agent** = Coordinator of multiple tasks (e.g., "morning routine: fetch weather, check calendar, send daily brief")
+</Note>
+
+## What is an Agent?
+
+An Agent is a smart container that:
+- 🎯 **Orchestrates Multiple Playbooks** - Run several automations as one cohesive workflow
+- ⏰ **Scheduled Execution** - Run all playbooks at specified times or intervals
+- 🔄 **Sequential or Parallel** - Control how playbooks execute (one after another or simultaneously)
+- 📊 **Unified Monitoring** - Track all playbook executions in one place
+- 🤖 **NIRA-Powered** - Build complex agents through conversation
+
+## Agent vs Playbook
+
+<CardGroup cols={2}>
+  <Card title="Playbook" icon="book">
+    **Single automation task**
+
+    - One specific workflow
+    - Uses one or more MCP tools
+    - Runs independently
+    - Example: "Send Slack notification"
+  </Card>
+
+  <Card title="Agent" icon="robot">
+    **Multi-playbook orchestrator**
+
+    - Coordinates multiple playbooks
+    - Manages complex workflows
+    - Scheduled or interval-based
+    - Example: "Daily morning routine"
+  </Card>
+</CardGroup>
+
+## When to Use Agents
+
+Use Agents when you need to:
+
+<AccordionGroup>
+  <Accordion title="Coordinate Multiple Data Sources">
+    **Example:** Pull data from Salesforce, enrich with market data from Finnhub, analyze with AI, and post results to Slack
+
+    **Why Agent:** Multiple playbooks working together, each handling one data source
+  </Accordion>
+
+  <Accordion title="Execute Sequential Workflows">
+    **Example:** Morning routine - check weather → check calendar → check emails → generate daily brief → send to Slack
+
+    **Why Agent:** Playbooks need to run in specific order, passing data between steps
+  </Accordion>
+
+  <Accordion title="Recurring Multi-Step Processes">
+    **Example:** Hourly: monitor system health → check API quotas → update dashboard → alert if issues
+
+    **Why Agent:** Complex workflow that repeats on a schedule
+  </Accordion>
+
+  <Accordion title="Conditional Workflow Branching">
+    **Example:** Sales pipeline: check new leads → qualify leads → assign to reps → notify team, but only for qualified leads
+
+    **Why Agent:** Logic spans multiple playbooks with conditional execution
+  </Accordion>
+</AccordionGroup>
+
+## Creating an Agent with NIRA
+
+The easiest way to create an agent is to ask NIRA:
+
+<Steps>
+  <Step title="Describe Your Multi-Step Workflow">
+    Tell NIRA about the complex automation you want to build
+
+    <Card>
+    **You:** "I need a morning routine agent that checks the weather, pulls my calendar for today, summarizes my emails, and sends me a daily brief in Slack every weekday at 7am"
+    </Card>
+  </Step>
+
+  <Step title="NIRA Analyzes & Proposes Structure">
+    NIRA identifies this needs multiple playbooks and suggests an agent
+
+    <Card>
+    **NIRA says:** 🤖
+
+    "Perfect! This is a great use case for an Agent. I'll create a 'Morning Routine Agent' with 4 playbooks:
+
+    1. **Weather Playbook** - Fetches forecast for your location
+    2. **Calendar Playbook** - Gets today's events from Google Calendar
+    3. **Email Playbook** - Summarizes unread emails
+    4. **Brief Playbook** - Compiles everything and sends to Slack
+
+    These will run sequentially so each step completes before the next starts.
+
+    Schedule: Weekdays at 7:00 AM
+
+    Sound good?"
+    </Card>
+  </Step>
+
+  <Step title="Configure API Keys">
+    Provide credentials for each service the agent will use
+  </Step>
+
+  <Step title="Review Agent Configuration">
+    See all playbooks, their execution order, and schedule
+  </Step>
+
+  <Step title="Deploy & Monitor">
+    Agent goes live and you can track each playbook execution
+  </Step>
+</Steps>
+
+## Agent Configuration
+
+### Scheduling Options
+
+Agents can be configured with flexible scheduling:
+
+<Tabs>
+  <Tab title="Time-Based">
+    Run at specific times:
+    - Daily at 9:00 AM
+    - Weekdays at 8:00 AM and 5:00 PM
+    - Every Monday at 10:00 AM
+    - First day of month at 9:00 AM
+
+```json
+{
+  "schedule": {
+    "type": "time",
+    "time": "09:00",
+    "days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+    "timezone": "America/Panama"
+  }
+}
+```
+  </Tab>
+
+  <Tab title="Interval-Based">
+    Run at regular intervals:
+    - Every 15 minutes
+    - Every hour
+    - Every 6 hours
+    - Every day
+
+```json
+{
+  "schedule": {
+    "type": "interval",
+    "interval": "1h",
+    "startTime": "08:00"
+  }
+}
+```
+  </Tab>
+
+  <Tab title="Event-Triggered">
+    Run when conditions are met:
+    - When webhook receives data
+    - When file is uploaded
+    - When threshold is exceeded
+
+```json
+{
+  "schedule": {
+    "type": "trigger",
+    "trigger": "webhook",
+    "endpoint": "/webhooks/agent-123"
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+### Execution Modes
+
+Control how playbooks within an agent execute:
+
+<CardGroup cols={2}>
+  <Card title="Sequential" icon="arrow-right">
+    Playbooks run one after another
+
+    **Best for:**
+    - Dependent steps
+    - Data flows between playbooks
+    - Resource-intensive tasks
+
+    **Example:** Fetch data → Process → Analyze → Report
+  </Card>
+
+  <Card title="Parallel" icon="diagram-project">
+    Playbooks run simultaneously
+
+    **Best for:**
+    - Independent tasks
+    - Speed optimization
+    - Multiple data sources
+
+    **Example:** Check 5 APIs at once, compile results
+  </Card>
+</CardGroup>
+
+### Playbook Dependencies
+
+Define relationships between playbooks:
+
+```json
+{
+  "playbooks": [
+    {
+      "id": "fetch-sales-data",
+      "name": "Fetch Sales Data",
+      "dependencies": []
+    },
+    {
+      "id": "fetch-market-data",
+      "name": "Fetch Market Data",
+      "dependencies": []
+    },
+    {
+      "id": "analyze-data",
+      "name": "Analyze Combined Data",
+      "dependencies": ["fetch-sales-data", "fetch-market-data"]
+    },
+    {
+      "id": "send-report",
+      "name": "Send Report to Team",
+      "dependencies": ["analyze-data"]
+    }
+  ]
+}
+```
+
+## Real-World Agent Examples
+
+### 1. Sales Intelligence Agent
+
+<Card title="Sales Intelligence Agent" icon="chart-line">
+**Goal:** Provide daily competitive intelligence to sales team
+
+**Playbooks:**
+1. **Competitor Monitor** - Scrape competitor pricing pages
+2. **Market Data** - Fetch relevant market trends (Finnhub)
+3. **CRM Sync** - Pull today's opportunities (Salesforce)
+4. **AI Analysis** - Analyze data and generate insights
+5. **Report Generator** - Create formatted report
+6. **Slack Notifier** - Send to #sales channel
+
+**Schedule:** Every weekday at 6:00 AM
+**Execution:** Sequential (each step needs previous data)
+</Card>
+
+### 2. System Health Agent
+
+<Card title="System Health Monitor" icon="heartbeat">
+**Goal:** Monitor application health and alert on issues
+
+**Playbooks:**
+1. **API Health Check** - Test all API endpoints
+2. **Database Monitor** - Check database performance
+3. **Log Analyzer** - Scan for errors in last hour
+4. **Quota Monitor** - Check API usage limits
+5. **Alert Generator** - Create alerts if issues found
+6. **PagerDuty Trigger** - Escalate critical issues
+
+**Schedule:** Every 15 minutes
+**Execution:** Parallel (all checks run simultaneously)
+</Card>
+
+### 3. Content Distribution Agent
+
+<Card title="Content Distribution Agent" icon="share-nodes">
+**Goal:** Automatically publish content across multiple platforms
+
+**Playbooks:**
+1. **Content Fetch** - Get approved posts from Notion
+2. **Image Optimizer** - Resize/optimize images
+3. **Twitter Publisher** - Post to Twitter
+4. **LinkedIn Publisher** - Post to LinkedIn
+5. **Slack Notifier** - Notify team of publications
+6. **Analytics Tracker** - Log publication to database
+
+**Schedule:** Daily at 9:00 AM and 3:00 PM
+**Execution:** Parallel for social posts, sequential for tracking
+</Card>
+
+## Managing Agents
+
+### Agent Dashboard
+
+View all your agents in one place:
+- 📊 Execution history and success rates
+- ⏱️ Next scheduled run times
+- 🎯 Active vs paused agents
+- 📈 Performance metrics per playbook
+
+### Editing Agents
+
+Modify agents at any time:
+- ➕ Add new playbooks
+- ➖ Remove playbooks
+- 🔄 Change execution order
+- ⏰ Update schedule
+- 🔧 Adjust configurations
+
+<Tip>
+**Pro Tip:** Ask NIRA to modify your agent: "Add a playbook to the morning routine that checks my stock portfolio"
+</Tip>
+
+### Pausing & Resuming
+
+Temporarily disable agents without deleting:
+- Pause before holidays or maintenance
+- Resume when ready
+- Edit while paused
+- View historical data even when paused
+
+## Advanced Features
+
+<AccordionGroup>
+  <Accordion title="Conditional Execution">
+    Run playbooks based on conditions:
+    - Only send alerts if threshold exceeded
+    - Skip steps if data is empty
+    - Branch based on time of day or day of week
+
+```json
+{
+  "playbook": "send-alert",
+  "condition": "temperature > 100"
+}
+```
+  </Accordion>
+
+  <Accordion title="Data Passing Between Playbooks">
+    Share data between playbooks in an agent:
+    - Output from one playbook becomes input to next
+    - Access shared agent context
+    - Transform data between steps
+
+```json
+{
+  "playbook": "analyze-data",
+  "inputs": {
+    "salesData": "${fetch-sales-data.output}",
+    "marketData": "${fetch-market-data.output}"
+  }
+}
+```
+  </Accordion>
+
+  <Accordion title="Error Handling & Retries">
+    Configure resilient agents:
+    - Retry failed playbooks automatically
+    - Continue on error vs stop agent
+    - Fallback playbooks
+    - Error notifications
+
+```json
+{
+  "errorHandling": {
+    "retry": true,
+    "maxRetries": 3,
+    "retryDelay": "5m",
+    "onError": "continue"
+  }
+}
+```
+  </Accordion>
+
+  <Accordion title="Agent Variables">
+    Define reusable variables across playbooks:
+    - Environment configurations
+    - Shared settings
+    - Dynamic values
+
+```json
+{
+  "variables": {
+    "slackChannel": "#sales-team",
+    "reportFormat": "detailed",
+    "timezone": "America/Panama"
+  }
+}
+```
+  </Accordion>
+</AccordionGroup>
+
+## Monitoring & Logs
+
+Track agent performance in detail:
+
+### Execution History
+- See every agent run with timestamp
+- Playbook-by-playbook status
+- Execution duration
+- Success/failure indicators
+
+### Detailed Logs
+- Each playbook's output
+- MCP tool interactions
+- Error messages and stack traces
+- Data transformations
+
+### Performance Metrics
+- Average execution time
+- Success rate percentage
+- Resource usage
+- Cost tracking (API calls)
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Start Simple" icon="seedling">
+    Begin with 2-3 playbooks and add more as needed
+  </Card>
+
+  <Card title="Name Clearly" icon="tag">
+    Use descriptive names: "Morning Routine" not "Agent 1"
+  </Card>
+
+  <Card title="Test Individually" icon="flask">
+    Test each playbook before combining into agent
+  </Card>
+
+  <Card title="Monitor Initially" icon="eye">
+    Watch first few runs closely to catch issues
+  </Card>
+
+  <Card title="Handle Failures" icon="shield">
+    Configure retries and error handling upfront
+  </Card>
+
+  <Card title="Document Purpose" icon="book">
+    Add descriptions so team understands agent's goal
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Agent didn't run on schedule">
+    **Check:**
+    - Agent is not paused
+    - Schedule timezone is correct
+    - Schedule cron expression is valid
+    - System status page for outages
+  </Accordion>
+
+  <Accordion title="One playbook failed, stopped entire agent">
+    **Solution:**
+    - Configure error handling to "continue" instead of "stop"
+    - Add retry logic to the failing playbook
+    - Review playbook logs to fix underlying issue
+  </Accordion>
+
+  <Accordion title="Playbooks running in wrong order">
+    **Check:**
+    - Execution mode (sequential vs parallel)
+    - Playbook dependencies are configured correctly
+    - Review execution logs for actual order
+  </Accordion>
+
+  <Accordion title="Agent runs too slowly">
+    **Optimize:**
+    - Switch independent playbooks to parallel execution
+    - Reduce API call frequency in playbooks
+    - Cache frequently-accessed data
+    - Review MCP tool performance
+  </Accordion>
+</AccordionGroup>
+
+## What's Next?
+
+<CardGroup cols={2}>
+  <Card title="Build Your First Agent" icon="plus" href="/studio/nira">
+    Ask NIRA to create a multi-playbook workflow
+  </Card>
+  <Card title="Learn About Playbooks" icon="book" href="/studio/playbooks">
+    Understand the building blocks of agents
+  </Card>
+  <Card title="Explore MCP Tools" icon="plug" href="/studio/connections">
+    See what tools your agent can use
+  </Card>
+  <Card title="Activity Logs" icon="chart-line" href="/studio/activity-logs">
+    Track your agent's execution and success
+  </Card>
+</CardGroup>
