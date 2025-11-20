@@ -45,7 +45,7 @@ Cursor is an AI-first code editor built for productivity. By connecting your MCP
       "args": [
         "@nimbletools/mcp-http-bridge",
         "--endpoint",
-        "https://mcp.nimbletools.ai/{workspace-id}/{server-name}/mcp",
+        "https://mcp.nimbletools.dev/{workspace-id}/{server-name}/mcp",
         "--token",
         "YOUR_WORKSPACE_TOKEN"
       ]
@@ -57,8 +57,8 @@ Cursor is an AI-first code editor built for productivity. By connecting your MCP
 ## Getting Your Configuration
 
 <Steps>
-  <Step title="Navigate to Toolbox">
-    Go to the Toolbox section in NimbleBrain Studio
+  <Step title="Navigate to Connections">
+    Go to the Connections section in NimbleBrain Studio
   </Step>
   <Step title="Find Your Server">
     Locate the MCP server you want to connect
@@ -159,7 +159,7 @@ Some MCP tools can be invoked from Cursor's integrated terminal.
     - Incorrect endpoint URL
 
     **Solution:**
-    - Check server status in Toolbox (should show "Running")
+    - Check server status in Connections (should show "Running")
     - Verify internet connection
     - Confirm endpoint URL matches your workspace and server
   </Accordion>
@@ -191,7 +191,7 @@ You can connect multiple MCP servers:
       "args": [
         "@nimbletools/mcp-http-bridge",
         "--endpoint",
-        "https://mcp.nimbletools.ai/{workspace-id}/database/mcp",
+        "https://mcp.nimbletools.dev/{workspace-id}/database/mcp",
         "--token",
         "YOUR_TOKEN"
       ]
@@ -201,7 +201,7 @@ You can connect multiple MCP servers:
       "args": [
         "@nimbletools/mcp-http-bridge",
         "--endpoint",
-        "https://mcp.nimbletools.ai/{workspace-id}/api/mcp",
+        "https://mcp.nimbletools.dev/{workspace-id}/api/mcp",
         "--token",
         "YOUR_TOKEN"
       ]
@@ -222,7 +222,7 @@ Use environment variables for sensitive data:
       "args": [
         "@nimbletools/mcp-http-bridge",
         "--endpoint",
-        "https://mcp.nimbletools.ai/{workspace-id}/{server-name}/mcp",
+        "https://mcp.nimbletools.dev/{workspace-id}/{server-name}/mcp",
         "--token",
         "${NIMBLEBRAIN_TOKEN}"
       ]
@@ -260,9 +260,9 @@ export NIMBLEBRAIN_TOKEN="your-token-here"
 
 <CardGroup cols={2}>
   <Card
-    title="Toolbox"
-    icon="toolbox"
-    href="/studio/toolbox"
+    title="Connections"
+    icon="plug"
+    href="/studio/connections"
   >
     Install and manage MCP servers
   </Card>

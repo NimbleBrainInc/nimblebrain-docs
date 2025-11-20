@@ -1,0 +1,1496 @@
+---
+title: 'PDF.co'
+sidebarTitle: 'PDF.co'
+description: 'Comprehensive PDF manipulation, conversion, OCR, and document automation with support for barcodes, watermarks, and security features'
+icon: 'file-pdf'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="wand-magic-sparkles">
+    PDF.co provides 18 powerful tools for PDF processing, conversion, and automation. Extract text and data from PDFs, merge and split documents, add watermarks and passwords, convert HTML and images to PDF, generate and read barcodes, and perform OCR on scanned documents. All processing happens through a simple cloud API with credit-based pricing.
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **Document Workflows**: Automate contract processing, invoice extraction, and report generation. **Content Management**: Convert web pages to PDFs, merge documents, and compress files. **Security**: Add password protection and watermarks. **Data Extraction**: OCR scanned documents, read barcodes, and extract structured data. **Creative**: Generate QR codes, add annotations, and batch process images.
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+<Steps>
+  <Step title="Get your API key">
+    1. Visit [PDF.co Dashboard](https://app.pdf.co/dashboard)
+    2. Sign up for a free account (no credit card required)
+    3. Copy your API key from the dashboard
+
+    **Free tier includes**:
+    - 300 credits per month
+    - Most operations cost 1-3 credits
+    - Perfect for testing and light usage
+  </Step>
+
+  <Step title="Add to NimbleBrain Studio">
+    1. Open NimbleBrain Studio
+    2. Navigate to **MCP Servers** in the sidebar
+    3. Find **PDF.co** in the Document Processing category
+    4. Click **Enable**
+    5. Paste your API key when prompted
+    6. Click **Save**
+
+    The server will connect automatically and show "Active" status.
+  </Step>
+
+  <Step title="Test your connection">
+    Try this in Studio's chat interface:
+
+    ```text
+    "Extract text from this PDF: https://example.com/sample.pdf"
+    ```
+
+    You should see the 🔧 tool indicator appear, followed by the extracted text content. If successful, you're ready to use all 18 PDF.co tools!
+  </Step>
+</Steps>
+
+## Available Tools
+
+PDF.co provides 18 tools organized into 6 categories for comprehensive document processing.
+
+### PDF Conversion Tools
+
+<Accordion title="pdf_to_text" icon="text">
+  Extract text content from PDF documents with optional page range selection.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | url | string | Yes | - | URL or base64 encoded PDF |
+  | pages | string | No | All pages | Page range (e.g., "1-3" or "1,3,5") |
+  | async_mode | boolean | No | false | Process asynchronously for large files |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "url": "https://pdf.co/output.txt",
+    "text": "Extracted text content...",
+    "pageCount": 5,
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request
+
+  **Example Usage:**
+  ```text
+  "Extract text from pages 1-10 of this PDF: https://example.com/report.pdf"
+  ```
+</Accordion>
+
+<Accordion title="pdf_to_json" icon="code">
+  Extract structured data from PDFs in JSON format, preserving document structure.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | url | string | Yes | - | URL or base64 encoded PDF |
+  | pages | string | No | All pages | Page range to process |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "url": "https://pdf.co/output.json",
+    "data": {
+      "pages": [...],
+      "text": "...",
+      "structure": {...}
+    },
+    "pageCount": 5,
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request
+
+  **Example Usage:**
+  ```text
+  "Convert this PDF to structured JSON: https://example.com/invoice.pdf"
+  ```
+</Accordion>
+
+<Accordion title="pdf_to_html" icon="file-code">
+  Convert PDF documents to HTML format with optional simple mode.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | url | string | Yes | - | URL or base64 encoded PDF |
+  | pages | string | No | All pages | Page range to convert |
+  | simple | boolean | No | false | Use simple HTML mode (plain text) |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "url": "https://pdf.co/output.html",
+    "html": "<html>...</html>",
+    "pageCount": 5,
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request
+
+  **Example Usage:**
+  ```text
+  "Convert this PDF to HTML with simple formatting: https://example.com/document.pdf"
+  ```
+</Accordion>
+
+<Accordion title="pdf_to_csv" icon="table">
+  Extract tables from PDF documents to CSV format for spreadsheet analysis.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | url | string | Yes | - | URL or base64 encoded PDF |
+  | pages | string | No | All pages | Page range containing tables |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "url": "https://pdf.co/output.csv",
+    "csv": "col1,col2,col3\nval1,val2,val3",
+    "pageCount": 3,
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request
+
+  **Example Usage:**
+  ```text
+  "Extract the table from page 2 of this PDF to CSV: https://example.com/report.pdf"
+  ```
+</Accordion>
+
+### PDF Manipulation Tools
+
+<Accordion title="pdf_merge" icon="object-group">
+  Combine multiple PDF documents into a single unified PDF file.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | urls | array[string] | Yes | - | List of PDF URLs or base64 encoded PDFs |
+  | name | string | No | "merged.pdf" | Output filename |
+  | async_mode | boolean | No | false | Process asynchronously for large files |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "url": "https://pdf.co/merged.pdf",
+    "pageCount": 15,
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request (regardless of number of PDFs)
+
+  **Example Usage:**
+  ```text
+  "Merge these three PDFs into one: https://example.com/doc1.pdf, https://example.com/doc2.pdf, https://example.com/doc3.pdf"
+  ```
+</Accordion>
+
+<Accordion title="pdf_split" icon="scissors">
+  Split PDF documents into separate pages or extract specific page ranges.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | url | string | Yes | - | URL or base64 encoded PDF |
+  | pages | string | No | All pages | Page ranges to extract (e.g., "1-3,5-7") |
+  | split_by_pages | boolean | No | false | Split into individual pages |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "urls": [
+      "https://pdf.co/page1.pdf",
+      "https://pdf.co/page2.pdf"
+    ],
+    "pageCount": 2,
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request
+
+  **Example Usage:**
+  ```text
+  "Split this PDF into individual pages: https://example.com/document.pdf"
+  ```
+</Accordion>
+
+<Accordion title="pdf_rotate" icon="rotate">
+  Rotate pages in a PDF document by 90, 180, or 270 degrees.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | url | string | Yes | - | URL or base64 encoded PDF |
+  | angle | integer | Yes | - | Rotation angle (90, 180, 270, or -90) |
+  | pages | string | No | All pages | Page range to rotate |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "url": "https://pdf.co/rotated.pdf",
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request
+
+  **Example Usage:**
+  ```text
+  "Rotate pages 1-5 by 90 degrees in this PDF: https://example.com/document.pdf"
+  ```
+</Accordion>
+
+<Accordion title="pdf_compress" icon="compress">
+  Reduce PDF file size with configurable compression levels.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | url | string | Yes | - | URL or base64 encoded PDF |
+  | compression_level | string | No | "balanced" | Compression level: "low", "balanced", "high", "extreme" |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "url": "https://pdf.co/compressed.pdf",
+    "originalSize": 5242880,
+    "compressedSize": 1048576,
+    "compressionRatio": 80.0,
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request
+
+  **Example Usage:**
+  ```text
+  "Compress this PDF with high compression: https://example.com/large-file.pdf"
+  ```
+</Accordion>
+
+<Accordion title="pdf_add_watermark" icon="droplet">
+  Add text watermarks or annotations to PDF pages with customizable styling.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | url | string | Yes | - | URL or base64 encoded PDF |
+  | text | string | Yes | - | Watermark text |
+  | x | integer | No | 100 | X position in points |
+  | y | integer | No | 100 | Y position in points |
+  | font_size | integer | No | 24 | Font size in points |
+  | color | string | No | "FF0000" | Hex color without # (e.g., "FF0000" for red) |
+  | opacity | float | No | 0.5 | Opacity from 0.0 to 1.0 |
+  | pages | string | No | "0-" | Page range (e.g., "0-" for all pages) |
+  | name | string | No | "watermarked.pdf" | Output filename |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "url": "https://pdf.co/watermarked.pdf",
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request
+
+  **Example Usage:**
+  ```text
+  "Add 'CONFIDENTIAL' watermark in red with 30% opacity to all pages of this PDF: https://example.com/document.pdf"
+  ```
+</Accordion>
+
+### PDF Security Tools
+
+<Accordion title="pdf_protect" icon="lock">
+  Add password protection to PDF documents with configurable permissions.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | url | string | Yes | - | URL or base64 encoded PDF |
+  | owner_password | string | Yes | - | Owner password for full access |
+  | user_password | string | No | null | User password for restricted access |
+  | allow_print | boolean | No | true | Allow printing |
+  | allow_copy | boolean | No | false | Allow copying text |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "url": "https://pdf.co/protected.pdf",
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request
+
+  **Example Usage:**
+  ```text
+  "Add password protection to this PDF with owner password 'admin123' and prevent copying: https://example.com/document.pdf"
+  ```
+
+  <Warning>
+  **Security Best Practice**: Never hardcode passwords in conversations. Use this tool through programmatic workflows where passwords are stored securely.
+  </Warning>
+</Accordion>
+
+<Accordion title="pdf_unlock" icon="unlock">
+  Remove password protection from PDF documents (requires correct password).
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | url | string | Yes | - | URL or base64 encoded PDF |
+  | password | string | Yes | - | PDF password to unlock |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "url": "https://pdf.co/unlocked.pdf",
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request
+
+  **Example Usage:**
+  ```text
+  "Remove password protection from this PDF using password 'secret123': https://example.com/protected.pdf"
+  ```
+</Accordion>
+
+### PDF Information
+
+<Accordion title="pdf_info" icon="circle-info">
+  Get comprehensive metadata about a PDF document including pages, dimensions, encryption status, and file properties.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | url | string | Yes | - | URL or base64 encoded PDF |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "info": {
+      "PageCount": 10,
+      "PageRectangle": {
+        "Width": 612.0,
+        "Height": 792.0
+      },
+      "Encrypted": false,
+      "Title": "Sample Document",
+      "Author": "John Doe",
+      "Subject": "Report",
+      "FileSize": 1024576
+    },
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request
+
+  **Example Usage:**
+  ```text
+  "Get metadata for this PDF: https://example.com/document.pdf"
+  ```
+</Accordion>
+
+### Document Creation Tools
+
+<Accordion title="html_to_pdf" icon="file-code">
+  Convert HTML content or URLs to PDF with customizable page settings.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | html | string | Yes | - | HTML content or URL |
+  | name | string | No | "document.pdf" | Output filename |
+  | margins | string | No | null | Margins in format "top,right,bottom,left" (e.g., "10mm,10mm,10mm,10mm") |
+  | orientation | string | No | "Portrait" | Page orientation: "Portrait" or "Landscape" |
+  | page_size | string | No | "Letter" | Page size: "Letter", "A4", "Legal", etc. |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "url": "https://pdf.co/document.pdf",
+    "pageCount": 3,
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request
+
+  **Example Usage:**
+  ```text
+  "Convert this HTML to PDF with A4 page size: <h1>Report</h1><p>Content here...</p>"
+  ```
+</Accordion>
+
+<Accordion title="url_to_pdf" icon="globe">
+  Convert web pages to PDF documents with automatic rendering.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | url | string | Yes | - | Web page URL |
+  | name | string | No | "webpage.pdf" | Output filename |
+  | orientation | string | No | "Portrait" | Page orientation: "Portrait" or "Landscape" |
+  | page_size | string | No | "Letter" | Page size: "Letter", "A4", "Legal", etc. |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "url": "https://pdf.co/webpage.pdf",
+    "pageCount": 5,
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request
+
+  **Example Usage:**
+  ```text
+  "Convert this webpage to PDF: https://example.com/article"
+  ```
+</Accordion>
+
+<Accordion title="image_to_pdf" icon="image">
+  Convert one or multiple images to a PDF document.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | images | array[string] | Yes | - | List of image URLs or base64 encoded images |
+  | name | string | No | "images.pdf" | Output filename |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "url": "https://pdf.co/images.pdf",
+    "pageCount": 3,
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request
+
+  **Example Usage:**
+  ```text
+  "Convert these images to PDF: https://example.com/img1.jpg, https://example.com/img2.jpg"
+  ```
+</Accordion>
+
+### Barcode Tools
+
+<Accordion title="barcode_generate" icon="qrcode">
+  Generate QR codes and various barcode formats as PNG, JPG, or SVG images.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | value | string | Yes | - | Barcode value/text to encode |
+  | barcode_type | string | No | "QRCode" | Type: "QRCode", "Code128", "Code39", "EAN13", "EAN8", "UPCA", "UPCE" |
+  | format | string | No | "png" | Output format: "png", "jpg", "svg" |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "url": "https://pdf.co/barcode.png",
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request
+
+  **Example Usage:**
+  ```text
+  "Generate a QR code for this URL: https://example.com"
+  ```
+</Accordion>
+
+<Accordion title="barcode_read" icon="barcode-scan">
+  Read and decode barcodes from images with support for multiple barcode types.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | url | string | Yes | - | Image URL or base64 encoded image |
+  | barcode_types | array[string] | No | All common types | List of barcode types to detect |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "barcodes": [
+      {
+        "type": "QRCode",
+        "value": "https://example.com",
+        "confidence": 0.99,
+        "x": 100,
+        "y": 150,
+        "width": 200,
+        "height": 200
+      }
+    ],
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 1 credit per request
+
+  **Example Usage:**
+  ```text
+  "Read barcodes from this image: https://example.com/barcode.jpg"
+  ```
+</Accordion>
+
+### OCR Tools
+
+<Accordion title="ocr_pdf" icon="eye">
+  Perform OCR (Optical Character Recognition) on scanned PDFs to make them searchable.
+
+  **Parameters:**
+  | Parameter | Type | Required | Default | Description |
+  |-----------|------|----------|---------|-------------|
+  | url | string | Yes | - | URL or base64 encoded PDF |
+  | pages | string | No | All pages | Page range to OCR |
+  | lang | string | No | "eng" | Language code: "eng", "spa", "fra", "deu", "chi", etc. |
+
+  **Returns:**
+  ```json
+  {
+    "error": false,
+    "url": "https://pdf.co/ocr.pdf",
+    "text": "Extracted text from scanned document...",
+    "pageCount": 10,
+    "message": null
+  }
+  ```
+
+  **Credit Cost:** 3 credits per request (OCR is more resource-intensive)
+
+  **Example Usage:**
+  ```text
+  "OCR this scanned document in English: https://example.com/scanned.pdf"
+  ```
+</Accordion>
+
+## Authentication & Configuration
+
+### API Key Setup
+
+PDF.co requires an API key for all operations. The service uses a credit-based system where operations consume credits from your monthly quota.
+
+<Steps>
+  <Step title="Create Account">
+    Visit [PDF.co Dashboard](https://app.pdf.co/dashboard) and sign up:
+    - **No credit card required** for free tier
+    - Email verification needed
+    - Instant API key generation
+  </Step>
+
+  <Step title="Get API Key">
+    After signup:
+    1. Log in to [PDF.co Dashboard](https://app.pdf.co/dashboard)
+    2. Your API key is displayed prominently on the dashboard
+    3. Click "Copy" to copy your key
+    4. Keep it secure - treat it like a password
+  </Step>
+
+  <Step title="Add to Studio">
+    Configure in NimbleBrain Studio:
+    1. Navigate to **MCP Servers** → **PDF.co**
+    2. Click **Enable**
+    3. Paste your API key in the configuration field
+    4. Click **Save**
+
+    The server will automatically validate your key and show "Active" status.
+  </Step>
+</Steps>
+
+### Credit-Based Pricing
+
+PDF.co operates on a credit system where each operation consumes credits. Most operations cost **1 credit**, with OCR costing **3 credits**.
+
+<Tabs>
+  <Tab title="Free Tier">
+    **300 Credits/Month** - Perfect for testing and light usage
+
+    **What's Included:**
+    - 300 operations/month (most tools)
+    - 100 OCR operations/month
+    - 10 requests per minute
+    - 50MB maximum file size
+    - All 18 tools available
+    - 24-hour file storage
+
+    **Best For:**
+    - Testing the service
+    - Personal projects
+    - Light document processing
+    - Prototyping workflows
+
+    **Limitations:**
+    - Cannot be used for production at scale
+    - Rate limited to 10 req/min
+    - Files auto-deleted after 24 hours
+  </Tab>
+
+  <Tab title="Starter ($9/month)">
+    **3,000 Credits/Month** - Small teams and growing projects
+
+    **What's Included:**
+    - 3,000 operations/month
+    - 1,000 OCR operations/month
+    - 30 requests per minute
+    - 100MB maximum file size
+    - Priority support
+    - 7-day file storage
+
+    **Best For:**
+    - Small team workflows
+    - Regular document processing
+    - Customer-facing features (low volume)
+    - Development and staging environments
+  </Tab>
+
+  <Tab title="Professional ($49/month)">
+    **20,000 Credits/Month** - Production workflows
+
+    **What's Included:**
+    - 20,000 operations/month
+    - 6,666 OCR operations/month
+    - 60 requests per minute
+    - 200MB maximum file size
+    - Priority support
+    - 30-day file storage
+    - SLA guarantee
+
+    **Best For:**
+    - Production applications
+    - Customer-facing features
+    - High-volume processing
+    - Business automation
+  </Tab>
+
+  <Tab title="Business ($199/month)">
+    **100,000 Credits/Month** - Enterprise scale
+
+    **What's Included:**
+    - 100,000 operations/month
+    - 33,333 OCR operations/month
+    - 120 requests per minute
+    - 500MB maximum file size
+    - Dedicated support
+    - 90-day file storage
+    - SLA guarantee
+    - Custom integrations
+
+    **Best For:**
+    - Large-scale operations
+    - Enterprise deployments
+    - Mission-critical workflows
+    - High-availability requirements
+  </Tab>
+
+  <Tab title="Enterprise (Custom)">
+    **Custom Credits** - Unlimited scale
+
+    **What's Included:**
+    - Custom credit allocation
+    - Unlimited file sizes
+    - Custom rate limits
+    - Dedicated infrastructure
+    - 24/7 support
+    - Custom SLA
+    - On-premise options
+    - Custom feature development
+
+    **Best For:**
+    - Fortune 500 companies
+    - Government agencies
+    - Massive scale operations
+    - Custom requirements
+
+    **Contact**: [sales@pdf.co](mailto:sales@pdf.co)
+  </Tab>
+</Tabs>
+
+### Credit Consumption
+
+Understanding credit usage helps you plan your monthly budget:
+
+| Tool Category | Operation | Credit Cost | Free Tier Usage |
+|---------------|-----------|-------------|-----------------|
+| **Conversion** | pdf_to_text | 1 credit | 300 operations |
+| **Conversion** | pdf_to_json | 1 credit | 300 operations |
+| **Conversion** | pdf_to_html | 1 credit | 300 operations |
+| **Conversion** | pdf_to_csv | 1 credit | 300 operations |
+| **Manipulation** | pdf_merge | 1 credit | 300 operations |
+| **Manipulation** | pdf_split | 1 credit | 300 operations |
+| **Manipulation** | pdf_rotate | 1 credit | 300 operations |
+| **Manipulation** | pdf_compress | 1 credit | 300 operations |
+| **Manipulation** | pdf_add_watermark | 1 credit | 300 operations |
+| **Security** | pdf_protect | 1 credit | 300 operations |
+| **Security** | pdf_unlock | 1 credit | 300 operations |
+| **Information** | pdf_info | 1 credit | 300 operations |
+| **Creation** | html_to_pdf | 1 credit | 300 operations |
+| **Creation** | url_to_pdf | 1 credit | 300 operations |
+| **Creation** | image_to_pdf | 1 credit | 300 operations |
+| **Barcodes** | barcode_generate | 1 credit | 300 operations |
+| **Barcodes** | barcode_read | 1 credit | 300 operations |
+| **OCR** | ocr_pdf | 3 credits | 100 operations |
+
+<Tip>
+**Cost Optimization**: OCR operations cost 3x more than other tools. For scanned documents, consider if you need full OCR or if pdf_to_text (for native PDFs) would suffice.
+</Tip>
+
+### Rate Limits
+
+API rate limits vary by plan tier:
+
+| Plan | Requests/Minute | Burst Limit | File Size | File Retention |
+|------|----------------|-------------|-----------|----------------|
+| **Free** | 10 | 20 | 50 MB | 24 hours |
+| **Starter** | 30 | 60 | 100 MB | 7 days |
+| **Professional** | 60 | 120 | 200 MB | 30 days |
+| **Business** | 120 | 240 | 500 MB | 90 days |
+| **Enterprise** | Custom | Custom | Custom | Custom |
+
+<Warning>
+**Rate Limit Handling**: If you exceed your rate limit, requests will return HTTP 429 errors. Studio will automatically retry with exponential backoff.
+</Warning>
+
+### Security Best Practices
+
+<AccordionGroup>
+  <Accordion title="API Key Security" icon="key">
+    **Protect Your API Key:**
+    - Never commit API keys to version control
+    - Don't share keys in chat logs or screenshots
+    - Rotate keys regularly (every 90 days)
+    - Use separate keys for development and production
+    - Monitor usage for unauthorized activity
+
+    **In Studio**: API keys are encrypted and stored securely in your local configuration.
+  </Accordion>
+
+  <Accordion title="Data Privacy" icon="shield-halved">
+    **File Handling:**
+    - All files are transmitted over HTTPS
+    - Files are automatically deleted after retention period
+    - No files are used for training or analytics
+    - GDPR compliant data processing
+    - SOC 2 Type II certified
+
+    **Recommendation**: For sensitive documents, use the shortest retention period for your tier.
+  </Accordion>
+
+  <Accordion title="Password Protection" icon="lock">
+    **When Using PDF Security Tools:**
+    - Never hardcode passwords in Studio conversations
+    - Use strong, unique passwords for protected PDFs
+    - Store passwords in secure password managers
+    - Implement password rotation for long-term protected files
+    - Consider using owner/user password combinations
+  </Accordion>
+</AccordionGroup>
+
+## Example Workflows
+
+Real-world scenarios showing how to use PDF.co tools in NimbleBrain Studio.
+
+<Tabs>
+  <Tab title="Invoice Processing">
+    **Business Value**: Automate invoice data extraction from PDF invoices
+
+    **Scenario**: Extract structured data from vendor invoices for accounting
+
+    **Steps**:
+    1. Extract text: "Extract text from this invoice PDF: [invoice-url]"
+    2. Parse data: "Extract the invoice number, date, total amount, and vendor name from this text"
+    3. Validate: "Check if all required fields are present"
+
+    **Tools Used**: `pdf_to_text`, `pdf_to_json`
+
+    **Credit Cost**: 2 credits per invoice
+
+    **Time Saved**: 5 minutes manual work → 30 seconds automated
+
+    **Example Prompt**:
+    ```text
+    "Extract invoice data from this PDF and tell me the invoice number, date, total, and vendor: https://example.com/invoice-2025-001.pdf"
+    ```
+  </Tab>
+
+  <Tab title="Contract Generation">
+    **Business Value**: Generate formatted contracts from templates
+
+    **Scenario**: Create customer contracts with watermarks and password protection
+
+    **Steps**:
+    1. Generate PDF: "Convert this HTML contract to PDF: [html-content]"
+    2. Add watermark: "Add 'DRAFT' watermark to all pages"
+    3. Protect: "Add password protection with owner password"
+
+    **Tools Used**: `html_to_pdf`, `pdf_add_watermark`, `pdf_protect`
+
+    **Credit Cost**: 3 credits per contract
+
+    **Time Saved**: 15 minutes manual work → 2 minutes automated
+
+    **Example Prompt**:
+    ```text
+    "Create a PDF from this HTML contract, add a 'CONFIDENTIAL' watermark, and protect it with owner password 'admin2025'"
+    ```
+  </Tab>
+
+  <Tab title="Document Archival">
+    **Business Value**: Compress and merge documents for long-term storage
+
+    **Scenario**: Consolidate quarterly reports into single compressed archive
+
+    **Steps**:
+    1. Merge reports: "Merge these 4 quarterly reports into one PDF"
+    2. Compress: "Compress the merged PDF with high compression"
+    3. Verify: "Get metadata to confirm page count and file size"
+
+    **Tools Used**: `pdf_merge`, `pdf_compress`, `pdf_info`
+
+    **Credit Cost**: 3 credits per archive
+
+    **Savings**: 85% file size reduction typical
+
+    **Example Prompt**:
+    ```text
+    "Merge Q1, Q2, Q3, and Q4 reports from these URLs, compress with extreme compression, and show me the final file size"
+    ```
+  </Tab>
+
+  <Tab title="Receipt Scanning">
+    **Business Value**: Digitize paper receipts for expense tracking
+
+    **Scenario**: Scan paper receipts and extract text for expense reports
+
+    **Steps**:
+    1. Convert image: "Convert this receipt photo to PDF"
+    2. OCR: "Perform OCR to extract text from the receipt"
+    3. Parse: "Extract merchant name, date, and total amount"
+
+    **Tools Used**: `image_to_pdf`, `ocr_pdf`
+
+    **Credit Cost**: 4 credits per receipt (1 for image + 3 for OCR)
+
+    **Accuracy**: 95%+ for clear receipts
+
+    **Example Prompt**:
+    ```text
+    "Convert this receipt photo to PDF and extract the merchant, date, and amount: https://example.com/receipt.jpg"
+    ```
+  </Tab>
+
+  <Tab title="Report Distribution">
+    **Business Value**: Generate web reports as PDFs for stakeholders
+
+    **Scenario**: Convert dashboard URLs to PDF for email distribution
+
+    **Steps**:
+    1. Capture page: "Convert this dashboard URL to PDF in landscape"
+    2. Add metadata: "Get PDF metadata to verify page count"
+    3. Compress: "Compress for email distribution"
+
+    **Tools Used**: `url_to_pdf`, `pdf_info`, `pdf_compress`
+
+    **Credit Cost**: 3 credits per report
+
+    **Distribution**: Email-friendly file sizes
+
+    **Example Prompt**:
+    ```text
+    "Convert this analytics dashboard to PDF with landscape orientation and compress it: https://example.com/dashboard"
+    ```
+  </Tab>
+
+  <Tab title="QR Code Campaign">
+    **Business Value**: Generate QR codes for marketing materials
+
+    **Scenario**: Create QR codes for product packaging and event materials
+
+    **Steps**:
+    1. Generate QR: "Generate a QR code for this product URL"
+    2. Batch create: "Generate QR codes for these 10 product URLs"
+    3. Embed in PDF: "Convert these QR codes to a single PDF"
+
+    **Tools Used**: `barcode_generate`, `image_to_pdf`
+
+    **Credit Cost**: 2 credits per QR code sheet
+
+    **Use Cases**: Product packaging, event badges, marketing flyers
+
+    **Example Prompt**:
+    ```text
+    "Generate QR codes for these 5 product URLs and combine them into one PDF sheet: [urls]"
+    ```
+  </Tab>
+
+  <Tab title="Form Extraction">
+    **Business Value**: Extract data from filled PDF forms
+
+    **Scenario**: Process customer registration forms submitted as PDFs
+
+    **Steps**:
+    1. Extract structure: "Convert this form PDF to JSON"
+    2. Parse fields: "Extract name, email, phone, and address fields"
+    3. Validate: "Check for required fields"
+
+    **Tools Used**: `pdf_to_json`, `pdf_to_text`
+
+    **Credit Cost**: 2 credits per form
+
+    **Accuracy**: 90%+ for standard forms
+
+    **Example Prompt**:
+    ```text
+    "Extract form data from this registration PDF and give me the name, email, and phone: https://example.com/registration.pdf"
+    ```
+  </Tab>
+
+  <Tab title="Document Redaction">
+    **Business Value**: Prepare documents for public release by adding watermarks
+
+    **Scenario**: Add "PUBLIC COPY" watermarks to documents
+
+    **Steps**:
+    1. Add watermark: "Add PUBLIC COPY watermark across all pages"
+    2. Remove security: "Unlock the PDF if password protected"
+    3. Compress: "Compress for web distribution"
+
+    **Tools Used**: `pdf_add_watermark`, `pdf_unlock`, `pdf_compress`
+
+    **Credit Cost**: 3 credits per document
+
+    **Use Cases**: Public records, press releases, annual reports
+
+    **Example Prompt**:
+    ```text
+    "Add 'PUBLIC COPY' watermark in red with 40% opacity to this document and compress it: https://example.com/internal.pdf"
+    ```
+  </Tab>
+
+  <Tab title="Multi-Language OCR">
+    **Business Value**: Process international documents with OCR
+
+    **Scenario**: Extract text from Spanish invoices for translation
+
+    **Steps**:
+    1. OCR in Spanish: "Perform OCR on this Spanish document"
+    2. Verify language: "Check the extracted text quality"
+    3. Translate: Use translation tool on extracted text
+
+    **Tools Used**: `ocr_pdf`
+
+    **Credit Cost**: 3 credits per document
+
+    **Languages**: 100+ languages supported including Spanish, French, German, Chinese, Japanese
+
+    **Example Prompt**:
+    ```text
+    "Perform OCR on this Spanish invoice and extract the text: https://example.com/factura.pdf"
+    ```
+  </Tab>
+
+  <Tab title="Presentation Archival">
+    **Business Value**: Archive slide deck presentations as PDFs
+
+    **Scenario**: Convert PowerPoint presentations shared as URLs to PDFs
+
+    **Steps**:
+    1. Convert: "Convert this presentation URL to PDF"
+    2. Rotate: "Rotate any incorrectly oriented slides"
+    3. Compress: "Compress for long-term storage"
+
+    **Tools Used**: `url_to_pdf`, `pdf_rotate`, `pdf_compress`
+
+    **Credit Cost**: 3 credits per presentation
+
+    **Use Cases**: Training materials, sales decks, webinar recordings
+
+    **Example Prompt**:
+    ```text
+    "Convert this slide deck to PDF and compress it: https://example.com/presentation"
+    ```
+  </Tab>
+
+  <Tab title="Barcode Inventory">
+    **Business Value**: Read barcodes from product photos for inventory
+
+    **Scenario**: Scan product barcodes from shelf photos
+
+    **Steps**:
+    1. Read barcode: "Read the barcode from this product photo"
+    2. Batch scan: "Process all barcodes from this shelf photo"
+    3. Validate: "Check if barcode format is valid EAN13"
+
+    **Tools Used**: `barcode_read`
+
+    **Credit Cost**: 1 credit per image
+
+    **Accuracy**: 98%+ for clear barcodes
+
+    **Example Prompt**:
+    ```text
+    "Read all barcodes from this shelf photo and list their values: https://example.com/shelf.jpg"
+    ```
+  </Tab>
+
+  <Tab title="Legal Document Prep">
+    **Business Value**: Prepare legal documents with security features
+
+    **Scenario**: Create signed contracts with watermarks and encryption
+
+    **Steps**:
+    1. Merge: "Combine contract and exhibits into one PDF"
+    2. Watermark: "Add 'EXECUTED' watermark to signature pages"
+    3. Protect: "Password protect with printing allowed but no editing"
+
+    **Tools Used**: `pdf_merge`, `pdf_add_watermark`, `pdf_protect`
+
+    **Credit Cost**: 3 credits per document
+
+    **Use Cases**: Contracts, NDAs, settlement agreements
+
+    **Example Prompt**:
+    ```text
+    "Merge the contract and exhibits, add EXECUTED watermark to pages 5-6, and protect with password 'legal2025'"
+    ```
+  </Tab>
+</Tabs>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="API Key Invalid" icon="triangle-exclamation">
+    **Symptom**: Error message "Unauthorized" or "Invalid API key"
+
+    **Solutions**:
+    1. Verify you copied the complete API key from the dashboard
+    2. Check for extra spaces before/after the key
+    3. Log in to [PDF.co Dashboard](https://app.pdf.co/dashboard) and confirm the key
+    4. Generate a new API key if needed
+    5. In Studio, disable and re-enable PDF.co with the new key
+
+    **Common Causes**:
+    - Partial key copied
+    - Key regenerated but not updated in Studio
+    - Account suspended for non-payment
+  </Accordion>
+
+  <Accordion title="Credit Limit Exceeded" icon="coins">
+    **Symptom**: Error message "Insufficient credits" or "Monthly quota exceeded"
+
+    **Solutions**:
+    1. Check your current credit balance at [PDF.co Dashboard](https://app.pdf.co/dashboard)
+    2. Wait for monthly reset (1st of each month)
+    3. Upgrade to a higher tier plan
+    4. Purchase additional credit packs
+
+    **Prevention**:
+    - Monitor usage dashboard regularly
+    - Set up usage alerts in your account
+    - Implement credit budgeting in workflows
+    - Consider upgrading before hitting limits
+  </Accordion>
+
+  <Accordion title="Rate Limit Errors" icon="gauge-high">
+    **Symptom**: Error message "Too many requests" or HTTP 429 errors
+
+    **Solutions**:
+    1. Reduce request frequency
+    2. Implement delays between operations (1-2 seconds)
+    3. Studio will automatically retry with backoff
+    4. Upgrade plan for higher rate limits
+
+    **Rate Limits by Tier**:
+    - Free: 10 requests/minute
+    - Starter: 30 requests/minute
+    - Professional: 60 requests/minute
+    - Business: 120 requests/minute
+  </Accordion>
+
+  <Accordion title="File Too Large" icon="file-zipper">
+    **Symptom**: Error message "File size exceeds limit"
+
+    **Solutions**:
+    1. Compress PDF before uploading
+    2. Split large PDF into smaller chunks
+    3. Reduce image quality for image-to-PDF conversions
+    4. Upgrade plan for larger file limits
+
+    **File Size Limits**:
+    - Free: 50 MB
+    - Starter: 100 MB
+    - Professional: 200 MB
+    - Business: 500 MB
+    - Enterprise: Custom
+  </Accordion>
+
+  <Accordion title="OCR Quality Issues" icon="eye-slash">
+    **Symptom**: Extracted text is garbled or incorrect
+
+    **Solutions**:
+    1. Ensure scanned document has sufficient resolution (300 DPI minimum)
+    2. Specify correct language code (lang parameter)
+    3. Pre-process images to improve contrast
+    4. Rotate images to correct orientation before OCR
+    5. Try scanning again with better lighting
+
+    **Best Practices**:
+    - Use 300 DPI or higher resolution
+    - Ensure good lighting and contrast
+    - Avoid shadows and glare
+    - Straighten skewed documents
+    - Specify language for better accuracy
+  </Accordion>
+
+  <Accordion title="PDF Generation Timeout" icon="clock">
+    **Symptom**: Operation times out or returns incomplete results
+
+    **Solutions**:
+    1. Use `async_mode: true` for large files
+    2. Split operations into smaller chunks
+    3. Reduce page count (use page range parameters)
+    4. Check file URL accessibility (must be publicly accessible)
+    5. Try again during off-peak hours
+
+    **When to Use Async Mode**:
+    - PDFs with 50+ pages
+    - Large merge operations (5+ files)
+    - OCR operations on multi-page documents
+    - Files larger than 10 MB
+  </Accordion>
+
+  <Accordion title="Watermark Not Visible" icon="droplet-slash">
+    **Symptom**: Watermark added but not visible in PDF
+
+    **Solutions**:
+    1. Adjust opacity (try 0.3-0.7 range)
+    2. Change watermark color for better contrast
+    3. Increase font size
+    4. Adjust x/y position coordinates
+    5. Verify page range includes desired pages
+
+    **Position Guidelines**:
+    - Most PDFs use 612x792 points (Letter size)
+    - Center position: x=306, y=396
+    - Try different positions to find optimal placement
+    - Use lighter colors (higher opacity) for visibility
+  </Accordion>
+
+  <Accordion title="Merge Failed" icon="object-ungroup">
+    **Symptom**: PDF merge operation fails or produces corrupted output
+
+    **Solutions**:
+    1. Verify all PDF URLs are accessible
+    2. Check that all files are valid PDFs
+    3. Try merging fewer files at once (batch in groups of 5)
+    4. Unlock password-protected PDFs before merging
+    5. Use async_mode for large merge operations
+
+    **Common Issues**:
+    - One or more source PDFs corrupted
+    - Protected/encrypted PDFs in the list
+    - Network issues downloading source files
+    - Total merged size exceeds file limit
+  </Accordion>
+
+  <Accordion title="Tools Not Triggering" icon="tools">
+    **Symptom**: Studio doesn't use PDF.co tools when expected
+
+    **Solutions**:
+    1. Be more explicit: mention "PDF.co" or specific tool names
+    2. Verify server shows "Active" status in Studio
+    3. Check API key is correctly configured
+    4. Provide file URLs directly (don't ask Studio to find them)
+    5. Use clear action verbs: "extract", "convert", "merge", etc.
+
+    **Example Good Prompts**:
+    - ✅ "Extract text from this PDF: [url]"
+    - ✅ "Merge these two PDFs: [url1], [url2]"
+    - ✅ "Generate a QR code for: [url]"
+
+    **Example Ambiguous Prompts**:
+    - ❌ "What's in this document?" (might not trigger pdf_to_text)
+    - ❌ "Can you help with a PDF?" (no action specified)
+  </Accordion>
+</AccordionGroup>
+
+## Links & Resources
+
+### Getting Started
+- [PDF.co Dashboard](https://app.pdf.co/dashboard) - Manage API keys and monitor usage
+- [API Documentation](https://apidocs.pdf.co/) - Complete API reference
+- [Pricing Plans](https://pdf.co/pricing) - Compare plans and upgrade
+- [Support Portal](https://pdf.co/support) - Help center and FAQs
+
+### Tool-Specific Documentation
+- [PDF Conversion APIs](https://apidocs.pdf.co/02-pdf-to-text) - Text, JSON, HTML, CSV extraction
+- [PDF Manipulation](https://apidocs.pdf.co/03-pdf-merge) - Merge, split, rotate, compress
+- [Document Generation](https://apidocs.pdf.co/07-html-to-pdf) - HTML to PDF, URL to PDF
+- [OCR API](https://apidocs.pdf.co/12-pdf-ocr) - Optical character recognition
+- [Barcode API](https://apidocs.pdf.co/24-barcode-generate) - Generate and read barcodes
+
+### Support
+- [Status Page](https://status.pdf.co/) - Service uptime and incidents
+- [Email Support](mailto:support@pdf.co) - Technical support
+- [Community Forum](https://community.pdf.co/) - User discussions
+- [GitHub Examples](https://github.com/bytescout/pdf-co-api-samples) - Code samples
+
+## Learning Resources
+
+<AccordionGroup>
+  <Accordion title="PDF.co vs Other Services" icon="scale-balanced">
+    **How PDF.co Compares:**
+
+    **Advantages:**
+    - ✅ Simple credit-based pricing (no per-page fees)
+    - ✅ Comprehensive API (18 tools in one service)
+    - ✅ FastMCP integration for Studio
+    - ✅ Generous free tier (300 credits/month)
+    - ✅ No watermarks on free tier
+    - ✅ 24-hour file retention (not immediate deletion)
+
+    **Alternatives:**
+    - **Adobe PDF Services**: More expensive, enterprise-focused
+    - **iLovePDF**: Limited API, consumer-focused
+    - **Smallpdf**: No free API tier
+    - **PyPDF2/pdfplumber**: Self-hosted but limited features
+
+    **Best For**: Teams wanting all-in-one PDF processing without managing multiple services.
+  </Accordion>
+
+  <Accordion title="Credit Usage Optimization" icon="lightbulb">
+    **Maximize Your Free Tier:**
+
+    **1. Batch Operations** (1 credit for multiple items):
+    - Use pdf_merge for multiple PDFs (1 credit total)
+    - Use image_to_pdf for multiple images (1 credit total)
+    - Use barcode_read on images with multiple codes (1 credit total)
+
+    **2. Avoid OCR When Possible** (3 credits):
+    - Try pdf_to_text first (native PDFs don't need OCR)
+    - Use ocr_pdf only for scanned/image-based PDFs
+    - Specify page ranges to OCR only needed pages
+
+    **3. Compress Smart**:
+    - Use compression before other operations
+    - Balance quality vs file size (start with "balanced")
+    - Compress before merging to save processing time
+
+    **4. Use Page Ranges**:
+    - Extract only needed pages: `pages="1-5"`
+    - Skip blank pages to reduce processing
+    - Test on single pages before full document
+  </Accordion>
+
+  <Accordion title="Understanding Tool Categories" icon="layer-group">
+    **How Tools Are Organized:**
+
+    **Conversion Tools** (Extract Data):
+    - Input: Existing PDF
+    - Output: Text, JSON, HTML, CSV
+    - Use when: You need to read/analyze PDF content
+
+    **Manipulation Tools** (Modify PDFs):
+    - Input: Existing PDF(s)
+    - Output: Modified PDF
+    - Use when: You need to change PDF structure
+
+    **Security Tools** (Protect Content):
+    - Input: Existing PDF
+    - Output: Protected/unlocked PDF
+    - Use when: You need access control
+
+    **Creation Tools** (Generate PDFs):
+    - Input: HTML, URL, or images
+    - Output: New PDF
+    - Use when: You need to create PDFs from scratch
+
+    **Barcode Tools** (QR & Barcodes):
+    - Input: Text (generate) or Image (read)
+    - Output: Barcode image or decoded data
+    - Use when: Product tracking, marketing, inventory
+
+    **OCR Tools** (Text Recognition):
+    - Input: Scanned PDF or images
+    - Output: Searchable PDF + text
+    - Use when: Paper documents need digitization
+  </Accordion>
+
+  <Accordion title="File URL Requirements" icon="link">
+    **How to Provide Files to PDF.co:**
+
+    **Option 1: Public URLs** (Recommended):
+    - File must be publicly accessible
+    - No authentication required
+    - HTTPS preferred (HTTP works)
+    - Examples: S3 public URLs, Dropbox public links, web hosting
+
+    **Option 2: Base64 Encoding**:
+    - For files you can't make public
+    - Encode file as base64 string
+    - Include data URI prefix: `data:application/pdf;base64,`
+    - More complex but works for private files
+
+    **Studio Limitation**:
+    - Studio cannot directly upload files from your computer
+    - Must provide URL or base64-encoded string
+    - For local files: upload to cloud storage first, then use URL
+
+    **Best Practice**:
+    - Use cloud storage (S3, Dropbox, Google Drive)
+    - Generate temporary public URLs (expiring links)
+    - Remove files after processing to maintain privacy
+  </Accordion>
+
+  <Accordion title="Async vs Sync Operations" icon="arrows-spin">
+    **When to Use Async Mode:**
+
+    **Synchronous (Default)**:
+    - Studio waits for immediate response
+    - Best for: Fast operations, small files, single pages
+    - Timeout: 60 seconds
+    - Most operations complete instantly
+
+    **Asynchronous (`async_mode: true`)**:
+    - PDF.co processes in background
+    - Returns job ID, you poll for completion
+    - Best for: Large files, many pages, OCR, large merges
+    - No timeout limit
+
+    **When to Enable Async**:
+    - PDFs with 50+ pages
+    - Files larger than 25 MB
+    - Merging 10+ documents
+    - OCR on multi-page documents
+    - Operations taking longer than 30 seconds
+
+    **Studio Handling**:
+    - Studio automatically handles async operations
+    - You'll see "Processing..." status
+    - Results appear when ready
+    - No manual polling needed
+  </Accordion>
+
+  <Accordion title="Error Code Reference" icon="circle-exclamation">
+    **Common PDF.co Error Codes:**
+
+    **401 Unauthorized**:
+    - Invalid or missing API key
+    - Solution: Check API key in Studio configuration
+
+    **402 Payment Required**:
+    - Credits exhausted
+    - Solution: Wait for monthly reset or upgrade plan
+
+    **429 Too Many Requests**:
+    - Rate limit exceeded
+    - Solution: Slow down requests or upgrade plan
+
+    **400 Bad Request**:
+    - Invalid parameters (wrong URL, bad page range)
+    - Solution: Check tool documentation for correct format
+
+    **413 Payload Too Large**:
+    - File exceeds size limit
+    - Solution: Compress file or upgrade plan
+
+    **500 Internal Server Error**:
+    - PDF.co service issue
+    - Solution: Check [Status Page](https://status.pdf.co/), retry later
+
+    **503 Service Unavailable**:
+    - Temporary outage
+    - Solution: Wait 5 minutes and retry
+
+    Studio will show user-friendly error messages for all these codes.
+  </Accordion>
+
+  <Accordion title="Best Practices for Production" icon="shield-check">
+    **Production Deployment Guidelines:**
+
+    **1. API Key Management**:
+    - Use separate keys for dev/staging/production
+    - Rotate keys quarterly
+    - Never log or expose keys
+    - Monitor usage for anomalies
+
+    **2. Error Handling**:
+    - Implement retry logic with exponential backoff
+    - Handle rate limits gracefully (queue requests)
+    - Validate file URLs before API calls
+    - Log errors for debugging (exclude sensitive data)
+
+    **3. Cost Control**:
+    - Monitor credit usage daily
+    - Set up alerts at 80% quota
+    - Implement usage caps per user/workflow
+    - Review credit consumption monthly
+
+    **4. Performance**:
+    - Use async mode for large operations
+    - Cache results when appropriate
+    - Compress files before processing
+    - Use page ranges to process only needed content
+
+    **5. Security**:
+    - Delete files immediately after processing
+    - Use shortest retention period for your tier
+    - Encrypt sensitive PDFs with pdf_protect
+    - Validate file types before processing
+
+    **6. Reliability**:
+    - Have fallback for service outages
+    - Test with sample files regularly
+    - Monitor PDF.co status page
+    - Keep Studio MCP connection active
+  </Accordion>
+</AccordionGroup>
+
+---
+
+**Ready to Process Documents?** Enable PDF.co in NimbleBrain Studio and start with the free tier. Most operations cost just 1 credit, and you get 300 credits per month to explore all 18 tools!

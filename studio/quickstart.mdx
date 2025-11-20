@@ -1,250 +1,494 @@
 ---
-title: 'Studio Quickstart'
-description: 'Get started with NimbleBrain Studio in under 5 minutes'
+title: 'Quickstart'
+description: 'Build your first automation in under 5 minutes'
 icon: 'rocket'
 ---
 
-Get started with NimbleBrain Studio and create your first AI-powered playbook with this step-by-step guide.
+# Get Started with Your First Automation
+
+Welcome to NimbleBrain Studio! This quickstart guide walks you through the NIRA-powered onboarding experience you'll encounter on your first login.
+
+<Note>
+**New to Studio?** When you log in for the first time, NIRA will automatically guide you through this process. This documentation is here for reference.
+</Note>
+
+## What You'll Build
+
+In this tutorial, NIRA will help you create a simple but powerful automation. You'll learn:
+- How to interact with NIRA conversationally
+- How NIRA selects and configures MCP tools
+- How to provide API credentials securely
+- How to deploy and monitor your automation
+
+<Frame>
+  <img src="/images/studio/nira-welcome.png" alt="NIRA Welcome Screen" />
+</Frame>
 
 ## Prerequisites
 
+All you need is:
 - A web browser (Chrome, Firefox, Safari, or Edge)
 - A GitHub or Google account for authentication
+- ☕ **5 minutes of your time**
 
-<Callout type="info">
-  No installation required! NimbleBrain Studio runs entirely in your browser.
-</Callout>
+<Tip>
+No technical knowledge required! NIRA handles all the complexity.
+</Tip>
 
-## Step 1: Create Your Account
+## Step 1: NIRA's Introduction
 
-<Steps>
-  <Step title="Navigate to Studio">
-    Visit [studio.nimblebrain.ai](https://studio.nimblebrain.ai)
-  </Step>
-  <Step title="Sign Up">
-    Click "Sign Up" and authenticate with GitHub or Google
-  </Step>
-  <Step title="Complete Profile">
-    Fill in your organization name and preferences
-  </Step>
-</Steps>
+When you first log into NimbleBrain Studio at [studio.nimblebrain.dev](https://studio.nimblebrain.dev), you'll see NIRA's welcome message:
 
-## Step 2: Explore the Interface
+<Card>
+**NIRA says:** 👋
 
-<img
-  src="/images/studio/playbooks-main-view.png"
-  alt="NimbleBrain Studio main interface"
-/>
+"Hi! I'm NIRA, your automation assistant. I'm here to help you build powerful automations through simple conversation.
 
-When you first log in, you'll see your default workspace with two main sections:
+Let's create your first automation together! I'll guide you through every step.
 
-<CardGroup cols={2}>
-  <Card title="Playbooks" icon="play">
-    Create AI-powered workflows with natural language instructions
-  </Card>
-  <Card title="Toolbox" icon="toolbox">
-    Install and manage MCP servers from the community registry
-  </Card>
-</CardGroup>
+Ready to get started?"
+</Card>
 
-## Step 3: Install Your First MCP Server
+Click **"Yes, let's build something!"** to begin.
 
-Let's install an MCP server from the Toolbox.
+<Note>
+Don't worry about making mistakes—NIRA is patient and will help you every step of the way!
+</Note>
 
-<Steps>
-  <Step title="Navigate to Toolbox">
-    Click "Toolbox" in the sidebar navigation
-  </Step>
-  <Step title="Browse the Catalog">
-    Click "Browse Catalog" to see all available MCP servers organized by category
-  </Step>
-  <Step title="Select a Server">
-    Choose a server that interests you - for example, the "Echo" server for testing
-  </Step>
-  <Step title="Install">
-    Click "Install" - the server will be added to your workspace's installed servers
-  </Step>
-</Steps>
+## Step 2: Describe Your Automation
 
-<img
-  src="/images/studio/toolbox-browse-catalog.png"
-  alt="MCP Server Catalog"
-/>
-
-<Callout type="success">
-  Installed servers can be connected to various AI clients like Claude Desktop, Claude Code, and Cursor!
-</Callout>
-
-## Step 4: Create Your First Playbook
-
-Now let's create an AI-powered playbook.
-
-<Steps>
-  <Step title="Navigate to Playbooks">
-    Click "Playbooks" in the sidebar navigation
-  </Step>
-  <Step title="Create New Playbook">
-    Click the "Create Playbook" button
-  </Step>
-  <Step title="Add Instructions">
-    Write natural language instructions for what you want the AI to do. For example:
-    ```
-    Research the latest trends in AI development and
-    summarize the top 5 most important developments.
-    ```
-  </Step>
-  <Step title="Configure Settings">
-    In the Configuration tab, adjust:
-    - Model selection (e.g., Claude 3.5 Sonnet)
-    - Temperature (creativity level)
-    - Max tokens (response length)
-  </Step>
-  <Step title="Save Playbook">
-    Give your playbook a name and save it
-  </Step>
-</Steps>
-
-<img
-  src="/images/studio/playbook-detail-instructions.png"
-  alt="Playbook Instructions"
-/>
-
-## Step 5: Execute Your Playbook
-
-<Steps>
-  <Step title="Run the Playbook">
-    Click the "Execute" or "Run" button on your playbook
-  </Step>
-  <Step title="Monitor Progress">
-    Watch as the AI executes your instructions step by step
-  </Step>
-  <Step title="View Results">
-    See the complete output and any tool calls made during execution
-  </Step>
-  <Step title="Review History">
-    Check the "Recent Executions" tab to see all past runs with detailed steps
-  </Step>
-</Steps>
-
-<img
-  src="/images/studio/playbook-recent-executions.png"
-  alt="Playbook Execution History"
-/>
-
-## Step 6: Connect to Claude Desktop
-
-Connect your installed MCP servers to Claude Desktop.
-
-<Steps>
-  <Step title="Go to Toolbox">
-    Navigate to Toolbox and find your installed server
-  </Step>
-  <Step title="Click Connect">
-    Click the "Connect" button on any installed server
-  </Step>
-  <Step title="Choose Claude Desktop">
-    Select "Claude Desktop" from the integration options
-  </Step>
-  <Step title="Copy Configuration">
-    Copy the generated JSON configuration
-  </Step>
-  <Step title="Open Claude Config File">
-    On macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-
-    On Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-  </Step>
-  <Step title="Add Configuration">
-    Add the configuration to the `mcpServers` section of your config file
-  </Step>
-  <Step title="Restart Claude Desktop">
-    Fully quit and restart Claude Desktop to load the new configuration
-  </Step>
-</Steps>
-
-<img
-  src="/images/studio/connect-modal-claude-desktop.png"
-  alt="Claude Desktop Connection"
-/>
-
-<Callout type="warning">
-  Make sure to back up your existing Claude configuration before making changes!
-</Callout>
-
-## Next Steps
-
-Congratulations! You've installed your first MCP server and created a playbook.
-
-<CardGroup cols={2}>
-  <Card
-    title="Explore Playbooks"
-    icon="play"
-    href="/studio/playbooks"
-  >
-    Learn more about creating AI-powered workflows
-  </Card>
-  <Card
-    title="Browse Toolbox"
-    icon="toolbox"
-    href="/studio/toolbox"
-  >
-    Discover and install more MCP servers
-  </Card>
-  <Card
-    title="Client Integrations"
-    icon="plug"
-    href="/studio/integrations"
-  >
-    Connect to Claude Code, Cursor, and other AI clients
-  </Card>
-  <Card
-    title="Generate API Tokens"
-    icon="key"
-    href="/studio/api-keys"
-  >
-    Create tokens for programmatic access via CLI or API
-  </Card>
-</CardGroup>
-
-## Common Issues
+NIRA will ask you what you'd like to automate. For this tutorial, try one of these examples:
 
 <AccordionGroup>
-  <Accordion title="Playbook execution fails">
-    - Check that your instructions are clear and specific
-    - Verify you have sufficient AI credits in your workspace
-    - Review the execution logs for error details
+  <Accordion title="Example 1: Weather Alert (Easiest) ⭐">
+    **Say to NIRA:**
+
+    "Send me a Slack message every morning at 8am with today's weather forecast for San Francisco"
+
+    **What NIRA does:**
+    - Selects OpenWeatherMap MCP server for weather data
+    - Selects Slack MCP server for messaging
+    - Creates a daily 8am schedule
+    - Asks for your OpenWeatherMap API key and Slack credentials
   </Accordion>
-  <Accordion title="Claude Desktop doesn't show MCP tools">
-    - Verify Claude Desktop was fully restarted (quit and relaunch)
-    - Check that the configuration file has valid JSON syntax
-    - Ensure your workspace token is properly set in the config
+
+  <Accordion title="Example 2: Daily Calendar Summary">
+    **Say to NIRA:**
+
+    "Create a daily summary of my Google Calendar events and email it to me at 6am"
+
+    **What NIRA does:**
+    - Connects to Google Calendar
+    - Formats your day's events
+    - Sends email via your preferred email service
+    - Asks for Google Calendar and email credentials
   </Accordion>
-  <Accordion title="Can't find an installed server">
-    - Make sure you're viewing the "Installed" tab in Toolbox
-    - Check that you're in the correct workspace
-    - Try refreshing the page
-  </Accordion>
-  <Accordion title="MCP server connection timeout">
-    - The server may be starting up (cold start) - wait 5-10 seconds and retry
-    - Check your internet connection
-    - Verify the server is shown as "Running" in Toolbox
+
+  <Accordion title="Example 3: Price Monitor">
+    **Say to NIRA:**
+
+    "Check Bitcoin price every hour and notify me on Slack if it goes above $100,000"
+
+    **What NIRA does:**
+    - Sets up cryptocurrency price tracking
+    - Implements conditional logic (only alert if > $100k)
+    - Schedules hourly checks
+    - Asks for Slack credentials
   </Accordion>
 </AccordionGroup>
 
-## Need Help?
+<Frame>
+  <img src="/images/studio/nira-conversation.png" alt="Chatting with NIRA" />
+</Frame>
+
+### What NIRA Does Behind the Scenes
+
+When you describe your automation, NIRA:
+
+<Steps>
+  <Step title="Understands Intent">
+    ✅ Parses your natural language request to understand what you want
+  </Step>
+  <Step title="Selects Tools">
+    ✅ Identifies which MCP servers are needed (e.g., OpenWeatherMap, Slack)
+  </Step>
+  <Step title="Designs Workflow">
+    ✅ Determines the automation schedule, logic, and data flow
+  </Step>
+  <Step title="Generates Playbook">
+    ✅ Creates a complete playbook configuration
+  </Step>
+  <Step title="Identifies Credentials">
+    ✅ Figures out which API keys you'll need to provide
+  </Step>
+</Steps>
+
+<Tip>
+**Be specific!** Include timing ("every morning at 8am"), data sources ("my Google Calendar"), and outputs ("send to my email").
+</Tip>
+
+## Step 3: Add Your API Keys
+
+NIRA will identify which services you need and prompt for credentials:
+
+<Card>
+**NIRA says:** 🔑
+
+"Great! To build this automation, I need access to:
+
+- **OpenWeatherMap API** (for weather data)
+- **Slack** (to send you messages)
+
+Let's add these credentials to your workspace. I'll walk you through each one.
+
+Don't have an OpenWeatherMap account? No problem! I'll show you how to get a free API key—it only takes a minute."
+</Card>
+
+<Steps>
+  <Step title="Click 'Add API Key'">
+    NIRA will show a secure form for each service
+  </Step>
+  <Step title="Follow NIRA's Guidance">
+    NIRA provides direct links to get API keys from each service:
+    - Click the link NIRA provides
+    - Sign up or log in to the service
+    - Generate your API key
+    - Copy it
+  </Step>
+  <Step title="Paste Credentials">
+    Return to Studio and paste the API key into the secure form
+  </Step>
+  <Step title="Save Securely">
+    NIRA encrypts and stores your keys in your workspace
+  </Step>
+</Steps>
+
+<Warning>
+**Security Note**: Your API keys are encrypted and never shared. They're stored securely in your workspace and only accessible to your automations. NIRA never sees or logs your credentials.
+</Warning>
+
+<Callout type="info">
+**Taking too long?** No worries! NIRA saves your progress. You can come back later to finish adding credentials.
+</Callout>
+
+## Step 4: Review Your Playbook
+
+Once you've added credentials, NIRA shows you the generated playbook before deploying:
+
+<Card>
+**NIRA says:** 📋
+
+"Here's what I've built for you:
+
+**Automation Name:** Morning Weather Alert
+**Schedule:** Daily at 8:00 AM Pacific Time
+**Tools Used:** OpenWeatherMap, Slack
+
+**What it does:**
+1. Fetches current weather and 24-hour forecast for San Francisco
+2. Formats a friendly message with temperature, conditions, and forecast
+3. Sends to your Slack DM
+
+Everything look good? You can deploy it now or ask me to make changes!"
+</Card>
+
+You can:
+- ✅ **Deploy Now** - Launch your automation immediately
+- ✏️ **Edit** - Ask NIRA to modify anything ("Change it to 7am" or "Add wind speed")
+- 👀 **View Details** - See the full playbook configuration
+- 🗑️ **Start Over** - Have NIRA build something different
+
+<Frame>
+  <img src="/images/studio/playbooks-example.png" alt="Reviewing playbook with NIRA" />
+</Frame>
+
+## Step 5: Deploy & Test
+
+Click **"Deploy Automation"** and NIRA handles the rest:
+
+<Steps>
+  <Step title="NIRA Validates Configuration">
+    Checks that all tools are properly connected and credentials work
+  </Step>
+  <Step title="Test Run">
+    NIRA runs a test to ensure everything works correctly
+  </Step>
+  <Step title="Schedule Activation">
+    Your automation goes live on the schedule you specified
+  </Step>
+  <Step title="Immediate Confirmation">
+    You'll see the first result immediately—NIRA sends a test message!
+  </Step>
+</Steps>
+
+<Frame>
+  <img src="/images/studio/nira-deployed.png" alt="Automation Deployed" />
+</Frame>
+
+<Callout type="success">
+**Congratulations!** 🎉 You've built your first automation with NIRA. Check your Slack for the test message!
+</Callout>
+
+## Step 6: Monitor & Manage
+
+After deployment, NIRA shows you how to:
 
 <CardGroup cols={2}>
-  <Card
-    title="Troubleshooting"
-    icon="wrench"
-    href="/dev/troubleshooting"
-  >
-    Check our comprehensive troubleshooting guide
+  <Card title="View Execution History" icon="clock-rotate-left">
+    See when your automation ran and what it did
   </Card>
-  <Card
-    title="Activity Logs"
-    icon="list-check"
-    href="/studio/activity-logs"
-  >
-    View audit logs of all workspace actions
+  <Card title="Check Logs" icon="file-lines">
+    Detailed logs for troubleshooting
+  </Card>
+  <Card title="Edit Automation" icon="pen-to-square">
+    Ask NIRA to modify your automation anytime
+  </Card>
+  <Card title="Pause/Resume" icon="circle-pause">
+    Temporarily stop or restart your automation
   </Card>
 </CardGroup>
+
+<Note>
+**Found an issue?** Just tell NIRA! She can help troubleshoot and fix problems.
+</Note>
+
+## What's Next?
+
+Now that you've completed the tutorial, you can:
+
+<CardGroup cols={2}>
+  <Card title="Build More Automations" icon="plus" href="/studio/nira">
+    Ask NIRA to create more complex workflows
+  </Card>
+  <Card title="Explore Connections" icon="plug" href="/studio/connections">
+    See all 50+ MCP servers NIRA can use
+  </Card>
+  <Card title="Learn About Playbooks" icon="book" href="/studio/playbooks">
+    Understand how NIRA structures automations
+  </Card>
+  <Card title="Connect to Claude" icon="robot" href="/studio/integrations">
+    Use your automations in Claude Desktop
+  </Card>
+  <Card title="Workspace Management" icon="layer-group" href="/studio/workspace-management">
+    Organize automations across projects
+  </Card>
+  <Card title="Activity Logs" icon="list-check" href="/studio/activity-logs">
+    Track all workspace activity
+  </Card>
+</CardGroup>
+
+## Tips for Working with NIRA
+
+Make the most of your NIRA experience with these tips:
+
+<AccordionGroup>
+  <Accordion title="Be Specific About Timing">
+    **Good:** "Every Monday at 9am"
+    **Better:** "Every weekday at 9am except holidays"
+    **Best:** "Every Monday, Wednesday, and Friday at 9am Pacific Time"
+
+    NIRA understands natural language timing but specificity helps ensure you get exactly what you want.
+  </Accordion>
+
+  <Accordion title="Name Your Data Sources">
+    **Vague:** "Get sales data"
+    **Better:** "Get sales data from Stripe"
+    **Best:** "Get yesterday's sales data from our Stripe account and calculate total revenue"
+
+    The more specific you are about WHERE data comes from, the better NIRA can build your automation.
+  </Accordion>
+
+  <Accordion title="Describe the Output Format">
+    **Basic:** "Send me a report"
+    **Better:** "Email me a report"
+    **Best:** "Email me a PDF report with charts showing revenue trends"
+
+    Tell NIRA HOW and WHERE you want results delivered.
+  </Accordion>
+
+  <Accordion title="Ask for Modifications Anytime">
+    You can always refine automations:
+    - "Make the report more detailed"
+    - "Change the schedule to 6am"
+    - "Add weather data to the summary"
+    - "Only send alerts if revenue is above $10k"
+
+    NIRA treats modifications like a conversation—just ask!
+  </Accordion>
+
+  <Accordion title="Use Examples">
+    Show NIRA what you want:
+    - "Format it like: 'Today's weather: 72°F, Sunny. Forecast: Clear skies.'"
+    - "Include metrics similar to last week's report"
+
+    Examples help NIRA understand your preferences.
+  </Accordion>
+</AccordionGroup>
+
+## Common Questions
+
+<AccordionGroup>
+  <Accordion title="Can I edit NIRA's automations manually?">
+    Yes! Every automation NIRA creates is a standard playbook you can view and edit. Click on any playbook to see its configuration, instructions, and settings.
+
+    You can switch between NIRA mode and manual mode anytime.
+  </Accordion>
+
+  <Accordion title="What if NIRA doesn't understand my request?">
+    NIRA will ask clarifying questions:
+    - "Could you be more specific about the timing?"
+    - "Which email address should I send to?"
+    - "What should trigger this automation?"
+
+    Answer her questions and she'll figure it out!
+  </Accordion>
+
+  <Accordion title="How do I know what tools/services NIRA can use?">
+    Browse [Connections](/studio/connections) to see all 50+ MCP servers. NIRA automatically knows about all of them and will select the best ones for your needs.
+
+    If NIRA doesn't have a tool for something, she'll let you know and may suggest alternatives.
+  </Accordion>
+
+  <Accordion title="Can NIRA build really complex automations?">
+    Absolutely! NIRA can handle:
+    - Multi-step workflows with conditional logic
+    - Automations that use 5+ different tools
+    - Scheduled tasks with complex timing rules
+    - Data transformations and calculations
+
+    Start simple and ask NIRA to add complexity as you go.
+  </Accordion>
+
+  <Accordion title="What happens if my automation fails?">
+    NIRA monitors all automations and will:
+    1. Notify you if something fails
+    2. Show you detailed error logs
+    3. Help you fix the issue
+
+    Just tell NIRA "My weather automation isn't working" and she'll investigate.
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="NIRA says she needs more information">
+    **Issue:** Your request was too vague.
+
+    **Solution:** Be more specific about:
+    - Timing ("when should this run?")
+    - Data sources ("which service has the data?")
+    - Output destination ("where should results go?")
+
+    **Example:**
+    Instead of: "Send me updates"
+    Try: "Send me Slack alerts every hour with Bitcoin price from CoinGecko"
+  </Accordion>
+
+  <Accordion title="API key connection failed">
+    **Issue:** The credentials you entered aren't working.
+
+    **Solution:**
+    - Double-check you copied the entire key (no extra spaces)
+    - Verify the key hasn't expired
+    - Make sure the account has proper permissions
+    - Try regenerating the key and adding it again
+
+    NIRA will guide you through re-adding credentials.
+  </Accordion>
+
+  <Accordion title="Automation didn't run on schedule">
+    **Issue:** Your automation missed its scheduled time.
+
+    **Solution:**
+    - Check the execution logs in the Monitoring tab
+    - NIRA may have encountered an issue with an external service
+    - Click "Run Now" to test manually
+    - Ask NIRA: "Why didn't my weather alert run this morning?"
+  </Accordion>
+
+  <Accordion title="Results aren't formatted how I want">
+    **Issue:** The output format doesn't match your expectations.
+
+    **Solution:** Tell NIRA exactly how you want it formatted:
+    - "Make the report shorter and only include the top 3 items"
+    - "Add emojis to make it more visual"
+    - "Format dates as MM/DD/YYYY instead of YYYY-MM-DD"
+
+    NIRA will update the automation instantly.
+  </Accordion>
+
+  <Accordion title="NIRA is taking a long time to respond">
+    **Issue:** NIRA seems slow or unresponsive.
+
+    **Solution:**
+    - Check your internet connection
+    - Refresh the page
+    - If the issue persists, the platform may be experiencing high load—try again in a few minutes
+
+    Your conversation is saved, so you won't lose progress.
+  </Accordion>
+</AccordionGroup>
+
+## Real User Examples
+
+See what others have built with NIRA on their first try:
+
+<Card>
+**Sarah, Marketing Manager** 📊
+
+"I need a weekly report showing our social media metrics from Twitter and Instagram, formatted as a nice email with graphs"
+
+**Result:** NIRA created an automation that runs every Monday at 9am, pulls metrics from both platforms, generates comparison charts, and emails a professional report. Built in 4 minutes.
+</Card>
+
+<Card>
+**Mike, Small Business Owner** 🏪
+
+"Alert me on Slack whenever someone leaves a 1-star review on Google My Business so I can respond quickly"
+
+**Result:** NIRA set up real-time monitoring that checks every 30 minutes and sends instant Slack alerts with the review text and a link to respond. Built in 3 minutes.
+</Card>
+
+<Card>
+**Jamie, Sales Team Lead** 💼
+
+"Every Friday afternoon, send me a summary of all deals closed this week from Salesforce, including total value and top 3 deals"
+
+**Result:** NIRA built an automation that queries Salesforce every Friday at 4pm, calculates totals, ranks deals, and sends a formatted summary via email. Built in 5 minutes.
+</Card>
+
+## Need Help?
+
+NIRA is always available in your workspace to help, but here are other resources:
+
+<CardGroup cols={3}>
+  <Card title="Ask NIRA" icon="robot">
+    💬 She's always in your workspace ready to help
+  </Card>
+  <Card title="Read the Docs" icon="book">
+    📖 [Full Studio Documentation](/studio/introduction)
+  </Card>
+  <Card title="Contact Support" icon="envelope">
+    🎫 [support@nimblebrain.ai](mailto:support@nimblebrain.ai)
+  </Card>
+</CardGroup>
+
+## You're All Set! 🎉
+
+You've completed the quickstart and built your first automation with NIRA. You now know how to:
+
+- ✅ Describe automations in natural language
+- ✅ Add API credentials securely
+- ✅ Review and deploy with confidence
+- ✅ Monitor and modify automations
+
+Ready to build something more complex? Open NIRA and start a new conversation!
+
+<Callout type="success">
+**Pro tip:** The more you use NIRA, the better she understands your preferences and style. Build a few automations and watch how quickly you can go from idea to deployed solution.
+</Callout>
+
+<Tip>
+**Ready for more complexity?** Once you're comfortable with single playbooks, try building an [Agent](/studio/agents) that coordinates multiple automations together. Agents are perfect for multi-step workflows like "morning routine" or "weekly reporting."
+</Tip>

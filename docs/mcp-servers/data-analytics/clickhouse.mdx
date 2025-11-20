@@ -1,0 +1,1740 @@
+---
+title: 'ClickHouse'
+description: 'Real-time analytics and OLAP database queries for data-driven business insights'
+icon: 'database'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="database">
+    ClickHouse is a high-performance, column-oriented database designed for real-time analytics on massive datasets. Through Studio's natural language interface, you can query billions of rows in milliseconds without writing SQL.
+
+    **Key Features:**
+    - Real-time SQL query execution on large datasets
+    - Millisecond response times for analytics
+    - Natural language to SQL conversion
+    - Column-oriented storage for fast aggregations
+    - Distributed query processing
+    - Time-series data optimization
+    - Read-only queries for data safety
+    - Database and table schema exploration
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    ClickHouse excels at OLAP analytics and business intelligence:
+
+    - **Business Dashboards**: Real-time metrics and KPIs
+    - **Log Analysis**: Monitor application and system logs
+    - **User Analytics**: Track behavior and engagement patterns
+    - **E-commerce Insights**: Sales, inventory, and customer analytics
+    - **Financial Analysis**: Transaction and market data processing
+    - **Time-Series Data**: IoT sensors, metrics, and monitoring
+    - **Ad-hoc Exploration**: Quick data discovery and analysis
+    - **Funnel & Cohort Analysis**: User journey and retention metrics
+  </Card>
+</CardGroup>
+
+<Info>
+  ClickHouse can analyze billions of rows in milliseconds, making it ideal for real-time business intelligence and interactive analytics dashboards.
+</Info>
+
+## Quick Start
+
+<Steps>
+  <Step title="Set Up ClickHouse Instance">
+    You need a ClickHouse database to connect to. Choose one option:
+
+    **Option 1: ClickHouse Cloud (Recommended)**
+    1. Sign up at [clickhouse.cloud/signup](https://clickhouse.cloud/signup)
+    2. Create a new service
+    3. Note your connection details from the dashboard:
+       - **Host**: `xyz.clickhouse.cloud` (your unique hostname)
+       - **Port**: `8443` (HTTPS default)
+       - **Database**: `default` (or your custom database)
+       - **Username**: `default` (or custom user)
+       - **Password**: Set during service creation
+
+    **Free Tier Includes:**
+    - Up to 25GB storage
+    - Fully managed infrastructure
+    - Automatic backups and scaling
+    - SSL/TLS encryption by default
+    - No infrastructure management
+
+    **Option 2: ClickHouse SQL Playground (Demo)**
+    Test with ClickHouse's demo instance:
+    - **Host**: `sql-clickhouse.clickhouse.com`
+    - **Port**: `8443`
+    - **Username**: `demo`
+    - **Password**: *(leave empty)*
+    - **Database**: `default`
+
+    Perfect for trying ClickHouse before creating an account!
+
+    **Option 3: Self-Hosted**
+    - Install ClickHouse on your infrastructure
+    - Configure network access and SSL
+    - Set up authentication
+    - Note connection details
+
+    <Tip>
+      ClickHouse Cloud is the easiest option - fully managed, secure by default, with automatic scaling. Perfect for business users.
+    </Tip>
+  </Step>
+
+  <Step title="Add to NimbleBrain Studio">
+    1. Open **NimbleBrain Studio**
+    2. Navigate to **Settings** → **MCP Servers**
+    3. Click **Add Server**
+    4. Search for "ClickHouse" in the server registry
+    5. Click **Configure**
+    6. Enter your connection details:
+       - **CLICKHOUSE_HOST**: Your ClickHouse hostname
+       - **CLICKHOUSE_PORT**: `8443` (Cloud) or `8123` (self-hosted HTTP)
+       - **CLICKHOUSE_USER**: Your username (usually `default`)
+       - **CLICKHOUSE_PASSWORD**: Your password
+       - **CLICKHOUSE_DATABASE**: Database name (optional, defaults to `default`)
+       - **CLICKHOUSE_SECURE**: `true` (recommended for Cloud)
+    7. Click **Test Connection** to verify
+    8. Click **Save & Enable**
+
+    <Warning>
+      For ClickHouse Cloud, always use `CLICKHOUSE_SECURE=true` and port `8443`. For local development without SSL, use `false` and port `8123`.
+    </Warning>
+  </Step>
+
+  <Step title="Test Your Connection">
+    In your Studio chat, try this prompt:
+
+    *"List all databases in my ClickHouse instance"*
+
+    **What happens:**
+    - Studio calls the `list_databases` tool
+    - ClickHouse returns all database names
+    - You see available databases
+
+    **Next, explore a database:**
+
+    *"Show me all tables in the default database"*
+
+    You'll see table names, schemas, row counts, and column details!
+
+    <Check>
+      If you see your databases and tables, your ClickHouse connection is working perfectly!
+    </Check>
+  </Step>
+</Steps>
+
+## Available Tools
+
+<AccordionGroup>
+  <Accordion title="run_select_query - Execute SQL queries for analytics" icon="code">
+    Execute SELECT queries on your ClickHouse database using natural language. Studio converts your questions into optimized SQL automatically.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | query | string | Yes | SQL SELECT query to execute |
+
+    **Returns:**
+    - `columns`: Array of column names
+    - `rows`: Array of result rows (each row is an array of values)
+
+    **Example Usage:**
+
+    *Natural language in Studio:*
+    ```text
+    "Show me the top 10 products by sales from the orders table"
+    ```
+
+    **SQL Generated (automatic):**
+    ```sql
+    SELECT
+        product_name,
+        SUM(quantity * price) as total_sales
+    FROM orders
+    WHERE date >= today() - INTERVAL 30 DAY
+    GROUP BY product_name
+    ORDER BY total_sales DESC
+    LIMIT 10
+    ```
+
+    **Example Response:**
+    ```json
+    {
+      "columns": ["product_name", "total_sales"],
+      "rows": [
+        ["Widget Pro", 125000.50],
+        ["Gadget Plus", 98500.25],
+        ["Tool Kit", 87300.00]
+      ]
+    }
+    ```
+
+    <Tip>
+      All queries run with `readonly=1` for safety - no accidental data modifications possible!
+    </Tip>
+
+    <Note>
+      Query timeout is configurable (default: 30 seconds). For long-running queries, increase `CLICKHOUSE_MCP_QUERY_TIMEOUT`.
+    </Note>
+  </Accordion>
+
+  <Accordion title="list_databases - Discover available databases" icon="database">
+    List all databases in your ClickHouse instance. Perfect for exploring what data is available.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | *(none)* | - | - | No parameters required |
+
+    **Returns:**
+    - JSON array of database names
+
+    **Example Usage:**
+
+    *Natural language in Studio:*
+    ```text
+    "What databases are available in ClickHouse?"
+    ```
+    or simply:
+    ```text
+    "List all databases"
+    ```
+
+    **Example Response:**
+    ```json
+    [
+      "default",
+      "system",
+      "analytics",
+      "logs",
+      "events"
+    ]
+    ```
+
+    <Tip>
+      Use this as your first step when connecting to explore what data is available. Then drill down into specific databases.
+    </Tip>
+
+    <Note>
+      System databases like `system` contain ClickHouse metadata and monitoring information. Your business data is typically in `default` or custom databases.
+    </Note>
+  </Accordion>
+
+  <Accordion title="list_tables - Explore database schema and structure" icon="table">
+    List all tables in a database with detailed schema information including columns, data types, row counts, and storage statistics.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | database | string | Yes | Name of the database to query |
+    | like | string | No | Filter tables by pattern (e.g., `'user%'` for tables starting with "user") |
+    | not_like | string | No | Exclude tables by pattern (e.g., `'%_tmp'` to exclude temporary tables) |
+
+    **Returns:**
+    - Array of table objects with comprehensive metadata:
+      - `database`: Database name
+      - `name`: Table name
+      - `engine`: Storage engine (e.g., MergeTree)
+      - `columns`: Array of column details (name, type, default, comment)
+      - `total_rows`: Number of rows in table
+      - `total_bytes`: Storage size in bytes
+      - `primary_key`: Primary key columns
+      - `sorting_key`: Sort order for optimization
+      - `comment`: Table description
+      - Plus: engine details, compression stats, partition info
+
+    **Example Usage:**
+
+    *Natural language in Studio:*
+    ```text
+    "Show me all tables in the analytics database"
+    ```
+
+    *With filtering:*
+    ```text
+    "List all user-related tables in the default database"
+    ```
+    *(Studio automatically applies LIKE filter for "user")*
+
+    *Exclude temporary tables:*
+    ```text
+    "Show me production tables in analytics, excluding any temp tables"
+    ```
+
+    **Example Response:**
+    ```json
+    [
+      {
+        "database": "analytics",
+        "name": "events",
+        "engine": "MergeTree",
+        "total_rows": 1250000000,
+        "total_bytes": 45000000000,
+        "primary_key": "date, user_id",
+        "sorting_key": "date, user_id, event_type",
+        "comment": "User behavior events",
+        "columns": [
+          {
+            "name": "date",
+            "column_type": "Date",
+            "comment": "Event date"
+          },
+          {
+            "name": "user_id",
+            "column_type": "UInt64",
+            "comment": "User identifier"
+          },
+          {
+            "name": "event_type",
+            "column_type": "String",
+            "comment": "Type of event"
+          }
+        ]
+      }
+    ]
+    ```
+
+    <Tip>
+      Use this to understand your data structure before writing queries. Pay attention to `primary_key` and `sorting_key` for optimal query performance!
+    </Tip>
+
+    <Info>
+      The `total_rows` and `total_bytes` fields help you understand data volume. ClickHouse can handle billions of rows efficiently!
+    </Info>
+  </Accordion>
+
+  <Accordion title="run_chdb_select_query - Query data with embedded engine" icon="bolt">
+    Execute SQL queries using chDB, an embedded ClickHouse engine that can query files, URLs, and databases without ETL processes. Perfect for ad-hoc data exploration from various sources.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | query | string | Yes | SQL query to execute with chDB |
+
+    **Returns:**
+    - JSON array of result objects (each row as an object with column names as keys)
+
+    **What is chDB?**
+    - **Embedded ClickHouse** engine (no separate server needed)
+    - **Query any source**: Local files (CSV, JSON, Parquet), URLs, databases
+    - **In-memory or file-based** storage
+    - **No ETL required**: Query data directly from source
+    - **Perfect for**: Data exploration, prototyping, lightweight analytics
+
+    **Example Usage:**
+
+    *Query a CSV file:*
+    ```text
+    "Use chDB to analyze this CSV: SELECT * FROM file('data.csv', CSV) LIMIT 10"
+    ```
+
+    *Query a URL:*
+    ```text
+    "Use chDB to get data from this URL: SELECT * FROM url('https://example.com/data.json', JSONEachRow)"
+    ```
+
+    *In-memory analytics:*
+    ```text
+    "Use chDB to calculate: SELECT sum(value) FROM (SELECT 1 as value UNION ALL SELECT 2 UNION ALL SELECT 3)"
+    ```
+
+    **Example Response:**
+    ```json
+    [
+      {"id": 1, "name": "Product A", "sales": 1000},
+      {"id": 2, "name": "Product B", "sales": 1500},
+      {"id": 3, "name": "Product C", "sales": 2000}
+    ]
+    ```
+
+    <Note>
+      chDB is optional and disabled by default. Enable it by setting `CHDB_ENABLED=true` in your Studio configuration. Requires `CHDB_DATA_PATH` for persistent storage or defaults to in-memory.
+    </Note>
+
+    <Tip>
+      Use chDB for quick data exploration without loading data into ClickHouse. Great for testing queries on sample data before production deployment!
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+## Authentication
+
+<Info>
+  **Database Credentials Required**: ClickHouse requires connection authentication for secure data access.
+</Info>
+
+### Connection Configuration
+
+Configure these parameters in NimbleBrain Studio (**Settings** → **MCP Servers** → **ClickHouse**):
+
+**Required Parameters:**
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| **CLICKHOUSE_HOST** | Your ClickHouse server hostname | `abc123.clickhouse.cloud` |
+| **CLICKHOUSE_USER** | Database username | `default` |
+| **CLICKHOUSE_PASSWORD** | Database password | `your_secure_password` |
+
+**Optional Parameters:**
+
+| Parameter | Description | Default | Notes |
+|-----------|-------------|---------|-------|
+| **CLICKHOUSE_PORT** | Connection port | `8443` (secure) or `8123` (HTTP) | Auto-set based on CLICKHOUSE_SECURE |
+| **CLICKHOUSE_DATABASE** | Default database | `default` | Connect to specific database |
+| **CLICKHOUSE_SECURE** | Enable SSL/TLS | `true` | Always `true` for ClickHouse Cloud |
+| **CLICKHOUSE_VERIFY** | Verify SSL certificates | `true` | Recommended for production |
+| **CLICKHOUSE_CONNECT_TIMEOUT** | Connection timeout (seconds) | `30` | Increase for slow networks |
+| **CLICKHOUSE_SEND_RECEIVE_TIMEOUT** | Query timeout (seconds) | `300` | Increase for long-running queries |
+
+<Tip>
+  For ClickHouse Cloud: Use `CLICKHOUSE_SECURE=true` and port `8443`. SSL/TLS is enabled by default with automatic certificate handling.
+</Tip>
+
+### ClickHouse Cloud vs Self-Hosted
+
+**ClickHouse Cloud (Recommended):**
+
+| Tier | Storage | Compute | Price | Best For |
+|------|---------|---------|-------|----------|
+| **Free** | 25GB | 8GB RAM | $0/mo | Testing, small projects |
+| **Development** | 100GB | 16GB RAM | ~$50/mo | Dev/staging environments |
+| **Production** | 1TB+ | 32GB+ RAM | ~$300+/mo | Production workloads |
+| **Enterprise** | Custom | Custom | Custom | Large-scale deployments |
+
+**Benefits:**
+- ✅ Fully managed (no DevOps)
+- ✅ Automatic backups
+- ✅ SSL/TLS by default
+- ✅ Auto-scaling
+- ✅ High availability
+
+**Self-Hosted:**
+- Free open-source software
+- You manage infrastructure costs (compute, storage, networking)
+- Full control over configuration
+- Requires DevOps expertise for:
+  - Installation and upgrades
+  - Backup and recovery
+  - Security and SSL setup
+  - Performance tuning
+  - Monitoring and alerts
+
+<Warning>
+  Self-hosted deployments require significant DevOps expertise. ClickHouse Cloud is recommended for business users who want to focus on analytics, not infrastructure management.
+</Warning>
+
+### Security Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use Read-Only Credentials for Studio" icon="lock">
+    Create a dedicated read-only user for Studio to prevent accidental data modification:
+
+    ```sql
+    -- Create read-only user
+    CREATE USER studio_readonly IDENTIFIED BY 'secure_password_here';
+
+    -- Grant SELECT permission on specific databases
+    GRANT SELECT ON analytics.* TO studio_readonly;
+    GRANT SELECT ON logs.* TO studio_readonly;
+
+    -- Allow listing databases and tables
+    GRANT SHOW DATABASES ON *.* TO studio_readonly;
+    GRANT SHOW TABLES ON *.* TO studio_readonly;
+    ```
+
+    **Why read-only?**
+    - Prevents accidental data deletion or modification
+    - Safe for business users to explore data
+    - ClickHouse MCP already enforces `readonly=1`, but database-level permissions add extra security
+
+    <Info>
+      All Studio queries automatically run with `readonly=1` setting, ensuring queries cannot modify data even if the user has write permissions.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Always Enable SSL/TLS in Production" icon="shield">
+    Encrypt data in transit between Studio and ClickHouse:
+
+    **ClickHouse Cloud:**
+    - SSL/TLS enabled by default
+    - Automatic certificate management
+    - Just set `CLICKHOUSE_SECURE=true`
+
+    **Self-Hosted:**
+    1. Configure SSL certificates in ClickHouse server
+    2. Set `CLICKHOUSE_SECURE=true`
+    3. Set `CLICKHOUSE_VERIFY=true` to validate certificates
+
+    **Studio Settings:**
+    ```
+    CLICKHOUSE_SECURE=true
+    CLICKHOUSE_VERIFY=true
+    CLICKHOUSE_PORT=8443
+    ```
+
+    <Warning>
+      Never use `CLICKHOUSE_SECURE=false` with sensitive data in production. Unencrypted connections expose your data to network sniffing.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Restrict Network Access" icon="network-wired">
+    Control which IPs can connect to your ClickHouse instance:
+
+    **ClickHouse Cloud:**
+    - Configure IP allowlists in the Cloud console
+    - Add your office IPs
+    - Add Studio's IP ranges (contact NimbleBrain support)
+
+    **Self-Hosted:**
+    - Configure firewall rules (iptables, security groups)
+    - Limit access to known IPs
+    - Use VPN for remote access
+    - Disable public internet access if possible
+
+    <Tip>
+      For maximum security, place ClickHouse behind a VPN and only allow connections from authorized networks.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Use Strong Passwords & Rotate Regularly" icon="key">
+    Password security best practices:
+
+    **Strong Password Requirements:**
+    - Minimum 16 characters
+    - Mix of uppercase, lowercase, numbers, symbols
+    - Not reused from other services
+    - Not based on dictionary words
+    - Unique per environment (dev, staging, prod)
+
+    **Password Rotation:**
+    - Rotate every 90 days
+    - Rotate immediately if:
+      - Employee leaves with access
+      - Suspected credential compromise
+      - Security audit recommendation
+
+    **Password Management:**
+    - Store in a password manager (1Password, LastPass, etc.)
+    - Never commit passwords to git repos
+    - Use environment variables, not hardcoded values
+
+    <Warning>
+      Default passwords like "clickhouse" or "password123" are the #1 cause of database breaches. Always use strong, unique passwords.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Monitor Query Activity" icon="chart-line">
+    Track who is querying your database and what they're asking:
+
+    **ClickHouse System Tables:**
+    ```sql
+    -- Recent queries
+    SELECT
+        user,
+        query,
+        query_start_time,
+        query_duration_ms
+    FROM system.query_log
+    WHERE type = 'QueryFinish'
+    ORDER BY query_start_time DESC
+    LIMIT 100;
+    ```
+
+    **What to monitor:**
+    - Unusual query patterns
+    - Long-running queries
+    - Failed authentication attempts
+    - Queries accessing sensitive tables
+    - Unusual access times (nights, weekends)
+
+    **Set up alerts for:**
+    - Multiple failed authentication attempts
+    - Queries to sensitive tables
+    - Unusual data volume exports
+    - Performance degradation
+
+    <Tip>
+      Regular query monitoring helps identify both security issues and performance bottlenecks early.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+### Managing Credentials in Studio
+
+Update your ClickHouse connection details anytime:
+
+1. Go to **Settings** → **MCP Servers**
+2. Find "ClickHouse" in your server list
+3. Click **Edit Configuration**
+4. Update your connection parameters
+5. Click **Test Connection** to verify changes
+6. Click **Save**
+
+<Info>
+  Studio securely stores your database credentials with encryption. Your credentials are never exposed in conversation logs or shared with other users.
+</Info>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Sales Analytics">
+    **Scenario:** Analyze sales performance by region and product category
+
+    **Business Goal:** Identify top-performing regions and products to optimize inventory and marketing spend.
+
+    **Prompt:**
+    ```text
+    "Show me total sales by region for the last 30 days, including order count and average order value"
+    ```
+
+    **What happens:**
+    1. Studio converts your question to SQL
+    2. Queries your `sales` or `orders` table
+    3. Aggregates by region with date filtering
+    4. Calculates metrics (total, count, average)
+    5. Returns results in readable format
+
+    **SQL Generated (automatic):**
+    ```sql
+    SELECT
+        region,
+        COUNT(*) as order_count,
+        SUM(amount) as total_sales,
+        AVG(amount) as avg_order_value
+    FROM sales
+    WHERE date >= today() - INTERVAL 30 DAY
+    GROUP BY region
+    ORDER BY total_sales DESC
+    ```
+
+    **Example Results:**
+    | Region | Order Count | Total Sales | Avg Order Value |
+    |--------|-------------|-------------|-----------------|
+    | West | 15,234 | $1,250,000 | $82.05 |
+    | East | 12,890 | $987,500 | $76.61 |
+    | South | 10,456 | $890,000 | $85.12 |
+
+    **Time:** &lt;100ms for millions of rows
+    **Follow-up:** "Now break down West region by product category"
+
+    <Tip>
+      ClickHouse's column-oriented storage makes aggregations incredibly fast. Perfect for real-time dashboard queries!
+    </Tip>
+  </Tab>
+
+  <Tab title="User Behavior Analysis">
+    **Scenario:** Understand user engagement patterns to improve product features
+
+    **Business Goal:** Identify most active users and their behavior to inform product roadmap and retention strategies.
+
+    **Prompt:**
+    ```text
+    "Find the top 20 most active users this week by event count, and show me what types of events they're performing"
+    ```
+
+    **What happens:**
+    1. Queries `user_events` or `events` table
+    2. Filters to current week
+    3. Groups by user_id
+    4. Counts events and event types
+    5. Ranks by activity level
+
+    **SQL Generated:**
+    ```sql
+    SELECT
+        user_id,
+        COUNT(*) as total_events,
+        COUNT(DISTINCT event_type) as unique_event_types,
+        groupArray(event_type) as event_list
+    FROM user_events
+    WHERE timestamp >= toStartOfWeek(now())
+    GROUP BY user_id
+    ORDER BY total_events DESC
+    LIMIT 20
+    ```
+
+    **Example Results:**
+    | User ID | Total Events | Unique Types | Top Events |
+    |---------|--------------|--------------|------------|
+    | 10523 | 1,245 | 12 | page_view, click, purchase |
+    | 89421 | 1,189 | 15 | search, filter, add_to_cart |
+    | 45890 | 1,067 | 9 | login, profile_update, message |
+
+    **Time:** &lt;50ms for hundreds of millions of events
+    **Business Insight:** High-activity users are using diverse features - opportunity to create power-user features!
+
+    <Note>
+      Follow up with: "Show me the conversion funnel for these power users" to understand their path to value.
+    </Note>
+  </Tab>
+
+  <Tab title="Log Analysis & Troubleshooting">
+    **Scenario:** Diagnose application errors in production
+
+    **Business Goal:** Quickly identify and fix issues before they impact customers.
+
+    **Prompt:**
+    ```text
+    "Show me all error logs from the last hour, grouped by error type, with counts and the most recent occurrence"
+    ```
+
+    **What happens:**
+    1. Queries `application_logs` table
+    2. Filters for ERROR level in last hour
+    3. Groups by error type/message
+    4. Counts occurrences
+    5. Shows latest timestamp
+
+    **SQL Generated:**
+    ```sql
+    SELECT
+        error_type,
+        COUNT(*) as error_count,
+        max(timestamp) as last_occurrence,
+        any(error_message) as sample_message
+    FROM application_logs
+    WHERE
+        log_level = 'ERROR'
+        AND timestamp >= now() - INTERVAL 1 HOUR
+    GROUP BY error_type
+    ORDER BY error_count DESC
+    ```
+
+    **Example Results:**
+    | Error Type | Count | Last Occurrence | Sample Message |
+    |------------|-------|-----------------|----------------|
+    | DatabaseTimeout | 156 | 10:45:23 | Query timeout after 30s |
+    | AuthenticationFailed | 89 | 10:43:12 | Invalid credentials |
+    | APIRateLimit | 45 | 10:44:56 | Rate limit exceeded |
+
+    **Time:** &lt;200ms searching millions of log entries
+    **Action:** "Show me the full stack trace for DatabaseTimeout errors"
+
+    <Warning>
+      ClickHouse's speed makes it perfect for real-time log monitoring. Set up alerts for error spikes!
+    </Warning>
+  </Tab>
+
+  <Tab title="Time-Series Metrics">
+    **Scenario:** Track business KPIs over time for dashboard
+
+    **Business Goal:** Monitor hourly revenue trends to detect anomalies and optimize operations.
+
+    **Prompt:**
+    ```text
+    "Show me hourly revenue trends for the past 7 days, including order count and average order value"
+    ```
+
+    **What happens:**
+    1. Time-buckets data by hour
+    2. Aggregates revenue metrics
+    3. Calculates order statistics
+    4. Returns chronological series
+
+    **SQL Generated:**
+    ```sql
+    SELECT
+        toStartOfHour(order_time) as hour,
+        COUNT(*) as order_count,
+        SUM(amount) as total_revenue,
+        AVG(amount) as avg_order_value,
+        COUNT(DISTINCT user_id) as unique_customers
+    FROM orders
+    WHERE order_time >= now() - INTERVAL 7 DAY
+    GROUP BY hour
+    ORDER BY hour
+    ```
+
+    **Example Results:**
+    | Hour | Orders | Revenue | Avg Order | Unique Customers |
+    |------|--------|---------|-----------|------------------|
+    | 2025-01-01 00:00 | 234 | $18,950 | $80.98 | 189 |
+    | 2025-01-01 01:00 | 189 | $15,200 | $80.42 | 156 |
+    | 2025-01-01 02:00 | 145 | $12,450 | $85.86 | 123 |
+
+    **Time:** &lt;100ms for week of hourly data
+    **Visualization:** Perfect for line charts in dashboards
+
+    <Tip>
+      ClickHouse's time functions (`toStartOfHour`, `toStartOfDay`, etc.) make time-series analysis incredibly efficient. Ideal for monitoring dashboards!
+    </Tip>
+  </Tab>
+
+  <Tab title="Funnel Analysis">
+    **Scenario:** Analyze conversion funnel to optimize user journey
+
+    **Business Goal:** Identify where users drop off in the conversion process to improve conversion rates.
+
+    **Prompt:**
+    ```text
+    "Calculate our conversion funnel from signup to purchase, showing user count at each stage and drop-off percentages"
+    ```
+
+    **What happens:**
+    1. Identifies key funnel stages
+    2. Counts distinct users at each stage
+    3. Calculates conversion rates
+    4. Shows drop-off between stages
+
+    **SQL Generated:**
+    ```sql
+    SELECT
+        stage,
+        COUNT(DISTINCT user_id) as users,
+        100.0 * COUNT(DISTINCT user_id) / first_value(COUNT(DISTINCT user_id)) OVER (ORDER BY stage_order) as conversion_rate
+    FROM (
+        SELECT 'Signup' as stage, 1 as stage_order, user_id FROM events WHERE event_type = 'signup'
+        UNION ALL
+        SELECT 'Product View', 2, user_id FROM events WHERE event_type = 'product_view'
+        UNION ALL
+        SELECT 'Add to Cart', 3, user_id FROM events WHERE event_type = 'add_to_cart'
+        UNION ALL
+        SELECT 'Checkout Started', 4, user_id FROM events WHERE event_type = 'checkout_start'
+        UNION ALL
+        SELECT 'Purchase', 5, user_id FROM events WHERE event_type = 'purchase'
+    )
+    GROUP BY stage, stage_order
+    ORDER BY stage_order
+    ```
+
+    **Example Results:**
+    | Stage | Users | Conversion Rate | Drop-off |
+    |-------|-------|-----------------|----------|
+    | Signup | 10,000 | 100% | - |
+    | Product View | 8,500 | 85% | 15% |
+    | Add to Cart | 4,250 | 42.5% | 50% |
+    | Checkout Started | 3,400 | 34% | 20% |
+    | Purchase | 2,720 | 27.2% | 20% |
+
+    **Time:** &lt;150ms analyzing millions of events
+    **Insight:** Biggest drop-off is between Product View → Add to Cart (50%) - optimize product pages!
+
+    <Note>
+      ClickHouse's window functions and CTEs make complex funnel analysis fast and easy to understand.
+    </Note>
+  </Tab>
+
+  <Tab title="Cohort Retention Analysis">
+    **Scenario:** Track user retention by signup cohort
+
+    **Business Goal:** Understand which user cohorts have better retention to optimize onboarding and engagement strategies.
+
+    **Prompt:**
+    ```text
+    "Show me monthly retention rates for users who signed up in Q1 2024, broken down by cohort month"
+    ```
+
+    **What happens:**
+    1. Groups users by signup month (cohorts)
+    2. Tracks activity in subsequent months
+    3. Calculates retention percentages
+    4. Shows retention curves by cohort
+
+    **SQL Generated:**
+    ```sql
+    WITH cohorts AS (
+        SELECT
+            user_id,
+            toStartOfMonth(signup_date) as cohort_month
+        FROM users
+        WHERE signup_date >= '2024-01-01' AND signup_date < '2024-04-01'
+    ),
+    activity AS (
+        SELECT
+            c.cohort_month,
+            c.user_id,
+            dateDiff('month', c.cohort_month, toStartOfMonth(e.event_date)) as months_since_signup
+        FROM cohorts c
+        JOIN events e ON c.user_id = e.user_id
+        WHERE e.event_date >= c.cohort_month
+    )
+    SELECT
+        cohort_month,
+        months_since_signup,
+        COUNT(DISTINCT user_id) as active_users,
+        100.0 * COUNT(DISTINCT user_id) / first_value(COUNT(DISTINCT user_id)) OVER (PARTITION BY cohort_month ORDER BY months_since_signup) as retention_rate
+    FROM activity
+    GROUP BY cohort_month, months_since_signup
+    ORDER BY cohort_month, months_since_signup
+    ```
+
+    **Example Results:**
+    | Cohort | Month 0 | Month 1 | Month 2 | Month 3 |
+    |--------|---------|---------|---------|---------|
+    | 2024-01 | 100% (5,000) | 65% (3,250) | 48% (2,400) | 41% (2,050) |
+    | 2024-02 | 100% (6,200) | 68% (4,216) | 52% (3,224) | 45% (2,790) |
+    | 2024-03 | 100% (7,100) | 72% (5,112) | 58% (4,118) | - |
+
+    **Time:** &lt;500ms for complex multi-month analysis
+    **Insight:** February cohort has best retention - review what changed in onboarding!
+
+    <Tip>
+      Cohort analysis reveals which changes improved user retention. Use it to measure the impact of product improvements over time.
+    </Tip>
+  </Tab>
+
+  <Tab title="A/B Test Analysis">
+    **Scenario:** Compare experiment variant performance
+
+    **Business Goal:** Determine which variant performs better to make data-driven product decisions.
+
+    **Prompt:**
+    ```text
+    "Compare conversion rates between control and treatment groups for the checkout redesign experiment"
+    ```
+
+    **What happens:**
+    1. Segments users by experiment variant
+    2. Calculates conversion metrics per group
+    3. Compares performance
+    4. Shows statistical significance
+
+    **SQL Generated:**
+    ```sql
+    SELECT
+        variant,
+        COUNT(DISTINCT user_id) as total_users,
+        SUM(converted) as conversions,
+        100.0 * SUM(converted) / COUNT(DISTINCT user_id) as conversion_rate,
+        AVG(revenue) as avg_revenue_per_user
+    FROM (
+        SELECT
+            e.user_id,
+            e.variant,
+            MAX(CASE WHEN e.event_type = 'purchase' THEN 1 ELSE 0 END) as converted,
+            SUM(CASE WHEN e.event_type = 'purchase' THEN e.amount ELSE 0 END) as revenue
+        FROM experiment_events e
+        WHERE e.experiment_name = 'checkout_redesign'
+        GROUP BY e.user_id, e.variant
+    )
+    GROUP BY variant
+    ORDER BY variant
+    ```
+
+    **Example Results:**
+    | Variant | Total Users | Conversions | Conv. Rate | Avg Revenue/User |
+    |---------|-------------|-------------|------------|------------------|
+    | Control | 10,000 | 1,200 | 12.0% | $18.50 |
+    | Treatment | 10,000 | 1,450 | 14.5% | $22.30 |
+    | **Improvement** | - | +250 | **+2.5pp** | **+$3.80** |
+
+    **Time:** &lt;100ms analyzing experiment data
+    **Decision:** Treatment variant wins! 21% relative improvement in conversion rate. Ship it!
+
+    <Info>
+      ClickHouse makes A/B test analysis fast enough to monitor experiments in real-time, allowing you to stop underperforming variants quickly.
+    </Info>
+  </Tab>
+
+  <Tab title="Real-Time Dashboard">
+    **Scenario:** Monitor live business metrics for operations team
+
+    **Business Goal:** Real-time visibility into business health with up-to-the-minute metrics for quick decision-making.
+
+    **Prompt:**
+    ```text
+    "Give me current business metrics: active users in last 5 minutes, revenue today, top products, and error rate"
+    ```
+
+    **What happens:**
+    1. Executes multiple real-time queries
+    2. Aggregates very recent data
+    3. Returns current operational metrics
+    4. Updates can be refreshed frequently
+
+    **SQL Generated (multi-query):**
+    ```sql
+    -- Active users (last 5 min)
+    SELECT COUNT(DISTINCT user_id) as active_users
+    FROM events
+    WHERE timestamp >= now() - INTERVAL 5 MINUTE;
+
+    -- Today's revenue
+    SELECT
+        SUM(amount) as total_revenue,
+        COUNT(*) as order_count
+    FROM orders
+    WHERE date = today();
+
+    -- Top products today
+    SELECT
+        product_name,
+        COUNT(*) as sales_count,
+        SUM(amount) as revenue
+    FROM orders
+    WHERE date = today()
+    GROUP BY product_name
+    ORDER BY revenue DESC
+    LIMIT 5;
+
+    -- Error rate (last hour)
+    SELECT
+        100.0 * SUM(CASE WHEN log_level = 'ERROR' THEN 1 ELSE 0 END) / COUNT(*) as error_rate
+    FROM application_logs
+    WHERE timestamp >= now() - INTERVAL 1 HOUR;
+    ```
+
+    **Example Dashboard:**
+    ```
+    🟢 LIVE METRICS (Updated: 10:45:30 AM)
+
+    Active Users (5min): 1,234
+    Today's Revenue:     $145,890 (2,340 orders)
+    Error Rate (1hr):    0.15%
+
+    Top Products Today:
+    1. Widget Pro     - $23,500 (340 sales)
+    2. Gadget Plus    - $19,200 (280 sales)
+    3. Tool Kit       - $15,800 (195 sales)
+    ```
+
+    **Time:** &lt;200ms for all queries combined
+    **Update Frequency:** Can refresh every 5-10 seconds
+
+    <Tip>
+      ClickHouse's speed enables true real-time dashboards without pre-aggregation. No more waiting for hourly ETL jobs!
+    </Tip>
+  </Tab>
+</Tabs>
+
+<Note>
+  All examples use natural language prompts in Studio - SQL is generated automatically! Focus on asking business questions, not writing queries.
+</Note>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection Refused" icon="triangle-exclamation">
+    **Error Message:**
+    ```
+    Connection refused - unable to connect to ClickHouse
+    ERROR - Cannot connect to ClickHouse: [errno] Connection refused
+    ```
+
+    **Possible Causes:**
+    - Incorrect host or port
+    - Firewall blocking connection
+    - ClickHouse server not running (self-hosted)
+    - Network connectivity issues
+
+    **Solutions:**
+
+    1. **Verify Connection Details:**
+       - Go to **Settings** → **MCP Servers** → **ClickHouse** → **Edit**
+       - Check `CLICKHOUSE_HOST` matches your instance
+       - For Cloud: Should be `xyz.clickhouse.cloud`
+       - For Playground: Should be `sql-clickhouse.clickhouse.com`
+
+    2. **Check Port Configuration:**
+       - Cloud (HTTPS): Port `8443`, `CLICKHOUSE_SECURE=true`
+       - Self-hosted (HTTP): Port `8123`, `CLICKHOUSE_SECURE=false`
+       - Self-hosted (HTTPS): Port `8443`, `CLICKHOUSE_SECURE=true`
+
+    3. **Test from Command Line:**
+       ```bash
+       curl "https://your-host:8443?query=SELECT version()" \
+         --user username:password
+       ```
+
+    4. **Check Firewall Rules:**
+       - ClickHouse Cloud: Add your IP to allowlist in Cloud console
+       - Self-hosted: Check firewall rules allow inbound on ClickHouse port
+       - Corporate network: Verify outbound connections allowed
+
+    <Tip>
+      Most connection issues are due to port misconfiguration. Cloud always uses `8443` with SSL, local dev typically uses `8123` without SSL.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Authentication Failed" icon="key">
+    **Error Message:**
+    ```
+    401 Authentication failed
+    Code: 516. DB::Exception: Invalid credentials
+    ```
+
+    **Possible Causes:**
+    - Wrong username or password
+    - Password contains special characters not properly encoded
+    - User doesn't exist in ClickHouse
+    - User doesn't have necessary permissions
+
+    **Solutions:**
+
+    1. **Verify Credentials:**
+       - Double-check username and password in Studio config
+       - Check for typos, extra spaces, or incorrect capitalization
+       - ClickHouse passwords are case-sensitive
+
+    2. **Reset Password:**
+       - **Cloud**: Reset in ClickHouse Cloud dashboard
+       - **Self-hosted**: Update via SQL or configuration file
+
+    3. **Check User Exists:**
+       ```sql
+       -- As admin user, check if user exists
+       SELECT name FROM system.users WHERE name = 'your_username';
+       ```
+
+    4. **Grant Permissions:**
+       ```sql
+       -- Grant necessary permissions
+       GRANT SELECT ON database_name.* TO username;
+       GRANT SHOW DATABASES ON *.* TO username;
+       ```
+
+    5. **Special Characters in Password:**
+       - If password contains `@`, `#`, `%`, etc., ensure proper encoding
+       - Try resetting to a simpler password temporarily for testing
+
+    <Warning>
+      Default username for ClickHouse is usually `default`. Verify your actual username in your ClickHouse setup.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Query Timeout" icon="clock">
+    **Error Message:**
+    ```
+    Query timed out after 30 seconds
+    Timeout exceeded: elapsed 30.001 seconds
+    ```
+
+    **Possible Causes:**
+    - Query scanning too much data
+    - Missing indexes or poor table design
+    - Unoptimized query (no WHERE clause on large table)
+    - Server overloaded
+
+    **Solutions:**
+
+    1. **Add Date/Time Filters:**
+       ```sql
+       -- Instead of:
+       SELECT * FROM events
+
+       -- Do:
+       SELECT * FROM events
+       WHERE date >= today() - INTERVAL 7 DAY
+       ```
+
+    2. **Use LIMIT:**
+       ```sql
+       SELECT * FROM large_table
+       WHERE condition
+       LIMIT 10000
+       ```
+
+    3. **Increase Timeout:**
+       - In Studio: Add `CLICKHOUSE_MCP_QUERY_TIMEOUT=60` (seconds)
+       - Or in query: Use Studio to request "with longer timeout"
+
+    4. **Optimize Query:**
+       ```sql
+       -- Use PREWHERE for efficient filtering
+       SELECT * FROM table
+       PREWHERE date >= today() - 7
+       WHERE status = 'active'
+
+       -- Use sampling for exploration
+       SELECT * FROM table SAMPLE 0.1 -- 10% sample
+       ```
+
+    5. **Check Table Design:**
+       - Verify ORDER BY key matches your query patterns
+       - Consider partitioning by date
+       - Create materialized views for complex queries
+
+    <Note>
+      ClickHouse is extremely fast, but unoptimized queries on billions of rows can still timeout. Always add date filters and LIMIT clauses.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Table or Database Not Found" icon="table">
+    **Error Message:**
+    ```
+    DB::Exception: Table database.table_name doesn't exist
+    DB::Exception: Database 'database_name' doesn't exist
+    ```
+
+    **Possible Causes:**
+    - Table or database name is misspelled
+    - Table doesn't exist in the specified database
+    - User doesn't have permission to see the table
+    - Wrong database specified
+
+    **Solutions:**
+
+    1. **List Available Databases:**
+       ```text
+       "List all databases in ClickHouse"
+       ```
+
+    2. **List Tables in Database:**
+       ```text
+       "Show me all tables in the [database_name] database"
+       ```
+
+    3. **Check Table Name:**
+       - ClickHouse table names are **case-sensitive**
+       - `Users` ≠ `users` ≠ `USERS`
+       - Use exact capitalization
+
+    4. **Check Database Context:**
+       ```sql
+       -- Explicitly specify database
+       SELECT * FROM database_name.table_name
+       ```
+
+    5. **Verify Permissions:**
+       ```sql
+       -- Check what you have access to
+       SHOW GRANTS FOR CURRENT_USER
+       ```
+
+    <Tip>
+      Use `list_databases` and `list_tables` tools before writing queries to discover what data is available and get exact table names.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Memory Limit Exceeded" icon="memory">
+    **Error Message:**
+    ```
+    DB::Exception: Memory limit exceeded for query
+    Code: 241. DB::Exception: Memory limit (for query) exceeded
+    ```
+
+    **Possible Causes:**
+    - Query returning too many rows
+    - Large GROUP BY creating many groups
+    - JOINing very large tables
+    - Not enough memory allocated
+
+    **Solutions:**
+
+    1. **Add LIMIT:**
+       ```sql
+       SELECT * FROM large_table
+       WHERE date = today()
+       LIMIT 10000  -- Limit rows returned
+       ```
+
+    2. **Filter More Aggressively:**
+       ```sql
+       -- Add WHERE clauses to reduce data scanned
+       SELECT * FROM table
+       WHERE date >= today() - INTERVAL 1 DAY
+         AND region = 'US'
+         AND status = 'active'
+       ```
+
+    3. **Aggregate Instead of Returning Raw Data:**
+       ```sql
+       -- Instead of returning millions of rows:
+       SELECT * FROM events
+
+       -- Return aggregated summary:
+       SELECT
+           date,
+           event_type,
+           COUNT(*) as event_count
+       FROM events
+       GROUP BY date, event_type
+       ```
+
+    4. **Use Sampling for Exploration:**
+       ```sql
+       SELECT * FROM huge_table
+       SAMPLE 0.01  -- 1% sample
+       WHERE conditions
+       ```
+
+    5. **For ClickHouse Cloud:**
+       - Memory auto-scales, but very large queries may still hit limits
+       - Consider upgrading to higher tier for more memory
+
+    <Warning>
+      Avoid `SELECT *` on large tables without filtering. Always use WHERE clauses and LIMIT to reduce data volume.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Syntax Error in Query" icon="code">
+    **Error Message:**
+    ```
+    DB::Exception: Syntax error
+    Code: 62. DB::Exception: Syntax error: unexpected token
+    ```
+
+    **Possible Causes:**
+    - ClickHouse SQL syntax differs from other databases
+    - Using MySQL/PostgreSQL-specific functions
+    - Incorrect function names
+    - Malformed query
+
+    **Solutions:**
+
+    1. **Use Studio's Natural Language:**
+       - Let Studio generate SQL automatically
+       - Ask in plain English: "Show me top 10 users by activity"
+       - Studio handles ClickHouse-specific syntax
+
+    2. **Common ClickHouse Differences:**
+       ```sql
+       -- Date functions
+       toDate('2024-01-01')     -- not CAST('2024-01-01' AS DATE)
+       today()                   -- not CURDATE() or CURRENT_DATE
+       now()                     -- not CURRENT_TIMESTAMP
+
+       -- Array functions
+       arrayJoin(array_column)   -- for array operations
+       groupArray(column)        -- aggregate into array
+
+       -- String functions
+       concat(str1, str2)        -- same as others
+       position(haystack, needle) -- not INSTR
+       ```
+
+    3. **Check ClickHouse Documentation:**
+       - [ClickHouse SQL Reference](https://clickhouse.com/docs/en/sql-reference/)
+       - Functions may have different names than MySQL/PostgreSQL
+
+    4. **Test Incrementally:**
+       - Start with simple SELECT
+       - Add complexity step by step
+       - Identify what causes the error
+
+    <Tip>
+      When using Studio, natural language queries avoid syntax issues entirely. Describe what you want, and Studio handles ClickHouse-specific syntax automatically!
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Slow Query Performance" icon="gauge">
+    **Issue:** Queries taking longer than expected (multiple seconds)
+
+    **Diagnosis:**
+
+    ClickHouse is extremely fast - if queries are slow, it's usually a schema or query optimization issue.
+
+    **Common Causes & Solutions:**
+
+    1. **Missing Date Filters:**
+       ```sql
+       -- Slow: Scans entire table
+       SELECT * FROM events WHERE user_id = 123
+
+       -- Fast: Filters by date first
+       SELECT * FROM events
+       WHERE date >= today() - 7
+         AND user_id = 123
+       ```
+
+    2. **ORDER BY Doesn't Match Table Sort Key:**
+       ```sql
+       -- If table is sorted by (date, user_id):
+
+       -- Fast: Matches sort key
+       SELECT * FROM events
+       ORDER BY date, user_id
+
+       -- Slow: Different sort order
+       SELECT * FROM events
+       ORDER BY timestamp DESC
+       ```
+
+    3. **Not Using PREWHERE:**
+       ```sql
+       -- PREWHERE evaluates before reading all columns
+       SELECT * FROM large_table
+       PREWHERE date >= today() - 7  -- Evaluated first
+       WHERE status = 'active'       -- Evaluated on filtered data
+       ```
+
+    4. **Large Result Sets:**
+       - Always use LIMIT
+       - Return aggregated data instead of raw rows
+       - Use sampling for exploration
+
+    5. **Check Query Performance:**
+       ```sql
+       -- See query execution plan
+       EXPLAIN SELECT ...
+
+       -- See query statistics
+       SELECT query_duration_ms, read_rows, read_bytes
+       FROM system.query_log
+       WHERE type = 'QueryFinish'
+       ORDER BY query_start_time DESC
+       LIMIT 10
+       ```
+
+    <Info>
+      Well-optimized ClickHouse queries typically run in 10-100ms even on billions of rows. If your queries are slower, schema optimization is usually the answer.
+    </Info>
+  </Accordion>
+
+  <Accordion title="SSL/TLS Certificate Errors" icon="shield">
+    **Error Message:**
+    ```
+    SSL certificate verification failed
+    Certificate verification error
+    ```
+
+    **Possible Causes:**
+    - Self-signed certificates
+    - Expired certificates
+    - Certificate chain issues
+    - System trust store not configured
+
+    **Solutions:**
+
+    1. **For ClickHouse Cloud:**
+       - Certificates are valid and trusted
+       - Ensure `CLICKHOUSE_SECURE=true`
+       - Ensure `CLICKHOUSE_VERIFY=true`
+       - Should work automatically
+
+    2. **For Self-Hosted with Valid Certs:**
+       - Ensure certificates are from trusted CA
+       - System trust store should recognize them
+       - Use `CLICKHOUSE_VERIFY=true`
+
+    3. **For Self-Hosted with Self-Signed Certs (DEV ONLY):**
+       - **Not recommended for production**
+       - Set `CLICKHOUSE_VERIFY=false`
+       - Disables certificate verification
+
+    4. **Update System Trust Store:**
+       - Ensure your OS has updated CA certificates
+       - On Ubuntu: `sudo apt-get update ca-certificates`
+       - On macOS: Usually automatic via OS updates
+
+    <Warning>
+      Never use `CLICKHOUSE_VERIFY=false` in production. This disables certificate verification and makes your connection vulnerable to man-in-the-middle attacks.
+    </Warning>
+  </Accordion>
+</AccordionGroup>
+
+## Links & Resources
+
+<CardGroup cols={2}>
+  <Card title="GitHub Repository" icon="github" href="https://github.com/ClickHouse/mcp-clickhouse">
+    View MCP server source code and report issues
+  </Card>
+
+  <Card title="ClickHouse Documentation" icon="book" href="https://clickhouse.com/docs">
+    Official ClickHouse reference and SQL guide
+  </Card>
+
+  <Card title="ClickHouse Cloud" icon="cloud" href="https://clickhouse.cloud">
+    Managed ClickHouse service with free tier
+  </Card>
+
+  <Card title="ClickHouse SQL Playground" icon="play" href="https://sql.clickhouse.com">
+    Try ClickHouse without signing up
+  </Card>
+</CardGroup>
+
+## Related MCP Servers
+
+Looking for other data and analytics tools?
+
+<CardGroup cols={3}>
+  <Card title="PostgreSQL" icon="database" href="/mcp-servers/databases/postgresql">
+    Relational database for transactional data
+  </Card>
+
+  <Card title="MongoDB" icon="database" href="/mcp-servers/databases/mongodb">
+    NoSQL document database
+  </Card>
+
+  <Card title="Finnhub" icon="chart-line" href="/mcp-servers/finance/finnhub">
+    Financial market data and analytics
+  </Card>
+</CardGroup>
+
+## Learning Resources
+
+<AccordionGroup>
+  <Accordion title="What is ClickHouse?" icon="circle-question">
+    **ClickHouse Overview:**
+
+    ClickHouse is an open-source, column-oriented database management system designed for OLAP (Online Analytical Processing).
+
+    **Key Characteristics:**
+    - **Column-Oriented**: Stores data by columns, not rows
+      - Traditional databases: Store full rows together
+      - ClickHouse: Stores each column separately
+      - Result: 100-1000x faster for analytics queries
+
+    - **Massively Parallel**: Distributes queries across cores and servers
+    - **Real-Time**: Query billions of rows in milliseconds
+    - **Highly Compressed**: 10-100x compression ratios
+    - **Scalable**: From single server to hundreds of nodes
+
+    **Best For:**
+    - Analytics and business intelligence
+    - Real-time dashboards
+    - Log processing and monitoring
+    - Time-series data
+    - Event tracking and user analytics
+
+    **Not Ideal For:**
+    - Transactional workloads (OLTP)
+    - Frequent updates to individual rows
+    - Small datasets (less than millions of rows)
+    - Document storage
+  </Accordion>
+
+  <Accordion title="Natural Language to SQL in Studio" icon="brain">
+    **How Studio Converts Your Questions to ClickHouse SQL:**
+
+    **You ask:** "Show me revenue by product category this month"
+
+    **Studio's AI:**
+    1. Understands your intent (revenue analysis)
+    2. Identifies entities (revenue, product, category, time period)
+    3. Maps to your database schema
+    4. Generates optimized ClickHouse SQL
+    5. Executes and formats results
+
+    **Generated SQL:**
+    ```sql
+    SELECT
+        product_category,
+        SUM(revenue) as total_revenue,
+        COUNT(*) as order_count
+    FROM sales
+    WHERE date >= toStartOfMonth(now())
+    GROUP BY product_category
+    ORDER BY total_revenue DESC
+    ```
+
+    **You see:** Formatted results in natural language with data table
+
+    **No SQL knowledge required** - just ask business questions!
+
+    <Tip>
+      Be specific in your questions: mention time ranges, specific tables if known, and what metrics you want. The more context, the better the SQL!
+    </Tip>
+  </Accordion>
+
+  <Accordion title="ClickHouse Performance Tips" icon="bolt">
+    **Make Your Queries Lightning Fast:**
+
+    **1. Always Filter by Date/Time**
+    ```sql
+    -- Slow: Scans entire table
+    SELECT * FROM events
+
+    -- Fast: Filters first
+    SELECT * FROM events
+    WHERE date >= today() - 30
+    ```
+    ClickHouse tables are typically partitioned by date - this reduces data scanned by 10-1000x.
+
+    **2. Use LIMIT**
+    ```sql
+    SELECT * FROM large_table
+    WHERE conditions
+    LIMIT 1000  -- Stop after 1000 rows
+    ```
+    Prevents accidentally returning millions of rows.
+
+    **3. Aggregate When Possible**
+    ```sql
+    -- Instead of returning millions of raw rows:
+    SELECT * FROM events
+
+    -- Return summary:
+    SELECT date, COUNT(*) as events
+    FROM events
+    GROUP BY date
+    ```
+    Aggregated data is much smaller and faster to return.
+
+    **4. Match Your ORDER BY to Table Sort Key**
+    ```sql
+    -- If table sorted by (date, user_id):
+    SELECT * FROM table
+    WHERE date = today()
+    ORDER BY date, user_id  -- Fast!
+    ```
+    Matching sort order uses pre-sorted data.
+
+    **5. Use PREWHERE for Filtering**
+    ```sql
+    SELECT expensive_columns
+    FROM table
+    PREWHERE cheap_filter = value  -- Evaluated first
+    WHERE expensive_filter = value  -- Evaluated after
+    ```
+    PREWHERE reduces data before expensive operations.
+
+    **6. Use Sampling for Exploration**
+    ```sql
+    SELECT * FROM billion_row_table
+    SAMPLE 0.01  -- 1% sample = 10M rows
+    WHERE conditions
+    ```
+    Perfect for testing queries before running on full data.
+
+    <Info>
+      With these optimizations, ClickHouse can query billions of rows in 10-100ms!
+    </Info>
+  </Accordion>
+
+  <Accordion title="ClickHouse Data Modeling Best Practices" icon="diagram-project">
+    **Designing Tables for Performance:**
+
+    **1. Choose the Right Engine**
+    ```sql
+    CREATE TABLE events (
+        date Date,
+        timestamp DateTime,
+        user_id UInt64,
+        event_type String
+    ) ENGINE = MergeTree()  -- Most common
+    ORDER BY (date, user_id)
+    PARTITION BY toYYYYMM(date);
+    ```
+
+    **2. Order By Frequently Queried Columns**
+    ```sql
+    -- If you always filter by date and user_id:
+    ORDER BY (date, user_id)
+
+    -- If you query by user_id first:
+    ORDER BY (user_id, date)
+    ```
+    Put most filtered columns first.
+
+    **3. Partition by Date**
+    ```sql
+    PARTITION BY toYYYYMM(date)  -- Monthly partitions
+    ```
+    Makes dropping old data fast and enables efficient time-range queries.
+
+    **4. Use Appropriate Data Types**
+    ```sql
+    -- Good: Right-sized types
+    user_id UInt64
+    status Enum8('active'=1, 'inactive'=2)
+    date Date
+
+    -- Bad: Oversized types
+    user_id String  -- Numbers as strings are slow
+    status String   -- Use Enum instead
+    ```
+    Smaller types = faster queries and less storage.
+
+    **5. Denormalize for Query Performance**
+    ```sql
+    -- Instead of JOINs:
+    SELECT u.name, e.event
+    FROM events e
+    JOIN users u ON e.user_id = u.id
+
+    -- Denormalize:
+    SELECT user_name, event
+    FROM events_denormalized
+    ```
+    ClickHouse favors denormalization - duplicate data for faster queries.
+
+    **6. Use Materialized Views for Complex Queries**
+    ```sql
+    CREATE MATERIALIZED VIEW daily_stats
+    ENGINE = SummingMergeTree()
+    ORDER BY (date, user_id)
+    AS SELECT
+        date,
+        user_id,
+        COUNT(*) as event_count
+    FROM events
+    GROUP BY date, user_id
+    ```
+    Pre-aggregate frequently queried data.
+
+    <Tip>
+      Good schema design is 10x more important than query optimization in ClickHouse. Invest time in proper table structure!
+    </Tip>
+  </Accordion>
+
+  <Accordion title="OLAP vs OLTP: When to Use ClickHouse" icon="code-compare">
+    **Understanding Database Types:**
+
+    **OLAP (ClickHouse):**
+    - **O**nline **A**nalytical **P**rocessing
+    - Optimized for: Reading and aggregating large datasets
+    - Use for: Analytics, reports, dashboards, business intelligence
+
+    **OLTP (PostgreSQL, MySQL):**
+    - **O**nline **T**ransaction **P**rocessing
+    - Optimized for: Frequent small updates and inserts
+    - Use for: Application databases, user data, transactions
+
+    **Comparison:**
+
+    | Feature | ClickHouse (OLAP) | PostgreSQL (OLTP) |
+    |---------|-------------------|-------------------|
+    | **Read Speed** | Extremely fast (billions/sec) | Moderate |
+    | **Write Speed** | Batch inserts only | Individual inserts fast |
+    | **Updates** | Not supported | Frequent updates OK |
+    | **Deletes** | Expensive | Fast |
+    | **Use Case** | Analytics, reporting | Application backend |
+    | **Data Volume** | Billions of rows | Millions of rows |
+    | **Query Type** | Aggregations, scans | Lookups, joins |
+
+    **When to Use ClickHouse:**
+    - ✅ Analyzing logs (millions of log lines per day)
+    - ✅ User behavior analytics (clickstream data)
+    - ✅ Business intelligence dashboards
+    - ✅ Time-series metrics and monitoring
+    - ✅ Financial analysis (transactions, market data)
+    - ✅ Ad-hoc data exploration
+
+    **When NOT to Use ClickHouse:**
+    - ❌ User profile storage (use PostgreSQL)
+    - ❌ Shopping cart data (use Redis/PostgreSQL)
+    - ❌ Content management (use MongoDB/PostgreSQL)
+    - ❌ Frequent updates to individual records
+    - ❌ Transaction processing (orders, payments)
+
+    **Hybrid Architecture (Best Practice):**
+    ```
+    Application Database (PostgreSQL)
+    ↓ Real-time streaming
+    Analytics Database (ClickHouse)
+    ```
+
+    Use OLTP for application, stream data to OLAP for analytics!
+
+    <Info>
+      Most successful data architectures use both OLTP and OLAP databases. Write to OLTP, analyze in OLAP.
+    </Info>
+  </Accordion>
+</AccordionGroup>
+
+---
+
+<CardGroup cols={2}>
+  <Card title="Need Help?" icon="question-circle">
+    **Support Channels:**
+    - [NimbleBrain Discord](https://discord.gg/nimblebrain)
+    - Email: support@nimblebrain.ai
+    - [ClickHouse Community Slack](https://clickhouse.com/slack)
+    - [GitHub Issues](https://github.com/ClickHouse/mcp-clickhouse/issues)
+  </Card>
+
+  <Card title="Ready for Analytics?" icon="rocket">
+    **Next Steps:**
+    - [Sign up for ClickHouse Cloud](https://clickhouse.cloud/signup)
+    - [Try the SQL Playground](https://sql.clickhouse.com)
+    - [Browse More MCP Servers](/mcp-servers)
+  </Card>
+</CardGroup>

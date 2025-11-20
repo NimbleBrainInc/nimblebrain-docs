@@ -1,0 +1,1155 @@
+---
+title: 'Reverse Text'
+sidebarTitle: 'Reverse Text'
+description: 'Simple text manipulation and transformation utilities for creative content and data formatting'
+icon: 'arrow-right-arrow-left'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="arrow-right-arrow-left">
+    Reverse Text MCP Server provides instant text manipulation tools that work locally in Studio without any external dependencies or configuration.
+
+    **Key Features:**
+    - Reverse text character by character
+    - Analyze text characteristics (length, word count, character types)
+    - Local processing (no data leaves Studio)
+    - Zero configuration required
+    - Instant results
+    - Privacy-first design
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **Creative Applications:**
+    - Create reversed text for creative content
+    - Generate palindrome-style effects
+    - Social media content creation
+    - Design mockups with mirror text
+
+    **Practical Uses:**
+    - Text analysis and statistics
+    - Character counting for content limits
+    - Data formatting experiments
+    - Testing text processing logic
+    - Simple text obfuscation
+    - Word puzzles and games
+  </Card>
+</CardGroup>
+
+<Info>
+  This is a utility server that requires **no authentication** and **no configuration** - just enable it and start transforming text!
+</Info>
+
+## Quick Start
+
+<Steps>
+  <Step title="Add to NimbleBrain Studio">
+    In NimbleBrain Studio:
+
+    1. Navigate to **MCP Servers** in the sidebar
+    2. Click **Add Server**
+    3. Search for "Reverse Text" in the server registry
+    4. Click **Configure**
+    5. Click **Enable** (no configuration needed!)
+
+    <Info>
+      No configuration needed! This server works immediately after enabling.
+    </Info>
+  </Step>
+
+  <Step title="Test the Server">
+    In your Studio chat, try this prompt:
+
+    ```text
+    "Reverse the text: Hello World"
+    ```
+
+    You should see output like:
+    ```json
+    {
+      "original_text": "Hello World",
+      "reversed_text": "dlroW olleH",
+      "length": 11
+    }
+    ```
+
+    <Tip>
+      Look for the 🔧 tool usage indicator to confirm the server is working.
+    </Tip>
+  </Step>
+</Steps>
+
+<Note>
+  **Zero Configuration**: This utility server requires no API keys, credentials, or setup - it's ready to use immediately!
+</Note>
+
+## Available Tools
+
+<AccordionGroup>
+  <Accordion title="reverse_text" icon="arrows-rotate">
+    Reverse the characters in a text string to create mirror text or simple transformations.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | text | string | Yes | The text to reverse character by character |
+
+    **Returns:**
+    JSON object containing:
+    - `original_text` - The input text
+    - `reversed_text` - Characters reversed
+    - `length` - Total character count
+    - `timestamp` - When the operation was performed
+
+    **Example Usage:**
+    ```text
+    "Reverse this text: Innovation starts here"
+    ```
+
+    **Example Response:**
+    ```json
+    {
+      "original_text": "Innovation starts here",
+      "reversed_text": "ereh strats noitavonnI",
+      "length": 22,
+      "timestamp": "2025-11-05T12:00:00Z"
+    }
+    ```
+
+    **What Gets Reversed:**
+    - Every character is reversed (including spaces)
+    - Case is preserved (uppercase stays uppercase)
+    - Punctuation is reversed in place
+    - Numbers are reversed
+    - Special characters are preserved
+
+    <Tip>
+      Use this for creating mirror text effects, simple obfuscation, or generating creative text patterns!
+    </Tip>
+  </Accordion>
+
+  <Accordion title="text_info" icon="circle-info">
+    Get comprehensive statistical analysis of text including character counts, word count, and character type breakdown.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | text | string | Yes | The text to analyze |
+
+    **Returns:**
+    JSON object containing:
+    - `text` - The analyzed text
+    - `length` - Total characters including spaces
+    - `word_count` - Number of words (space-separated)
+    - `character_count` - Same as length
+    - `character_count_no_spaces` - Characters excluding spaces
+    - `uppercase_count` - Number of uppercase letters
+    - `lowercase_count` - Number of lowercase letters
+    - `digit_count` - Number of numeric digits
+    - `timestamp` - When the analysis was performed
+
+    **Example Usage:**
+    ```text
+    "Analyze this text: Hello World 123"
+    ```
+
+    **Example Response:**
+    ```json
+    {
+      "text": "Hello World 123",
+      "length": 15,
+      "word_count": 3,
+      "character_count": 15,
+      "character_count_no_spaces": 13,
+      "uppercase_count": 2,
+      "lowercase_count": 8,
+      "digit_count": 3,
+      "timestamp": "2025-11-05T12:00:00Z"
+    }
+    ```
+
+    **Useful For:**
+    - Checking character limits for social media
+    - Content length validation
+    - Text statistics for reports
+    - Quality assurance checks
+    - Understanding text composition
+
+    <Tip>
+      Perfect for verifying content fits character limits before posting to Twitter, LinkedIn, or other platforms!
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Simple Text Reversal">
+    **Scenario:** Create reversed text for creative content
+
+    **Prompt:**
+    ```text
+    "Reverse this text: Hello World"
+    ```
+
+    **Result:**
+    ```json
+    {
+      "original_text": "Hello World",
+      "reversed_text": "dlroW olleH",
+      "length": 11
+    }
+    ```
+
+    **What happens:**
+    - Text is reversed character by character
+    - Spaces are preserved in their reversed positions
+    - Case is maintained (H→H, e→e)
+    - Instant result with metadata
+
+    **Follow-up prompts:**
+    - "Reverse: The quick brown fox"
+    - "Create reversed version of my company tagline"
+    - "Flip this text: Innovation 2025"
+
+    <Tip>
+      Use for creating mirror text effects in designs or attention-grabbing social media posts!
+    </Tip>
+  </Tab>
+
+  <Tab title="Text Analysis">
+    **Scenario:** Analyze content for character limits
+
+    **Prompt:**
+    ```text
+    "Analyze this tweet: Excited to announce our new product launch! 🚀 Coming soon in 2025. #Innovation"
+    ```
+
+    **Result:**
+    ```json
+    {
+      "text": "Excited to announce our new product launch! 🚀 Coming soon in 2025. #Innovation",
+      "length": 78,
+      "word_count": 12,
+      "character_count": 78,
+      "character_count_no_spaces": 67,
+      "uppercase_count": 3,
+      "lowercase_count": 54,
+      "digit_count": 4
+    }
+    ```
+
+    **Use case:**
+    - Verify tweet is under 280 characters ✅
+    - Check word count for content briefs
+    - Validate post length for different platforms
+    - Analyze text composition
+
+    **Platform Limits:**
+    - Twitter/X: 280 characters
+    - LinkedIn post: 3,000 characters
+    - LinkedIn headline: 220 characters
+    - Instagram caption: 2,200 characters
+    - Facebook post: 63,206 characters
+
+    <Info>
+      Studio can help you optimize content length for any platform using text analysis!
+    </Info>
+  </Tab>
+
+  <Tab title="Palindrome Creation">
+    **Scenario:** Check if text reads the same forwards and backwards
+
+    **Prompt:**
+    ```text
+    "Reverse the text 'racecar' and compare it to the original"
+    ```
+
+    **Result:**
+    ```json
+    {
+      "original_text": "racecar",
+      "reversed_text": "racecar",
+      "length": 7
+    }
+    ```
+
+    **Observation:** Original equals reversed = palindrome! ✓
+
+    **Other palindromes to test:**
+    - "level"
+    - "noon"
+    - "madam"
+    - "refer"
+    - "A man a plan a canal Panama" (ignoring spaces/case)
+
+    **Create word games:**
+    - Find palindromic phrases
+    - Test custom words
+    - Create puzzles for social media
+    - Educational content for language learning
+
+    <Tip>
+      Use this to verify palindromes or create word puzzles for your audience!
+    </Tip>
+  </Tab>
+
+  <Tab title="Social Media Content">
+    **Scenario:** Create unique mirror text effects
+
+    **Prompt:**
+    ```text
+    "Reverse this tagline for a design mockup: Think Different"
+    ```
+
+    **Result:**
+    ```json
+    {
+      "original_text": "Think Different",
+      "reversed_text": "tnereffiD knihT",
+      "length": 15
+    }
+    ```
+
+    **Creative applications:**
+    - Design symmetrical logos
+    - Create eye-catching social posts
+    - Generate unique text patterns
+    - Mirror text for artistic effects
+    - Attention-grabbing headlines
+
+    **Example social post:**
+    ```
+    Think Different
+    ↕️
+    tnereffiD knihT
+
+    Innovation flows both ways!
+    ```
+
+    <Note>
+      Reversed text creates visual interest and can make content more memorable and shareable!
+    </Note>
+  </Tab>
+
+  <Tab title="Content Validation">
+    **Scenario:** Check if content meets platform requirements
+
+    **Prompt:**
+    ```text
+    "Analyze this LinkedIn headline: Senior Product Manager | Building Innovative SaaS Solutions | AI Enthusiast"
+    ```
+
+    **Result:**
+    ```json
+    {
+      "text": "Senior Product Manager | Building Innovative SaaS Solutions | AI Enthusiast",
+      "length": 78,
+      "word_count": 10,
+      "character_count": 78,
+      "character_count_no_spaces": 67,
+      "uppercase_count": 8,
+      "lowercase_count": 52
+    }
+    ```
+
+    **Validation checks:**
+    - ✅ Under 220 character LinkedIn limit (78/220)
+    - ✅ Good length for readability
+    - ✅ Clear word separation (10 words)
+    - ✅ Professional capitalization
+
+    **What to optimize:**
+    - Too short: Add more keywords
+    - Too long: Remove filler words
+    - Poor capitalization: Adjust for professionalism
+    - Lacking keywords: Add relevant terms
+
+    <Tip>
+      Use text analysis to perfect your professional profiles and marketing copy!
+    </Tip>
+  </Tab>
+
+  <Tab title="Data Obfuscation">
+    **Scenario:** Simple text encoding for non-sensitive data
+
+    **Prompt:**
+    ```text
+    "Reverse this message: Meet at 3pm tomorrow"
+    ```
+
+    **Result:**
+    ```json
+    {
+      "original_text": "Meet at 3pm tomorrow",
+      "reversed_text": "worromot mp3 ta teeM",
+      "length": 20
+    }
+    ```
+
+    **Use cases:**
+    - Create simple puzzle messages
+    - Hide spoilers in text (reverse to read)
+    - Generate word games
+    - Create scavenger hunt clues
+    - Educational encoding exercises
+
+    **To decode:**
+    ```text
+    "Reverse this: worromot mp3 ta teeM"
+    ```
+
+    Returns original: "Meet at 3pm tomorrow"
+
+    <Warning>
+      This is **NOT** cryptographic security! Only use for fun puzzles or simple obfuscation. Never use for sensitive data protection.
+    </Warning>
+  </Tab>
+
+  <Tab title="Batch Text Processing">
+    **Scenario:** Process multiple pieces of text
+
+    **Prompt:**
+    ```text
+    "Analyze each line and give me character counts:
+    Line 1: Hello World
+    Line 2: Testing 123
+    Line 3: NimbleBrain Studio"
+    ```
+
+    **You can process multiple texts:**
+    1. "Analyze: Hello World" → 11 characters
+    2. "Analyze: Testing 123" → 11 characters
+    3. "Analyze: NimbleBrain Studio" → 19 characters
+
+    **Batch operations:**
+    - Process lists of text
+    - Validate multiple pieces of content
+    - Compare text statistics
+    - Quality assurance for content sets
+
+    **Efficient workflow:**
+    - Ask Studio to process each in sequence
+    - Compare results side by side
+    - Identify patterns across multiple texts
+    - Batch validation for content
+
+    <Info>
+      Studio can intelligently process multiple text operations in sequence for efficient batch processing!
+    </Info>
+  </Tab>
+
+  <Tab title="Creative Writing">
+    **Scenario:** Generate unique text patterns for creative projects
+
+    **Prompt:**
+    ```text
+    "Reverse these words individually and show me the pattern:
+    - LOVE
+    - PEACE
+    - HOPE
+    - DREAM"
+    ```
+
+    **Results:**
+    - LOVE → EVOL
+    - PEACE → ECAEP
+    - HOPE → EPOH
+    - DREAM → MAERD
+
+    **Creative applications:**
+    - Generate unique brand names
+    - Create artistic text patterns
+    - Design symmetrical compositions
+    - Generate word art
+    - Create visual poetry
+    - Design logo concepts
+
+    **Pattern exploration:**
+    ```
+    LOVE ←→ EVOL
+    PEACE ←→ ECAEP
+    HOPE ←→ EPOH
+    DREAM ←→ MAERD
+    ```
+
+    <Tip>
+      Reversed words can inspire unique names, create visual interest, or generate artistic text compositions!
+    </Tip>
+  </Tab>
+</Tabs>
+
+<Note>
+  All transformations are instant, process locally in Studio, and require no external services!
+</Note>
+
+## Authentication
+
+<Info>
+  **No Authentication Required**: This utility server works without any API keys or credentials.
+</Info>
+
+### Why No Auth?
+
+This server performs local text transformations that:
+- ✅ Don't access external APIs
+- ✅ Don't store or transmit data
+- ✅ Don't require third-party services
+- ✅ Process everything locally in Studio
+- ✅ Work completely offline
+
+**Privacy Benefits:**
+- Your text never leaves Studio
+- No external service dependencies
+- No rate limits or usage quotas
+- Instant processing with no latency
+- Complete privacy for sensitive content
+- No tracking or analytics
+
+**Perfect for:**
+- Processing confidential content
+- Working with sensitive data
+- Offline text manipulation
+- Privacy-conscious users
+- High-frequency text operations
+
+<Tip>
+  Utility servers like this are perfect for sensitive text processing since everything stays local and private!
+</Tip>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Server Not Responding" icon="triangle-exclamation">
+    **Issue:** Tool not activating when prompted
+
+    **Symptoms:**
+    - No response to text reversal requests
+    - Tools not showing in Studio
+    - Commands not being recognized
+
+    **Solutions:**
+    1. **Check Server Status:**
+       - Go to Settings → MCP Servers → Reverse Text
+       - Verify server shows as "Active" (green indicator)
+       - Check for any error messages
+
+    2. **Enable the Server:**
+       - If disabled, click "Enable"
+       - Wait for status to change to active
+       - Try your prompt again
+
+    3. **Restart Server:**
+       - Disable the server
+       - Wait 2 seconds
+       - Re-enable the server
+       - Test with simple prompt
+
+    4. **Be More Explicit:**
+       ```text
+       Instead of: "flip this: Hello"
+       Try: "Reverse the text: Hello"
+       Or: "Use reverse text tool on: Hello"
+       ```
+
+    5. **Restart Studio:**
+       - Close and reopen Studio
+       - Check server is still enabled
+       - Try test prompt again
+
+    <Tip>
+      Be specific in your prompt - say "reverse the text" rather than just asking about the text.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Unexpected Output Format" icon="circle-question">
+    **Issue:** Output doesn't match expectations
+
+    **Common scenarios:**
+
+    **1. Getting JSON Instead of Plain Text:**
+    ```json
+    {
+      "original_text": "Hello",
+      "reversed_text": "olleH",
+      "length": 5
+    }
+    ```
+
+    **Solution:** This is correct! The tool returns structured data. Ask Studio to extract just the reversed text:
+    ```text
+    "Reverse 'Hello' and show me only the reversed version"
+    ```
+
+    **2. Spaces Not Where Expected:**
+    - Spaces ARE included in reversal
+    - "Hello World" → "dlroW olleH" (space reversed in place)
+    - This is correct behavior
+
+    **3. Case Looks Wrong:**
+    - Case is preserved
+    - "HeLLo" → "oLLeH" (not "Olleh")
+    - Uppercase stays uppercase, lowercase stays lowercase
+
+    **4. Numbers Reversed:**
+    - Numbers reverse like any character
+    - "Test 123" → "321 tseT"
+    - This is expected behavior
+
+    <Info>
+      The tool reverses ALL characters in place, including spaces, punctuation, and numbers. This is standard text reversal behavior.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Special Characters Issues" icon="font">
+    **Issue:** Special characters or emojis not handled as expected
+
+    **What works well:**
+    - ✅ Letters (A-Z, a-z)
+    - ✅ Numbers (0-9)
+    - ✅ Basic punctuation (. , ! ? ; :)
+    - ✅ Common symbols ($ % & @ #)
+    - ✅ Spaces and tabs
+
+    **What may have issues:**
+    - ⚠️ Emojis (may reverse incorrectly)
+    - ⚠️ Complex Unicode characters
+    - ⚠️ Right-to-left language text
+    - ⚠️ Combined diacritical marks
+    - ⚠️ Zero-width characters
+
+    **Examples:**
+
+    **Good:**
+    ```text
+    "Hello, World! 123" → "321 !dlroW ,olleH"
+    "Test@email.com" → "moc.liame@tseT"
+    "$100 USD" → "DSU 001$"
+    ```
+
+    **May be problematic:**
+    ```text
+    "Hello 👋🌍" → (emoji may not reverse correctly)
+    "مرحبا" → (right-to-left text issues)
+    "café" → (diacritical marks may not work right)
+    ```
+
+    **Best practices:**
+    - Test with your specific characters first
+    - Use plain ASCII for consistent results
+    - For emojis, keep them separate from reversed text
+    - Consider removing special characters before reversing
+
+    <Note>
+      Most common text and punctuation work perfectly. Edge cases with complex Unicode characters may vary.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Long Text Processing" icon="align-left">
+    **Issue:** Very long text takes time or doesn't work
+
+    **Character limits (approximate):**
+    - ✅ Small text: &lt;100 characters - instant
+    - ✅ Medium text: 100-1,000 characters - very fast
+    - ✅ Long text: 1,000-10,000 characters - fast
+    - ⚠️ Very long: 10,000+ characters - may be slow
+
+    **Solutions:**
+
+    **1. Break into chunks:**
+    ```text
+    Instead of reversing a 50,000 character document:
+    - Process paragraph by paragraph
+    - Process section by section
+    - Combine results manually
+    ```
+
+    **2. Ask for help:**
+    ```text
+    "Break this long text into paragraphs and reverse each one"
+    ```
+
+    **3. Consider if you need reversal:**
+    - Do you need ALL text reversed?
+    - Can you reverse just key sections?
+    - Would text analysis be better?
+
+    **Memory considerations:**
+    - Server processes in memory
+    - Very long text uses more resources
+    - Batch processing is more efficient
+
+    <Tip>
+      For documents, process one paragraph at a time for better performance and easier management.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Tool Not Detected by Studio" icon="magnifying-glass">
+    **Issue:** Studio doesn't recognize the command
+
+    **Symptoms:**
+    - Studio responds without using tool
+    - No tool usage indicator (🔧)
+    - Generic response instead of reversal
+
+    **Solutions:**
+
+    **1. Use explicit keywords:**
+    ```text
+    Good prompts:
+    ✅ "Reverse this text: [text]"
+    ✅ "Use reverse text tool on: [text]"
+    ✅ "Flip the characters in: [text]"
+    ✅ "Mirror this text: [text]"
+
+    Vague prompts:
+    ❌ "What about: [text]"
+    ❌ "Try: [text]"
+    ❌ "Show me: [text]"
+    ```
+
+    **2. Verify server is active:**
+    - Check MCP Servers list
+    - Look for green "Active" indicator
+    - Ensure it's not disabled
+
+    **3. Test with simple example:**
+    ```text
+    "Reverse the text: Test"
+    ```
+    Should return: "tseT"
+
+    **4. Check tool availability:**
+    ```text
+    "What reverse text tools are available?"
+    ```
+
+    **5. Restart conversation:**
+    - Sometimes starting fresh helps
+    - Server state resets
+    - Try your prompt again
+
+    <Tip>
+      Studio's AI is smart, but explicit prompts help ensure the right tool is used every time!
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Incorrect Character Count" icon="calculator">
+    **Issue:** Character count doesn't match expectations
+
+    **Common confusion:**
+
+    **1. Spaces count as characters:**
+    ```json
+    {
+      "text": "Hello World",
+      "character_count": 11,  // includes space
+      "character_count_no_spaces": 10  // excludes space
+    }
+    ```
+
+    **2. Multiple spaces all count:**
+    ```text
+    "Hello  World" has 12 characters (2 spaces)
+    "Hello   World" has 13 characters (3 spaces)
+    ```
+
+    **3. Line breaks count:**
+    - \n counts as 1 character
+    - \r\n counts as 2 characters
+    - Empty lines add to count
+
+    **4. Tabs count:**
+    - Tab character (\t) = 1 character
+    - Visual width doesn't affect count
+
+    **Different count types:**
+    - `character_count` - Total including spaces
+    - `character_count_no_spaces` - Excludes spaces
+    - `length` - Same as character_count
+    - `word_count` - Space-separated words
+
+    **Examples:**
+    ```json
+    "Hello" → 5 characters, 1 word
+    "Hello World" → 11 characters, 10 without spaces, 2 words
+    "Hello  World" → 12 characters, 10 without spaces, 2 words
+    ```
+
+    <Info>
+      Use `character_count_no_spaces` when you need length without spaces, like for hashtags or usernames!
+    </Info>
+  </Accordion>
+</AccordionGroup>
+
+## Links & Resources
+
+<CardGroup cols={2}>
+  <Card title="GitHub Repository" icon="github" href="https://github.com/NimbleBrainInc/mcp-reverse-text">
+    View source code, report issues, and contribute
+  </Card>
+
+  <Card title="Report Issues" icon="bug" href="https://github.com/NimbleBrainInc/mcp-reverse-text/issues">
+    Found a bug? Submit an issue on GitHub
+  </Card>
+
+  <Card title="NimbleBrain Studio" icon="brain" href="https://studio.nimblebrain.ai">
+    Access your Studio workspace
+  </Card>
+
+  <Card title="MCP Documentation" icon="book" href="https://modelcontextprotocol.io">
+    Learn about the Model Context Protocol
+  </Card>
+</CardGroup>
+
+## Related MCP Servers
+
+<CardGroup cols={3}>
+  <Card title="Echo" icon="message" href="/docs/mcp-servers/development/echo">
+    Simple echo and testing utilities
+  </Card>
+
+  <Card title="Abstract API" icon="globe" href="/docs/mcp-servers/data-intelligence/abstract">
+    Business data enrichment
+  </Card>
+
+  <Card title="DeepL" icon="language" href="/docs/mcp-servers/language/deepl">
+    Professional translation services
+  </Card>
+</CardGroup>
+
+## Learning Resources
+
+<AccordionGroup>
+  <Accordion title="Text Reversal Basics" icon="book-open">
+    **What is Text Reversal?**
+
+    Text reversal is the process of reversing the order of characters in text. It's one of the simplest text transformations but has many creative applications.
+
+    **How it works:**
+    ```
+    Original: "Hello World"
+    Step 1: Split into characters: H-e-l-l-o- -W-o-r-l-d
+    Step 2: Reverse the order: d-l-r-o-W- -o-l-l-e-H
+    Result: "dlroW olleH"
+    ```
+
+    **Character-by-character reversal:**
+    - Every character moves to mirror position
+    - First character becomes last
+    - Last character becomes first
+    - Middle stays in middle (for odd-length text)
+
+    **What gets preserved:**
+    - Case (uppercase/lowercase)
+    - Character type (letters/numbers/symbols)
+    - All characters including spaces
+
+    **Common Uses:**
+    - Creating mirror text effects
+    - Simple encoding/obfuscation
+    - Palindrome detection
+    - Text puzzles and games
+    - Creative typography
+    - Algorithm testing
+
+    <Note>
+      Text reversal is deterministic - reversing reversed text returns the original!
+    </Note>
+  </Accordion>
+
+  <Accordion title="Palindromes" icon="arrows-left-right">
+    **What are Palindromes?**
+
+    Palindromes are words, phrases, or sequences that read the same forwards and backwards.
+
+    **Word Palindromes:**
+    - "racecar" → "racecar"
+    - "level" → "level"
+    - "noon" → "noon"
+    - "radar" → "radar"
+    - "kayak" → "kayak"
+
+    **Phrase Palindromes (ignoring spaces/punctuation):**
+    - "A man a plan a canal Panama"
+    - "Madam, I'm Adam"
+    - "Never odd or even"
+    - "Do geese see God?"
+    - "Was it a car or a cat I saw?"
+
+    **How to check with Reverse Text:**
+    1. Reverse the text
+    2. Compare with original
+    3. If identical = palindrome!
+
+    **Example:**
+    ```text
+    "Reverse: racecar"
+    Result: "racecar"
+    Original = Reversed ✓ Palindrome!
+    ```
+
+    **Uses:**
+    - Word games and puzzles
+    - Creative writing challenges
+    - Algorithm testing
+    - Language learning
+    - Mathematics (palindromic numbers)
+
+    <Tip>
+      Use the reverse tool to quickly verify if text is palindromic - if original equals reversed, it's a palindrome!
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Text Analysis Applications" icon="chart-line">
+    **Why Analyze Text?**
+
+    Text analysis helps you understand and optimize content for various platforms and purposes.
+
+    **Key Metrics:**
+
+    **1. Character Count:**
+    - Total length including spaces
+    - Important for platform limits
+    - Affects readability
+    - Impacts SEO
+
+    **2. Character Count (No Spaces):**
+    - Actual content density
+    - Useful for hashtags
+    - Username length validation
+    - Code identifiers
+
+    **3. Word Count:**
+    - Content length estimation
+    - Reading time calculation
+    - Writing goals tracking
+    - Content brief compliance
+
+    **4. Character Type Breakdown:**
+    - Uppercase: Professional tone, emphasis
+    - Lowercase: Casual tone, readability
+    - Digits: Data, dates, measurements
+    - Helps identify content style
+
+    **Platform-Specific Uses:**
+
+    **Twitter/X:**
+    - 280 character limit
+    - Check before posting
+    - Optimize for length
+
+    **LinkedIn:**
+    - Posts: 3,000 characters
+    - Headlines: 220 characters
+    - Summaries: 2,600 characters
+
+    **Instagram:**
+    - Captions: 2,200 characters
+    - Bio: 150 characters
+    - Hashtags count toward limit
+
+    **Email Subject Lines:**
+    - Optimal: 30-50 characters
+    - Mobile preview: ~30 characters
+    - Desktop preview: ~60 characters
+
+    **SEO:**
+    - Title tags: 50-60 characters
+    - Meta descriptions: 150-160 characters
+    - URL slugs: shorter is better
+
+    <Info>
+      Use text analysis to ensure your content fits platform requirements and reaches maximum visibility!
+    </Info>
+  </Accordion>
+
+  <Accordion title="Creative Applications" icon="palette">
+    **Fun Uses for Text Transformation:**
+
+    **1. Visual Design:**
+    - Create symmetrical text layouts
+    - Design logo concepts with mirrored text
+    - Generate artistic text patterns
+    - Create visual interest in designs
+    - Mirror text for background effects
+
+    **2. Social Media:**
+    - Eye-catching post formats
+    - Unique caption styles
+    - Puzzle-based engagement
+    - Attention-grabbing headlines
+    - Interactive content for followers
+
+    **3. Games & Puzzles:**
+    - Word scramble games
+    - Decoding challenges
+    - Scavenger hunt clues
+    - Educational puzzles
+    - Brain teaser creation
+
+    **4. Content Creation:**
+    - Unique formatting for emphasis
+    - Creative section dividers
+    - Stylistic text effects
+    - Pattern-based layouts
+    - Artistic compositions
+
+    **5. Education:**
+    - Teaching string manipulation
+    - Algorithm demonstrations
+    - Pattern recognition exercises
+    - Language learning activities
+    - Computational thinking
+
+    **6. Testing & Development:**
+    - Test text processing logic
+    - Verify reversible operations
+    - Create test data
+    - Validate transformations
+    - Debug string handling
+
+    **Example Combinations:**
+    ```
+    Original → Reversed
+    ═══════════════════
+    THINK → KNIHT
+    BACKWARDS → SDRAWKCAB
+    MIRROR → RORRIM
+    ```
+
+    <Tip>
+      Reversed text creates visual interest and can make content more engaging and memorable!
+    </Tip>
+  </Accordion>
+
+  <Accordion title="When to Use This Server" icon="lightbulb">
+    **Best Use Cases:**
+
+    **✅ Perfect For:**
+    - Quick text transformations
+    - Character/word counting
+    - Palindrome checking
+    - Creative content generation
+    - Data formatting experiments
+    - Text statistics
+    - Content length validation
+    - Simple text obfuscation (non-sensitive)
+    - Educational demonstrations
+    - Testing text processing
+
+    **✅ Advantages:**
+    - Zero configuration
+    - Instant results
+    - Complete privacy (local processing)
+    - No rate limits
+    - No cost per use
+    - Works offline
+    - No dependencies
+
+    **❌ Not Suitable For:**
+    - Encryption or security (not cryptographically secure)
+    - Complex text analysis (sentiment, NLP)
+    - Language translation
+    - Grammar or spell checking
+    - Large-scale batch processing (10,000+ items)
+    - Real-time encryption
+    - Secure data protection
+    - Production cryptography
+
+    **Security Note:**
+    <Warning>
+      This is a utility tool, NOT a security tool. Text reversal is NOT encryption. Never use text reversal to protect sensitive data, passwords, or confidential information.
+    </Warning>
+
+    **Privacy Note:**
+    <Info>
+      All processing happens locally in Studio. Your text never leaves your environment, making it safe for confidential content that doesn't require actual security.
+    </Info>
+
+    **When to Upgrade:**
+    - Need actual encryption → Use cryptography tools
+    - Need translation → Use DeepL or similar
+    - Need NLP analysis → Use specialized NLP servers
+    - Need grammar → Use language tools
+    - Need large-scale processing → Use batch processing servers
+  </Accordion>
+
+  <Accordion title="Understanding Character Counting" icon="calculator">
+    **Character Count Types Explained:**
+
+    **1. Total Character Count:**
+    - Includes everything
+    - Spaces, tabs, line breaks
+    - Punctuation and symbols
+    - This is what platforms limit
+
+    **2. Character Count (No Spaces):**
+    - Excludes all whitespace
+    - Spaces, tabs, line breaks removed
+    - Only visible characters
+    - Useful for dense text metrics
+
+    **3. Word Count:**
+    - Space-separated segments
+    - "Hello World" = 2 words
+    - Multiple spaces still count as separator
+    - Standard metric for content length
+
+    **4. Character Type Counts:**
+    - Uppercase letters (A-Z)
+    - Lowercase letters (a-z)
+    - Digits (0-9)
+    - Everything else is punctuation/symbols
+
+    **Examples:**
+
+    ```text
+    "Hello World!"
+    - Total: 12 characters
+    - No spaces: 11 characters
+    - Words: 2
+    - Uppercase: 2 (H, W)
+    - Lowercase: 8 (e,l,l,o,o,r,l,d)
+    - Digits: 0
+    ```
+
+    ```text
+    "Test 123"
+    - Total: 8 characters
+    - No spaces: 7 characters
+    - Words: 2
+    - Uppercase: 1 (T)
+    - Lowercase: 3 (e,s,t)
+    - Digits: 3 (1,2,3)
+    ```
+
+    **Why It Matters:**
+
+    **Platform Limits:**
+    - Twitter: 280 character limit
+    - SMS: 160 character limit
+    - Email subjects: 50-60 characters optimal
+
+    **Readability:**
+    - Short: Quick, scannable
+    - Medium: Detailed, informative
+    - Long: Comprehensive, deep
+
+    **SEO:**
+    - Title tags: 50-60 characters
+    - Meta descriptions: 150-160 characters
+    - URL slugs: Shorter is better
+
+    <Tip>
+      Different metrics matter for different purposes - choose the right one for your use case!
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://discord.gg/nimblebrain) or email support@nimblebrain.ai

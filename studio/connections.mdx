@@ -1,19 +1,23 @@
 ---
-title: 'Toolbox'
+title: 'Connections'
 description: 'Install and manage MCP servers from the community registry'
-icon: 'toolbox'
+icon: 'plug'
 ---
 
 <img
   src="/images/studio/toolbox-installed-servers.png"
-  alt="Toolbox installed servers"
+  alt="Connections installed servers"
 />
 
-**Toolbox** is where you manage MCP servers in your workspace. Install servers from the community registry to give your playbooks access to external APIs, databases, and services.
+**Connections** is where you manage MCP servers in your workspace. Install servers from the community registry to give your playbooks access to external APIs, databases, and services.
 
-## What is the Toolbox?
+<Tip>
+**NIRA Handles This**: NIRA automatically selects and configures MCP servers for you. This page is useful for understanding what tools are available.
+</Tip>
 
-The Toolbox provides:
+## What is Connections?
+
+Connections provides:
 
 - **Browse Catalog**: Explore available MCP servers from the NimbleBrain registry
 - **One-Click Install**: Install servers instantly without configuration
@@ -26,7 +30,7 @@ The Installed Servers tab shows all MCP servers currently running in your worksp
 
 <img
   src="/images/studio/toolbox-installed-servers.png"
-  alt="Toolbox installed servers view"
+  alt="Connections installed servers view"
 />
 
 ### Server Information
@@ -64,7 +68,7 @@ Each server card displays:
 
 <img
   src="/images/studio/toolbox-browse-catalog.png"
-  alt="Toolbox catalog browser"
+  alt="Connections catalog browser"
 />
 
 The catalog contains MCP servers from the NimbleBrain community registry.
@@ -74,16 +78,16 @@ The catalog contains MCP servers from the NimbleBrain community registry.
 Servers are organized into categories:
 
 <CardGroup cols={3}>
-  <Card title="All" icon="grid">
+  <Card title="All" icon="grid" href="/docs/mcp-servers/overview">
     View all available servers
   </Card>
-  <Card title="Data Intelligence" icon="database">
+  <Card title="Data Intelligence" icon="database" href="/docs/mcp-servers/overview">
     APIs for financial data, web search, and intelligence
   </Card>
-  <Card title="Developer Tools" icon="code">
+  <Card title="Developer Tools" icon="code" href="/docs/mcp-servers/overview">
     GitHub, reverse text, documentation search
   </Card>
-  <Card title="Infrastructure Data" icon="server">
+  <Card title="Infrastructure Data" icon="server" href="/docs/mcp-servers/overview">
     Database access (PostgreSQL, ClickHouse)
   </Card>
 </CardGroup>
@@ -103,7 +107,7 @@ Each server in the catalog shows:
 
 <Steps>
   <Step title="Browse Catalog">
-    Click the "Browse Catalog" tab in Toolbox
+    Click the "Browse Catalog" tab in Connections
   </Step>
   <Step title="Find a Server">
     Scroll through or use the category filters to find a server
@@ -125,50 +129,129 @@ Each server in the catalog shows:
 
 ## Available Servers
 
-Here are some popular MCP servers in the catalog:
+Here are all the MCP servers available in the catalog:
+
+<Tip>
+  **View all servers**: Check out the [MCP Servers Overview](/docs/mcp-servers/overview) for detailed descriptions and use cases.
+</Tip>
+
+### Development Tools
+
+<AccordionGroup>
+  <Accordion title="Echo">
+    Simple echo service for testing MCP protocol functionality, debugging, and development workflows. No API key required.
+
+    [View Echo Documentation →](/docs/mcp-servers/development/echo)
+  </Accordion>
+  <Accordion title="GitHub">
+    Interact with GitHub repos, issues, PRs, code search, and Actions through natural language. Requires GitHub token.
+
+    [View GitHub Documentation →](/docs/mcp-servers/development/github)
+  </Accordion>
+  <Accordion title="Ref">
+    Token-efficient documentation search for 1000+ sites. 60-95% fewer tokens than alternatives with session-aware de-duplication. Requires Ref API key.
+
+    [View Ref Documentation →](/docs/mcp-servers/development-tools/ref)
+  </Accordion>
+</AccordionGroup>
 
 ### Data Intelligence
 
 <AccordionGroup>
-  <Accordion title="Finnhub">
-    Financial market data API with real-time quotes, company profiles, and news. Requires API key from Finnhub.
-  </Accordion>
-  <Accordion title="Tavily">
-    Real-time web search, extract, map & crawl capabilities for web intelligence. Requires Tavily API key.
+  <Accordion title="Abstract API">
+    Comprehensive API suite for data enrichment, validation, and intelligence services. Email validation, IP geolocation, phone validation, and company data. Requires Abstract API key.
+
+    [View Abstract API Documentation →](/docs/mcp-servers/data-intelligence/abstract)
   </Accordion>
   <Accordion title="IPInfo">
-    IP geolocation, network intelligence, ASN lookup, privacy detection, and WHOIS queries.
-  </Accordion>
-  <Accordion title="National Parks">
-    U.S. National Parks Service API for park information, alerts, campgrounds, and events.
+    IP geolocation, network intelligence, ASN lookup, privacy detection, and WHOIS queries. Requires IPInfo API key.
+
+    [View IPInfo Documentation →](/docs/mcp-servers/data-intelligence/ipinfo)
   </Accordion>
 </AccordionGroup>
 
-### Developer Tools
+### Search & Research
 
 <AccordionGroup>
-  <Accordion title="GitHub">
-    Interact with GitHub repos, issues, PRs, code search, and Actions through natural language. Requires GitHub token.
-  </Accordion>
-  <Accordion title="Echo">
-    Simple echo service for testing MCP protocol functionality, debugging, and development workflows.
-  </Accordion>
-  <Accordion title="Ref Tools">
-    Token-efficient documentation search for AI agents with web content extraction.
-  </Accordion>
-  <Accordion title="Reverse Text">
-    Text manipulation service with reverse and analysis tools for processing and transforming text data.
+  <Accordion title="Tavily">
+    AI-powered web search optimized for LLMs. Real-time results, content extraction, web crawling, and site mapping. Requires Tavily API key.
+
+    [View Tavily Documentation →](/docs/mcp-servers/search-research/tavily)
   </Accordion>
 </AccordionGroup>
 
-### Infrastructure Data
+### Document Processing
 
 <AccordionGroup>
-  <Accordion title="PostgreSQL">
-    PostgreSQL MCP server with configurable read/write access and performance analysis. Requires database credentials.
+  <Accordion title="PDF.co">
+    Comprehensive PDF toolkit with 18 tools for conversion, manipulation, security, OCR, barcodes, and watermarks. Credit-based pricing with API key.
+
+    [View PDF.co Documentation →](/docs/mcp-servers/document-processing/pdfco)
   </Accordion>
+</AccordionGroup>
+
+### Databases & Analytics
+
+<AccordionGroup>
   <Accordion title="ClickHouse">
-    OLAP database for real-time analytics and data warehousing queries. Requires ClickHouse connection details.
+    OLAP database for real-time analytics and data warehousing queries. Execute queries, analyze data, and generate insights. Requires ClickHouse connection details.
+
+    [View ClickHouse Documentation →](/docs/mcp-servers/data-analytics/clickhouse)
+  </Accordion>
+  <Accordion title="PostgreSQL">
+    Industrial-strength database management with AI-powered natural language queries, intelligent index optimization, and comprehensive health monitoring. Requires database credentials.
+
+    [View PostgreSQL Documentation →](/docs/mcp-servers/databases/postgresql)
+  </Accordion>
+</AccordionGroup>
+
+### Finance
+
+<AccordionGroup>
+  <Accordion title="Finnhub">
+    Real-time stock data, company fundamentals, financial news, and market analysis. Requires Finnhub API key.
+
+    [View Finnhub Documentation →](/mcp-servers/finance/finnhub)
+  </Accordion>
+</AccordionGroup>
+
+### Language & Translation
+
+<AccordionGroup>
+  <Accordion title="DeepL">
+    High-quality neural machine translation supporting 30+ languages. Text translation, document translation, and language detection. Requires DeepL API key.
+
+    [View DeepL Documentation →](/docs/mcp-servers/language/deepl)
+  </Accordion>
+</AccordionGroup>
+
+### Travel & Recreation
+
+<AccordionGroup>
+  <Accordion title="National Parks">
+    Explore US National Parks with detailed information about parks, trails, campgrounds, and visitor centers. U.S. National Parks Service API.
+
+    [View National Parks Documentation →](/mcp-servers/travel/nationalparks)
+  </Accordion>
+</AccordionGroup>
+
+### Weather & Climate
+
+<AccordionGroup>
+  <Accordion title="OpenWeatherMap">
+    Current weather, forecasts, historical data, and air quality information for any location worldwide. Requires OpenWeatherMap API key.
+
+    [View OpenWeatherMap Documentation →](/mcp-servers/weather/openweathermap)
+  </Accordion>
+</AccordionGroup>
+
+### Utilities
+
+<AccordionGroup>
+  <Accordion title="Reverse Text">
+    Text manipulation service with reverse and analysis tools for processing and transforming text data. Zero configuration, no API key required.
+
+    [View Reverse Text Documentation →](/docs/mcp-servers/utilities/reverse-text)
   </Accordion>
 </AccordionGroup>
 

@@ -1,0 +1,584 @@
+---
+title: 'NIRA - AI Research Assistant'
+description: 'Build complex automations through conversation with NIRA, your intelligent copilot for NimbleBrain Studio'
+icon: 'robot'
+---
+
+<div align="center">
+  <img
+    src="/images/studio/NIRA-intro.png"
+    alt="NIRA AI Research Assistant"
+  />
+</div>
+
+**NIRA** (NimbleBrain Research Assistant) is your AI copilot that transforms how you build automations. Simply describe what you want to accomplish in plain English, and NIRA handles the complexity of configuring tools, orchestrating workflows, and deploying playbooks.
+
+## What is NIRA?
+
+NIRA is an intelligent assistant built into NimbleBrain Studio that understands your business requirements and automatically builds working automations. Instead of manually configuring playbooks, selecting MCP servers, and writing instructions, you have a conversation with NIRA about what you need—and it does the rest.
+
+<CardGroup cols={2}>
+  <Card title="🗣️ Conversational" icon="comments">
+    Describe your automation needs in natural language—no technical expertise required
+  </Card>
+  <Card title="🧠 Intelligent" icon="brain">
+    Understands context, selects the right tools, and structures complex multi-step workflows
+  </Card>
+  <Card title="⚡ Fast" icon="bolt">
+    Build automations in minutes that would take hours to configure manually
+  </Card>
+  <Card title="🔄 Iterative" icon="arrows-rotate">
+    Refine and adjust automations through continued conversation
+  </Card>
+</CardGroup>
+
+## Why Use NIRA?
+
+### Traditional Playbook Building vs. NIRA
+
+| Task | Manual Approach | With NIRA |
+|------|----------------|-----------|
+| **Understanding Requirements** | Translate business needs to technical specs | Describe needs in plain English |
+| **Tool Selection** | Browse catalog, research capabilities | NIRA auto-selects optimal tools |
+| **Configuration** | Write instructions, set parameters | NIRA generates configuration |
+| **Integration** | Connect multiple tools manually | NIRA orchestrates multi-tool workflows |
+| **Time to Deploy** | Hours or days | Minutes |
+
+<Tip>
+  **Perfect for non-technical users!** NIRA makes automation accessible to everyone on your team, not just developers.
+</Tip>
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Conversational Automation Building" icon="message-bot">
+    Chat naturally with NIRA about what you want to automate. No need to understand technical details—just explain your business process.
+  </Card>
+  <Card title="Intelligent Playbook Generation" icon="wand-magic-sparkles">
+    NIRA analyzes your requirements and automatically generates complete playbooks with proper tool selection and workflow logic.
+  </Card>
+  <Card title="Automatic Configuration" icon="gears">
+    NIRA handles the technical details: selecting MCP servers, structuring instructions, and setting optimal parameters.
+  </Card>
+  <Card title="Multi-Tool Orchestration" icon="diagram-project">
+    NIRA seamlessly coordinates multiple MCP servers to accomplish complex, multi-step automations.
+  </Card>
+  <Card title="Natural Language Understanding" icon="brain-circuit">
+    Understands context, business terminology, and implicit requirements to build automations that truly match your needs.
+  </Card>
+  <Card title="Guided API Setup" icon="key">
+    NIRA identifies required credentials and walks you through adding API keys for each tool.
+  </Card>
+</CardGroup>
+
+## How NIRA Works
+
+Building an automation with NIRA is simple:
+
+<Steps>
+  <Step title="Describe Your Automation">
+    Tell NIRA what you want to accomplish in plain English. Be as detailed or high-level as you like—NIRA will ask clarifying questions if needed.
+
+    **Example:** "I need a daily report that shows all new support tickets from Zendesk, categorizes them by priority, and posts a summary to our #support Slack channel every morning."
+  </Step>
+
+  <Step title="NIRA Analyzes & Designs">
+    NIRA understands your requirements and:
+    - Selects the appropriate MCP servers from the catalog
+    - Designs the workflow structure
+    - Generates playbook instructions
+    - Identifies required API credentials
+  </Step>
+
+  <Step title="Add Your API Keys">
+    NIRA prompts you for the necessary API keys and credentials. Simply add them when requested—NIRA knows exactly what's needed.
+
+    <Note>
+      Your API keys are encrypted and stored securely. They're never visible to NIRA or logged anywhere.
+    </Note>
+  </Step>
+
+  <Step title="Review the Playbook">
+    NIRA shows you the generated playbook with:
+    - Selected MCP servers
+    - Workflow instructions
+    - Configuration parameters
+    - Expected behavior
+
+    You can ask NIRA to make adjustments before deploying.
+  </Step>
+
+  <Step title="Click GO to Deploy">
+    Once you're satisfied, click the **GO** button and NIRA deploys your automation immediately. Your playbook is ready to run!
+  </Step>
+</Steps>
+
+<Callout type="success">
+  **It's that simple!** Most automations are built and deployed in under 5 minutes.
+</Callout>
+
+## Getting Started with NIRA
+
+### Accessing NIRA
+
+1. Navigate to your NimbleBrain Studio workspace
+2. Look for the **NIRA** button in the main navigation or dashboard
+3. Click to open the NIRA chat interface
+
+<Frame>
+  <img src="/images/studio/nirachatinterface.png" alt="NIRA chat interface" />
+</Frame>
+
+### Your First Automation
+
+Try this simple automation to get familiar with NIRA:
+
+<Steps>
+  <Step title="Open NIRA">
+    Click the NIRA button in Studio
+  </Step>
+
+  <Step title="Say Hello">
+    Start with: "Hello NIRA, I'd like to create my first automation"
+  </Step>
+
+  <Step title="Describe Something Simple">
+    Try: "Send me a weather forecast for San Francisco every morning at 7am via email"
+  </Step>
+
+  <Step title="Follow NIRA's Guidance">
+    NIRA will guide you through adding the necessary API credentials and reviewing the playbook
+  </Step>
+
+  <Step title="Deploy">
+    Click GO when ready, and you're done!
+  </Step>
+</Steps>
+
+## Use Cases
+
+### Business Operations
+
+<AccordionGroup>
+  <Accordion title="Daily Sales Reports">
+    **Request:** "Generate a daily sales report from Salesforce showing closed deals, total revenue, and top performers. Send it to #sales-team on Slack every morning at 9am."
+
+    **What NIRA Does:**
+    - Installs and configures Salesforce MCP server
+    - Installs Slack MCP server
+    - Creates playbook to query yesterday's deals
+    - Formats data into readable summary
+    - Schedules daily execution
+  </Accordion>
+
+  <Accordion title="Customer Support Automation">
+    **Request:** "When a new high-priority ticket is created in Zendesk, notify the on-call engineer via PagerDuty and post details in #urgent-support Slack channel."
+
+    **What NIRA Does:**
+    - Sets up Zendesk webhook integration
+    - Configures PagerDuty alerting
+    - Creates Slack notification workflow
+    - Implements priority filtering logic
+  </Accordion>
+
+  <Accordion title="Inventory Management">
+    **Request:** "Check weather forecast for our warehouse locations. If severe weather is predicted, send alerts to logistics team and update delivery schedules in our system."
+
+    **What NIRA Does:**
+    - Integrates weather API for multiple locations
+    - Creates alert logic based on severity
+    - Configures email/SMS notifications
+    - Sets up system API updates
+  </Accordion>
+</AccordionGroup>
+
+### Data & Analytics
+
+<AccordionGroup>
+  <Accordion title="Cross-Platform Analytics">
+    **Request:** "Combine data from Google Analytics, Stripe, and HubSpot to create a weekly executive dashboard showing traffic, revenue, and conversion rates."
+
+    **What NIRA Does:**
+    - Connects to all three platforms
+    - Aggregates and correlates data
+    - Generates formatted report
+    - Schedules weekly delivery
+  </Accordion>
+
+  <Accordion title="Anomaly Detection">
+    **Request:** "Monitor our database for unusual query patterns. If response times spike above 2 seconds, investigate and send a diagnostic report to #engineering."
+
+    **What NIRA Does:**
+    - Sets up database monitoring
+    - Implements threshold detection
+    - Creates diagnostic data collection
+    - Configures alerting workflow
+  </Accordion>
+</AccordionGroup>
+
+### Developer Workflows
+
+<AccordionGroup>
+  <Accordion title="PR Management">
+    **Request:** "When a pull request is opened in GitHub, run our test suite, check code coverage, and post results as a comment. Auto-approve if all checks pass and coverage improves."
+
+    **What NIRA Does:**
+    - Sets up GitHub webhook
+    - Configures test execution
+    - Implements coverage analysis
+    - Creates conditional approval logic
+  </Accordion>
+
+  <Accordion title="Deployment Automation">
+    **Request:** "After successful merge to main branch, deploy to staging, run smoke tests, and if everything passes, notify team in Slack with deployment summary."
+
+    **What NIRA Does:**
+    - Creates deployment pipeline
+    - Integrates testing framework
+    - Sets up Slack notifications
+    - Implements conditional logic
+  </Accordion>
+</AccordionGroup>
+
+## Example Conversations
+
+<CodeGroup>
+
+```plaintext Sales Report Automation
+You: "Create a daily report that pulls sales data from Salesforce and sends it to our #sales-team Slack channel every morning at 9am"
+
+NIRA: "I'll create a playbook that:
+1. Connects to Salesforce using the Salesforce MCP server
+2. Queries yesterday's closed deals and calculates total revenue
+3. Formats the data as a summary report with top performers
+4. Sends to Slack channel #sales-team at 9:00 AM daily
+
+You'll need to provide:
+- Salesforce API credentials (Consumer Key and Secret)
+- Slack workspace token
+
+Ready to add these credentials?"
+
+You: "Yes, let's set it up"
+
+NIRA: "Great! First, let's add your Salesforce credentials..."
+```
+
+```plaintext Multi-Step Workflow
+You: "I want to automate our customer onboarding. When a new customer signs up in Stripe, create a Zendesk ticket, send a welcome email, and add them to our HubSpot CRM."
+
+NIRA: "I'll build a multi-step automation that:
+
+Step 1: Monitors Stripe for new subscriptions
+Step 2: Creates a welcome ticket in Zendesk for our success team
+Step 3: Sends personalized welcome email with getting started guide
+Step 4: Adds customer to HubSpot with 'New Customer' tag
+
+This requires:
+- Stripe webhook configuration (I'll generate this)
+- Zendesk API token
+- SendGrid API key (for emails)
+- HubSpot API key
+
+The workflow will execute automatically whenever a new customer subscribes. Would you like me to proceed with this setup?"
+
+You: "Perfect! Yes, let's build it"
+```
+
+```plaintext Weather-Based Alerts
+You: "Monitor weather for our 5 warehouse locations. If any location expects severe weather in the next 24 hours, alert the logistics team"
+
+NIRA: "I'll create a weather monitoring automation:
+
+1. Uses OpenWeatherMap to check forecasts for all 5 warehouse locations
+2. Runs every 6 hours to stay current
+3. Identifies severe weather alerts (storms, snow, hurricanes)
+4. Sends immediate alerts to logistics team via email and Slack
+5. Includes affected location, weather type, and timing
+
+I'll need:
+- Warehouse addresses or coordinates (you can provide these now or later)
+- OpenWeatherMap API key
+- Logistics team email addresses or Slack channel
+
+Shall we configure these settings?"
+```
+
+```plaintext Database Monitoring
+You: "Set up monitoring that checks our PostgreSQL database performance every 5 minutes and alerts us if queries are taking longer than normal"
+
+NIRA: "I'll build a database performance monitor that:
+
+1. Connects to your PostgreSQL database using the PostgreSQL MCP server
+2. Runs every 5 minutes to check:
+   - Average query execution time
+   - Slow query count (queries > 2 seconds)
+   - Active connection count
+   - Database size and growth
+3. Compares against baseline performance
+4. Sends alerts if:
+   - Average query time increases by 50%
+   - More than 10 slow queries detected
+   - Connection count exceeds 90% of max
+
+Alerts will include diagnostic information and slow query details.
+
+Required:
+- PostgreSQL connection details (host, port, database name)
+- Database credentials (read-only access is sufficient)
+- Alert destination (Slack, email, or PagerDuty)
+
+Ready to configure?"
+```
+
+</CodeGroup>
+
+## Writing Effective Automation Requests
+
+### Be Specific About Outcomes
+
+<Check>**Good:** "Send me a daily summary of GitHub pull requests that need review, organized by priority, every morning at 9am"</Check>
+
+**Vague:** "Do something with GitHub"
+
+### Include Timing Requirements
+
+<Check>**Good:** "Check for new invoices in Stripe every hour and sync them to QuickBooks immediately"</Check>
+
+**Missing Info:** "Sync Stripe invoices to QuickBooks"
+
+### Mention All Systems Involved
+
+<Check>**Good:** "When a support ticket is marked urgent in Zendesk, create a task in Asana and notify the team lead via Slack"</Check>
+
+**Incomplete:** "Do something when tickets are urgent"
+
+### Specify Conditions and Filters
+
+<Check>**Good:** "Monitor Twitter for mentions of our brand with negative sentiment and create Zendesk tickets for customer service follow-up"</Check>
+
+**Too Broad:** "Monitor Twitter mentions"
+
+<Tip>
+  **Don't worry about being too detailed!** NIRA will ask clarifying questions if it needs more information.
+</Tip>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Start Simple, Then Iterate">
+    Begin with a basic version of your automation and ask NIRA to add complexity:
+
+    1. "Create a daily sales report from Salesforce"
+    2. Once working: "Add revenue trends compared to last week"
+    3. Then: "Include top 3 performing sales reps"
+    4. Finally: "Send to executives in PDF format"
+
+    This iterative approach ensures each piece works before adding more.
+  </Accordion>
+
+  <Accordion title="Use Business Language, Not Technical Terms">
+    NIRA understands business processes better than technical jargon:
+
+    **Good:** "When a customer's trial ends, send them pricing information"
+
+    **Unnecessarily Technical:** "Trigger webhook on trial_end event to execute email_send function with pricing payload"
+  </Accordion>
+
+  <Accordion title="Describe the 'Why' Along with the 'What'">
+    Providing context helps NIRA build better automations:
+
+    **Better:** "We need to track inventory levels because we've had stockouts. Alert purchasing when items drop below 20 units so they can reorder in time."
+
+    **Basic:** "Alert when inventory is below 20 units"
+
+    The context helps NIRA include relevant details in alerts.
+  </Accordion>
+
+  <Accordion title="Test with Real Data">
+    After NIRA builds your automation, test it:
+
+    1. Run the playbook manually first
+    2. Check that outputs match expectations
+    3. Verify notifications go to the right places
+    4. Ask NIRA to adjust if needed
+  </Accordion>
+
+  <Accordion title="Leverage NIRA's Knowledge">
+    NIRA knows which MCP servers work well together. Ask for suggestions:
+
+    - "What's the best way to automate customer onboarding?"
+    - "How can I monitor our application performance?"
+    - "What integrations are available for e-commerce?"
+  </Accordion>
+</AccordionGroup>
+
+## When to Use NIRA vs. Manual Playbooks
+
+### Use NIRA When:
+
+<Check>You're new to automation or NimbleBrain Studio</Check>
+<Check>You need to build something quickly</Check>
+<Check>You're not sure which MCP servers to use</Check>
+<Check>Your automation involves multiple systems</Check>
+<Check>You want to describe requirements in business terms</Check>
+<Check>You're prototyping or experimenting with ideas</Check>
+
+### Use Manual Playbooks When:
+
+- You need very specific, custom instructions
+- You're building a template for others to reuse
+- You want fine-grained control over every parameter
+- You're an experienced user who knows exactly what you need
+
+<Note>
+  You can always **start with NIRA** and then **refine manually** if needed. NIRA generates standard playbooks that you can edit.
+</Note>
+
+## Frequently Asked Questions
+
+<AccordionGroup>
+  <Accordion title="What languages does NIRA understand?">
+    NIRA currently works best with English, but can understand other major languages. Responses are always in English.
+  </Accordion>
+
+  <Accordion title="Can NIRA access my data?">
+    No. NIRA only has access to:
+    - Your workspace configuration
+    - Available MCP servers in the catalog
+    - Playbook templates and examples
+
+    NIRA never sees your actual data, API responses, or execution results.
+  </Accordion>
+
+  <Accordion title="What if NIRA doesn't understand my request?">
+    NIRA will ask clarifying questions to better understand your needs. If it still can't help, it will suggest breaking down the request or provide guidance on how to rephrase.
+  </Accordion>
+
+  <Accordion title="Can I edit playbooks that NIRA creates?">
+    Yes! NIRA generates standard playbooks that you can view, edit, and customize just like manually-created ones.
+  </Accordion>
+
+  <Accordion title="Does using NIRA cost extra?">
+    NIRA is included with your NimbleBrain Studio subscription. You only pay for playbook executions and MCP server usage, just like manual playbooks.
+  </Accordion>
+
+  <Accordion title="Can NIRA help me troubleshoot playbooks?">
+    Absolutely! If a playbook isn't working as expected, describe the issue to NIRA and it will help diagnose and fix problems.
+  </Accordion>
+
+  <Accordion title="How does NIRA learn my preferences?">
+    NIRA remembers the context within a conversation session. Over time, patterns in your workspace (like frequently used MCP servers) help NIRA make better suggestions.
+  </Accordion>
+</AccordionGroup>
+
+## Advanced Features
+
+### Context-Aware Suggestions
+
+NIRA learns from your workspace:
+- Suggests MCP servers you've used before
+- Remembers your notification preferences
+- Adapts to your organization's naming conventions
+- Understands your scheduling patterns
+
+### Workflow Optimization
+
+NIRA can optimize existing playbooks:
+
+**Say:** "Make my sales report playbook faster"
+
+NIRA will analyze the playbook and suggest optimizations like:
+- Parallel tool execution
+- Reduced API calls
+- Caching strategies
+- Simplified logic
+
+### Building Agents with NIRA
+
+When your automation requires multiple steps or data sources, NIRA will suggest creating an Agent:
+
+<Card>
+**Example:**
+
+**You:** "I need to pull sales data from Salesforce, get market trends from Finnhub, analyze both with AI, and send a report to Slack every Monday morning"
+
+**NIRA:** "This requires multiple data sources working together. I recommend creating an Agent with 4 playbooks:
+
+1. **Salesforce Data** - Pull weekly sales data
+2. **Market Trends** - Fetch relevant market data
+3. **AI Analysis** - Analyze combined data and generate insights
+4. **Slack Report** - Format and send to your team
+
+These will run sequentially on Mondays at 9 AM. Would you like me to set that up?"
+</Card>
+
+NIRA handles the complexity of:
+- Determining which playbooks are needed
+- Setting up the execution order (sequential or parallel)
+- Configuring data passing between playbooks
+- Scheduling the agent to run automatically
+
+<Tip>
+**Ready for multi-step workflows?** Learn how Agents coordinate multiple playbooks → [Learn more about Agents](/studio/agents)
+</Tip>
+
+## Limitations
+
+<Warning>
+  **Current Limitations:**
+  - NIRA cannot access MCP servers that aren't in the NimbleBrain registry
+  - Very complex custom logic may require manual refinement
+  - NIRA cannot directly modify running playbooks (you must redeploy)
+  - Conversation context is limited to the current session
+</Warning>
+
+## Tips for Success
+
+1. **Be conversational** - Talk to NIRA like you would a colleague
+2. **Provide examples** - Show NIRA what output you want
+3. **Ask questions** - NIRA can explain how things work
+4. **Iterate** - Refine automations through conversation
+5. **Test early** - Deploy simple versions first, then enhance
+6. **Give feedback** - Tell NIRA if results aren't what you expected
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card
+    title="Playbooks"
+    icon="play"
+    href="/studio/playbooks"
+  >
+    Learn about playbook execution and management
+  </Card>
+  <Card
+    title="Connections"
+    icon="plug"
+    href="/studio/connections"
+  >
+    Browse available MCP servers
+  </Card>
+  <Card
+    title="Quickstart Guide"
+    icon="rocket"
+    href="/studio/quickstart"
+  >
+    Get started with NimbleBrain Studio
+  </Card>
+  <Card
+    title="Best Practices"
+    icon="lightbulb"
+    href="/dev/best-practices"
+  >
+    Automation best practices and patterns
+  </Card>
+</CardGroup>
+
+## Get Started with NIRA Today
+
+Ready to build your first automation? Click the **NIRA** button in your Studio workspace and start a conversation!
+
+<Callout type="success">
+  **Pro Tip:** Start with "Hi NIRA, show me what you can do" to see example automations and get inspired!
+</Callout>

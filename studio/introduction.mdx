@@ -1,6 +1,6 @@
 ---
 title: 'NimbleBrain Studio'
-description: 'Visual interface for managing MCP servers, workspaces, and AI integrations'
+description: 'Build AI-powered automations with natural language instructions and MCP integrations'
 icon: 'sparkles'
 ---
 
@@ -15,62 +15,86 @@ icon: 'sparkles'
   alt="NimbleBrain Studio Hero Dark"
 />
 
-**NimbleBrain Studio** is a powerful web-based platform for managing Model Context Protocol (MCP) servers, workspaces, and AI integrations. Deploy and configure MCP servers with a visual interface, no command line required.
+# Welcome to NimbleBrain Studio
+
+NimbleBrain Studio is a web-based platform for building AI-powered automations. Create workflows that leverage MCP (Model Context Protocol) servers to connect to external APIs, databases, and services.
+
+<Note>
+**First time here?** NIRA, our AI assistant, can help you get started by building your first automation through conversation. Or explore the platform and build manually!
+</Note>
 
 ## What is NimbleBrain Studio?
 
-NimbleBrain Studio is a web-based platform that provides visual management for MCP servers and AI-powered workflows:
+NimbleBrain Studio provides everything you need to build and manage AI automations:
 
-- **Playbooks**: Create and manage AI-powered workflows with natural language instructions
-- **Toolbox**: Install and manage MCP servers from the community registry
-- **Visual Workspace Management**: Create, switch, and manage isolated workspace environments
-- **Integrated Monitoring**: Track execution history, view logs, and monitor activity
-- **API Tokens**: Generate secure tokens for programmatic access and Claude Desktop integration
+- **Playbooks**: AI-powered workflows with natural language instructions
+- **Connections**: 50+ MCP servers to connect external APIs and services
+- **NIRA**: AI assistant that can build automations through conversation
+- **Workspace Management**: Organize automations across isolated environments
+- **Monitoring & Logs**: Track execution history and debug issues
+- **API Tokens**: Generate secure tokens for Claude Desktop and programmatic access
 
-## Key Features
+## Core Features
 
 <CardGroup cols={2}>
   <Card
-    title="Playbooks"
-    icon="play"
-    href="/studio/playbooks"
+    title="NIRA - AI Assistant"
+    icon="robot"
+    href="/studio/nira"
   >
-    Create AI-powered workflows with natural language instructions
+    Build automations conversationally - describe what you need and NIRA creates it
   </Card>
   <Card
-    title="Toolbox"
-    icon="toolbox"
-    href="/studio/toolbox"
+    title="Agents - Multi-Playbook Orchestration"
+    icon="diagram-project"
+    href="/studio/agents"
   >
-    Install and manage MCP servers from the community registry
+    Coordinate multiple playbooks under intelligent agents that run on schedules
+  </Card>
+  <Card
+    title="Playbooks"
+    icon="book-open"
+    href="/studio/playbooks"
+  >
+    AI-powered workflows with natural language instructions that execute using Claude AI
+  </Card>
+  <Card
+    title="Connections"
+    icon="plug"
+    href="/studio/connections"
+  >
+    50+ MCP servers providing access to APIs, databases, and external services
   </Card>
   <Card
     title="Workspace Management"
-    icon="folder-tree"
+    icon="layer-group"
     href="/studio/workspace-management"
   >
-    Create isolated environments for your playbooks and tools
+    Create isolated environments for different projects
   </Card>
   <Card
     title="API Tokens"
     icon="key"
     href="/studio/api-keys"
   >
-    Generate tokens for programmatic access and Claude Desktop
+    Generate tokens for Claude Desktop and programmatic access
   </Card>
 </CardGroup>
 
 ## Who Should Use Studio?
 
 <AccordionGroup>
-  <Accordion title="AI Engineers & Developers">
-    Quickly prototype and deploy MCP servers without managing infrastructure. Focus on building AI applications, not DevOps.
+  <Accordion title="Non-Technical Users">
+    Use NIRA to build automations through conversation - no coding required. Just describe what you want in plain English and NIRA creates the playbook for you.
   </Accordion>
-  <Accordion title="Product Teams">
-    Non-technical team members can deploy and configure MCP servers without touching the command line.
+  <Accordion title="Product Teams & Business Analysts">
+    Build data pipelines, reports, and alerts without engineering resources. Create playbooks manually or use NIRA to translate requirements into working automations.
+  </Accordion>
+  <Accordion title="AI Engineers & Developers">
+    Rapidly prototype MCP integrations and complex workflows. Build manually with full control over playbook configuration, or use NIRA for quick foundations.
   </Accordion>
   <Accordion title="Enterprise Teams">
-    Manage multiple workspaces, control access, and monitor deployments across your organization.
+    Manage multiple workspaces, control access, and monitor deployments across your organization. Use the web UI or CLI for automation and CI/CD.
   </Accordion>
 </AccordionGroup>
 
@@ -80,41 +104,44 @@ Both Studio and the [NimbleTools CLI](/cli/introduction) provide access to the s
 
 | Feature | Studio | CLI |
 |---------|--------|-----|
+| **Automation Building** | ✅ Visual UI + NIRA assistant | ❌ Not available |
 | **Workspace Management** | ✅ Visual UI | ✅ Command line |
-| **MCP Server Management** | ✅ One-click install | ✅ Single command |
-| **Playbooks** | ✅ Visual workflow builder | ❌ Not available |
+| **MCP Server Management** | ✅ One-click install | ✅ Deploy command |
+| **Playbooks** | ✅ Create & manage | ❌ Not available |
 | **Monitoring & Logs** | ✅ Real-time dashboard | ✅ Stream to terminal |
 | **Claude Integration** | ✅ Generate tokens | ✅ Generate config |
-| **Automation** | ✅ Scheduled playbooks | ✅ CI/CD pipelines |
-| **Best For** | Workflows, visual monitoring | Scripts, automation, power users |
+| **Best For** | Building and managing automations | CI/CD, scripting, power users |
 
-<Callout type="tip">
-  **Use Both!** Most users find a hybrid approach works best - use Studio for visual management and monitoring, and CLI for automation and scripts.
-</Callout>
+<Tip>
+  **Use Both!** Studio provides a visual interface for building and managing automations, while the CLI is perfect for CI/CD pipelines and scripting.
+</Tip>
 
 ## Get Started
 
 <Steps>
   <Step title="Sign Up">
-    Create your NimbleBrain Studio account at [studio.nimblebrain.ai](https://studio.nimblebrain.ai)
+    Create your account at [studio.nimblebrain.dev](https://studio.nimblebrain.dev)
+  </Step>
+  <Step title="Create a Workspace">
+    Workspaces are isolated environments for organizing your automations
   </Step>
   <Step title="Install MCP Servers">
-    Browse the Toolbox and install MCP servers from the community registry
+    Browse Connections and install servers you need (e.g., GitHub, Slack, PostgreSQL)
   </Step>
-  <Step title="Create a Playbook">
-    Build your first AI-powered workflow with natural language instructions
+  <Step title="Build Your First Playbook">
+    Create a playbook manually or use NIRA to build it conversationally
   </Step>
-  <Step title="Generate API Token">
-    Create a token for Claude Desktop or programmatic access
+  <Step title="Deploy & Monitor">
+    Run your playbook and track execution history in the dashboard
   </Step>
 </Steps>
 
 <Card
-  title="Studio Quickstart"
+  title="Interactive Quickstart"
   icon="rocket"
   href="/studio/quickstart"
 >
-  Follow our interactive quickstart guide to deploy your first MCP server in under 5 minutes
+  Follow the quickstart guide where NIRA walks you through building your first automation
 </Card>
 
 ## Next Steps
@@ -122,30 +149,44 @@ Both Studio and the [NimbleTools CLI](/cli/introduction) provide access to the s
 <CardGroup cols={2}>
   <Card
     title="Quickstart Guide"
-    icon="play"
+    icon="graduation-cap"
     href="/studio/quickstart"
   >
-    Complete walkthrough of Studio features
+    Build your first automation with NIRA's help
   </Card>
   <Card
     title="Playbooks"
-    icon="workflow"
+    icon="book-open"
     href="/studio/playbooks"
   >
-    Create AI-powered workflows
+    Learn how to create AI-powered workflows
   </Card>
   <Card
-    title="Toolbox"
-    icon="toolbox"
-    href="/studio/toolbox"
+    title="Connections"
+    icon="plug"
+    href="/studio/connections"
   >
-    Manage your MCP servers
+    Browse 50+ available MCP servers
   </Card>
   <Card
-    title="API Tokens"
-    icon="key"
-    href="/studio/api-keys"
+    title="NIRA Assistant"
+    icon="robot"
+    href="/studio/nira"
   >
-    Generate tokens for programmatic access
+    Discover NIRA's conversational automation building
+  </Card>
+  <Card
+    title="Integrations"
+    icon="plug"
+    href="/studio/integrations"
+  >
+    Connect to Claude Desktop and other clients
+  </Card>
+  <Card
+    title="Workspace Management"
+    icon="layer-group"
+    href="/studio/workspace-management"
+  >
+    Organize projects across isolated workspaces
   </Card>
 </CardGroup>

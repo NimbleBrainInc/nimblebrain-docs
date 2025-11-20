@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git clone:*)",
+      "Bash(mv:*)",
+      "Bash(mkdir:*)",
+      "Bash(taskkill:*)",
+      "Bash(nul)",
+      "Bash(mintlify dev:*)",
+      "Bash(node -e:*)",
+      "Bash(powershell -Command \"3000..3004 | ForEach-Object { Get-NetTCPConnection -LocalPort $_-ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_OwningProcess -Force -ErrorAction SilentlyContinue } }\")",
+      "Bash(test:*)",
+      "Bash(docs.json)",
+      "Bash(docs.json.tmp)",
+      "Bash(cat:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(powershell -Command \"Stop-Process -Id 158268 -Force\")",
+      "Bash(powershell -Command:*)",
+      "Bash(grep:*)",
+      "Bash(timeout /t 5 /nobreak)",
+      "Bash(timeout:*)",
+      "Bash(ping:*)",
+      "WebFetch(domain:studio.nimblebrain.dev)",
+      "Bash(npx mintlify@latest dev:*)",
+      "Bash(for img in nira-welcome.png nira-conversation.png nira-deployed.png nira-interface.png)",
+      "Bash(do test:*)",
+      "Bash(echo:*)",
+      "Bash(done)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

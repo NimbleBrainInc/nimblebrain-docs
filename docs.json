@@ -9,181 +9,121 @@
   },
   "favicon": "/images/favicon.ico",
   "navigation": {
-    "tabs": [
+    "groups": [
       {
-        "tab": "Studio",
-        "groups": [
-          {
-            "group": "Get Started",
-            "pages": [
-              "studio/introduction",
-              "studio/quickstart"
-            ]
-          },
-          {
-            "group": "Core Features",
-            "pages": [
-              "studio/playbooks",
-              "studio/toolbox",
-              "studio/workspace-management",
-              "studio/api-keys",
-              "studio/activity-logs"
-            ]
-          },
+        "group": "Get Started",
+        "pages": [
+          "studio/introduction",
+          "studio/quickstart"
+        ]
+      },
+      {
+        "group": "Core Features",
+        "pages": [
+          "studio/nira",
+          "studio/agents",
+          "studio/playbooks",
+          "studio/connections",
+          "studio/workspace-management",
+          "studio/api-keys",
+          "studio/activity-logs"
+        ]
+      },
+      {
+        "group": "Developer Tools",
+        "pages": [
           {
             "group": "Integrations",
+            "icon": "plug",
             "pages": [
+              "dev/integrations",
               "studio/integrations",
               "studio/claude-desktop",
               "studio/claude-code",
               "studio/cursor",
               "studio/langchain"
             ]
-          }
-        ]
-      },
-      {
-        "tab": "Runtime",
-        "groups": [
-          {
-            "group": "Get Started",
-            "pages": [
-              "runtime/introduction",
-              "runtime/installation",
-              "runtime/quickstart"
-            ]
           },
           {
-            "group": "Core Concepts",
+            "group": "Runtime",
+            "icon": "server",
             "pages": [
+              "dev/runtime-overview",
+              "runtime/introduction",
+              "runtime/installation",
+              "runtime/quickstart",
               "runtime/architecture",
               "runtime/mcp-services"
             ]
-          }
-        ]
-      },
-      {
-        "tab": "CLI Reference",
-        "groups": [
+          },
           {
-            "group": "Get Started",
+            "group": "CLI Reference",
+            "icon": "terminal",
             "pages": [
+              "dev/cli-overview",
               "cli/introduction",
               "cli/installation",
-              "cli/quickstart"
+              "cli/quickstart",
+              {
+                "group": "Core Concepts",
+                "pages": [
+                  "cli/concepts/workspaces",
+                  "cli/concepts/mcp-servers",
+                  "cli/concepts/authentication"
+                ]
+              },
+              {
+                "group": "Commands",
+                "pages": [
+                  "cli/commands/auth/login",
+                  "cli/commands/auth/logout",
+                  "cli/commands/auth/status",
+                  "cli/commands/auth/signup",
+                  "cli/commands/workspace/create",
+                  "cli/commands/workspace/list",
+                  "cli/commands/workspace/switch",
+                  "cli/commands/workspace/select",
+                  "cli/commands/workspace/delete",
+                  "cli/commands/workspace/clear",
+                  "cli/commands/workspace/debug",
+                  "cli/commands/workspace/sync",
+                  "cli/commands/server/deploy",
+                  "cli/commands/server/list",
+                  "cli/commands/server/info",
+                  "cli/commands/server/scale",
+                  "cli/commands/server/remove",
+                  "cli/commands/server/logs",
+                  "cli/commands/server/claude-config",
+                  "cli/commands/mcp/connect",
+                  "cli/commands/mcp/tools",
+                  "cli/commands/mcp/call",
+                  "cli/commands/registry/list",
+                  "cli/commands/registry/show",
+                  "cli/commands/secrets/list",
+                  "cli/commands/secrets/set",
+                  "cli/commands/secrets/unset",
+                  "cli/commands/token/create",
+                  "cli/commands/token/list",
+                  "cli/commands/token/refresh",
+                  "cli/commands/token/revoke",
+                  "cli/commands/token/show",
+                  "cli/commands/utilities/health"
+                ]
+              }
             ]
           },
           {
-            "group": "Core Concepts",
+            "group": "Advanced",
+            "icon": "code",
             "pages": [
-              "cli/concepts/workspaces",
-              "cli/concepts/mcp-servers",
-              "cli/concepts/authentication"
-            ]
-          },
-          {
-            "group": "Authentication",
-            "pages": [
-              "cli/commands/auth/login",
-              "cli/commands/auth/logout",
-              "cli/commands/auth/status",
-              "cli/commands/auth/signup"
-            ]
-          },
-          {
-            "group": "Workspace Management",
-            "pages": [
-              "cli/commands/workspace/create",
-              "cli/commands/workspace/list",
-              "cli/commands/workspace/switch",
-              "cli/commands/workspace/select",
-              "cli/commands/workspace/delete",
-              "cli/commands/workspace/clear",
-              "cli/commands/workspace/debug",
-              "cli/commands/workspace/sync"
-            ]
-          },
-          {
-            "group": "Server Management",
-            "pages": [
-              "cli/commands/server/deploy",
-              "cli/commands/server/list",
-              "cli/commands/server/info",
-              "cli/commands/server/scale",
-              "cli/commands/server/remove",
-              "cli/commands/server/logs",
-              "cli/commands/server/claude-config"
-            ]
-          },
-          {
-            "group": "MCP Client",
-            "pages": [
-              "cli/commands/mcp/connect",
-              "cli/commands/mcp/tools",
-              "cli/commands/mcp/call"
-            ]
-          },
-          {
-            "group": "Registry",
-            "pages": [
-              "cli/commands/registry/list",
-              "cli/commands/registry/show"
-            ]
-          },
-          {
-            "group": "Secrets Management",
-            "pages": [
-              "cli/commands/secrets/list",
-              "cli/commands/secrets/set",
-              "cli/commands/secrets/unset"
-            ]
-          },
-          {
-            "group": "Token Management",
-            "pages": [
-              "cli/commands/token/create",
-              "cli/commands/token/list",
-              "cli/commands/token/refresh",
-              "cli/commands/token/revoke",
-              "cli/commands/token/show"
-            ]
-          },
-          {
-            "group": "Utilities",
-            "pages": [
-              "cli/commands/utilities/health"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Developers",
-        "groups": [
-          {
-            "group": "Platform Architecture",
-            "pages": [
+              "dev/overview",
               "dev/api-architecture",
-              "dev/environment-variables"
-            ]
-          },
-          {
-            "group": "Integrations",
-            "pages": [
+              "dev/environment-variables",
               "dev/claude-desktop-integration",
-              "dev/examples/langchain-integration"
-            ]
-          },
-          {
-            "group": "Advanced Topics",
-            "pages": [
+              "dev/examples/langchain-integration",
               "dev/ci-cd",
               "dev/best-practices",
-              "dev/troubleshooting"
-            ]
-          },
-          {
-            "group": "Examples",
-            "pages": [
+              "dev/troubleshooting",
               "dev/examples/complete-workflow",
               "dev/examples/claude-desktop",
               "dev/examples/advanced-usage"
