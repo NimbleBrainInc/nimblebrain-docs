@@ -1,0 +1,478 @@
+---
+title: 'Gmail'
+description: 'Email automation for sending, receiving, organizing, and managing Gmail messages and contacts'
+icon: 'envelope'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="envelope">
+    Gmail MCP Server connects AI tools directly to your Gmail account, enabling natural language interactions with emails, drafts, labels, and contacts.
+
+    **Powered by [Composio](https://composio.dev)** with **20+ tools** for email automation.
+
+    **Key Features:**
+    - Send and receive emails
+    - Create and manage drafts
+    - Organize with labels
+    - Search and filter messages
+    - Manage conversation threads
+    - Access contacts and profiles
+    - Handle attachments
+    - Reply to threads
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **Email Management:**
+    - Automatically respond to common inquiries
+    - Organize inbox with smart labeling
+    - Search for specific emails or threads
+    - Archive or trash old messages
+
+    **Communication Automation:**
+    - Draft personalized email responses
+    - Send scheduled notifications
+    - Create templated email campaigns
+    - Reply to conversation threads
+
+    **Workflow Integration:**
+    - Forward important emails to Slack
+    - Extract data from email content
+    - Create CRM entries from emails
+    - Generate reports from email activity
+  </Card>
+</CardGroup>
+
+<Info>
+  This connection is powered by [Composio](https://mcp.composio.dev/gmail) and provides access to 20+ Gmail tools through the Model Context Protocol (MCP).
+</Info>
+
+## Quick Start
+
+<Steps>
+  <Step title="Connect Your Google Account">
+    NimbleBrain Studio uses OAuth2 to securely connect to your Gmail account.
+
+    1. Navigate to **Connections** in the sidebar
+    2. Click **Browse Catalog**
+    3. Search for "Gmail"
+    4. Click **Install**
+    5. Click **Connect** and authorize with your Google account
+    6. Grant the requested permissions for Gmail access
+
+    <Tip>
+      OAuth2 provides secure, token-based authentication. You'll need to authorize access to your Gmail data.
+    </Tip>
+  </Step>
+
+  <Step title="Verify Connection">
+    Once connected, test the integration:
+
+    ```text
+    "Show me my unread emails from today"
+    ```
+
+    **Other test prompts:**
+    - "List my recent email drafts"
+    - "Show all labels in my Gmail"
+    - "Get my Gmail profile information"
+  </Step>
+</Steps>
+
+## Available Tools
+
+The Gmail connection provides **20+ tools** organized into the following categories:
+
+### Email Management
+
+<AccordionGroup>
+  <Accordion title="Email Operations" icon="envelope">
+    Fetch, read, and manage email messages.
+
+    | Tool | Description |
+    |------|-------------|
+    | `GMAIL_FETCH_EMAILS` | Retrieve emails with filtering, pagination, and full content options |
+    | `GMAIL_FETCH_MESSAGE_BY_MESSAGE_ID` | Get a specific email by ID (minimal, full, raw, or metadata format) |
+    | `GMAIL_FETCH_MESSAGE_BY_THREAD_ID` | Get all messages from a conversation thread |
+    | `GMAIL_DELETE_MESSAGE` | Permanently delete an email message |
+    | `GMAIL_MOVE_TO_TRASH` | Move an email to trash (recoverable) |
+
+    **Example Usage:**
+    ```text
+    "Show me all unread emails from the last 24 hours"
+    ```
+
+    <Note>
+      Use `MOVE_TO_TRASH` for recoverable deletion; `DELETE_MESSAGE` permanently removes emails.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Draft Operations
+
+<AccordionGroup>
+  <Accordion title="Draft Management" icon="file-pen">
+    Create, list, and manage email drafts.
+
+    | Tool | Description |
+    |------|-------------|
+    | `GMAIL_CREATE_EMAIL_DRAFT` | Create a draft with recipients, subject, body (plain/HTML), and attachments |
+    | `GMAIL_LIST_DRAFTS` | List all drafts with optional detailed content |
+    | `GMAIL_DELETE_DRAFT` | Permanently remove a draft |
+
+    **Example Usage:**
+    ```text
+    "Create a draft email to john@example.com with subject 'Meeting Follow-up' and include our discussion points"
+    ```
+
+    <Tip>
+      Drafts support HTML body content for rich formatting and can include attachments.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+### Thread Management
+
+<AccordionGroup>
+  <Accordion title="Thread Operations" icon="messages">
+    Manage email conversation threads.
+
+    | Tool | Description |
+    |------|-------------|
+    | `GMAIL_LIST_THREADS` | List conversation threads with filtering and pagination |
+    | `GMAIL_MODIFY_THREAD_LABELS` | Add or remove labels from entire threads |
+    | `GMAIL_REPLY_TO_THREAD` | Send a reply within an existing conversation |
+
+    **Example Usage:**
+    ```text
+    "Reply to the thread about the Q4 budget with 'Approved, please proceed'"
+    ```
+
+    <Note>
+      Thread operations affect all messages in a conversation simultaneously.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Label Organization
+
+<AccordionGroup>
+  <Accordion title="Label Operations" icon="tags">
+    Create and manage Gmail labels for organization.
+
+    | Tool | Description |
+    |------|-------------|
+    | `GMAIL_CREATE_LABEL` | Create custom labels with name, color, and visibility settings |
+    | `GMAIL_LIST_LABELS` | List all system and user-created labels |
+    | `GMAIL_MODIFY_EMAIL_LABELS` | Apply or remove labels from individual messages |
+    | `GMAIL_PATCH_LABEL` | Update label properties (name, visibility, color) |
+    | `GMAIL_REMOVE_LABEL` | Delete user-created labels |
+
+    **Example Usage:**
+    ```text
+    "Create a new label called 'Priority Clients' with red color"
+    ```
+
+    <Warning>
+      System labels (INBOX, SENT, TRASH, etc.) cannot be deleted or renamed.
+    </Warning>
+  </Accordion>
+</AccordionGroup>
+
+### Contacts & Profile
+
+<AccordionGroup>
+  <Accordion title="Contact Operations" icon="address-book">
+    Access contacts and profile information.
+
+    | Tool | Description |
+    |------|-------------|
+    | `GMAIL_GET_CONTACTS` | Fetch contacts from Google account with pagination |
+    | `GMAIL_GET_PEOPLE` | Get individual contact details or interaction history |
+    | `GMAIL_GET_PROFILE` | Get account profile info (email, message count, history ID) |
+
+    **Example Usage:**
+    ```text
+    "Show me my contact information for people at acme.com"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Attachments
+
+<AccordionGroup>
+  <Accordion title="Attachment Operations" icon="paperclip">
+    Handle email attachments.
+
+    | Tool | Description |
+    |------|-------------|
+    | `GMAIL_GET_ATTACHMENT` | Download attachments by attachment and message ID |
+
+    **Example Usage:**
+    ```text
+    "Download the PDF attachment from the email about the contract"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+  This is the complete list of available tools. For the most up-to-date information, visit the [Composio Gmail documentation](https://mcp.composio.dev/gmail).
+</Note>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Inbox Management">
+    **Scenario:** Organize and prioritize your inbox
+
+    **Prompt:**
+    ```text
+    "Find all unread emails from VIP clients, label them as 'Priority', and show me a summary"
+    ```
+
+    **What happens:**
+    - Searches for unread emails matching criteria
+    - Applies the Priority label
+    - Returns a summary of found emails
+  </Tab>
+
+  <Tab title="Draft Response">
+    **Scenario:** Create a professional response draft
+
+    **Prompt:**
+    ```text
+    "Create a draft reply to the latest email from sarah@company.com thanking her for the proposal and requesting a meeting next week"
+    ```
+
+    **What happens:**
+    - Finds the original email thread
+    - Creates a draft reply in context
+    - Includes professional formatting
+  </Tab>
+
+  <Tab title="Email Search">
+    **Scenario:** Find specific emails quickly
+
+    **Prompt:**
+    ```text
+    "Find all emails with attachments from last month about invoices"
+    ```
+
+    **What happens:**
+    - Searches with multiple filters
+    - Returns matching emails
+    - Lists attachment details
+  </Tab>
+
+  <Tab title="Thread Cleanup">
+    **Scenario:** Archive old conversation threads
+
+    **Prompt:**
+    ```text
+    "Move all threads older than 30 days with the 'Newsletter' label to archive"
+    ```
+
+    **What happens:**
+    - Identifies matching threads
+    - Removes from inbox
+    - Applies archive label
+  </Tab>
+
+  <Tab title="Contact Lookup">
+    **Scenario:** Find contact information
+
+    **Prompt:**
+    ```text
+    "Get all contact information for people I've emailed at acme.com"
+    ```
+
+    **What happens:**
+    - Searches contacts and interactions
+    - Returns contact details
+    - Shows email history
+  </Tab>
+</Tabs>
+
+## Authentication
+
+<Info>
+  **OAuth2 Authentication**: This connection uses OAuth2 for secure authentication through Composio.
+</Info>
+
+### How It Works
+
+When you connect Gmail in NimbleBrain Studio:
+
+1. You'll be redirected to Google's authorization page
+2. Log in with your Google account
+3. Review and grant permissions
+4. You're automatically redirected back to Studio
+
+### Required Scopes
+
+The integration requests the following Gmail scopes:
+
+**Email Scopes:**
+- `gmail.readonly` - Read email messages and settings
+- `gmail.modify` - Read, send, delete, and manage labels
+- `gmail.compose` - Create and send new emails
+- `gmail.send` - Send email on your behalf
+
+**Contact Scopes:**
+- `contacts.readonly` - Read contacts
+- `contacts.other.readonly` - Read "other contacts"
+
+**Profile Scopes:**
+- `userinfo.email` - View email address
+- `userinfo.profile` - View basic profile info
+
+<Tip>
+  You can manage connected apps in your Google Account under **Security** → **Third-party apps with account access**.
+</Tip>
+
+## Rate Limits
+
+Gmail API enforces quota limits:
+
+| Limit Type | Restriction |
+|------------|-------------|
+| Daily sending | 500 emails/day (consumer), 2,000/day (Workspace) |
+| Per-user rate | 250 quota units per user per second |
+| Batch requests | 100 requests per batch |
+
+**Quota Units by Operation:**
+- `messages.list` - 5 units
+- `messages.get` - 5 units
+- `messages.send` - 100 units
+- `drafts.create` - 10 units
+- `labels.list` - 1 unit
+
+<Info>
+  Studio automatically handles rate limiting with exponential backoff for retries.
+</Info>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection Failed" icon="triangle-exclamation">
+    **Issue:** OAuth authorization didn't complete
+
+    **Solutions:**
+    - Ensure you're logged into the correct Google account
+    - Try a different browser or incognito mode
+    - Check popup blockers aren't interfering
+    - Verify your Google account is active
+    - For Workspace accounts, check admin policies
+  </Accordion>
+
+  <Accordion title="Permission Denied" icon="lock">
+    **Issue:** Insufficient privileges error
+
+    **Solutions:**
+    - Reconnect to grant additional scopes
+    - For Workspace, ensure app is approved by admin
+    - Check if Gmail API is enabled in Google Cloud Console
+    - Verify account isn't restricted
+  </Accordion>
+
+  <Accordion title="Email Not Found" icon="envelope-circle-xmark">
+    **Issue:** Cannot find specified email
+
+    **Solutions:**
+    - Verify the message ID is correct
+    - Email may have been deleted or moved
+    - Check trash and spam folders
+    - Try searching with different criteria
+  </Accordion>
+
+  <Accordion title="Send Failed" icon="paper-plane">
+    **Issue:** Cannot send email
+
+    **Solutions:**
+    - Check daily sending quota hasn't been exceeded
+    - Verify recipient addresses are valid
+    - Ensure compose scope is authorized
+    - Check for attachment size limits (25MB)
+  </Accordion>
+
+  <Accordion title="Label Operations Failed" icon="tag">
+    **Issue:** Cannot create or modify labels
+
+    **Solutions:**
+    - System labels cannot be modified
+    - Label names must be unique
+    - Check for special characters in label name
+    - Verify modify scope is authorized
+  </Accordion>
+
+  <Accordion title="Rate Limit Exceeded" icon="gauge">
+    **Issue:** Too many requests error
+
+    **Solutions:**
+    - Wait for rate limit to reset
+    - Reduce frequency of requests
+    - Batch operations when possible
+    - Studio automatically handles retries
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Email Organization" icon="folder-tree">
+    - Use labels consistently
+    - Create filters for auto-labeling
+    - Archive instead of delete when possible
+    - Use threads for related conversations
+    - Keep inbox manageable
+  </Card>
+
+  <Card title="Security" icon="shield">
+    - Review connected apps regularly
+    - Use specific scopes, not full access
+    - Don't store sensitive data in drafts
+    - Monitor for unusual activity
+    - Revoke access when not needed
+  </Card>
+
+  <Card title="Performance" icon="gauge-high">
+    - Use filters to limit search results
+    - Batch operations when possible
+    - Cache frequently accessed data
+    - Use pagination for large lists
+    - Fetch only needed message parts
+  </Card>
+
+  <Card title="Communication" icon="comments">
+    - Use drafts for review before sending
+    - Reply in threads for context
+    - Include clear subject lines
+    - Test templates before bulk use
+    - Monitor delivery status
+  </Card>
+</CardGroup>
+
+## Links and Resources
+
+<CardGroup cols={2}>
+  <Card title="Composio Gmail Docs" icon="book" href="https://mcp.composio.dev/gmail">
+    Full documentation for all Gmail tools
+  </Card>
+
+  <Card title="Gmail API Reference" icon="code" href="https://developers.google.com/gmail/api">
+    Official Gmail API documentation
+  </Card>
+
+  <Card title="Gmail Help Center" icon="circle-question" href="https://support.google.com/mail">
+    Gmail support and troubleshooting
+  </Card>
+
+  <Card title="Google Cloud Console" icon="cloud" href="https://console.cloud.google.com/">
+    Manage API quotas and credentials
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://discord.gg/nimblebrain) or email support@nimblebrain.ai

@@ -1,0 +1,551 @@
+---
+title: 'Google Sheets'
+description: 'Spreadsheet automation for creating, reading, updating, and analyzing data in Google Sheets'
+icon: 'table'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="table">
+    Google Sheets MCP Server connects AI tools directly to your Google Sheets, enabling natural language interactions with spreadsheets, data analysis, and automation.
+
+    **Powered by [Composio](https://composio.dev)** with **38+ tools** for spreadsheet automation.
+
+    **Key Features:**
+    - Create and manage spreadsheets
+    - Read and write cell data
+    - Execute SQL queries on sheet data
+    - Create charts and visualizations
+    - Apply formatting to cells
+    - Manage worksheets and tabs
+    - Aggregate and analyze data
+    - Clear and update values by filters
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **Data Management:**
+    - Import and organize data from various sources
+    - Update records programmatically
+    - Maintain inventory and tracking sheets
+    - Sync data across multiple sheets
+
+    **Reporting & Analysis:**
+    - Generate automated reports
+    - Create dashboards with charts
+    - Aggregate data with SQL queries
+    - Calculate statistics and summaries
+
+    **Automation:**
+    - Auto-populate sheets from other systems
+    - Create templated spreadsheets
+    - Bulk update records
+    - Format data for consistency
+  </Card>
+</CardGroup>
+
+<Info>
+  This connection is powered by [Composio](https://mcp.composio.dev/googlesheets) and provides access to 38+ Google Sheets tools through the Model Context Protocol (MCP).
+</Info>
+
+## Quick Start
+
+<Steps>
+  <Step title="Connect Your Google Account">
+    NimbleBrain Studio uses OAuth2 to securely connect to your Google account.
+
+    1. Navigate to **Connections** in the sidebar
+    2. Click **Browse Catalog**
+    3. Search for "Google Sheets"
+    4. Click **Install**
+    5. Click **Connect** and authorize with your Google account
+    6. Grant the requested permissions for Google Sheets access
+
+    <Tip>
+      OAuth2 provides secure, token-based authentication. You'll need to authorize access to your Google Sheets data.
+    </Tip>
+  </Step>
+
+  <Step title="Verify Connection">
+    Once connected, test the integration:
+
+    ```text
+    "List all worksheets in my Sales Report spreadsheet"
+    ```
+
+    **Other test prompts:**
+    - "Create a new spreadsheet called 'Q4 Budget'"
+    - "Get data from cells A1:D10 in my inventory sheet"
+    - "Add a new row to my contacts spreadsheet"
+  </Step>
+</Steps>
+
+## Available Tools
+
+The Google Sheets connection provides **38+ tools** organized into the following categories:
+
+### Spreadsheet Management
+
+<AccordionGroup>
+  <Accordion title="Spreadsheet Operations" icon="file-spreadsheet">
+    Create and manage Google Sheets spreadsheets.
+
+    | Tool | Description |
+    |------|-------------|
+    | `GOOGLESHEETS_CREATE_GOOGLE_SHEET1` | Create a new Google spreadsheet in Google Drive with a specified title |
+    | `GOOGLESHEETS_GET_SPREADSHEET_BY_DATA_FILTER` | Retrieve spreadsheet data filtered by criteria (A1 notation, metadata, grid ranges) |
+
+    **Example Usage:**
+    ```text
+    "Create a new spreadsheet called 'Monthly Expenses 2025'"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Worksheet Management
+
+<AccordionGroup>
+  <Accordion title="Worksheet Operations" icon="layer-group">
+    Create, find, and manage individual worksheets (tabs) within spreadsheets.
+
+    | Tool | Description |
+    |------|-------------|
+    | `GOOGLESHEETS_ADD_SHEET` | Add a new worksheet to a spreadsheet with optional title, index, and size |
+    | `GOOGLESHEETS_DELETE_SHEET` | Remove a worksheet from a spreadsheet |
+    | `GOOGLESHEETS_FIND_WORKSHEET` | Find a worksheet by its exact, case-sensitive title |
+    | `GOOGLESHEETS_LIST_WORKSHEETS` | List all worksheet names from a spreadsheet |
+
+    **Example Usage:**
+    ```text
+    "Add a new worksheet called 'March Data' to my budget spreadsheet"
+    ```
+
+    <Tip>
+      Worksheet titles are case-sensitive when using the find operation.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+### Data Reading
+
+<AccordionGroup>
+  <Accordion title="Read Operations" icon="eye">
+    Retrieve data from spreadsheets using various methods.
+
+    | Tool | Description |
+    |------|-------------|
+    | `GOOGLESHEETS_BATCH_GET` | Retrieve data from specified cell ranges using A1 notation |
+    | `GOOGLESHEETS_GET_SPREADSHEET_BY_DATA_FILTER` | Get filtered data based on criteria |
+
+    **Example Usage:**
+    ```text
+    "Get all data from cells A1:F100 in my Sales sheet"
+    ```
+
+    <Note>
+      Use A1 notation for ranges (e.g., "Sheet1!A1:D10" or "A1:Z100").
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Data Writing
+
+<AccordionGroup>
+  <Accordion title="Write Operations" icon="pen">
+    Write, update, and append data to spreadsheets.
+
+    | Tool | Description |
+    |------|-------------|
+    | `GOOGLESHEETS_BATCH_UPDATE` | Update cell ranges with new values or append as new rows |
+    | `GOOGLESHEETS_BATCH_UPDATE_VALUES_BY_DATA_FILTER` | Update values in ranges matching data filter criteria |
+    | `GOOGLESHEETS_CREATE_SPREADSHEET_ROW` | Insert empty rows at specified indices |
+    | `GOOGLESHEETS_CREATE_SPREADSHEET_COLUMN` | Insert new columns at specified positions |
+    | `GOOGLESHEETS_APPEND_DIMENSION` | Add empty rows or columns to expand sheet size |
+
+    **Example Usage:**
+    ```text
+    "Add a new row with data: John Smith, john@email.com, Sales, $75000"
+    ```
+
+    <Tip>
+      Use `BATCH_UPDATE` without a starting position to append data as new rows.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+### Data Manipulation
+
+<AccordionGroup>
+  <Accordion title="Clear & Delete Operations" icon="eraser">
+    Clear cell contents and delete rows/columns.
+
+    | Tool | Description |
+    |------|-------------|
+    | `GOOGLESHEETS_CLEAR_VALUES` | Clear cell content (preserves formatting and notes) from a range |
+    | `GOOGLESHEETS_DELETE_DIMENSION` | Remove specified rows or columns from sheets |
+    | `GOOGLESHEETS_CLEAR_BASIC_FILTER` | Remove basic filters from a sheet |
+
+    **Example Usage:**
+    ```text
+    "Clear all data from cells B2:D50 in the Report sheet"
+    ```
+
+    <Note>
+      Clearing values preserves cell formatting and notes. Use delete operations to remove entire rows/columns.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### SQL Queries
+
+<AccordionGroup>
+  <Accordion title="SQL Operations" icon="database">
+    Execute SQL queries against spreadsheet data for powerful data manipulation.
+
+    | Tool | Description |
+    |------|-------------|
+    | `GOOGLESHEETS_EXECUTE_SQL` | Execute SELECT, INSERT, UPDATE, DELETE queries on sheet data |
+
+    **Example Usage:**
+    ```text
+    "Run SQL: SELECT name, email FROM Customers WHERE status = 'Active'"
+    ```
+
+    **Supported Operations:**
+    - `SELECT` - Query and filter data
+    - `INSERT` - Add new records
+    - `UPDATE` - Modify existing records
+    - `DELETE` - Remove records
+
+    <Warning>
+      Tables are automatically detected from spreadsheet structure. Column headers become field names.
+    </Warning>
+  </Accordion>
+</AccordionGroup>
+
+### Data Analysis
+
+<AccordionGroup>
+  <Accordion title="Aggregation Operations" icon="calculator">
+    Perform calculations and analysis on spreadsheet data.
+
+    | Tool | Description |
+    |------|-------------|
+    | `GOOGLESHEETS_AGGREGATE_COLUMN_DATA` | Search rows by column value and perform math operations (sum, avg, count, min, max, percentage) |
+
+    **Example Usage:**
+    ```text
+    "Calculate the sum of column D where column A equals 'Completed'"
+    ```
+
+    **Supported Operations:**
+    - Sum
+    - Average
+    - Count
+    - Minimum
+    - Maximum
+    - Percentage
+  </Accordion>
+</AccordionGroup>
+
+### Charts & Visualization
+
+<AccordionGroup>
+  <Accordion title="Chart Operations" icon="chart-pie">
+    Create visual representations of your data.
+
+    | Tool | Description |
+    |------|-------------|
+    | `GOOGLESHEETS_CREATE_CHART` | Generate charts using specified data ranges and chart types |
+
+    **Supported Chart Types:**
+    - BAR
+    - LINE
+    - AREA
+    - COLUMN
+    - SCATTER
+    - COMBO
+    - STEPPED_AREA
+
+    **Example Usage:**
+    ```text
+    "Create a bar chart from columns A and B showing sales by region"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Formatting
+
+<AccordionGroup>
+  <Accordion title="Format Operations" icon="paintbrush">
+    Apply visual formatting to cells and ranges.
+
+    | Tool | Description |
+    |------|-------------|
+    | `GOOGLESHEETS_FORMAT_CELLS` | Apply text and background formatting to cell ranges |
+
+    **Example Usage:**
+    ```text
+    "Format cells A1:D1 with bold text and blue background"
+    ```
+
+    <Tip>
+      Formatting helps create professional-looking reports and dashboards.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+  This is a summary of the most commonly used tools. For the complete list, visit the [Composio Google Sheets documentation](https://mcp.composio.dev/googlesheets).
+</Note>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Sales Report">
+    **Scenario:** Generate a weekly sales report
+
+    **Prompt:**
+    ```text
+    "Create a new spreadsheet called 'Weekly Sales Report', add columns for Date, Product, Quantity, Revenue, and add a chart showing revenue by product"
+    ```
+
+    **What happens:**
+    - Creates new spreadsheet
+    - Sets up column headers
+    - Generates chart visualization
+    - Returns spreadsheet link
+  </Tab>
+
+  <Tab title="Data Import">
+    **Scenario:** Import and organize customer data
+
+    **Prompt:**
+    ```text
+    "Add these customers to my Contacts sheet: John Smith (john@email.com, Sales), Jane Doe (jane@email.com, Marketing)"
+    ```
+
+    **What happens:**
+    - Finds the Contacts worksheet
+    - Appends new rows with data
+    - Maintains existing formatting
+  </Tab>
+
+  <Tab title="SQL Analysis">
+    **Scenario:** Query data using SQL syntax
+
+    **Prompt:**
+    ```text
+    "Run a SQL query on my Orders sheet: SELECT product, SUM(quantity) as total FROM Orders GROUP BY product ORDER BY total DESC"
+    ```
+
+    **What happens:**
+    - Parses SQL query
+    - Executes against sheet data
+    - Returns aggregated results
+  </Tab>
+
+  <Tab title="Data Aggregation">
+    **Scenario:** Calculate totals and summaries
+
+    **Prompt:**
+    ```text
+    "Calculate the total revenue from my Sales sheet where the Region column equals 'North America'"
+    ```
+
+    **What happens:**
+    - Filters rows by criteria
+    - Aggregates revenue column
+    - Returns calculated total
+  </Tab>
+
+  <Tab title="Dashboard Creation">
+    **Scenario:** Build a visual dashboard
+
+    **Prompt:**
+    ```text
+    "In my Metrics spreadsheet, create a line chart showing monthly revenue trends from columns A (months) and B (revenue)"
+    ```
+
+    **What happens:**
+    - Reads specified data range
+    - Creates line chart
+    - Embeds chart in spreadsheet
+  </Tab>
+</Tabs>
+
+## Authentication
+
+<Info>
+  **OAuth2 Authentication**: This connection uses OAuth2 for secure authentication through Composio.
+</Info>
+
+### How It Works
+
+When you connect Google Sheets in NimbleBrain Studio:
+
+1. You'll be redirected to Google's authorization page
+2. Log in with your Google account
+3. Review and grant permissions
+4. You're automatically redirected back to Studio
+
+### Required Scopes
+
+The integration requests the following Google Sheets scopes:
+
+**Spreadsheet Scopes:**
+- `spreadsheets` - Full read/write access to spreadsheets
+- `spreadsheets.readonly` - Read-only access (if limited access preferred)
+
+**Drive Scopes (for spreadsheet creation):**
+- `drive.file` - Access to files created by the app
+- `drive` - Full Drive access (for browsing existing files)
+
+<Tip>
+  You can manage connected apps in your Google Account under **Security** → **Third-party apps with account access**.
+</Tip>
+
+## Rate Limits
+
+Google Sheets API enforces quota limits:
+
+| Limit Type | Restriction |
+|------------|-------------|
+| Read requests | 300 per minute per project |
+| Write requests | 300 per minute per project |
+| Per-user limit | 60 requests per minute per user |
+
+<Info>
+  Studio automatically handles rate limiting with exponential backoff for retries.
+</Info>
+
+**Best Practices for Rate Limits:**
+- Batch multiple operations when possible
+- Use `BATCH_GET` instead of multiple individual reads
+- Use `BATCH_UPDATE` for multiple writes
+- Implement appropriate delays for bulk operations
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection Failed" icon="triangle-exclamation">
+    **Issue:** OAuth authorization didn't complete
+
+    **Solutions:**
+    - Ensure you're logged into the correct Google account
+    - Try a different browser or incognito mode
+    - Check popup blockers aren't interfering
+    - Verify your Google account is active
+    - Clear browser cache and cookies
+  </Accordion>
+
+  <Accordion title="Permission Denied" icon="lock">
+    **Issue:** Insufficient privileges error
+
+    **Solutions:**
+    - Reconnect to grant additional scopes
+    - Check you have edit access to the spreadsheet
+    - Verify the spreadsheet isn't restricted
+    - For organization accounts, check admin policies
+  </Accordion>
+
+  <Accordion title="Spreadsheet Not Found" icon="file-circle-xmark">
+    **Issue:** Cannot find specified spreadsheet
+
+    **Solutions:**
+    - Verify the spreadsheet ID is correct
+    - Ensure you have access to the spreadsheet
+    - Check if the spreadsheet was moved or deleted
+    - Try using the full spreadsheet URL
+  </Accordion>
+
+  <Accordion title="Invalid Range" icon="table-cells">
+    **Issue:** A1 notation range error
+
+    **Solutions:**
+    - Use correct A1 notation format (e.g., "Sheet1!A1:D10")
+    - Include sheet name if not using first sheet
+    - Verify the range exists in the spreadsheet
+    - Check for typos in sheet names (case-sensitive)
+  </Accordion>
+
+  <Accordion title="Rate Limit Exceeded" icon="gauge">
+    **Issue:** Too many requests error
+
+    **Solutions:**
+    - Wait for rate limit to reset (1 minute)
+    - Reduce frequency of requests
+    - Batch operations together
+    - Studio automatically handles retries
+  </Accordion>
+
+  <Accordion title="SQL Query Failed" icon="database">
+    **Issue:** SQL query returns error
+
+    **Solutions:**
+    - Verify table/column names match sheet headers
+    - Check SQL syntax is correct
+    - Ensure data types are compatible
+    - Use quotes around string values
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Data Organization" icon="folder-tree">
+    - Use consistent column headers
+    - Keep one data type per column
+    - Avoid merged cells in data ranges
+    - Use separate sheets for different data types
+    - Name sheets descriptively
+  </Card>
+
+  <Card title="Performance" icon="gauge-high">
+    - Batch read/write operations
+    - Limit range sizes when possible
+    - Use specific ranges vs. entire columns
+    - Cache frequently accessed data
+    - Use filters to reduce data transfer
+  </Card>
+
+  <Card title="Data Integrity" icon="shield-check">
+    - Backup important spreadsheets
+    - Use data validation where appropriate
+    - Test queries on sample data first
+    - Avoid concurrent writes to same cells
+    - Document sheet structures
+  </Card>
+
+  <Card title="Collaboration" icon="users">
+    - Set appropriate sharing permissions
+    - Use named ranges for clarity
+    - Add comments for complex formulas
+    - Maintain version history
+    - Coordinate updates with team
+  </Card>
+</CardGroup>
+
+## Links and Resources
+
+<CardGroup cols={2}>
+  <Card title="Composio Google Sheets Docs" icon="book" href="https://mcp.composio.dev/googlesheets">
+    Full documentation for all Google Sheets tools
+  </Card>
+
+  <Card title="Google Sheets API Reference" icon="code" href="https://developers.google.com/sheets/api">
+    Official Google Sheets API documentation
+  </Card>
+
+  <Card title="A1 Notation Guide" icon="grid" href="https://developers.google.com/sheets/api/guides/concepts#a1_notation">
+    Learn about cell range notation
+  </Card>
+
+  <Card title="Google Cloud Console" icon="cloud" href="https://console.cloud.google.com/">
+    Manage API quotas and credentials
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://discord.gg/nimblebrain) or email support@nimblebrain.ai

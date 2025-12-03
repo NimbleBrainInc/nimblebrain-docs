@@ -25,6 +25,7 @@
           "studio/playbooks",
           "studio/connections",
           "studio/workspace-management",
+          "studio/use-cases",
           "studio/api-keys",
           "studio/activity-logs"
         ]

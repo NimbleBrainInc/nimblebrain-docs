@@ -24,6 +24,91 @@ Connections provides:
 - **Server Management**: View status, logs, and control installed servers
 - **Integration with Playbooks**: All installed servers are available to your playbooks
 
+## Connection Pricing
+
+NimbleBrain Studio offers connections in two tiers:
+
+<Tabs>
+  <Tab title="Free Tier">
+    **Available on all plans at no additional cost:**
+
+    <CardGroup cols={2}>
+      <Card title="NimbleMail" icon="envelope">
+        Send emails via AWS SES integration
+      </Card>
+      <Card title="NimbleNews" icon="newspaper">
+        News headlines and article search
+      </Card>
+      <Card title="NimbleSearch" icon="magnifying-glass">
+        Web search powered by Brave
+      </Card>
+      <Card title="NimbleWeather" icon="cloud-sun">
+        Weather data and forecasts
+      </Card>
+    </CardGroup>
+
+    <Tip>
+      These core connections are included with every NimbleBrain Studio account, making it easy to build automations for email, web search, news monitoring, and weather alerts.
+    </Tip>
+  </Tab>
+
+  <Tab title="Paid Tier">
+    **Available with paid subscription:**
+
+    All premium connections require a paid NimbleBrain Studio subscription:
+
+    **Business and Collaboration:**
+    - **Calendly** - Scheduling automation, event management, booking links, invitee tracking
+    - **Gmail** - Email automation, drafts, labels, threads, contacts
+    - **Google Sheets** - Spreadsheet automation, data analysis, SQL queries, charts
+    - **HubSpot** - CRM, marketing automation, sales pipeline management
+    - **Slack** - Team messaging, channels, file sharing, workflow automation
+    - **Zoom** - Video meetings, webinars, recordings, participant management
+
+    **Developer Tools:**
+    - **GitHub** - Repositories, issues, pull requests, Actions, code search
+    - **Ref** - Token-efficient documentation search for 1000+ sites
+
+    **Finance and Market Data:**
+    - **Finnhub** - Stock quotes, company fundamentals, financial news, market analysis
+
+    **Document Processing:**
+    - **PDF.co** - PDF manipulation, OCR, document automation, conversion
+
+    **Data and Analytics:**
+    - **ClickHouse** - OLAP database analytics and data warehousing
+    - **PostgreSQL** - Full database access with read/write capabilities
+
+    **Data Intelligence:**
+    - **Abstract API** - Email/phone validation, IP geolocation, company enrichment
+    - **IPInfo** - IP geolocation and network intelligence
+
+    **Language and Translation:**
+    - **DeepL** - Professional AI translation in 30+ languages
+
+    **Search and Research:**
+    - **Tavily** - AI-powered web search, content extraction, crawling
+
+    **Weather and Environment:**
+    - **OpenWeatherMap** - Weather, solar radiation, air quality data
+
+    **Travel and Recreation:**
+    - **National Parks** - US National Parks Service data
+
+    **Utilities:**
+    - **Echo** - Testing and debugging MCP connections
+    - **Reverse Text** - Text manipulation and analysis
+
+    <Info>
+      Paid tier includes all free tier connections plus access to 18+ premium integrations. [View pricing →](https://www.nimblebrain.ai/pricing)
+    </Info>
+  </Tab>
+</Tabs>
+
+<Warning>
+**Important:** Attempting to use paid-tier connections without a valid subscription will result in connection errors. Upgrade your plan to access premium integrations.
+</Warning>
+
 ## Installed Servers
 
 The Installed Servers tab shows all MCP servers currently running in your workspace:
@@ -77,7 +162,7 @@ The catalog contains MCP servers from the NimbleBrain community registry.
 
 Servers are organized into categories:
 
-<CardGroup cols={3}>
+<CardGroup cols={2}>
   <Card title="All" icon="grid" href="/docs/mcp-servers/overview">
     View all available servers
   </Card>
@@ -89,6 +174,9 @@ Servers are organized into categories:
   </Card>
   <Card title="Infrastructure Data" icon="server" href="/docs/mcp-servers/overview">
     Database access (PostgreSQL, ClickHouse)
+  </Card>
+  <Card title="Business and Collaboration" icon="users" href="/docs/mcp-servers/overview">
+    CRM, communication, and team collaboration tools
   </Card>
 </CardGroup>
 
@@ -170,7 +258,7 @@ Here are all the MCP servers available in the catalog:
   </Accordion>
 </AccordionGroup>
 
-### Search & Research
+### Search and Research
 
 <AccordionGroup>
   <Accordion title="Tavily">
@@ -190,7 +278,7 @@ Here are all the MCP servers available in the catalog:
   </Accordion>
 </AccordionGroup>
 
-### Databases & Analytics
+### Databases and Analytics
 
 <AccordionGroup>
   <Accordion title="ClickHouse">
@@ -215,7 +303,7 @@ Here are all the MCP servers available in the catalog:
   </Accordion>
 </AccordionGroup>
 
-### Language & Translation
+### Language and Translation
 
 <AccordionGroup>
   <Accordion title="DeepL">
@@ -225,7 +313,42 @@ Here are all the MCP servers available in the catalog:
   </Accordion>
 </AccordionGroup>
 
-### Travel & Recreation
+### Business and Collaboration
+
+<AccordionGroup>
+  <Accordion title="Calendly">
+    Scheduling automation for managing events, invitees, and booking links. Create scheduling links, track no-shows, and set up webhooks. OAuth2 authentication.
+
+    [View Calendly Documentation →](/docs/mcp-servers/business/calendly)
+  </Accordion>
+  <Accordion title="Gmail">
+    Email automation for sending, receiving, organizing, and managing messages. Create drafts, manage labels, handle threads, and access contacts. OAuth2 authentication.
+
+    [View Gmail Documentation →](/docs/mcp-servers/business/gmail)
+  </Accordion>
+  <Accordion title="Google Sheets">
+    Spreadsheet automation for creating, reading, updating, and analyzing data. Execute SQL queries, create charts, and manage worksheets. OAuth2 authentication.
+
+    [View Google Sheets Documentation →](/docs/mcp-servers/business/googlesheets)
+  </Accordion>
+  <Accordion title="HubSpot">
+    CRM and marketing automation platform integration. Manage contacts, companies, deals, tickets, and marketing campaigns. OAuth2 authentication.
+
+    [View HubSpot Documentation →](/docs/mcp-servers/business/hubspot)
+  </Accordion>
+  <Accordion title="Slack">
+    Team communication and collaboration platform integration. Send messages, manage channels, retrieve conversation history, and automate workflows. OAuth2 authentication.
+
+    [View Slack Documentation →](/docs/mcp-servers/business/slack)
+  </Accordion>
+  <Accordion title="Zoom">
+    Video conferencing platform integration. Schedule meetings, manage participants, retrieve recordings, and configure meeting settings. OAuth2 authentication.
+
+    [View Zoom Documentation →](/docs/mcp-servers/business/zoom)
+  </Accordion>
+</AccordionGroup>
+
+### Travel and Recreation
 
 <AccordionGroup>
   <Accordion title="National Parks">
@@ -235,7 +358,7 @@ Here are all the MCP servers available in the catalog:
   </Accordion>
 </AccordionGroup>
 
-### Weather & Climate
+### Weather and Climate
 
 <AccordionGroup>
   <Accordion title="OpenWeatherMap">
@@ -259,7 +382,7 @@ Here are all the MCP servers available in the catalog:
 
 Some servers require configuration before they can be used:
 
-### API Keys & Secrets
+### API Keys and Secrets
 
 Servers that connect to external APIs need authentication:
 
