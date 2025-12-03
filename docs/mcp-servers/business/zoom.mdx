@@ -1,0 +1,507 @@
+---
+title: 'Zoom'
+description: 'Video conferencing platform integration for scheduling meetings, managing participants, and accessing recordings'
+icon: 'video'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="video">
+    Zoom MCP Server connects AI tools directly to your Zoom account, enabling natural language interactions with meetings, webinars, recordings, and user management.
+
+    **Powered by [Composio](https://composio.dev)** with **17+ tools** for video conferencing automation.
+
+    **Key Features:**
+    - Schedule and manage meetings
+    - Create and configure webinars
+    - Manage meeting registrants
+    - Access and download recordings
+    - Generate usage reports and analytics
+    - Get meeting summaries (AI Companion)
+    - List and manage devices
+    - Access archived files
+    - Track participant attendance
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **Meeting Management:**
+    - Automatically schedule team meetings
+    - Coordinate interview schedules
+    - Set up recurring standups and reviews
+    - Manage webinar registrations
+
+    **Analytics and Reporting:**
+    - Generate daily usage reports
+    - Track meeting attendance
+    - Analyze participant engagement
+    - Export recording analytics
+
+    **Automation:**
+    - Create meetings programmatically
+    - Download and archive recordings
+    - Manage webinar registrations at scale
+    - Generate AI-powered meeting summaries
+  </Card>
+</CardGroup>
+
+<Info>
+  This connection is powered by [Composio](https://mcp.composio.dev/zoom) and provides access to 17+ Zoom tools through the Model Context Protocol (MCP).
+</Info>
+
+## Quick Start
+
+<Steps>
+  <Step title="Connect Your Zoom Account">
+    NimbleBrain Studio uses OAuth2 to securely connect to your Zoom account.
+
+    1. Navigate to **Connections** in the sidebar
+    2. Click **Browse Catalog**
+    3. Search for "Zoom"
+    4. Click **Install**
+    5. Click **Connect** and authorize with your Zoom account
+    6. Grant the requested permissions
+
+    <Tip>
+      OAuth2 provides secure, token-based authentication. You'll need to authorize access to your Zoom account.
+    </Tip>
+  </Step>
+
+  <Step title="Verify Connection">
+    Once connected, test the integration:
+
+    ```text
+    "Show me my upcoming Zoom meetings"
+    ```
+
+    **Other test prompts:**
+    - "Schedule a team meeting for tomorrow at 2pm"
+    - "List all my Zoom recordings from last week"
+    - "Show me today's meeting attendance"
+  </Step>
+</Steps>
+
+## Available Tools
+
+The Zoom connection provides **17+ tools** organized into the following categories:
+
+### Meeting Management
+
+<AccordionGroup>
+  <Accordion title="Meeting Operations" icon="calendar">
+    Create, view, update, and manage Zoom meetings.
+
+    | Tool | Description |
+    |------|-------------|
+    | `ZOOM_CREATE_A_MEETING` | Schedule a new Zoom meeting (uses 'me' for user-level apps) |
+    | `ZOOM_GET_A_MEETING` | Get details about a specific meeting |
+    | `ZOOM_UPDATE_A_MEETING` | Update meeting settings and details |
+    | `ZOOM_LIST_MEETINGS` | List all scheduled meetings for a user |
+    | `ZOOM_GET_A_MEETING_SUMMARY` | Get AI-generated meeting summary (requires Pro+ and AI Companion) |
+
+    **Example Usage:**
+    ```text
+    "Schedule a team standup for tomorrow at 9am, 30 minutes long"
+    ```
+
+    <Note>
+      Meeting updates have a limit of 100 requests/day and 100 updates per meeting in 24 hours. Start time must be future-dated.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Meeting Participants
+
+<AccordionGroup>
+  <Accordion title="Participant Operations" icon="users">
+    Manage meeting registrants and track attendance.
+
+    | Tool | Description |
+    |------|-------------|
+    | `ZOOM_ADD_A_MEETING_REGISTRANT` | Register users for meetings (max 4,999 registrants) |
+    | `ZOOM_GET_PAST_MEETING_PARTICIPANTS` | Get list of attendees from past meetings (Pro+ required) |
+
+    **Example Usage:**
+    ```text
+    "Register john@example.com for the product demo meeting"
+    ```
+
+    <Tip>
+      Past meeting participants API requires Pro plan or higher and excludes solo participants.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+### Webinar Management
+
+<AccordionGroup>
+  <Accordion title="Webinar Operations" icon="presentation-screen">
+    Create and manage webinars for larger audiences (up to 10,000 attendees).
+
+    | Tool | Description |
+    |------|-------------|
+    | `ZOOM_GET_A_WEBINAR` | Get webinar details (requires Pro+ and webinar add-on) |
+    | `ZOOM_LIST_WEBINARS` | List all scheduled webinars for a user |
+    | `ZOOM_ADD_A_WEBINAR_REGISTRANT` | Register attendees for webinars |
+    | `ZOOM_LIST_WEBINAR_PARTICIPANTS` | Get list of past webinar participants |
+
+    **Example Usage:**
+    ```text
+    "Show me all upcoming webinars"
+    ```
+
+    <Warning>
+      Webinar features require Pro plan or higher plus the webinar add-on. Only unexpired webinars are listed.
+    </Warning>
+  </Accordion>
+</AccordionGroup>
+
+### Recordings
+
+<AccordionGroup>
+  <Accordion title="Recording Operations" icon="record-vinyl">
+    Access, download, and manage cloud recordings.
+
+    | Tool | Description |
+    |------|-------------|
+    | `ZOOM_LIST_ALL_RECORDINGS` | List all cloud recordings for a user |
+    | `ZOOM_GET_MEETING_RECORDINGS` | Get recordings for a specific meeting (includes download URL) |
+    | `ZOOM_DELETE_MEETING_RECORDINGS` | Delete all recordings for a meeting |
+
+    **Example Usage:**
+    ```text
+    "Show me all recordings from last month"
+    ```
+
+    <Note>
+      Cloud recording must be enabled on your account. Use the download URL from `GET_MEETING_RECORDINGS` to download files.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Reports & Analytics
+
+<AccordionGroup>
+  <Accordion title="Report Operations" icon="chart-line">
+    Generate usage reports and analytics.
+
+    | Tool | Description |
+    |------|-------------|
+    | `ZOOM_GET_DAILY_USAGE_REPORT` | Get daily Zoom usage details (new users, meetings, participants, minutes) |
+
+    **Example Usage:**
+    ```text
+    "Show me Zoom usage statistics for last week"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Devices & Archives
+
+<AccordionGroup>
+  <Accordion title="Device & Archive Operations" icon="server">
+    Manage devices and archived files.
+
+    | Tool | Description |
+    |------|-------------|
+    | `ZOOM_LIST_DEVICES` | List all devices associated with the account |
+    | `ZOOM_LIST_ARCHIVED_FILES` | List archived meeting data (requires archiving feature) |
+
+    **Example Usage:**
+    ```text
+    "List all devices registered to my Zoom account"
+    ```
+
+    <Tip>
+      Meeting archiving requires the archiving feature to be enabled and is used for compliance purposes.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+  This is the complete list of available tools. For the most up-to-date information, visit the [Composio Zoom documentation](https://mcp.composio.dev/zoom).
+</Note>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Daily Standup">
+    **Scenario:** Set up recurring team standup meetings
+
+    **Prompt:**
+    ```text
+    "Create a Zoom meeting called 'Engineering Daily Standup' for tomorrow at 9am, 30 minutes long"
+    ```
+
+    **What happens:**
+    - Creates meeting with specified settings
+    - Generates meeting link
+    - Returns meeting ID and join URL
+  </Tab>
+
+  <Tab title="Webinar Registration">
+    **Scenario:** Register multiple attendees for a webinar
+
+    **Prompt:**
+    ```text
+    "Register these emails for the Product Launch webinar: john@example.com, sarah@example.com, mike@example.com"
+    ```
+
+    **What happens:**
+    - Adds registrants to webinar
+    - Each registrant receives confirmation
+    - Tracks registration count
+  </Tab>
+
+  <Tab title="Recording Access">
+    **Scenario:** Find and download meeting recordings
+
+    **Prompt:**
+    ```text
+    "List all recordings from the Board Meeting held last week and get the download links"
+    ```
+
+    **What happens:**
+    - Searches recordings by date
+    - Returns recording details
+    - Provides download URLs
+  </Tab>
+
+  <Tab title="Usage Analytics">
+    **Scenario:** Track team Zoom usage
+
+    **Prompt:**
+    ```text
+    "Show me daily Zoom usage for the past week including total meetings and participants"
+    ```
+
+    **What happens:**
+    - Retrieves daily usage data
+    - Shows new users, meetings, participants
+    - Calculates total minutes used
+  </Tab>
+
+  <Tab title="Meeting Summary">
+    **Scenario:** Get AI-powered meeting summary
+
+    **Prompt:**
+    ```text
+    "Get the meeting summary for yesterday's product planning meeting"
+    ```
+
+    **What happens:**
+    - Retrieves AI Companion summary
+    - Returns key discussion points
+    - Lists action items (if available)
+
+    <Note>
+      Requires Pro+ plan with AI Companion enabled. Not available for E2EE meetings.
+    </Note>
+  </Tab>
+</Tabs>
+
+## Authentication
+
+<Info>
+  **OAuth2 Authentication**: This connection uses OAuth2 for secure authentication through Composio.
+</Info>
+
+### How It Works
+
+When you connect Zoom in NimbleBrain Studio:
+
+1. You'll be redirected to Zoom's authorization page
+2. Log in with your Zoom account
+3. Review and grant permissions
+4. You're automatically redirected back to Studio
+
+### Required Scopes
+
+The integration requests scopes based on the features you need:
+
+**Meeting Scopes:**
+- `meeting:read` / `meeting:read:admin` - View meeting details
+- `meeting:write` / `meeting:write:admin` - Create and update meetings
+
+**Recording Scopes:**
+- `recording:read` / `recording:read:admin` - View recordings
+- `recording:write` / `recording:write:admin` - Manage recordings
+- `cloud_recording:read` - Access cloud recordings
+
+**Webinar Scopes:**
+- `webinar:read` / `webinar:read:admin` - View webinars
+- `webinar:write` / `webinar:write:admin` - Create webinars
+
+**User & Report Scopes:**
+- `user:read` / `user:read:admin` - View user info
+- `report:read:admin` - Access reports
+- `dashboard:read:admin` - View dashboard
+
+**Other Scopes:**
+- `meeting_summary:read` - Access AI meeting summaries
+
+<Tip>
+  You can manage connected apps in your Zoom account under **Settings** → **Apps**.
+</Tip>
+
+## Plan Requirements
+
+Different features require different Zoom plan levels:
+
+| Feature | Required Plan |
+|---------|---------------|
+| Basic meetings | Free |
+| Cloud recording | Pro+ |
+| Meeting summaries (AI) | Pro+ with AI Companion |
+| Webinars | Pro+ with Webinar add-on |
+| Past participants | Pro+ |
+| Admin reports | Pro+ |
+| Meeting archiving | Business+ with archiving |
+
+<Warning>
+  Free plan meetings are limited to 40 minutes for group meetings. Some API features require paid plans.
+</Warning>
+
+## Rate Limits
+
+Zoom enforces rate limits to ensure platform stability:
+
+| Limit Type | Restriction |
+|------------|-------------|
+| Meeting creation | 100/day (Free), higher on paid plans |
+| Meeting updates | 100 updates per meeting per 24 hours |
+| General API calls | 80 requests/second (varies by endpoint) |
+| Report generation | Lower limits (varies) |
+
+**Rate Limit Labels:**
+- **Light** - Higher limits, less restrictive
+- **Medium** - Standard limits
+- **Heavy** - More restrictive, use sparingly
+
+<Info>
+  Studio automatically handles rate limiting and retries with exponential backoff.
+</Info>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection Failed" icon="triangle-exclamation">
+    **Issue:** OAuth authorization didn't complete
+
+    **Solutions:**
+    - Ensure you're logged into the correct Zoom account
+    - Try a different browser or incognito mode
+    - Check popup blockers aren't interfering
+    - Verify your Zoom account is active
+  </Accordion>
+
+  <Accordion title="Permission Denied" icon="lock">
+    **Issue:** Insufficient privileges error
+
+    **Solutions:**
+    - Reconnect to grant additional scopes
+    - Verify your Zoom role has required permissions
+    - Some features require admin role
+    - Check your plan supports the feature
+  </Accordion>
+
+  <Accordion title="Meeting Summary Not Available" icon="sparkles">
+    **Issue:** Cannot get meeting summary
+
+    **Solutions:**
+    - Requires Pro plan or higher
+    - AI Companion must be enabled in account settings
+    - Not available for E2EE (end-to-end encrypted) meetings
+    - Summary may take time to generate after meeting ends
+  </Accordion>
+
+  <Accordion title="Webinar Features Unavailable" icon="presentation-screen">
+    **Issue:** Webinar API returns error
+
+    **Solutions:**
+    - Webinars require Pro plan or higher
+    - Must have webinar add-on purchased
+    - Verify webinar license is assigned to user
+    - Check webinar capacity matches your plan
+  </Accordion>
+
+  <Accordion title="Recording Not Found" icon="circle-xmark">
+    **Issue:** Cannot access recordings
+
+    **Solutions:**
+    - Cloud recording must be enabled on account
+    - Recording may still be processing
+    - Check if recording was deleted
+    - Verify you have access to the host's recordings
+  </Accordion>
+
+  <Accordion title="Rate Limit Exceeded" icon="gauge">
+    **Issue:** Too many requests error
+
+    **Solutions:**
+    - Wait for rate limit to reset
+    - Reduce frequency of requests
+    - Upgrade plan for higher limits
+    - Studio automatically handles retries
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Meeting Organization" icon="folder-tree">
+    - Use consistent naming conventions
+    - Set appropriate meeting durations
+    - Enable waiting rooms for external meetings
+    - Use passwords for sensitive meetings
+    - Schedule recurring meetings for regulars
+  </Card>
+
+  <Card title="Security" icon="shield">
+    - Enable waiting rooms for client meetings
+    - Use passwords for all meetings
+    - Lock meetings once started
+    - Control screen sharing permissions
+    - Review connected apps regularly
+  </Card>
+
+  <Card title="Recording Management" icon="hard-drive">
+    - Set auto-recording for important meetings
+    - Download and archive critical recordings
+    - Delete old recordings to save storage
+    - Use archiving for compliance needs
+    - Set retention policies
+  </Card>
+
+  <Card title="Participant Experience" icon="user">
+    - Test settings before important meetings
+    - Send invites well in advance
+    - Use clear, descriptive meeting names
+    - Provide agenda in meeting description
+    - Enable captions for accessibility
+  </Card>
+</CardGroup>
+
+## Links and Resources
+
+<CardGroup cols={2}>
+  <Card title="Composio Zoom Docs" icon="book" href="https://mcp.composio.dev/zoom">
+    Full documentation for all Zoom tools
+  </Card>
+
+  <Card title="Zoom API Reference" icon="code" href="https://developers.zoom.us/docs/api/">
+    Official Zoom API documentation
+  </Card>
+
+  <Card title="Zoom Marketplace" icon="store" href="https://marketplace.zoom.us/">
+    Browse and manage Zoom apps
+  </Card>
+
+  <Card title="Zoom Status" icon="signal" href="https://status.zoom.us/">
+    Check Zoom service status
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://discord.gg/nimblebrain) or email support@nimblebrain.ai

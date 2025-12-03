@@ -1,0 +1,535 @@
+---
+title: 'HubSpot'
+description: 'CRM and marketing automation platform integration for managing contacts, deals, and campaigns'
+icon: 'hubspot'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="hubspot">
+    HubSpot MCP Server connects AI tools directly to your HubSpot CRM, enabling natural language interactions with contacts, companies, deals, tickets, and marketing campaigns.
+
+    **Powered by [Composio](https://composio.dev)** with **348+ tools** for comprehensive CRM automation.
+
+    **Key Features:**
+    - Contact and company management
+    - Deal pipeline tracking
+    - Ticket and customer service management
+    - Product and quote management
+    - Email and marketing campaigns
+    - Line items and invoicing
+    - GDPR-compliant data management
+    - Batch operations for bulk processing
+    - Custom properties and fields
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **Sales Automation:**
+    - Create and update deals automatically
+    - Track contact interactions and engagement
+    - Generate sales reports and forecasts
+    - Merge duplicate records
+
+    **Marketing Workflows:**
+    - Manage email campaigns and lists
+    - Track campaign performance metrics
+    - Segment contacts for targeting
+    - Associate assets with campaigns
+
+    **Customer Support:**
+    - Create and manage support tickets
+    - Track ticket resolution times
+    - Handle feedback submissions
+    - Route tickets to appropriate teams
+  </Card>
+</CardGroup>
+
+<Info>
+  This connection is powered by [Composio](https://mcp.composio.dev/hubspot) and provides access to 348+ HubSpot tools through the Model Context Protocol (MCP).
+</Info>
+
+## Quick Start
+
+<Steps>
+  <Step title="Connect Your HubSpot Account">
+    NimbleBrain Studio uses OAuth2 to securely connect to your HubSpot account.
+
+    1. Navigate to **Connections** in the sidebar
+    2. Click **Browse Catalog**
+    3. Search for "HubSpot"
+    4. Click **Install**
+    5. Click **Connect** and authorize with your HubSpot account
+    6. Grant the requested permissions
+
+    <Tip>
+      OAuth2 provides secure, token-based authentication without exposing your credentials.
+    </Tip>
+  </Step>
+
+  <Step title="Verify Connection">
+    Once connected, test the integration:
+
+    ```text
+    "Show me my recent HubSpot contacts"
+    ```
+
+    **Other test prompts:**
+    - "List my open deals in the pipeline"
+    - "Show companies created this week"
+    - "What tickets are currently open?"
+  </Step>
+</Steps>
+
+## Available Tools
+
+The HubSpot connection provides **348+ tools** organized into the following categories:
+
+### Contact Management
+
+<AccordionGroup>
+  <Accordion title="Contact Operations" icon="user">
+    Comprehensive tools for managing contact records in your CRM.
+
+    | Tool | Description |
+    |------|-------------|
+    | `HUBSPOT_CREATE_CONTACT` | Create a new contact with properties |
+    | `HUBSPOT_GET_CONTACT_BY_ID` | Retrieve a specific contact by ID |
+    | `HUBSPOT_UPDATE_CONTACT` | Update contact properties |
+    | `HUBSPOT_ARCHIVE_CONTACT_BY_ID` | Archive a contact (move to recycling bin) |
+    | `HUBSPOT_SEARCH_CONTACTS` | Search contacts with filters and criteria |
+    | `HUBSPOT_BATCH_READ_CONTACTS_BY_IDS_OR_PROPERTIES` | Batch read multiple contacts |
+    | `HUBSPOT_ARCHIVE_BATCH_OF_CONTACTS_BY_ID` | Archive multiple contacts at once |
+    | `HUBSPOT_UPDATE_A_BATCH_OF_CONTACTS` | Update multiple contacts in batch |
+    | `HUBSPOT_CREATE_A_BATCH_OF_CONTACTS` | Create multiple contacts at once |
+    | `HUBSPOT_MERGE_CONTACTS` | Merge two duplicate contact records |
+    | `HUBSPOT_GDPR_DELETE_CONTACT` | Permanently delete contact (GDPR compliant) |
+    | `HUBSPOT_PERMANENTLY_ERASE_CONTACT_VIA_EMAIL_FOR_COMPLIANCE` | Delete contact by email for GDPR |
+
+    **Example Usage:**
+    ```text
+    "Create a contact for Sarah Johnson at sarah@techstartup.com with title CTO"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Company Management
+
+<AccordionGroup>
+  <Accordion title="Company Operations" icon="building">
+    Manage company records and their relationships.
+
+    | Tool | Description |
+    |------|-------------|
+    | `HUBSPOT_CREATE_COMPANY` | Create a new company record |
+    | `HUBSPOT_GET_COMPANY_BY_ID` | Retrieve company details |
+    | `HUBSPOT_UPDATE_COMPANY` | Partial update of company properties |
+    | `HUBSPOT_ARCHIVE_COMPANY` | Archive a company (soft delete) |
+    | `HUBSPOT_SEARCH_COMPANIES` | Search companies with filters |
+    | `HUBSPOT_FETCH_MULTIPLE_COMPANIES_BY_IDS_OR_ATTRIBUTES` | Batch read companies |
+    | `HUBSPOT_ARCHIVE_BATCH_OF_COMPANIES_BY_ID` | Archive multiple companies |
+    | `HUBSPOT_UPDATE_A_BATCH_OF_COMPANIES` | Batch update companies |
+    | `HUBSPOT_CREATE_A_BATCH_OF_COMPANIES` | Create multiple companies |
+    | `HUBSPOT_MERGE_TWO_COMPANIES_WITH_SAME_TYPE` | Merge duplicate companies |
+
+    **Example Usage:**
+    ```text
+    "Create a company for Acme Corporation with domain acme.com in the SaaS industry"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Deal Management
+
+<AccordionGroup>
+  <Accordion title="Deal Operations" icon="handshake">
+    Track and manage sales opportunities through your pipeline.
+
+    | Tool | Description |
+    |------|-------------|
+    | `HUBSPOT_CREATE_DEAL` | Create a new deal/opportunity |
+    | `HUBSPOT_GET_DEAL_BY_ID` | Retrieve deal details |
+    | `HUBSPOT_UPDATE_DEAL` | Update deal properties and stage |
+    | `HUBSPOT_ARCHIVE_DEAL` | Archive a deal (soft delete) |
+    | `HUBSPOT_SEARCH_DEALS` | Search deals with filters |
+    | `HUBSPOT_READ_A_BATCH_OF_DEALS_BY_INTERNAL_ID_OR_UNIQUE_PROPERTY_VALUES` | Batch read deals |
+    | `HUBSPOT_ARCHIVE_BATCH_OF_DEALS_BY_ID` | Archive multiple deals |
+    | `HUBSPOT_UPDATE_A_BATCH_OF_DEALS` | Batch update deals |
+    | `HUBSPOT_CREATE_A_BATCH_OF_DEALS` | Create multiple deals |
+    | `HUBSPOT_MERGE_DEALS` | Merge duplicate deals |
+
+    **Example Usage:**
+    ```text
+    "Create a deal called 'Enterprise License - Acme Corp' for $50,000 in the proposal stage"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Ticket Management
+
+<AccordionGroup>
+  <Accordion title="Ticket Operations" icon="ticket">
+    Manage customer support tickets and service requests.
+
+    | Tool | Description |
+    |------|-------------|
+    | `HUBSPOT_CREATE_TICKET` | Create a new support ticket |
+    | `HUBSPOT_GET_TICKET_BY_ID` | Retrieve ticket details |
+    | `HUBSPOT_UPDATE_TICKET` | Update ticket status and properties |
+    | `HUBSPOT_ARCHIVE_TICKET` | Archive a ticket |
+    | `HUBSPOT_SEARCH_TICKETS` | Search tickets with filters |
+    | `HUBSPOT_LIST_TICKETS` | List tickets with pagination |
+    | `HUBSPOT_ARCHIVE_BATCH_OF_TICKETS_BY_ID` | Archive multiple tickets |
+    | `HUBSPOT_CREATE_A_BATCH_OF_TICKETS` | Bulk create tickets |
+    | `HUBSPOT_UPDATE_A_BATCH_OF_TICKETS` | Batch update tickets |
+
+    **Example Usage:**
+    ```text
+    "Create a high-priority ticket for Acme Corp about API integration issues"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Product & Quote Management
+
+<AccordionGroup>
+  <Accordion title="Product Operations" icon="box">
+    Manage your product catalog.
+
+    | Tool | Description |
+    |------|-------------|
+    | `HUBSPOT_CREATE_PRODUCT` | Create a new product |
+    | `HUBSPOT_GET_PRODUCT_BY_ID` | Retrieve product details |
+    | `HUBSPOT_UPDATE_PRODUCT` | Update product properties |
+    | `HUBSPOT_ARCHIVE_PRODUCT` | Archive a product |
+    | `HUBSPOT_SEARCH_PRODUCTS` | Search products with filters |
+    | `HUBSPOT_ADVANCED_PRODUCT_SEARCH_WITH_FILTERS_AND_PAGINATION` | Advanced product search |
+    | `HUBSPOT_ARCHIVE_BATCH_PRODUCTS_BY_ID` | Archive multiple products |
+    | `HUBSPOT_UPDATE_A_BATCH_OF_PRODUCTS` | Batch update products |
+    | `HUBSPOT_CREATE_A_BATCH_OF_PRODUCTS` | Create multiple products |
+  </Accordion>
+
+  <Accordion title="Quote Operations" icon="file-invoice-dollar">
+    Create and manage sales quotes.
+
+    | Tool | Description |
+    |------|-------------|
+    | `HUBSPOT_CREATE_QUOTE` | Create a new quote |
+    | `HUBSPOT_GET_QUOTE_BY_ID` | Retrieve quote details |
+    | `HUBSPOT_UPDATE_QUOTE` | Update quote properties |
+    | `HUBSPOT_ARCHIVE_QUOTE` | Archive a quote |
+    | `HUBSPOT_ARCHIVE_A_BATCH_OF_QUOTES_BY_ID` | Archive multiple quotes |
+    | `HUBSPOT_CREATE_A_BATCH_OF_QUOTES` | Bulk create quotes |
+    | `HUBSPOT_MERGE_TWO_QUOTES_WITH_SAME_TYPE` | Merge duplicate quotes |
+  </Accordion>
+</AccordionGroup>
+
+### Line Items
+
+<AccordionGroup>
+  <Accordion title="Line Item Operations" icon="list-ol">
+    Manage line items for deals and quotes.
+
+    | Tool | Description |
+    |------|-------------|
+    | `HUBSPOT_CREATE_LINE_ITEM` | Create a new line item |
+    | `HUBSPOT_GET_LINE_ITEM_BY_ID` | Retrieve line item details |
+    | `HUBSPOT_UPDATE_LINE_ITEM` | Update line item properties |
+    | `HUBSPOT_ARCHIVE_LINE_ITEM_BY_ID` | Archive a line item |
+    | `HUBSPOT_ARCHIVE_BATCH_OF_LINE_ITEMS_BY_ID` | Archive multiple line items |
+    | `HUBSPOT_MERGE_LINE_ITEMS` | Merge duplicate line items |
+  </Accordion>
+</AccordionGroup>
+
+### Email Management
+
+<AccordionGroup>
+  <Accordion title="Email Operations" icon="envelope">
+    Manage email records and marketing emails.
+
+    | Tool | Description |
+    |------|-------------|
+    | `HUBSPOT_CREATE_EMAIL` | Create an email record |
+    | `HUBSPOT_GET_EMAIL_BY_ID` | Retrieve email details |
+    | `HUBSPOT_UPDATE_EMAIL` | Update email properties |
+    | `HUBSPOT_ARCHIVE_EMAIL` | Archive an email (move to recycling bin) |
+    | `HUBSPOT_ARCHIVE_A_BATCH_OF_EMAILS_BY_ID` | Archive multiple emails |
+    | `HUBSPOT_ARCHIVE_EMAILS` | Archive multiple emails by IDs |
+  </Accordion>
+</AccordionGroup>
+
+### Feedback Submissions
+
+<AccordionGroup>
+  <Accordion title="Feedback Operations" icon="comment">
+    Manage customer feedback and survey submissions.
+
+    | Tool | Description |
+    |------|-------------|
+    | `HUBSPOT_GET_FEEDBACK_SUBMISSION` | Retrieve feedback details |
+    | `HUBSPOT_ARCHIVE_FEEDBACK_SUBMISSION` | Archive a feedback submission |
+    | `HUBSPOT_ARCHIVE_BATCH_OF_FEEDBACK_SUBMISSIONS_BY_ID` | Archive multiple submissions |
+    | `HUBSPOT_SEARCH_FEEDBACK_SUBMISSIONS` | Search feedback submissions |
+  </Accordion>
+</AccordionGroup>
+
+### Marketing Campaigns
+
+<AccordionGroup>
+  <Accordion title="Campaign Operations" icon="bullhorn">
+    Manage marketing campaigns and assets.
+
+    | Tool | Description |
+    |------|-------------|
+    | `HUBSPOT_ADD_ASSET_ASSOCIATION` | Associate assets (forms, lists, URLs) with campaigns |
+    | `HUBSPOT_GET_CAMPAIGN` | Retrieve campaign details |
+    | `HUBSPOT_LIST_CAMPAIGNS` | List marketing campaigns |
+  </Accordion>
+</AccordionGroup>
+
+### Properties & Schema
+
+<AccordionGroup>
+  <Accordion title="Property Operations" icon="sliders">
+    Manage custom properties for CRM objects.
+
+    | Tool | Description |
+    |------|-------------|
+    | `HUBSPOT_CREATE_PROPERTY` | Create a custom property |
+    | `HUBSPOT_GET_PROPERTY` | Retrieve property definition |
+    | `HUBSPOT_UPDATE_PROPERTY` | Update property settings |
+    | `HUBSPOT_ARCHIVE_PROPERTY` | Archive a property |
+    | `HUBSPOT_CREATE_A_BATCH_OF_PROPERTIES` | Create multiple properties |
+    | `HUBSPOT_ARCHIVE_BATCH_OF_PROPERTIES` | Archive multiple properties |
+    | `HUBSPOT_LIST_PROPERTIES` | List all properties for an object type |
+  </Accordion>
+</AccordionGroup>
+
+### CRM Objects (Generic)
+
+<AccordionGroup>
+  <Accordion title="Generic CRM Operations" icon="database">
+    Work with any CRM object type using generic endpoints.
+
+    | Tool | Description |
+    |------|-------------|
+    | `HUBSPOT_CREATE_CRM_OBJECT` | Create any CRM object type |
+    | `HUBSPOT_GET_CRM_OBJECT_BY_ID` | Retrieve any object by type and ID |
+    | `HUBSPOT_UPDATE_CRM_OBJECT` | Update any object's properties |
+    | `HUBSPOT_ARCHIVE_A_CRM_OBJECT_BY_ID` | Archive any object |
+    | `HUBSPOT_ARCHIVE_BATCH_OF_OBJECTS_BY_ID` | Archive multiple objects |
+    | `HUBSPOT_SEARCH_CRM_OBJECTS` | Search any object type |
+    | `HUBSPOT_BULK_CREATE_CRM_OBJECTS` | Bulk create any object type |
+  </Accordion>
+</AccordionGroup>
+
+### Associations
+
+<AccordionGroup>
+  <Accordion title="Association Operations" icon="link">
+    Manage relationships between CRM objects.
+
+    | Tool | Description |
+    |------|-------------|
+    | `HUBSPOT_CREATE_ASSOCIATION` | Create association between objects |
+    | `HUBSPOT_DELETE_ASSOCIATION` | Remove association between objects |
+    | `HUBSPOT_GET_ASSOCIATIONS` | List associations for an object |
+    | `HUBSPOT_BATCH_CREATE_ASSOCIATIONS` | Create multiple associations |
+    | `HUBSPOT_BATCH_DELETE_ASSOCIATIONS` | Remove multiple associations |
+  </Accordion>
+</AccordionGroup>
+
+### Event Templates
+
+<AccordionGroup>
+  <Accordion title="Event Template Operations" icon="calendar-plus">
+    Manage custom event templates for tracking.
+
+    | Tool | Description |
+    |------|-------------|
+    | `HUBSPOT_ADD_TOKEN_TO_EVENT_TEMPLATE` | Add custom data tokens to event templates |
+    | `HUBSPOT_CREATE_EVENT_TEMPLATE` | Create a new event template |
+    | `HUBSPOT_UPDATE_EVENT_TEMPLATE` | Update event template settings |
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+  This is a summary of the most commonly used tools. The full integration includes **348+ tools** covering all HubSpot API endpoints. For the complete list, visit the [Composio HubSpot documentation](https://mcp.composio.dev/hubspot).
+</Note>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Lead Qualification">
+    **Scenario:** Automatically qualify and route new leads
+
+    **Prompt:**
+    ```text
+    "A new lead came in: Emily Chen, email: emily@startup.io, company: StartupIO, interested in Enterprise plan. Create the contact, associate with their company, and create a follow-up task."
+    ```
+
+    **What happens:**
+    - Creates new contact with all details
+    - Creates or finds company record
+    - Associates contact with company
+    - Creates follow-up task
+  </Tab>
+
+  <Tab title="Bulk Operations">
+    **Scenario:** Update multiple records efficiently
+
+    **Prompt:**
+    ```text
+    "Archive all deals that have been in 'Lost' stage for more than 90 days"
+    ```
+
+    **What happens:**
+    - Searches for matching deals
+    - Uses batch archive operation
+    - Processes all records efficiently
+  </Tab>
+
+  <Tab title="Data Cleanup">
+    **Scenario:** Merge duplicate records
+
+    **Prompt:**
+    ```text
+    "Merge the duplicate contact records for john@example.com"
+    ```
+
+    **What happens:**
+    - Identifies duplicate records
+    - Merges into single record
+    - Preserves all associations and history
+  </Tab>
+
+  <Tab title="GDPR Compliance">
+    **Scenario:** Handle data deletion requests
+
+    **Prompt:**
+    ```text
+    "Permanently delete the contact sarah@example.com for GDPR compliance and add email to blocklist"
+    ```
+
+    **What happens:**
+    - Performs GDPR-compliant permanent deletion
+    - Removes all associated data
+    - Adds email to blocklist to prevent re-creation
+  </Tab>
+</Tabs>
+
+## Authentication
+
+<Info>
+  **OAuth2 Authentication**: This connection uses OAuth2 for secure authentication through Composio.
+</Info>
+
+### How It Works
+
+When you connect HubSpot in NimbleBrain Studio:
+
+1. You'll be redirected to HubSpot's authorization page
+2. Log in with your HubSpot account
+3. Grant the requested permissions
+4. You're automatically redirected back to Studio
+
+### Required Scopes
+
+The integration requests appropriate scopes based on your needs:
+
+**CRM Scopes:**
+- `crm.objects.contacts.read` / `.write` - Contact management
+- `crm.objects.companies.read` / `.write` - Company management
+- `crm.objects.deals.read` / `.write` - Deal management
+- `crm.objects.owners.read` - View team members
+- `crm.schemas.contacts.read` - Read object schemas
+
+**Service Scopes:**
+- `tickets` - Ticket management
+
+**Marketing Scopes:**
+- `content` - Content and email management
+
+<Tip>
+  Permissions are requested at connection time. You can review and manage connected apps in your HubSpot settings under **Integrations** → **Connected Apps**.
+</Tip>
+
+## Rate Limits
+
+HubSpot API has rate limits based on your subscription:
+
+| Plan | API Calls/Day | Burst Limit |
+|------|---------------|-------------|
+| Free | 250,000 | 100/10s |
+| Starter | 500,000 | 100/10s |
+| Professional | 1,000,000 | 150/10s |
+| Enterprise | Custom | 200/10s |
+
+<Warning>
+  Batch operations are more efficient and count as fewer API calls. Use them when working with multiple records.
+</Warning>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection Failed" icon="triangle-exclamation">
+    **Issue:** OAuth authorization didn't complete
+
+    **Solutions:**
+    - Ensure you're logged into the correct HubSpot account
+    - Check that your HubSpot account has API access
+    - Try disconnecting and reconnecting
+    - Clear browser cookies and try again
+  </Accordion>
+
+  <Accordion title="Permission Denied" icon="lock">
+    **Issue:** 403 Forbidden errors
+
+    **Solutions:**
+    - Reconnect to grant additional scopes
+    - Verify your HubSpot user role has required permissions
+    - Some features require Professional or Enterprise plans
+  </Accordion>
+
+  <Accordion title="Rate Limit Exceeded" icon="gauge">
+    **Issue:** 429 Too Many Requests
+
+    **Solutions:**
+    - Wait for rate limit to reset
+    - Use batch operations instead of individual calls
+    - Consider upgrading your HubSpot plan
+  </Accordion>
+
+  <Accordion title="Object Not Found" icon="magnifying-glass">
+    **Issue:** 404 Not Found
+
+    **Solutions:**
+    - Verify the record ID is correct
+    - Check if the record was archived or deleted
+    - Ensure you have permission to view the record
+  </Accordion>
+</AccordionGroup>
+
+## Links and Resources
+
+<CardGroup cols={2}>
+  <Card title="Composio HubSpot Docs" icon="book" href="https://mcp.composio.dev/hubspot">
+    Full documentation for all 348+ HubSpot tools
+  </Card>
+
+  <Card title="HubSpot API Reference" icon="code" href="https://developers.hubspot.com/docs/api/overview">
+    Official HubSpot API documentation
+  </Card>
+
+  <Card title="HubSpot Academy" icon="graduation-cap" href="https://academy.hubspot.com/">
+    Free training and certifications
+  </Card>
+
+  <Card title="HubSpot Community" icon="comments" href="https://community.hubspot.com/">
+    Get help from the HubSpot community
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://discord.gg/nimblebrain) or email support@nimblebrain.ai

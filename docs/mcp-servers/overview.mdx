@@ -31,6 +31,14 @@ Browse all available MCP servers alphabetically. Each server displays its catego
     **Tools:** Email validation, IP geolocation, phone validation, company data
   </Card>
 
+  <Card title="Calendly" icon="calendar-check" href="/docs/mcp-servers/business/calendly">
+    <sub>**Business and Collaboration**</sub>
+
+    Scheduling automation for managing events, invitees, booking links, and calendar integrations.
+
+    **Tools:** Event management, invitee tracking, booking links, webhooks
+  </Card>
+
   <Card title="ClickHouse" icon="chart-line" href="/docs/mcp-servers/data-analytics/clickhouse">
     <sub>**Data Analytics**</sub>
 
@@ -69,6 +77,30 @@ Browse all available MCP servers alphabetically. Each server displays its catego
     Browse repositories, read code, search issues, and manage pull requests directly from your AI assistant.
 
     **Tools:** Repository access, code search, issue management
+  </Card>
+
+  <Card title="Gmail" icon="envelope" href="/docs/mcp-servers/business/gmail">
+    <sub>**Business and Collaboration**</sub>
+
+    Email automation for sending, receiving, organizing, and managing Gmail messages, drafts, and contacts.
+
+    **Tools:** Email management, drafts, labels, threads, contacts
+  </Card>
+
+  <Card title="Google Sheets" icon="table" href="/docs/mcp-servers/business/googlesheets">
+    <sub>**Business and Collaboration**</sub>
+
+    Spreadsheet automation for creating, reading, updating, and analyzing data with SQL queries and charts.
+
+    **Tools:** Spreadsheet management, data analysis, SQL queries, charts
+  </Card>
+
+  <Card title="HubSpot" icon="hubspot" href="/docs/mcp-servers/business/hubspot">
+    <sub>**Business and Collaboration**</sub>
+
+    CRM and marketing automation platform. Manage contacts, companies, deals, tickets, and campaigns.
+
+    **Tools:** Contact management, deal tracking, ticket management, analytics
   </Card>
 
   <Card title="IPInfo" icon="location-dot" href="/docs/mcp-servers/data-intelligence/ipinfo">
@@ -127,12 +159,28 @@ Browse all available MCP servers alphabetically. Each server displays its catego
     **Tools:** Text reversal, character counting
   </Card>
 
+  <Card title="Slack" icon="slack" href="/docs/mcp-servers/business/slack">
+    <sub>**Business and Collaboration**</sub>
+
+    Team communication platform. Send messages, manage channels, share files, and automate workflows.
+
+    **Tools:** Messaging, channel management, file sharing, user management
+  </Card>
+
   <Card title="Tavily" icon="magnifying-glass" href="/docs/mcp-servers/search-research/tavily">
     <sub>**Search & Research**</sub>
 
     AI-powered web search optimized for LLMs. Real-time results, content extraction, web crawling, and site mapping.
 
     **Tools:** Search, extract, crawl, map
+  </Card>
+
+  <Card title="Zoom" icon="video" href="/docs/mcp-servers/business/zoom">
+    <sub>**Business and Collaboration**</sub>
+
+    Video conferencing platform. Schedule meetings, manage participants, access recordings, and track analytics.
+
+    **Tools:** Meeting scheduling, webinar management, recording access, reporting
   </Card>
 </CardGroup>
 
@@ -230,6 +278,49 @@ Many workflows benefit from using multiple servers together:
     3. "Analyze our portfolio performance data" (ClickHouse)
     ```
   </Accordion>
+
+  <Accordion title="Data Reporting" icon="table">
+    **Servers:** Google Sheets + HubSpot + ClickHouse
+
+    **Use case:** Build reports, sync CRM data, track metrics in spreadsheets
+
+    **Example:**
+    ```
+    1. "Export all deals closed this month from HubSpot" (HubSpot)
+    2. "Query user engagement metrics from our analytics database" (ClickHouse)
+    3. "Create a new Google Sheet with the sales data and add a revenue chart" (Google Sheets)
+    4. "Calculate total revenue and average deal size in the spreadsheet" (Google Sheets)
+    ```
+  </Accordion>
+
+  <Accordion title="Team Collaboration" icon="users">
+    **Servers:** Calendly + Gmail + Slack + Zoom + HubSpot + Google Sheets
+
+    **Use case:** Coordinate sales calls, meetings, customer follow-ups, and reporting
+
+    **Example:**
+    ```
+    1. "Create a Calendly booking link for a 30-minute demo and share with prospect" (Calendly)
+    2. "When booked, create a HubSpot deal for Acme Corp - Enterprise License, $50k" (HubSpot)
+    3. "Send a Slack message to #sales with the meeting details and deal info" (Slack)
+    4. "Draft a follow-up email to the client with meeting summary" (Gmail)
+    5. "Log the deal in our Sales Pipeline Google Sheet" (Google Sheets)
+    ```
+  </Accordion>
+
+  <Accordion title="Email Automation" icon="envelope">
+    **Servers:** Gmail + HubSpot + Google Sheets
+
+    **Use case:** Automate email workflows, CRM updates, and tracking
+
+    **Example:**
+    ```
+    1. "Search Gmail for emails from new leads this week" (Gmail)
+    2. "Create HubSpot contacts for any new email addresses" (HubSpot)
+    3. "Log new contacts in the Leads tracking spreadsheet" (Google Sheets)
+    4. "Draft personalized welcome emails for each new lead" (Gmail)
+    ```
+  </Accordion>
 </AccordionGroup>
 
 ## Server Categories
@@ -241,6 +332,14 @@ Many workflows benefit from using multiple servers together:
     - GitHub (code examples)
     - PostgreSQL (database)
     - ClickHouse (analytics)
+
+    **Business and Collaboration:**
+    - Calendly (scheduling automation)
+    - Gmail (email automation)
+    - Google Sheets (spreadsheet automation)
+    - HubSpot (CRM and marketing)
+    - Slack (team communication)
+    - Zoom (video conferencing)
 
     **Content & Documents:**
     - PDF.co (PDF processing)
@@ -275,6 +374,12 @@ Many workflows benefit from using multiple servers together:
     - PostgreSQL (database credentials)
     - Finnhub (API key required)
     - DeepL (API key required)
+    - Calendly (OAuth2 required)
+    - Gmail (OAuth2 required)
+    - Google Sheets (OAuth2 required)
+    - HubSpot (OAuth2 required)
+    - Slack (OAuth2 required)
+    - Zoom (OAuth2 required)
     - National Parks (may require key)
   </Tab>
 
@@ -286,10 +391,16 @@ Many workflows benefit from using multiple servers together:
     - IPInfo (concise data returns)
 
     **Moderate Token Usage:**
+    - Calendly (structured scheduling data)
     - GitHub (depends on code size)
     - PostgreSQL (query results vary)
     - ClickHouse (result set dependent)
     - Finnhub (structured financial data)
+    - Gmail (depends on email content)
+    - Google Sheets (depends on data size)
+    - HubSpot (structured CRM responses)
+    - Slack (message-dependent)
+    - Zoom (structured responses)
 
     **Potentially High Token Usage:**
     - Tavily (full search results and content)

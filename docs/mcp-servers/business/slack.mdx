@@ -1,0 +1,663 @@
+---
+title: 'Slack'
+description: 'Team communication platform integration for messaging, channels, and workflow automation'
+icon: 'slack'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="slack">
+    Slack MCP Server connects AI tools directly to your Slack workspace, enabling natural language interactions with channels, messages, users, and workflows.
+
+    **Powered by [Composio](https://composio.dev)** with **142+ tools** for comprehensive workspace automation.
+
+    **Key Features:**
+    - Send and read messages in channels and DMs
+    - Manage channels and user groups
+    - Upload and share files
+    - Search message history
+    - Create and manage reminders
+    - Set status and Do Not Disturb
+    - React to messages with emoji
+    - Pin and star important items
+    - Manage calls and participants
+    - Custom emoji management
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **Team Collaboration:**
+    - Automate status updates and announcements
+    - Send notifications from other systems
+    - Archive and search conversation history
+    - Create channels for new projects
+
+    **Workflow Automation:**
+    - Trigger actions from Slack commands
+    - Send alerts and monitoring updates
+    - Automate standup reports
+    - Create incident response workflows
+
+    **Information Management:**
+    - Search across all channels
+    - Extract and summarize discussions
+    - Archive important conversations
+    - Generate team activity reports
+  </Card>
+</CardGroup>
+
+<Info>
+  This connection is powered by [Composio](https://mcp.composio.dev/slack) and provides access to 142+ Slack tools through the Model Context Protocol (MCP).
+</Info>
+
+## Quick Start
+
+<Steps>
+  <Step title="Connect Your Slack Workspace">
+    NimbleBrain Studio uses OAuth2 to securely connect to your Slack workspace.
+
+    1. Navigate to **Connections** in the sidebar
+    2. Click **Browse Catalog**
+    3. Search for "Slack"
+    4. Click **Install**
+    5. Click **Connect** and authorize with your Slack workspace
+    6. Grant the requested permissions
+
+    <Tip>
+      OAuth2 provides secure, token-based authentication. You'll need workspace admin permissions to install apps.
+    </Tip>
+  </Step>
+
+  <Step title="Invite Bot to Channels">
+    After connecting, invite the bot to channels you want it to access:
+
+    1. Go to any channel in Slack
+    2. Type `/invite @NimbleBrain` (or your bot name)
+    3. Bot can now read and post in that channel
+
+    <Warning>
+      The bot must be invited to private channels before it can access them.
+    </Warning>
+  </Step>
+
+  <Step title="Test the Connection">
+    In your Studio chat, try this prompt:
+
+    ```text
+    "List all channels in my Slack workspace"
+    ```
+
+    **Other test prompts:**
+    - "Send a message to #general saying 'Hello from Studio!'"
+    - "Show me recent messages in #random"
+    - "Create a reminder for tomorrow at 9am"
+  </Step>
+</Steps>
+
+## Available Tools
+
+The Slack connection provides **142+ tools** organized into the following categories:
+
+### Messaging
+
+<AccordionGroup>
+  <Accordion title="Message Operations" icon="message">
+    Send, read, update, and delete messages across channels and DMs.
+
+    | Tool | Description |
+    |------|-------------|
+    | `SLACK_SEND_MESSAGE` | Send a message to a channel, DM, or private channel |
+    | `SLACK_POST_MESSAGE_TO_CHANNEL` | Post a message to a specific channel |
+    | `SLACK_UPDATE_MESSAGE` | Edit an existing message |
+    | `SLACK_DELETE_MESSAGE` | Delete a message from a channel |
+    | `SLACK_SCHEDULE_MESSAGE` | Schedule a message for later delivery |
+    | `SLACK_GET_PERMALINK` | Get permanent link to a specific message |
+    | `SLACK_UNFURL_LINK` | Customize URL preview in messages |
+
+    **Example Usage:**
+    ```text
+    "Send a message to #engineering: 'Deployment complete for v2.1.0'"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Channel Management
+
+<AccordionGroup>
+  <Accordion title="Channel Operations" icon="hashtag">
+    Create, manage, and organize channels.
+
+    | Tool | Description |
+    |------|-------------|
+    | `SLACK_CREATE_CHANNEL` | Create a new public or private channel |
+    | `SLACK_ARCHIVE_CHANNEL` | Archive a channel (make read-only) |
+    | `SLACK_ARCHIVE_A_SLACK_CONVERSATION` | Archive a conversation by ID |
+    | `SLACK_UNARCHIVE_CHANNEL` | Restore an archived channel |
+    | `SLACK_RENAME_CHANNEL` | Change a channel's name |
+    | `SLACK_SET_CHANNEL_TOPIC` | Set or update channel topic |
+    | `SLACK_SET_CHANNEL_PURPOSE` | Set channel purpose/description |
+    | `SLACK_JOIN_CHANNEL` | Join a public channel |
+    | `SLACK_LEAVE_CHANNEL` | Leave a channel |
+    | `SLACK_LIST_CHANNELS` | Get all channels in workspace |
+    | `SLACK_GET_CHANNEL_INFO` | Get detailed channel information |
+    | `SLACK_GET_CHANNEL_HISTORY` | Retrieve messages from a channel |
+    | `SLACK_INVITE_TO_CHANNEL` | Invite users to a channel |
+    | `SLACK_KICK_FROM_CHANNEL` | Remove users from a channel |
+
+    **Example Usage:**
+    ```text
+    "Create a new private channel called 'project-phoenix' and invite @sarah and @john"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Conversations & DMs
+
+<AccordionGroup>
+  <Accordion title="Conversation Operations" icon="comments">
+    Manage direct messages and group conversations.
+
+    | Tool | Description |
+    |------|-------------|
+    | `SLACK_OPEN_CONVERSATION` | Open or create a direct message |
+    | `SLACK_CLOSE_CONVERSATION_CHANNEL` | Close a DM or group DM |
+    | `SLACK_CREATE_GROUP_DM` | Create multi-person direct message |
+    | `SLACK_LIST_CONVERSATIONS` | List all conversations |
+    | `SLACK_GET_CONVERSATION_MEMBERS` | Get members of a conversation |
+    | `SLACK_GET_CONVERSATION_HISTORY` | Get message history |
+
+    **Example Usage:**
+    ```text
+    "Create a group DM with @sarah, @john, and @alex to discuss the project"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Reactions & Engagement
+
+<AccordionGroup>
+  <Accordion title="Reaction Operations" icon="face-smile">
+    Add and manage emoji reactions on messages.
+
+    | Tool | Description |
+    |------|-------------|
+    | `SLACK_ADD_REACTION_TO_MESSAGE` | Add emoji reaction to a message |
+    | `SLACK_REMOVE_REACTION` | Remove a reaction from a message |
+    | `SLACK_GET_REACTIONS` | Get all reactions on a message |
+    | `SLACK_LIST_REACTIONS` | List items with specific reaction |
+
+    **Example Usage:**
+    ```text
+    "Add a thumbs up reaction to the last message in #general"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Pins & Stars
+
+<AccordionGroup>
+  <Accordion title="Pin & Star Operations" icon="thumbtack">
+    Pin important messages and star items for quick access.
+
+    | Tool | Description |
+    |------|-------------|
+    | `SLACK_PIN_MESSAGE` | Pin a message to a channel |
+    | `SLACK_UNPIN_MESSAGE` | Unpin a message |
+    | `SLACK_LIST_PINS` | List all pinned items in a channel |
+    | `SLACK_ADD_A_STAR_TO_AN_ITEM` | Star a channel, file, or message |
+    | `SLACK_REMOVE_STAR` | Remove star from an item |
+    | `SLACK_LIST_STARS` | List all starred items |
+
+    **Example Usage:**
+    ```text
+    "Pin the message with the sprint goals to #engineering"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Reminders
+
+<AccordionGroup>
+  <Accordion title="Reminder Operations" icon="bell">
+    Create and manage personal reminders.
+
+    | Tool | Description |
+    |------|-------------|
+    | `SLACK_CREATE_A_REMINDER` | Create a reminder with text and time |
+    | `SLACK_COMPLETE_REMINDER` | Mark a reminder as complete |
+    | `SLACK_DELETE_REMINDER` | Delete a reminder |
+    | `SLACK_LIST_REMINDERS` | List all reminders |
+    | `SLACK_GET_REMINDER_INFO` | Get details about a specific reminder |
+
+    **Example Usage:**
+    ```text
+    "Create a reminder for tomorrow at 2pm: 'Review PR #123'"
+    ```
+
+    <Tip>
+      Time accepts Unix timestamps, seconds from now, or natural language (e.g., 'in 15 minutes', 'every Thursday at 2pm').
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+### User Management
+
+<AccordionGroup>
+  <Accordion title="User Operations" icon="users">
+    Manage workspace members and their information.
+
+    | Tool | Description |
+    |------|-------------|
+    | `SLACK_LIST_USERS` | Get all users in workspace |
+    | `SLACK_GET_USER_INFO` | Get detailed user information |
+    | `SLACK_GET_USER_BY_EMAIL` | Find user by email address |
+    | `SLACK_GET_USER_PRESENCE` | Check if user is online/away |
+    | `SLACK_SET_USER_PRESENCE` | Set your own presence status |
+    | `SLACK_GET_USER_PROFILE` | Get user's profile information |
+    | `SLACK_SET_USER_PROFILE` | Update your profile |
+
+    **Example Usage:**
+    ```text
+    "Find the Slack user with email sarah@company.com"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### User Groups
+
+<AccordionGroup>
+  <Accordion title="User Group Operations" icon="user-group">
+    Create and manage user groups (subteams).
+
+    | Tool | Description |
+    |------|-------------|
+    | `SLACK_CREATE_A_SLACK_USER_GROUP` | Create a new user group |
+    | `SLACK_UPDATE_USER_GROUP` | Update group settings |
+    | `SLACK_DISABLE_USER_GROUP` | Disable a user group |
+    | `SLACK_ENABLE_USER_GROUP` | Re-enable a disabled group |
+    | `SLACK_LIST_USER_GROUPS` | List all user groups |
+    | `SLACK_GET_USER_GROUP` | Get group details |
+    | `SLACK_UPDATE_USER_GROUP_MEMBERS` | Add/remove group members |
+
+    **Example Usage:**
+    ```text
+    "Create a user group called 'frontend-team' with @sarah, @john, and @alex"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Do Not Disturb
+
+<AccordionGroup>
+  <Accordion title="DND Operations" icon="moon">
+    Manage Do Not Disturb settings.
+
+    | Tool | Description |
+    |------|-------------|
+    | `SLACK_SET_SNOOZE_DURATION` | Turn on DND mode |
+    | `SLACK_END_DND` | End Do Not Disturb |
+    | `SLACK_END_SNOOZE` | End snooze early |
+    | `SLACK_GET_DND_INFO` | Get your DND status |
+    | `SLACK_GET_TEAM_DND_INFO` | Get DND status for multiple users |
+
+    **Example Usage:**
+    ```text
+    "Turn on Do Not Disturb for 2 hours"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### File Management
+
+<AccordionGroup>
+  <Accordion title="File Operations" icon="file">
+    Upload, share, and manage files.
+
+    | Tool | Description |
+    |------|-------------|
+    | `SLACK_UPLOAD_FILE` | Upload a file to Slack |
+    | `SLACK_DELETE_A_FILE_BY_ID` | Permanently delete a file |
+    | `SLACK_LIST_FILES` | List files in workspace |
+    | `SLACK_GET_FILE_INFO` | Get file details |
+    | `SLACK_SHARE_FILE` | Share file to channels |
+    | `SLACK_ADD_A_REMOTE_FILE` | Add external file reference (Google Drive, Dropbox) |
+    | `SLACK_UPDATE_REMOTE_FILE` | Update external file info |
+    | `SLACK_DELETE_REMOTE_FILE` | Remove external file reference |
+    | `SLACK_DELETE_FILE_COMMENT` | Delete a comment on a file |
+
+    **Example Usage:**
+    ```text
+    "Upload the Q4_Report.pdf to #leadership with message 'Q4 results attached'"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Custom Emoji
+
+<AccordionGroup>
+  <Accordion title="Emoji Operations" icon="icons">
+    Manage custom workspace emoji.
+
+    | Tool | Description |
+    |------|-------------|
+    | `SLACK_ADD_EMOJI` | Add custom emoji to workspace |
+    | `SLACK_ADD_A_CUSTOM_EMOJI_TO_A_SLACK_TEAM` | Add custom emoji with image URL |
+    | `SLACK_ADD_AN_EMOJI_ALIAS` | Create alias for existing emoji |
+    | `SLACK_LIST_EMOJI` | List all custom emoji |
+
+    **Example Usage:**
+    ```text
+    "Add a custom emoji called 'shipit' using this image URL"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Calls
+
+<AccordionGroup>
+  <Accordion title="Call Operations" icon="phone">
+    Manage Slack calls and participants.
+
+    | Tool | Description |
+    |------|-------------|
+    | `SLACK_ADD_CALL_PARTICIPANTS` | Register new call participants |
+    | `SLACK_END_CALL` | End an active call |
+    | `SLACK_UPDATE_CALL` | Update call information |
+    | `SLACK_GET_CALL_INFO` | Get call details |
+
+    **Example Usage:**
+    ```text
+    "Add @sarah and @john as participants to the current call"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Search
+
+<AccordionGroup>
+  <Accordion title="Search Operations" icon="magnifying-glass">
+    Search messages and files across your workspace.
+
+    | Tool | Description |
+    |------|-------------|
+    | `SLACK_SEARCH_MESSAGES` | Search for messages |
+    | `SLACK_SEARCH_FILES` | Search for files |
+    | `SLACK_SEARCH_ALL` | Search messages and files |
+
+    **Example Usage:**
+    ```text
+    "Search for all messages mentioning 'API documentation' from last week"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Team & Workspace
+
+<AccordionGroup>
+  <Accordion title="Team Operations" icon="building">
+    Get workspace and team information.
+
+    | Tool | Description |
+    |------|-------------|
+    | `SLACK_GET_TEAM_INFO` | Get workspace information |
+    | `SLACK_GET_TEAM_PROFILE` | Get team profile fields |
+    | `SLACK_LIST_TEAM_MEMBERS` | List workspace members |
+    | `SLACK_GET_ACCESS_LOGS` | Get workspace access logs |
+    | `SLACK_GET_BILLABLE_INFO` | Get billable user info |
+
+    **Example Usage:**
+    ```text
+    "Show me information about this Slack workspace"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+  This is a summary of the most commonly used tools. The full integration includes **142+ tools** covering all Slack API endpoints. For the complete list, visit the [Composio Slack documentation](https://mcp.composio.dev/slack).
+</Note>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Daily Standup">
+    **Scenario:** Automate daily standup updates
+
+    **Prompt:**
+    ```text
+    "Post to #engineering: 'Daily Standup - May 15
+
+    Yesterday: Completed API authentication, reviewed PRs
+    Today: Working on database optimization
+    Blockers: None
+
+    cc: @tech-lead'"
+    ```
+
+    **What happens:**
+    - Formats message with clear sections
+    - Posts to team channel
+    - Mentions relevant people
+    - Creates searchable standup history
+  </Tab>
+
+  <Tab title="Incident Response">
+    **Scenario:** Coordinate during system incidents
+
+    **Prompt:**
+    ```text
+    "Create a private channel #incident-2024-05-15, invite @devops-team and @engineering-leads, post 'INCIDENT: API gateway responding slowly. Investigating now.', and set topic to 'May 15 Incident - API Performance'"
+    ```
+
+    **What happens:**
+    - Creates dedicated incident channel
+    - Invites response team
+    - Posts initial status
+    - Sets clear channel topic
+  </Tab>
+
+  <Tab title="Reminder Setup">
+    **Scenario:** Set up meeting reminders
+
+    **Prompt:**
+    ```text
+    "Create a reminder for every Monday at 9am: 'Weekly team sync in 30 minutes'"
+    ```
+
+    **What happens:**
+    - Creates recurring reminder
+    - Uses natural language time parsing
+    - Sends Slackbot reminder at scheduled time
+  </Tab>
+
+  <Tab title="Project Kickoff">
+    **Scenario:** Set up communication for new project
+
+    **Prompt:**
+    ```text
+    "Create channel #project-phoenix, set topic to 'Customer Portal - Launch Q3', invite @product-team @design @engineering, and post welcome message with project goals"
+    ```
+
+    **What happens:**
+    - Creates project channel
+    - Sets descriptive topic
+    - Invites all stakeholders
+    - Posts initial project brief
+  </Tab>
+</Tabs>
+
+## Authentication
+
+<Info>
+  **OAuth2 Authentication**: This connection uses OAuth2 for secure authentication through Composio.
+</Info>
+
+### How It Works
+
+When you connect Slack in NimbleBrain Studio:
+
+1. You'll be redirected to Slack's authorization page
+2. Select your workspace
+3. Review and grant permissions
+4. You're automatically redirected back to Studio
+
+### Required Scopes
+
+The integration requests comprehensive scopes for full functionality:
+
+**Message Scopes:**
+- `chat:write` - Send messages
+- `channels:history` - Read public channel messages
+- `groups:history` - Read private channel messages
+- `im:history` - Read direct messages
+- `mpim:history` - Read group DMs
+
+**Channel Scopes:**
+- `channels:read` / `channels:write` - Manage channels
+- `groups:read` / `groups:write` - Manage private channels
+- `im:read` / `im:write` - Manage DMs
+
+**User & Team Scopes:**
+- `users:read` / `users:write` - User management
+- `users:read.email` - Access email addresses
+- `usergroups:read` / `usergroups:write` - User groups
+- `team:read` - Workspace info
+
+**Other Scopes:**
+- `files:read` / `files:write` - File management
+- `pins:read` / `pins:write` - Pin management
+- `reactions:read` / `reactions:write` - Reactions
+- `reminders:read` / `reminders:write` - Reminders
+- `search:read` - Search functionality
+- `emoji:read` - Custom emoji
+- `dnd:read` / `dnd:write` - Do Not Disturb
+
+<Tip>
+  You can review connected apps in Slack under **Settings & Administration** → **Manage Apps**.
+</Tip>
+
+## Rate Limits
+
+Slack has rate limits to ensure platform stability:
+
+| Tier | Methods | Limit |
+|------|---------|-------|
+| Tier 1 | Most read operations | 1 req/sec |
+| Tier 2 | Posting messages | 1 req/sec per channel |
+| Tier 3 | File uploads | 20 req/min |
+| Tier 4 | Admin operations | 20 req/min |
+
+<Warning>
+  Posting too many messages quickly can trigger rate limiting. Studio automatically handles retries with appropriate delays.
+</Warning>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection Failed" icon="triangle-exclamation">
+    **Issue:** OAuth authorization didn't complete
+
+    **Solutions:**
+    - Ensure you have workspace admin permissions
+    - Try a different browser or incognito mode
+    - Check that popup blockers aren't interfering
+    - Contact your workspace admin if you lack permissions
+  </Accordion>
+
+  <Accordion title="Permission Denied" icon="lock">
+    **Issue:** `missing_scope` error
+
+    **Solutions:**
+    - Reconnect to grant additional scopes
+    - Verify your workspace allows the app
+    - Some operations require workspace admin
+  </Accordion>
+
+  <Accordion title="Channel Not Found" icon="hashtag">
+    **Issue:** `channel_not_found` error
+
+    **Solutions:**
+    - Verify channel name or ID is correct
+    - Invite bot to private channels first
+    - Ensure channel hasn't been archived
+    - Use channel ID instead of name for reliability
+  </Accordion>
+
+  <Accordion title="Rate Limited" icon="gauge">
+    **Issue:** `rate_limited` error
+
+    **Solutions:**
+    - Wait for retry-after time to pass
+    - Reduce frequency of requests
+    - Use threads instead of channel messages
+    - Studio automatically handles retries
+  </Accordion>
+
+  <Accordion title="Bot Not in Channel" icon="user-slash">
+    **Issue:** Can't read or post to a channel
+
+    **Solutions:**
+    - Invite bot with `/invite @BotName`
+    - Bot must be member of private channels
+    - Check channel permissions allow bots
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Message Etiquette" icon="message">
+    - Use threads for detailed discussions
+    - Don't spam channels with bot messages
+    - Format messages clearly
+    - Mention users only when needed
+    - Use appropriate emoji reactions
+  </Card>
+
+  <Card title="Channel Organization" icon="folder-tree">
+    - Use descriptive channel names
+    - Set clear channel topics
+    - Archive inactive channels
+    - Use naming conventions
+    - Document channel purposes
+  </Card>
+
+  <Card title="Security" icon="shield">
+    - Review app permissions regularly
+    - Monitor bot activity
+    - Use minimal required scopes
+    - Don't share tokens
+    - Audit connected apps
+  </Card>
+
+  <Card title="Automation" icon="robot">
+    - Test in dedicated channels first
+    - Avoid message flooding
+    - Provide context in messages
+    - Use appropriate channels
+    - Handle errors gracefully
+  </Card>
+</CardGroup>
+
+## Links and Resources
+
+<CardGroup cols={2}>
+  <Card title="Composio Slack Docs" icon="book" href="https://mcp.composio.dev/slack">
+    Full documentation for all 142+ Slack tools
+  </Card>
+
+  <Card title="Slack API Reference" icon="code" href="https://api.slack.com/methods">
+    Official Slack API methods reference
+  </Card>
+
+  <Card title="Slack App Directory" icon="grid" href="https://slack.com/apps">
+    Browse and manage Slack apps
+  </Card>
+
+  <Card title="Slack Community" icon="comments" href="https://slackcommunity.com/">
+    Connect with Slack developers
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://discord.gg/nimblebrain) or email support@nimblebrain.ai
