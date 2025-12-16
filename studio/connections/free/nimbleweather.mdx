@@ -1,0 +1,117 @@
+---
+title: 'NimbleWeather'
+description: 'Weather data and forecasts for your automations'
+---
+
+NimbleWeather gives your playbooks access to weather data and forecasts. It's included free with every NimbleBrain Studio account.
+
+<Info>
+**Free Forever**: NimbleWeather is included with all NimbleBrain Studio plans at no additional cost.
+</Info>
+
+## What is NimbleWeather?
+
+NimbleWeather provides current weather conditions and forecasts. Use it to:
+
+- Get current weather for any location
+- Retrieve weather forecasts
+- Build weather-aware automations
+- Send weather alerts and updates
+
+## Capabilities
+
+<CardGroup cols={2}>
+  <Card title="Current Weather" icon="sun">
+    Get current conditions for any location
+  </Card>
+  <Card title="Forecasts" icon="cloud-sun">
+    Multi-day weather forecasts
+  </Card>
+  <Card title="No Setup Required" icon="check">
+    Works immediately - no API keys needed
+  </Card>
+  <Card title="Global Coverage" icon="globe">
+    Weather data for locations worldwide
+  </Card>
+</CardGroup>
+
+## Example Usage
+
+### Get Current Weather
+
+```
+What's the current weather in San Francisco?
+```
+
+### Weather Forecast
+
+```
+Get the 5-day weather forecast for New York City
+```
+
+### Weather-Triggered Automation
+
+```
+Every morning at 6am, check the weather forecast. If rain is expected,
+send me a reminder to bring an umbrella.
+```
+
+### Travel Planning
+
+```
+Check the weather for Paris, France for next weekend and let me know
+if it's good for outdoor activities.
+```
+
+## Limitations
+
+- **Rate limits**: Reasonable request limits apply
+- **Basic data**: Temperature, conditions, precipitation
+- **No historical data**: Current and forecast only
+
+## When to Use NimbleWeather vs OpenWeatherMap
+
+| Use Case | NimbleWeather | OpenWeatherMap |
+|----------|---------------|----------------|
+| Current weather | Yes | Yes |
+| Basic forecasts | Yes | Yes |
+| Air quality data | No | Yes |
+| Historical data | No | Yes |
+| Weather maps | No | Yes |
+| Solar/UV data | No | Yes |
+| No setup required | Yes | No (API key required) |
+| Free | Yes | Paid tier |
+
+<Tip>
+Use **NimbleWeather** for basic weather checks and alerts. Use **OpenWeatherMap** when you need air quality, historical data, or advanced weather metrics.
+</Tip>
+
+## Example Automations
+
+**Morning Weather Brief**
+
+```
+Every weekday at 6:30am:
+1. Get today's weather forecast for my city
+2. Include high/low temperatures and precipitation chance
+3. Send summary via NimbleMail
+```
+
+**Event Weather Check**
+
+```
+One day before any calendar event marked "outdoor":
+1. Check the weather forecast for that day
+2. If rain > 50%, send an alert about potential weather issues
+```
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="OpenWeatherMap" href="/studio/connections/utilities/openweathermap">
+    Advanced weather data with air quality
+  </Card>
+  <Card title="NimbleMail" href="/studio/connections/free/nimblemail">
+    Send weather alerts via email
+  </Card>
+</CardGroup>

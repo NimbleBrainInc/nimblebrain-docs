@@ -1,0 +1,184 @@
+---
+title: 'API Reference'
+description: 'REST API documentation for NimbleBrain Studio'
+---
+
+The NimbleBrain API provides programmatic access to all Studio features. Use it to manage agents, execute playbooks, and build custom integrations.
+
+## Base URL
+
+```
+https://studio-api.nimblebrain.ai/v1
+```
+
+## Authentication
+
+All API requests require authentication using a Bearer token. Get your API key from **Settings > API Keys** in NimbleBrain Studio.
+
+```bash
+curl -H "Authorization: Bearer nb_live_xxxxx" \
+  https://studio-api.nimblebrain.ai/v1/agents
+```
+
+### API Key Formats
+
+| Prefix | Environment |
+|--------|-------------|
+| `nb_live_` | Production |
+| `nb_test_` | Testing/Development |
+
+## Interactive Documentation
+
+For the full interactive API reference with request/response examples, visit:
+
+<Card title="Swagger Documentation" icon="book-open" href="https://studio-api.nimblebrain.ai/v1/docs">
+  Interactive API explorer with try-it-out functionality
+</Card>
+
+## Available Endpoints
+
+### Agents
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/v1/agents` | List all agents |
+| `GET` | `/v1/agents/:id` | Get agent details |
+
+### Conversations
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/v1/agents/:agentId/conversations` | Create conversation |
+| `GET` | `/v1/agents/:agentId/conversations/:id` | Get conversation |
+
+### Messages
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/v1/agents/:agentId/conversations/:convId/messages` | List messages |
+| `POST` | `/v1/agents/:agentId/conversations/:convId/messages` | Send message |
+
+<Tip>
+Add `stream: true` to the message body and set `Accept: text/event-stream` header to receive streaming responses via SSE.
+</Tip>
+
+### Playbooks
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/v1/playbooks` | List all playbooks |
+| `GET` | `/v1/playbooks/:id` | Get playbook details |
+| `POST` | `/v1/playbooks/:id/execute` | Execute a playbook |
+
+### Executions
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/v1/executions/:id` | Get execution status |
+
+## Response Format
+
+All responses are JSON with consistent structure:
+
+**Success:**
+```json
+{
+  "agents": [...],
+  "meta": {
+    "total": 5,
+    "page": 1
+  }
+}
+```
+
+**Error:**
+```json
+{
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "Agent not found"
+  }
+}
+```
+
+## HTTP Status Codes
+
+| Code | Description |
+|------|-------------|
+| `200` | Success |
+| `201` | Created |
+| `400` | Bad request (invalid parameters) |
+| `401` | Unauthorized (invalid/missing API key) |
+| `403` | Forbidden (insufficient permissions) |
+| `404` | Not found |
+| `429` | Rate limited |
+| `500` | Internal server error |
+
+## Rate Limits
+
+API requests are rate limited per workspace:
+
+| Plan | Requests per minute |
+|------|---------------------|
+| Free | 60 |
+| Pro | 300 |
+| Enterprise | Custom |
+
+Rate limit headers are included in responses:
+- `X-RateLimit-Limit`: Maximum requests per window
+- `X-RateLimit-Remaining`: Requests remaining
+- `X-RateLimit-Reset`: Unix timestamp when limit resets
+
+## SDK vs Direct API
+
+For most use cases, we recommend using the [TypeScript SDK](/developers/sdk/overview) instead of calling the API directly. The SDK provides:
+
+- Type-safe methods
+- Automatic error handling
+- Streaming support built-in
+- Simpler authentication
+
+**Use the API directly when:**
+- Building in a language without an SDK
+- Need low-level control
+- Integrating with existing HTTP clients
+
+## Example: Execute a Playbook
+
+```bash
+# Execute a playbook
+curl -X POST \
+  -H "Authorization: Bearer nb_live_xxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"parameters": {"ticker": "AAPL"}}' \
+  https://studio-api.nimblebrain.ai/v1/playbooks/pb_123/execute
+
+# Response
+{
+  "id": "exec_456",
+  "status": "queued"
+}
+
+# Poll for completion
+curl -H "Authorization: Bearer nb_live_xxxxx" \
+  https://studio-api.nimblebrain.ai/v1/executions/exec_456
+
+# Response when complete
+{
+  "id": "exec_456",
+  "status": "completed",
+  "result": "Analysis: AAPL shows strong momentum...",
+  "durationMs": 4523
+}
+```
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="TypeScript SDK" icon="js" href="/developers/sdk/overview">
+    Type-safe SDK for Node.js and browsers
+  </Card>
+  <Card title="API Keys" icon="key" href="/studio/api-keys">
+    Manage your API keys in Studio
+  </Card>
+</CardGroup>

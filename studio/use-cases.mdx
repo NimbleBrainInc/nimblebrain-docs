@@ -1,0 +1,815 @@
+---
+title: 'Example Use Cases'
+description: 'Practical automation examples you can build in NimbleBrain Studio'
+---
+
+## Overview
+
+NimbleBrain Studio enables you to build powerful automations by connecting AI capabilities with your existing tools and services. This page showcases practical examples you can implement today using our available connectors.
+
+<Info>
+Each use case can be customized to fit your specific needs. Mix and match connectors to create workflows that solve your unique challenges.
+</Info>
+
+## Quick Wins
+
+Start with these simple, high-impact automations:
+
+| Use Case | Workflow | Trigger | Details |
+|----------|----------|---------|---------|
+| **Stock Price Alert** | Finnhub → Slack DM | Hourly (market hours) | Alert if price moves >5% - instant notification for significant movements |
+| **Failed CI Alert** | GitHub → Slack channel | Event-based (on fail) | Immediate team notification when Actions fail with error details and PR link |
+| **Weather Forecast** | OpenWeatherMap → Email | Daily at 6:00 AM | Morning weather brief with temperature, conditions, and severe weather warnings |
+| **Breaking News** | Tavily → Slack | Every 30 minutes | Industry-specific news alerts for keywords you care about |
+| **PDF to Text** | PDF.co → Email/Slack | On upload/Manual | Extract text from invoices, contracts, or documents for easy processing |
+| **CRM Daily Digest** | HubSpot → Slack + PDF.co → Email | Daily at 8:00 AM | Summary of new deals, pipeline changes, and CRM activity sent to Slack; formatted PDF report emailed to sales leadership |
+| **Meeting Prep Brief** | Calendly → NimbleSearch → Gmail | 24h before meeting | Research attendee's company, pull recent news, and send prep email before every client call |
+| **Lead Score Alert** | HubSpot → Google Sheets → Gmail | Daily/On CRM update | Track leads in scoring dashboard, alert sales when leads hit high-value thresholds |
+
+<Tip>
+These automations require minimal configuration and provide immediate value. Perfect for getting started with Studio automation!
+</Tip>
+
+---
+
+## Financial and Investment Monitoring
+
+<AccordionGroup>
+  <Accordion title="Daily Market Briefing" icon="chart-line">
+    **What it does:** Automatically generates and delivers a personalized market summary for your stock watchlist at market open and close.
+
+    **Workflow:**
+    ```
+    Finnhub (stock data) → NIRA (analysis) → Slack/Email (delivery)
+    ```
+
+    **Trigger:** Scheduled (9:00 AM and 4:00 PM ET weekdays)
+
+    **Business Value:**
+    - Stay informed without manual research
+    - Track portfolio performance automatically
+    - Make faster trading decisions with timely data
+    - Consistent daily market awareness
+
+    **Example Output:**
+    - Current prices and % change for watchlist
+    - Notable movers (>5% change)
+    - Volume analysis
+    - Market sentiment summary
+  </Accordion>
+
+  <Accordion title="Earnings and News Alerts" icon="newspaper">
+    **What it does:** Monitors your portfolio companies for earnings announcements, news mentions, and significant events.
+
+    **Workflow:**
+    ```
+    Finnhub (earnings + news) → Tavily (additional context) → Slack (alerts)
+    ```
+
+    **Trigger:** Scheduled (every 30 minutes during market hours)
+
+    **Business Value:**
+    - Never miss important company announcements
+    - React quickly to market-moving news
+    - Track competitor developments
+    - Automated intelligence gathering
+
+    **Alert Types:**
+    - Earnings release notifications
+    - Breaking news about portfolio companies
+    - Analyst rating changes
+    - Significant stock price movements
+  </Accordion>
+
+  <Accordion title="Competitor Stock Performance Tracker" icon="chart-mixed">
+    **What it does:** Generates weekly comparative analysis of your company's stock performance versus competitors.
+
+    **Workflow:**
+    ```
+    Finnhub (multi-company data) → NIRA (comparative analysis) → PDF.co (report generation) → Email (distribution)
+    ```
+
+    **Trigger:** Scheduled (Friday 5:00 PM)
+
+    **Business Value:**
+    - Executive-ready competitive intelligence
+    - Track market positioning over time
+    - Identify relative strengths and weaknesses
+    - Data-driven strategic insights
+
+    **Report Includes:**
+    - Week-over-week performance comparison
+    - YTD performance charts
+    - Volume and volatility analysis
+    - Key financial metrics comparison
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Developer and Engineering Workflows
+
+<AccordionGroup>
+  <Accordion title="Morning Dev Standup Digest" icon="mug-hot">
+    **What it does:** Delivers a comprehensive overnight activity summary to help developers start their day informed.
+
+    **Workflow:**
+    ```
+    GitHub (issues, PRs, Actions) → NIRA (summarization) → Slack/Email (distribution)
+    ```
+
+    **Trigger:** Scheduled (8:00 AM team local time)
+
+    **Business Value:**
+    - Skip standup meetings or make them faster
+    - Everyone starts with same context
+    - Identify blockers proactively
+    - Track team velocity automatically
+
+    **Digest Contents:**
+    - New issues and their priority
+    - PRs ready for review
+    - Failed CI/CD runs
+    - Merged PRs from previous day
+    - Top contributors
+  </Accordion>
+
+  <Accordion title="PR Review Reminder Bot" icon="git-pull-request">
+    **What it does:** Automatically reminds team members about pull requests waiting for review based on age and priority.
+
+    **Workflow:**
+    ```
+    GitHub (PR metadata) → NIRA (prioritization) → Slack (targeted reminders)
+    ```
+
+    **Trigger:** Scheduled (hourly during work hours)
+
+    **Business Value:**
+    - Reduce PR review latency
+    - Prevent bottlenecks in delivery pipeline
+    - Fair distribution of review work
+    - Improved code quality through timely reviews
+
+    **Smart Features:**
+    - Escalates PRs older than 24 hours
+    - Priority-based notifications
+    - Mentions specific reviewers
+    - Avoids reminder spam with intelligent throttling
+  </Accordion>
+
+  <Accordion title="Automated Release Notes Generator" icon="scroll">
+    **What it does:** Compiles merged PRs and commits into professional release notes as PDF documents.
+
+    **Workflow:**
+    ```
+    GitHub (PR history) → NIRA (categorization + writing) → PDF.co (formatting) → Email (distribution)
+    ```
+
+    **Trigger:** Manual or tag-based (when release tag created)
+
+    **Business Value:**
+    - Professional documentation with zero manual effort
+    - Consistent release communication
+    - Historical record of changes
+    - Customer-ready changelog
+
+    **Output Format:**
+    - Categorized changes (features, fixes, improvements)
+    - Breaking changes highlighted
+    - Contributors acknowledged
+    - Links to relevant PRs and issues
+  </Accordion>
+
+  <Accordion title="Repository Health Weekly Report" icon="heartbeat">
+    **What it does:** Provides engineering leadership with key metrics about repository activity and team health.
+
+    **Workflow:**
+    ```
+    GitHub (analytics) → NIRA (analysis + insights) → PDF.co (visualization) → Email (leadership distribution)
+    ```
+
+    **Trigger:** Scheduled (Monday 9:00 AM)
+
+    **Business Value:**
+    - Data-driven team management
+    - Early warning for team capacity issues
+    - Track engineering velocity trends
+    - Identify high-impact contributors
+
+    **Metrics Included:**
+    - Issues opened vs closed
+    - PR merge velocity
+    - Code review turnaround time
+    - Contributor activity
+    - Technical debt indicators
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Business Operations
+
+<AccordionGroup>
+  <Accordion title="Invoice and Document Processing" icon="file-invoice-dollar">
+    **What it does:** Automatically extracts data from PDF invoices and receipts, then routes for approval or filing.
+
+    **Workflow:**
+    ```
+    PDF.co (OCR + extraction) → NIRA (validation + categorization) → HubSpot/Slack (routing)
+    ```
+
+    **Trigger:** Event-based (new document uploaded) or manual
+
+    **Business Value:**
+    - Eliminate manual data entry
+    - Faster invoice processing
+    - Reduced errors in financial data
+    - Automatic expense categorization
+
+    **Extracted Data:**
+    - Vendor information
+    - Invoice numbers and dates
+    - Line items and amounts
+    - Tax calculations
+    - Payment terms
+  </Accordion>
+
+  <Accordion title="Contract Expiration Alert System" icon="calendar-exclamation">
+    **What it does:** Monitors contract expiration dates and sends escalating reminders to prevent service interruptions.
+
+    **Workflow:**
+    ```
+    PDF.co (date extraction from contracts) → NIRA (deadline tracking) → Slack/Email (tiered alerts)
+    ```
+
+    **Trigger:** Scheduled daily check with smart escalation
+
+    **Business Value:**
+    - Never miss renewal deadlines
+    - Negotiate from position of strength
+    - Prevent service disruptions
+    - Optimize contract terms proactively
+
+    **Alert Schedule:**
+    - 90 days: Initial notification
+    - 60 days: Reminder to finance/procurement
+    - 30 days: Urgent escalation to leadership
+    - 7 days: Daily reminders
+  </Accordion>
+
+  <Accordion title="Weather-Based Operations Alerts" icon="cloud-bolt">
+    **What it does:** Monitors weather forecasts and alerts operations teams about conditions affecting logistics, events, or field work.
+
+    **Workflow:**
+    ```
+    OpenWeatherMap (forecasts) → NIRA (impact assessment) → Slack (targeted alerts)
+    ```
+
+    **Trigger:** Scheduled (hourly) with smart filtering
+
+    **Business Value:**
+    - Proactive operational planning
+    - Protect field teams safety
+    - Minimize weather-related disruptions
+    - Customer communication head-starts
+
+    **Alert Scenarios:**
+    - Severe weather affecting delivery routes
+    - Extreme temperatures impacting equipment
+    - Storm warnings for outdoor events
+    - Optimal windows for construction/maintenance
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Sales and Marketing
+
+<AccordionGroup>
+  <Accordion title="Competitive Intelligence Brief" icon="magnifying-glass-chart">
+    **What it does:** Aggregates and summarizes daily mentions of competitors across news sources and web.
+
+    **Workflow:**
+    ```
+    Tavily (web search) → NIRA (analysis + summarization) → Slack/Email (digest)
+    ```
+
+    **Trigger:** Scheduled (daily 7:00 AM)
+
+    **Business Value:**
+    - Stay ahead of competitor moves
+    - Identify market opportunities
+    - Inform strategic planning
+    - Sales team competitive positioning
+
+    **Intelligence Gathered:**
+    - Product announcements
+    - Leadership changes
+    - Funding and partnerships
+    - Customer wins/losses
+    - Market sentiment
+  </Accordion>
+
+  <Accordion title="Industry Trend Weekly Report" icon="chart-line-up">
+    **What it does:** Creates comprehensive PDF reports on industry trends, market analysis, and thought leadership.
+
+    **Workflow:**
+    ```
+    Tavily (trend research) → NIRA (synthesis + writing) → PDF.co (professional formatting) → Email (stakeholder distribution)
+    ```
+
+    **Trigger:** Scheduled (Friday afternoon)
+
+    **Business Value:**
+    - Executive briefings without research team
+    - Identify emerging opportunities
+    - Inform product roadmap decisions
+    - Thought leadership content source
+
+    **Report Sections:**
+    - Top industry news and analysis
+    - Emerging technology trends
+    - Regulatory and policy changes
+    - Market size and growth projections
+    - Competitive landscape updates
+  </Accordion>
+
+  <Accordion title="Pre-Meeting Research Automation" icon="handshake">
+    **What it does:** Automatically researches meeting attendees and companies, delivering briefings before calls.
+
+    **Workflow:**
+    ```
+    Zoom (upcoming meetings) → Tavily (company/person research) → NIRA (briefing creation) → Email (pre-meeting delivery)
+    ```
+
+    **Trigger:** Event-based (2 hours before meeting)
+
+    **Business Value:**
+    - Appear prepared and informed
+    - Build rapport faster
+    - Identify conversation opportunities
+    - Improve meeting outcomes
+
+    **Briefing Includes:**
+    - Company overview and recent news
+    - Attendee backgrounds and interests
+    - Recent company announcements
+    - Potential pain points and opportunities
+    - Suggested talking points
+  </Accordion>
+
+  <Accordion title="Lead Enrichment Pipeline" icon="user-plus">
+    **What it does:** Automatically enriches new leads in HubSpot with company data, news, and qualification scoring.
+
+    **Workflow:**
+    ```
+    HubSpot (new lead trigger) → Tavily (company research) → NIRA (lead scoring) → HubSpot (update + routing)
+    ```
+
+    **Trigger:** Event-based (new lead created)
+
+    **Business Value:**
+    - Faster lead qualification
+    - Better lead prioritization
+    - Improved sales efficiency
+    - Higher conversion rates
+
+    **Enrichment Data:**
+    - Company size and industry
+    - Recent funding and growth
+    - Technology stack signals
+    - Hiring trends
+    - Intent signals from news
+  </Accordion>
+
+  <Accordion title="CRM Daily Digest" icon="chart-mixed">
+    **What it does:** Generates comprehensive daily CRM activity report with dual delivery - quick Slack summary for the team and detailed PDF report for leadership.
+
+    **Workflow:**
+    ```
+    HubSpot (CRM data extraction) → NIRA (analysis + summarization) → Slack (team digest) + PDF.co (report formatting) → Email (leadership distribution)
+    ```
+
+    **Trigger:** Scheduled (daily at 8:00 AM)
+
+    **Business Value:**
+    - Sales team starts day informed
+    - Leadership visibility without manual reports
+    - Track progress toward targets
+    - Identify pipeline issues early
+    - Consistent daily accountability
+
+    **Slack Summary Includes:**
+    - New deals created (count + value)
+    - Deals moved to next stage
+    - Deals closed (won/lost)
+    - High-priority follow-ups needed
+    - Top performers of the day
+
+    **PDF Report Includes:**
+    - Full pipeline snapshot
+    - Stage-by-stage conversion metrics
+    - Deal velocity trends
+    - Activity by rep (calls, emails, meetings)
+    - Forecast vs. target tracking
+    - Week-over-week comparisons
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Scheduling, Email & Productivity
+
+<Info>
+**New Integrations!** These use cases highlight our latest connectors: Calendly, Gmail, and Google Sheets - perfect for automating scheduling, communication, and data workflows.
+</Info>
+
+<AccordionGroup>
+  <Accordion title="Appointment Reminder + Prep Brief" icon="calendar-check">
+    **What it does:** Automatically researches the attendee's company 24 hours before a scheduled meeting, pulls recent news mentions, and sends a prep briefing email so you walk into every client call fully informed.
+
+    **Workflow:**
+    ```
+    Calendly (upcoming meetings) → NimbleSearch (company research) → NimbleNews (recent mentions) → Gmail (prep brief delivery)
+    ```
+
+    **Trigger:** Scheduled (24 hours before meeting)
+
+    **Business Value:**
+    - Never be caught off guard in a meeting
+    - Demonstrate professionalism and preparation to clients
+    - Identify relevant talking points automatically
+    - Build stronger client relationships through informed conversations
+
+    **Prep Brief Includes:**
+    - Company overview and recent news
+    - Attendee background and LinkedIn highlights
+    - Recent company announcements
+    - Industry trends affecting their business
+    - Suggested discussion topics and questions
+  </Accordion>
+
+  <Accordion title="Lead Scoring Dashboard" icon="table">
+    **What it does:** Aggregates lead and deal data from HubSpot into a scoring spreadsheet with custom criteria, automatically emailing sales reps when leads hit a high-value threshold.
+
+    **Workflow:**
+    ```
+    HubSpot (lead/deal data) → Google Sheets (scoring dashboard) → Gmail (threshold alerts)
+    ```
+
+    **Trigger:** Scheduled (daily) or event-based (on CRM update)
+
+    **Business Value:**
+    - Prioritize sales efforts on highest-potential opportunities
+    - Ensure hot leads get immediate attention
+    - Data-driven lead qualification
+    - Transparent scoring methodology for the team
+
+    **Dashboard Features:**
+    - Custom scoring criteria (engagement, company size, industry fit)
+    - Automatic score calculation and ranking
+    - Trend tracking over time
+    - Alert emails when leads exceed threshold score
+    - Weekly summary of score changes
+  </Accordion>
+
+  <Accordion title="Meeting Follow-up Automation" icon="envelope-circle-check">
+    **What it does:** After a Calendly meeting completes, automatically generates a personalized follow-up email draft with meeting notes template and logs the interaction in a tracking spreadsheet.
+
+    **Workflow:**
+    ```
+    Calendly (meeting completed) → Gmail (follow-up draft) → Google Sheets (interaction log)
+    ```
+
+    **Trigger:** Event-based (meeting ends or 1 hour after scheduled time)
+
+    **Business Value:**
+    - Never forget to follow up after meetings
+    - Consistent follow-up communication
+    - Complete interaction history for every prospect
+    - Faster response time builds trust
+
+    **Automation Includes:**
+    - Personalized follow-up email draft ready to send
+    - Meeting notes template with attendee context
+    - Automatic logging to CRM tracking sheet
+    - Next steps reminder scheduling
+    - Attachment suggestions based on meeting topic
+  </Accordion>
+
+  <Accordion title="Weekly Activity Report" icon="chart-pie">
+    **What it does:** Compiles your week's meetings from Calendly, email metrics from Gmail, and CRM activity into a comprehensive productivity report in Google Sheets.
+
+    **Workflow:**
+    ```
+    Calendly (meeting history) → Gmail (email stats) → HubSpot (CRM activity) → Google Sheets (weekly report)
+    ```
+
+    **Trigger:** Scheduled (Friday 5:00 PM)
+
+    **Business Value:**
+    - Track personal productivity metrics
+    - Identify patterns in meeting load
+    - Quantify client communication efforts
+    - Data for performance reviews and planning
+
+    **Report Includes:**
+    - Total meetings by type (demo, follow-up, internal)
+    - No-show tracking and rates
+    - Email volume sent/received
+    - CRM activities logged
+    - Week-over-week comparisons
+    - Time allocation analysis
+  </Accordion>
+
+  <Accordion title="Client Onboarding Sequence" icon="user-check">
+    **What it does:** When a new deal closes in HubSpot, automatically schedules onboarding meetings via Calendly, sends welcome emails through Gmail, and creates a client tracking sheet.
+
+    **Workflow:**
+    ```
+    HubSpot (deal closed-won) → Calendly (booking link generation) → Gmail (welcome sequence) → Google Sheets (client tracker)
+    ```
+
+    **Trigger:** Event-based (deal stage = Closed Won)
+
+    **Business Value:**
+    - Seamless transition from sales to customer success
+    - Consistent onboarding experience for all clients
+    - No manual coordination required
+    - Complete audit trail from day one
+
+    **Sequence Actions:**
+    - Generate personalized Calendly booking link
+    - Send welcome email with onboarding schedule
+    - Create client row in master tracking sheet
+    - Schedule internal kickoff meeting
+    - Set reminder for 30-day check-in
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Client-Facing Services
+
+<AccordionGroup>
+  <Accordion title="Automated Client Research Reports" icon="file-chart-column">
+    **What it does:** Generates customized research reports combining market data, news analysis, and financial metrics.
+
+    **Workflow:**
+    ```
+    Tavily (research) → Finnhub (financial data) → NIRA (analysis + writing) → PDF.co (professional formatting) → Email (client delivery)
+    ```
+
+    **Trigger:** Scheduled (weekly/monthly) or on-demand
+
+    **Business Value:**
+    - Scale research services without headcount
+    - Consistent report quality
+    - Faster turnaround times
+    - Higher client satisfaction
+
+    **Report Types:**
+    - Industry analysis reports
+    - Competitive landscape studies
+    - Market opportunity assessments
+    - Investment research summaries
+  </Accordion>
+
+  <Accordion title="Daily Portfolio Performance Updates" icon="briefcase">
+    **What it does:** Delivers personalized portfolio performance summaries to clients every morning.
+
+    **Workflow:**
+    ```
+    Finnhub (portfolio holdings data) → NIRA (performance analysis) → Email (personalized delivery)
+    ```
+
+    **Trigger:** Scheduled (8:00 AM client timezone)
+
+    **Business Value:**
+    - Premium service differentiation
+    - Improved client retention
+    - Reduced support inquiries
+    - Demonstrates proactive management
+
+    **Update Includes:**
+    - Portfolio value and daily P&L
+    - Top gainers and losers
+    - Dividend announcements
+    - Rebalancing recommendations
+    - Market context and outlook
+  </Accordion>
+
+  <Accordion title="Client Meeting Prep Packages" icon="folder-open">
+    **What it does:** Creates comprehensive briefing packages before client meetings with latest portfolio data and relevant news.
+
+    **Workflow:**
+    ```
+    HubSpot (client context) → Finnhub (portfolio data) → Tavily (relevant news) → PDF.co (package creation) → Email (advisor delivery)
+    ```
+
+    **Trigger:** Event-based (meeting scheduled) or manual
+
+    **Business Value:**
+    - Confident, informed client meetings
+    - Identify discussion opportunities
+    - Address concerns proactively
+    - Strengthen client relationships
+
+    **Package Contents:**
+    - Client profile and history
+    - Portfolio performance summary
+    - Relevant market news
+    - Suggested discussion topics
+    - Action items and recommendations
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Internal Communications
+
+<AccordionGroup>
+  <Accordion title="Executive Weekly Digest" icon="envelope-open-text">
+    **What it does:** Compiles key metrics and activities across engineering, sales, and operations into executive summary.
+
+    **Workflow:**
+    ```
+    GitHub (engineering metrics) → HubSpot (sales data) → Slack (key discussions) → NIRA (synthesis) → Email (leadership distribution)
+    ```
+
+    **Trigger:** Scheduled (Friday 4:00 PM)
+
+    **Business Value:**
+    - Leadership stays informed without meetings
+    - Cross-functional visibility
+    - Early identification of issues
+    - Data-driven decision making
+
+    **Digest Sections:**
+    - Week highlights and lowlights
+    - Key metrics and trends
+    - Notable customer wins
+    - Engineering velocity
+    - Upcoming priorities
+  </Accordion>
+
+  <Accordion title="New Employee Onboarding Automation" icon="user-graduate">
+    **What it does:** Orchestrates welcome communications, meeting schedules, and resource delivery for new hires.
+
+    **Workflow:**
+    ```
+    HubSpot/HR system (new hire trigger) → Slack (team intro) → Zoom (meeting scheduling) → Email (resource delivery)
+    ```
+
+    **Trigger:** Event-based (hire date - 3 days)
+
+    **Business Value:**
+    - Consistent onboarding experience
+    - Reduced HR administrative burden
+    - Faster time to productivity
+    - Positive first impression
+
+    **Automation Includes:**
+    - Welcome email with resources
+    - Slack channel introductions
+    - 1:1 meeting scheduling
+    - Training resource delivery
+    - 30/60/90 day check-in reminders
+  </Accordion>
+
+  <Accordion title="Incident Response Coordination" icon="siren-on">
+    **What it does:** Automatically coordinates team response when incidents are detected, including communication and tracking.
+
+    **Workflow:**
+    ```
+    GitHub/monitoring (incident detection) → Slack (war room creation + team alerts) → Zoom (bridge setup) → HubSpot (customer communication tracking)
+    ```
+
+    **Trigger:** Event-based (incident detected)
+
+    **Business Value:**
+    - Faster mean time to resolution
+    - Clear communication during crisis
+    - Complete incident documentation
+    - Post-mortem data collection
+
+    **Automation Steps:**
+    - Create incident Slack channel
+    - Alert on-call team
+    - Set up Zoom bridge
+    - Start incident timeline
+    - Track customer communications
+    - Generate post-incident report
+  </Accordion>
+
+  <Accordion title="Team Recognition Bot" icon="trophy">
+    **What it does:** Automatically celebrates team wins, contributions, and milestones in public channels.
+
+    **Workflow:**
+    ```
+    GitHub (PR merges, releases) → HubSpot (deals won) → NIRA (celebration message) → Slack (public recognition)
+    ```
+
+    **Trigger:** Event-based (various achievement triggers)
+
+    **Business Value:**
+    - Boost team morale
+    - Reinforce positive behaviors
+    - Build collaborative culture
+    - Make wins visible
+
+    **Recognition Types:**
+    - Major PR merges
+    - Deal closures
+    - Project completions
+    - Help desk kudos
+    - Work anniversaries
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Getting Started
+
+<Steps>
+  <Step title="Choose Your Use Case">
+    Browse the examples above and identify workflows that solve your challenges. Start with one high-impact automation.
+  </Step>
+
+  <Step title="Install Required Connectors">
+    Navigate to **Connections** in Studio and install the integrations you need. Configure API keys and credentials.
+  </Step>
+
+  <Step title="Create Your Playbook">
+    Go to **Playbooks** and create a new playbook. Give it a descriptive name and describe what you want it to do.
+  </Step>
+
+  <Step title="Set Your Trigger">
+    Choose how the automation runs:
+    - **Scheduled**: Runs at specific times (daily, hourly, etc.)
+    - **Event-based**: Runs when something happens (new issue, meeting scheduled)
+    - **Manual**: Runs when you trigger it
+  </Step>
+
+  <Step title="Configure and Test">
+    Set up your workflow logic and test with real data. Studio's AI will help you refine the automation.
+  </Step>
+
+  <Step title="Deploy and Monitor">
+    Activate your playbook and monitor its performance. Adjust as needed based on results.
+  </Step>
+</Steps>
+
+<Tip>
+Start simple and iterate. Many successful automations began as basic workflows that evolved over time based on user feedback and changing needs.
+</Tip>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Start Small" icon="seedling">
+    Begin with one simple automation that solves a clear pain point. Get comfortable with the process before building complex workflows.
+  </Card>
+
+  <Card title="Test Thoroughly" icon="flask">
+    Always test automations with real data before deploying. Verify notifications reach the right people and contain expected information.
+  </Card>
+
+  <Card title="Handle Errors Gracefully" icon="shield-check">
+    Plan for failures in external services. Set up fallback notifications and error alerts so you know when something breaks.
+  </Card>
+
+  <Card title="Monitor and Iterate" icon="chart-line">
+    Review automation performance regularly. Look for opportunities to improve accuracy, reduce noise, or add value.
+  </Card>
+
+  <Card title="Document Your Workflows" icon="book">
+    Keep notes on what each automation does and why. This helps when troubleshooting or handing off to team members.
+  </Card>
+
+  <Card title="Respect Rate Limits" icon="gauge">
+    Be mindful of API rate limits on external services. Adjust scheduling to stay within limits and avoid service disruptions.
+  </Card>
+</CardGroup>
+
+## Need Inspiration?
+
+<CardGroup cols={3}>
+  <Card title="Playbooks Guide" icon="book-open" href="/studio/playbooks">
+    Learn how to build and configure playbooks
+  </Card>
+
+  <Card title="Available Connectors" icon="plug" href="/studio/connections">
+    Browse all available integrations
+  </Card>
+
+  <Card title="Discord Community" icon="discord" href="https://www.nimblebrain.ai/discord?utm_source=docs&utm_campaign=studio">
+    Share ideas and learn from other users
+  </Card>
+</CardGroup>
+
+---
+
+<Note>
+These examples are starting points - customize them for your specific needs! Mix and match connectors, adjust schedules, and modify outputs to create workflows that perfectly fit your business.
+</Note>

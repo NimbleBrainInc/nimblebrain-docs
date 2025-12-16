@@ -1,7 +1,6 @@
 ---
-title: 'Connections'
-description: 'Install and manage MCP servers from the community registry'
-icon: 'plug'
+title: 'Overview'
+description: 'Install and manage integrations from the NimbleBrain registry'
 ---
 
 <img
@@ -9,59 +8,144 @@ icon: 'plug'
   alt="Connections installed servers"
 />
 
-**Connections** is where you manage MCP servers in your workspace. Install servers from the community registry to give your playbooks access to external APIs, databases, and services.
+**Connections** is where you manage integrations in your workspace. Install connections from the NimbleBrain registry to give your playbooks access to external APIs, databases, and services.
 
 <Tip>
-**NIRA Handles This**: NIRA automatically selects and configures MCP servers for you. This page is useful for understanding what tools are available.
+**NIRA Handles This**: NIRA automatically selects and configures the right tools for you. This page is useful for understanding what integrations are available.
 </Tip>
 
 ## What is Connections?
 
 Connections provides:
 
-- **Browse Catalog**: Explore available MCP servers from the NimbleBrain registry
-- **One-Click Install**: Install servers instantly without configuration
-- **Server Management**: View status, logs, and control installed servers
-- **Integration with Playbooks**: All installed servers are available to your playbooks
+- **Browse Catalog**: Explore available integrations from the NimbleBrain registry
+- **One-Click Install**: Install connections instantly without configuration
+- **Connection Management**: View status, logs, and control installed connections
+- **Integration with Playbooks**: All installed connections are available to your playbooks
 
-## Installed Servers
+## Connection Pricing
 
-The Installed Servers tab shows all MCP servers currently running in your workspace:
+NimbleBrain Studio offers connections in two tiers:
+
+<Tabs>
+  <Tab title="Free Tier">
+    **Available on all plans at no additional cost:**
+
+    <CardGroup cols={2}>
+      <Card title="NimbleMail" icon="envelope">
+        Send emails via AWS SES integration
+      </Card>
+      <Card title="NimbleNews" icon="newspaper">
+        News headlines and article search
+      </Card>
+      <Card title="NimbleSearch" icon="magnifying-glass">
+        Web search powered by Brave
+      </Card>
+      <Card title="NimbleWeather" icon="cloud-sun">
+        Weather data and forecasts
+      </Card>
+    </CardGroup>
+
+    <Tip>
+      These core connections are included with every NimbleBrain Studio account, making it easy to build automations for email, web search, news monitoring, and weather alerts.
+    </Tip>
+  </Tab>
+
+  <Tab title="Paid Tier">
+    **Available with paid subscription:**
+
+    All premium connections require a paid NimbleBrain Studio subscription:
+
+    **Business and Collaboration:**
+    - **Calendly** - Scheduling automation, event management, booking links, invitee tracking
+    - **Gmail** - Email automation, drafts, labels, threads, contacts
+    - **Google Sheets** - Spreadsheet automation, data analysis, SQL queries, charts
+    - **HubSpot** - CRM, marketing automation, sales pipeline management
+    - **Slack** - Team messaging, channels, file sharing, workflow automation
+    - **Zoom** - Video meetings, webinars, recordings, participant management
+
+    **Developer Tools:**
+    - **GitHub** - Repositories, issues, pull requests, Actions, code search
+    - **Ref** - Token-efficient documentation search for 1000+ sites
+
+    **Finance and Market Data:**
+    - **Finnhub** - Stock quotes, company fundamentals, financial news, market analysis
+
+    **Document Processing:**
+    - **PDF.co** - PDF manipulation, OCR, document automation, conversion
+
+    **Data and Analytics:**
+    - **ClickHouse** - OLAP database analytics and data warehousing
+    - **PostgreSQL** - Full database access with read/write capabilities
+
+    **Data Intelligence:**
+    - **Abstract API** - Email/phone validation, IP geolocation, company enrichment
+    - **IPInfo** - IP geolocation and network intelligence
+
+    **Language and Translation:**
+    - **DeepL** - Professional AI translation in 30+ languages
+
+    **Search and Research:**
+    - **Tavily** - AI-powered web search, content extraction, crawling
+
+    **Weather and Environment:**
+    - **OpenWeatherMap** - Weather, solar radiation, air quality data
+
+    **Travel and Recreation:**
+    - **National Parks** - US National Parks Service data
+
+    **Utilities:**
+    - **Echo** - Testing and debugging connections
+    - **Reverse Text** - Text manipulation and analysis
+
+    <Info>
+      Paid tier includes all free tier connections plus access to 18+ premium integrations. [View pricing →](https://www.nimblebrain.ai/pricing)
+    </Info>
+  </Tab>
+</Tabs>
+
+<Warning>
+**Important:** Attempting to use paid-tier connections without a valid subscription will result in connection errors. Upgrade your plan to access premium integrations.
+</Warning>
+
+## Installed Connections
+
+The Installed Connections tab shows all integrations currently running in your workspace:
 
 <img
   src="/images/studio/toolbox-installed-servers.png"
   alt="Connections installed servers view"
 />
 
-### Server Information
+### Connection Information
 
-Each server card displays:
+Each connection card displays:
 
-- **Server name**: The display name of the MCP server
-- **Description**: What the server does and which APIs it provides
-- **Status**: Running status indicator (🟢 Running)
+- **Connection name**: The display name of the integration
+- **Description**: What the connection does and which APIs it provides
+- **Status**: Running status indicator (Running)
 - **Package ID**: The registry identifier (e.g., `ai.nimbletools/echo`)
 
-### Server Actions
+### Connection Actions
 
 <ResponseField name="Connect" icon="plug">
-  Generate connection configuration for Claude Desktop or other MCP clients
+  Generate connection configuration for Claude Desktop
 </ResponseField>
 
 <ResponseField name="Logs" icon="file-text">
-  View real-time logs from the server to debug issues
+  View real-time logs from the connection to debug issues
 </ResponseField>
 
 <ResponseField name="Restart" icon="refresh">
-  Restart the server if it becomes unresponsive
+  Restart the connection if it becomes unresponsive
 </ResponseField>
 
 <ResponseField name="Uninstall" icon="trash">
-  Remove the server from your workspace
+  Remove the connection from your workspace
 </ResponseField>
 
 <ResponseField name="Configure" icon="settings">
-  Manage server-specific settings and environment variables
+  Manage connection-specific settings and environment variables
 </ResponseField>
 
 ## Browse Catalog
@@ -71,87 +155,87 @@ Each server card displays:
   alt="Connections catalog browser"
 />
 
-The catalog contains MCP servers from the NimbleBrain community registry.
+The catalog contains integrations from the NimbleBrain registry.
 
 ### Filter by Category
 
-Servers are organized into categories:
+Connections are organized into categories:
 
-<CardGroup cols={3}>
-  <Card title="All" icon="grid" href="/docs/mcp-servers/overview">
-    View all available servers
+<CardGroup cols={2}>
+  <Card title="Business" icon="briefcase">
+    Gmail, Slack, Calendly, Zoom, HubSpot, Google Sheets
   </Card>
-  <Card title="Data Intelligence" icon="database" href="/docs/mcp-servers/overview">
-    APIs for financial data, web search, and intelligence
+  <Card title="Developer Tools" icon="code">
+    GitHub, Echo, Ref documentation search
   </Card>
-  <Card title="Developer Tools" icon="code" href="/docs/mcp-servers/overview">
-    GitHub, reverse text, documentation search
+  <Card title="Data & Analytics" icon="database">
+    PostgreSQL, ClickHouse, Abstract API, IPInfo
   </Card>
-  <Card title="Infrastructure Data" icon="server" href="/docs/mcp-servers/overview">
-    Database access (PostgreSQL, ClickHouse)
+  <Card title="Utilities" icon="wrench">
+    Tavily, DeepL, PDF.co, Finnhub, OpenWeatherMap
   </Card>
 </CardGroup>
 
-### Server Cards
+### Connection Cards
 
-Each server in the catalog shows:
+Each connection in the catalog shows:
 
-- **Server icon**: Visual identifier
-- **Server name**: Display name
+- **Connection icon**: Visual identifier
+- **Connection name**: Display name
 - **Package ID**: Full registry identifier with version
-- **Description**: What the server provides
+- **Description**: What the connection provides
 - **Category badge**: Which category it belongs to
 - **Install button**: One-click installation
 
-## Installing a Server
+## Installing a Connection
 
 <Steps>
   <Step title="Browse Catalog">
     Click the "Browse Catalog" tab in Connections
   </Step>
-  <Step title="Find a Server">
-    Scroll through or use the category filters to find a server
+  <Step title="Find a Connection">
+    Scroll through or use the category filters to find a connection
   </Step>
   <Step title="Review Details">
-    Click on a server card to see full details (optional)
+    Click on a connection card to see full details (optional)
   </Step>
   <Step title="Click Install">
-    Click the blue "Install" button on the server card
+    Click the blue "Install" button on the connection card
   </Step>
   <Step title="Wait for Installation">
-    The server will be installed and started automatically (usually 5-15 seconds)
+    The connection will be installed and started automatically (usually 5-15 seconds)
   </Step>
 </Steps>
 
 <Callout type="success">
-  Once installed, the server is immediately available to all playbooks in your workspace!
+  Once installed, the connection is immediately available to all playbooks in your workspace!
 </Callout>
 
-## Available Servers
+## Available Connections
 
-Here are all the MCP servers available in the catalog:
+Here are all the integrations available in the catalog:
 
 <Tip>
-  **View all servers**: Check out the [MCP Servers Overview](/docs/mcp-servers/overview) for detailed descriptions and use cases.
+  **Browse by category**: Use the navigation sidebar to explore connections by category - Business, Developer Tools, Data & Analytics, and Utilities.
 </Tip>
 
 ### Development Tools
 
 <AccordionGroup>
   <Accordion title="Echo">
-    Simple echo service for testing MCP protocol functionality, debugging, and development workflows. No API key required.
+    Simple echo service for testing, debugging, and development workflows. No API key required.
 
-    [View Echo Documentation →](/docs/mcp-servers/development/echo)
+    [View Echo Documentation →](/studio/connections/developer-tools/echo)
   </Accordion>
   <Accordion title="GitHub">
     Interact with GitHub repos, issues, PRs, code search, and Actions through natural language. Requires GitHub token.
 
-    [View GitHub Documentation →](/docs/mcp-servers/development/github)
+    [View GitHub Documentation →](/studio/connections/developer-tools/github)
   </Accordion>
   <Accordion title="Ref">
     Token-efficient documentation search for 1000+ sites. 60-95% fewer tokens than alternatives with session-aware de-duplication. Requires Ref API key.
 
-    [View Ref Documentation →](/docs/mcp-servers/development-tools/ref)
+    [View Ref Documentation →](/studio/connections/developer-tools/ref)
   </Accordion>
 </AccordionGroup>
 
@@ -161,22 +245,22 @@ Here are all the MCP servers available in the catalog:
   <Accordion title="Abstract API">
     Comprehensive API suite for data enrichment, validation, and intelligence services. Email validation, IP geolocation, phone validation, and company data. Requires Abstract API key.
 
-    [View Abstract API Documentation →](/docs/mcp-servers/data-intelligence/abstract)
+    [View Abstract API Documentation →](/studio/connections/data/abstract)
   </Accordion>
   <Accordion title="IPInfo">
     IP geolocation, network intelligence, ASN lookup, privacy detection, and WHOIS queries. Requires IPInfo API key.
 
-    [View IPInfo Documentation →](/docs/mcp-servers/data-intelligence/ipinfo)
+    [View IPInfo Documentation →](/studio/connections/data/ipinfo)
   </Accordion>
 </AccordionGroup>
 
-### Search & Research
+### Search and Research
 
 <AccordionGroup>
   <Accordion title="Tavily">
     AI-powered web search optimized for LLMs. Real-time results, content extraction, web crawling, and site mapping. Requires Tavily API key.
 
-    [View Tavily Documentation →](/docs/mcp-servers/search-research/tavily)
+    [View Tavily Documentation →](/studio/connections/utilities/tavily)
   </Accordion>
 </AccordionGroup>
 
@@ -186,22 +270,22 @@ Here are all the MCP servers available in the catalog:
   <Accordion title="PDF.co">
     Comprehensive PDF toolkit with 18 tools for conversion, manipulation, security, OCR, barcodes, and watermarks. Credit-based pricing with API key.
 
-    [View PDF.co Documentation →](/docs/mcp-servers/document-processing/pdfco)
+    [View PDF.co Documentation →](/studio/connections/utilities/pdfco)
   </Accordion>
 </AccordionGroup>
 
-### Databases & Analytics
+### Databases and Analytics
 
 <AccordionGroup>
   <Accordion title="ClickHouse">
     OLAP database for real-time analytics and data warehousing queries. Execute queries, analyze data, and generate insights. Requires ClickHouse connection details.
 
-    [View ClickHouse Documentation →](/docs/mcp-servers/data-analytics/clickhouse)
+    [View ClickHouse Documentation →](/studio/connections/data/clickhouse)
   </Accordion>
   <Accordion title="PostgreSQL">
     Industrial-strength database management with AI-powered natural language queries, intelligent index optimization, and comprehensive health monitoring. Requires database credentials.
 
-    [View PostgreSQL Documentation →](/docs/mcp-servers/databases/postgresql)
+    [View PostgreSQL Documentation →](/studio/connections/data/postgresql)
   </Accordion>
 </AccordionGroup>
 
@@ -211,37 +295,70 @@ Here are all the MCP servers available in the catalog:
   <Accordion title="Finnhub">
     Real-time stock data, company fundamentals, financial news, and market analysis. Requires Finnhub API key.
 
-    [View Finnhub Documentation →](/mcp-servers/finance/finnhub)
+    [View Finnhub Documentation →](/studio/connections/utilities/finnhub)
   </Accordion>
 </AccordionGroup>
 
-### Language & Translation
+### Language and Translation
 
 <AccordionGroup>
   <Accordion title="DeepL">
     High-quality neural machine translation supporting 30+ languages. Text translation, document translation, and language detection. Requires DeepL API key.
 
-    [View DeepL Documentation →](/docs/mcp-servers/language/deepl)
+    [View DeepL Documentation →](/studio/connections/utilities/deepl)
   </Accordion>
 </AccordionGroup>
 
-### Travel & Recreation
+### Business and Collaboration
+
+<AccordionGroup>
+  <Accordion title="Calendly">
+    Scheduling automation for managing events, invitees, and booking links. Create scheduling links, track no-shows, and set up webhooks. OAuth2 authentication.
+
+    [View Calendly Documentation →](/studio/connections/business/calendly)
+  </Accordion>
+  <Accordion title="Gmail">
+    Email automation for sending, receiving, organizing, and managing messages. Create drafts, manage labels, handle threads, and access contacts. OAuth2 authentication.
+
+    [View Gmail Documentation →](/studio/connections/business/gmail)
+  </Accordion>
+  <Accordion title="Google Sheets">
+    Spreadsheet automation for creating, reading, updating, and analyzing data. Execute SQL queries, create charts, and manage worksheets. OAuth2 authentication.
+
+    [View Google Sheets Documentation →](/studio/connections/business/googlesheets)
+  </Accordion>
+  <Accordion title="HubSpot">
+    CRM and marketing automation platform integration. Manage contacts, companies, deals, tickets, and marketing campaigns. OAuth2 authentication.
+
+    [View HubSpot Documentation →](/studio/connections/business/hubspot)
+  </Accordion>
+  <Accordion title="Slack">
+    Team communication and collaboration platform integration. Send messages, manage channels, retrieve conversation history, and automate workflows. OAuth2 authentication.
+
+    [View Slack Documentation →](/studio/connections/business/slack)
+  </Accordion>
+  <Accordion title="Zoom">
+    Video conferencing platform integration. Schedule meetings, manage participants, retrieve recordings, and configure meeting settings. OAuth2 authentication.
+
+    [View Zoom Documentation →](/studio/connections/business/zoom)
+  </Accordion>
+</AccordionGroup>
+
+### Travel and Recreation
 
 <AccordionGroup>
   <Accordion title="National Parks">
     Explore US National Parks with detailed information about parks, trails, campgrounds, and visitor centers. U.S. National Parks Service API.
-
-    [View National Parks Documentation →](/mcp-servers/travel/nationalparks)
   </Accordion>
 </AccordionGroup>
 
-### Weather & Climate
+### Weather and Climate
 
 <AccordionGroup>
   <Accordion title="OpenWeatherMap">
     Current weather, forecasts, historical data, and air quality information for any location worldwide. Requires OpenWeatherMap API key.
 
-    [View OpenWeatherMap Documentation →](/mcp-servers/weather/openweathermap)
+    [View OpenWeatherMap Documentation →](/studio/connections/utilities/openweathermap)
   </Accordion>
 </AccordionGroup>
 
@@ -250,23 +367,21 @@ Here are all the MCP servers available in the catalog:
 <AccordionGroup>
   <Accordion title="Reverse Text">
     Text manipulation service with reverse and analysis tools for processing and transforming text data. Zero configuration, no API key required.
-
-    [View Reverse Text Documentation →](/docs/mcp-servers/utilities/reverse-text)
   </Accordion>
 </AccordionGroup>
 
-## Server Configuration
+## Connection Configuration
 
-Some servers require configuration before they can be used:
+Some connections require configuration before they can be used:
 
-### API Keys & Secrets
+### API Keys and Secrets
 
-Servers that connect to external APIs need authentication:
+Connections that access external APIs need authentication:
 
-1. Click the **Configure** button (gear icon) on the server card
+1. Click the **Configure** button (gear icon) on the connection card
 2. Enter required API keys or credentials
 3. Save the configuration
-4. Restart the server if prompted
+4. Restart the connection if prompted
 
 <Callout type="warning">
   **Security**: API keys are encrypted and stored securely. They are never exposed in logs or visible to other workspace members.
@@ -274,25 +389,25 @@ Servers that connect to external APIs need authentication:
 
 ### Environment Variables
 
-Some servers accept optional configuration via environment variables:
+Some connections accept optional configuration via environment variables:
 
 - Connection timeouts
 - Rate limiting
 - Feature flags
 - Custom endpoints
 
-Check the server documentation for available options.
+Check the connection documentation for available options.
 
-## Server Logs
+## Connection Logs
 
 View real-time logs to debug issues:
 
 <Steps>
   <Step title="Click Logs">
-    Click the "Logs" button on any installed server
+    Click the "Logs" button on any installed connection
   </Step>
   <Step title="View Output">
-    See real-time stdout/stderr from the server
+    See real-time output from the connection
   </Step>
   <Step title="Filter Logs">
     Use the search box to filter log messages
@@ -304,11 +419,11 @@ View real-time logs to debug issues:
 
 ## Connecting to Claude Desktop
 
-Generate a connection configuration for any installed server:
+Generate a connection configuration for any installed integration:
 
 <Steps>
   <Step title="Click Connect">
-    Click the "Connect" button on the server card
+    Click the "Connect" button on the connection card
   </Step>
   <Step title="Copy Configuration">
     Copy the generated JSON configuration
@@ -330,58 +445,58 @@ Generate a connection configuration for any installed server:
   The connection config includes your workspace API token for authentication. Keep it secure!
 </Callout>
 
-## Server Status
+## Connection Status
 
 <CardGroup cols={2}>
-  <Card title="🟢 Running" icon="circle-check">
-    Server is healthy and responding to requests
+  <Card title="Running" icon="circle-check">
+    Connection is healthy and responding to requests
   </Card>
-  <Card title="🔴 Error" icon="circle-xmark">
-    Server failed to start or is not responding
+  <Card title="Error" icon="circle-xmark">
+    Connection failed to start or is not responding
   </Card>
-  <Card title="🟡 Installing" icon="circle-notch">
-    Server is being installed or restarted
+  <Card title="Installing" icon="circle-notch">
+    Connection is being installed or restarted
   </Card>
-  <Card title="⚫ Stopped" icon="circle-pause">
-    Server is installed but not running
+  <Card title="Stopped" icon="circle-pause">
+    Connection is installed but not running
   </Card>
 </CardGroup>
 
-## Uninstalling a Server
+## Uninstalling a Connection
 
 <Steps>
   <Step title="Click Uninstall">
-    Click the red "Uninstall" button on the server card
+    Click the red "Uninstall" button on the connection card
   </Step>
   <Step title="Confirm">
-    Confirm that you want to remove the server
+    Confirm that you want to remove the connection
   </Step>
   <Step title="Cleanup">
-    The server and its configuration will be removed
+    The connection and its configuration will be removed
   </Step>
 </Steps>
 
 <Callout type="danger">
-  **Warning**: Uninstalling a server will break any playbooks that depend on it. Make sure no playbooks are using the server before uninstalling.
+  **Warning**: Uninstalling a connection will break any playbooks that depend on it. Make sure no playbooks are using the connection before uninstalling.
 </Callout>
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Server won't install">
+  <Accordion title="Connection won't install">
     - Check that you have sufficient workspace resources
     - Try refreshing the catalog
     - Check the Activity Logs for error details
   </Accordion>
-  <Accordion title="Server shows error status">
+  <Accordion title="Connection shows error status">
     - Click "Logs" to see error messages
     - Check if API keys are configured correctly
-    - Try restarting the server
+    - Try restarting the connection
   </Accordion>
-  <Accordion title="Playbook can't find the server">
-    - Verify the server shows "Running" status
-    - Try restarting the server
-    - Check that the server is installed in the correct workspace
+  <Accordion title="Playbook can't find the connection">
+    - Verify the connection shows "Running" status
+    - Try restarting the connection
+    - Check that the connection is installed in the correct workspace
   </Accordion>
   <Accordion title="API key errors">
     - Verify the API key is valid
@@ -394,7 +509,7 @@ Generate a connection configuration for any installed server:
 
 <CardGroup cols={2}>
   <Card title="Install What You Need" icon="download">
-    Only install servers that your playbooks will use
+    Only install connections that your playbooks will use
   </Card>
   <Card title="Secure API Keys" icon="lock">
     Never share API keys or workspace tokens publicly
@@ -403,7 +518,7 @@ Generate a connection configuration for any installed server:
     Check logs when debugging playbook issues
   </Card>
   <Card title="Test Connections" icon="plug">
-    Verify servers work before using them in production playbooks
+    Verify connections work before using them in production playbooks
   </Card>
 </CardGroup>
 
@@ -415,7 +530,7 @@ Generate a connection configuration for any installed server:
     icon="play"
     href="/studio/playbooks"
   >
-    Create workflows that use your installed MCP servers
+    Create workflows that use your installed connections
   </Card>
   <Card
     title="API Tokens"
@@ -429,13 +544,13 @@ Generate a connection configuration for any installed server:
     icon="list"
     href="/studio/activity-logs"
   >
-    Track server installations and configuration changes
+    Track connection installations and configuration changes
   </Card>
   <Card
     title="Claude Desktop Setup"
     icon="robot"
-    href="/studio/claude-desktop"
+    href="/developers/integrations/claude-desktop"
   >
-    Connect your servers to Claude Desktop
+    Connect your integrations to Claude Desktop
   </Card>
 </CardGroup>

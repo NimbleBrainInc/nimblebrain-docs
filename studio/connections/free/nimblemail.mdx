@@ -1,0 +1,96 @@
+---
+title: 'NimbleMail'
+description: 'Send emails from your automations with zero configuration'
+---
+
+NimbleMail lets your playbooks send emails without any API keys or configuration. It's included free with every NimbleBrain Studio account.
+
+<Info>
+**Free Forever**: NimbleMail is included with all NimbleBrain Studio plans at no additional cost.
+</Info>
+
+## What is NimbleMail?
+
+NimbleMail is a simple email sending service powered by AWS SES. Use it to:
+
+- Send notification emails from playbooks
+- Deliver reports and summaries
+- Alert team members about important events
+- Send automated follow-ups
+
+## Capabilities
+
+<CardGroup cols={2}>
+  <Card title="Send Emails" icon="envelope">
+    Send plain text or HTML emails to any recipient
+  </Card>
+  <Card title="Multiple Recipients" icon="users">
+    Send to multiple recipients, CC, and BCC
+  </Card>
+  <Card title="No Setup Required" icon="check">
+    Works immediately - no API keys or configuration needed
+  </Card>
+  <Card title="Reliable Delivery" icon="shield-check">
+    Powered by AWS SES for high deliverability
+  </Card>
+</CardGroup>
+
+## Example Usage
+
+### Send a Simple Notification
+
+```
+Send an email to team@company.com with subject "Daily Report Ready"
+and body "Your daily sales report is now available in the dashboard."
+```
+
+### Send an Alert
+
+```
+If the stock price drops below $100, send an email to alerts@company.com
+with subject "Price Alert: Stock Below Threshold"
+```
+
+### Automated Report Delivery
+
+```
+Every Friday at 5pm, compile the weekly metrics and email them to
+the leadership team at leadership@company.com
+```
+
+## Limitations
+
+<Warning>
+NimbleMail is designed for transactional and notification emails, not bulk marketing.
+</Warning>
+
+- **Rate limits**: Reasonable sending limits apply to prevent abuse
+- **From address**: Emails are sent from a NimbleBrain address
+- **No attachments**: File attachments are not currently supported
+- **No tracking**: Open/click tracking is not available
+
+## When to Use NimbleMail vs Gmail
+
+| Use Case | NimbleMail | Gmail Connection |
+|----------|------------|------------------|
+| Send notifications | Yes | Yes |
+| Read incoming emails | No | Yes |
+| Manage labels/folders | No | Yes |
+| Custom from address | No | Yes |
+| No setup required | Yes | No (OAuth required) |
+| Free | Yes | Paid tier |
+
+<Tip>
+Use **NimbleMail** for simple outbound notifications. Use **Gmail** when you need to read emails, manage your inbox, or send from your own address.
+</Tip>
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Gmail" href="/studio/connections/business/gmail">
+    Full Gmail integration with inbox access
+  </Card>
+  <Card title="Slack" href="/studio/connections/business/slack">
+    Team notifications via Slack
+  </Card>
+</CardGroup>

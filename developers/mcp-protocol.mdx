@@ -1,0 +1,136 @@
+---
+title: 'MCP Protocol'
+description: 'Technical overview of the Model Context Protocol used by NimbleBrain'
+---
+
+## What is MCP?
+
+**MCP** (Model Context Protocol) is an open standard that defines how AI models connect to external tools and data sources. NimbleBrain uses MCP to provide a consistent, secure way to integrate with any service.
+
+<Note>
+This is technical documentation for developers. If you're building automations in Studio, you don't need to understand MCP - just use [Connections](/studio/connections) to add integrations.
+</Note>
+
+## Why MCP Matters
+
+MCP provides several advantages for AI-powered integrations:
+
+<CardGroup cols={2}>
+  <Card title="Standardized" icon="check">
+    One protocol for all integrations. Any MCP-compatible server works with NimbleBrain.
+  </Card>
+  <Card title="Secure" icon="lock">
+    Credentials are managed separately from the AI model. Tools declare their capabilities upfront.
+  </Card>
+  <Card title="Extensible" icon="puzzle-piece">
+    New tools can be added without changing how playbooks work. The AI automatically discovers available tools.
+  </Card>
+  <Card title="Interoperable" icon="arrows-rotate">
+    MCP servers work with Claude Desktop, NimbleBrain Studio, and other MCP-compatible clients.
+  </Card>
+</CardGroup>
+
+## Architecture
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   NimbleBrain   │────▶│   MCP Server    │────▶│  External API   │
+│     Studio      │◀────│   (Connection)  │◀────│   (Slack, etc)  │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+        │                       │
+        │                       │
+        ▼                       ▼
+   Playbook asks          Server handles
+   "post to Slack"        authentication &
+                          API calls
+```
+
+## MCP Server Components
+
+Each MCP server (what Studio calls a "Connection") provides:
+
+### Tools
+Functions the AI can call. For example, the Slack server provides:
+- `slack_send_message` - Post a message to a channel
+- `slack_list_channels` - Get available channels
+- `slack_get_history` - Retrieve message history
+
+### Resources
+Data the AI can access, like files or database schemas.
+
+### Prompts
+Pre-configured prompt templates for common tasks.
+
+## Using MCP in Development
+
+### NimbleBrain SDK
+
+The TypeScript SDK handles MCP communication automatically:
+
+```typescript
+import { NimbleBrain } from '@nimblebrain/sdk';
+
+const client = new NimbleBrain({ apiKey: 'your-api-key' });
+
+// Run a playbook - MCP tools are available automatically
+const result = await client.playbooks.run('playbook-id', {
+  input: 'Post "Hello World" to #general on Slack'
+});
+```
+
+### Claude Desktop Integration
+
+Connect Claude Desktop to NimbleBrain MCP servers:
+
+1. Go to **Connections** in Studio
+2. Click **Connect** on any installed connection
+3. Copy the configuration JSON
+4. Add to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "nimblebrain-slack": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-remote", "https://mcp.nimbletools.dev/v1/sse"],
+      "env": {
+        "API_KEY": "your-workspace-api-key"
+      }
+    }
+  }
+}
+```
+
+### Building Custom MCP Servers
+
+To build your own MCP server for NimbleBrain:
+
+1. Follow the [MCP Specification](https://modelcontextprotocol.io)
+2. Implement the required transport (SSE for NimbleBrain)
+3. Publish to the NimbleBrain registry or deploy privately
+
+## MCP vs REST APIs
+
+| Feature | MCP | REST API |
+|---------|-----|----------|
+| AI Discovery | Tools auto-discovered | Manual documentation |
+| Type Safety | Schema-defined | Varies |
+| Authentication | Standardized | Varies by API |
+| Real-time | SSE support built-in | Requires WebSocket |
+
+## Resources
+
+<CardGroup cols={2}>
+  <Card title="MCP Specification" icon="book" href="https://modelcontextprotocol.io">
+    Official Model Context Protocol documentation
+  </Card>
+  <Card title="MCP GitHub" icon="github" href="https://github.com/modelcontextprotocol">
+    Open source MCP implementations and examples
+  </Card>
+  <Card title="NimbleBrain SDK" icon="code" href="/developers/sdk/overview">
+    TypeScript SDK for building with NimbleBrain
+  </Card>
+  <Card title="Connections" icon="plug" href="/studio/connections">
+    Browse available MCP servers in Studio
+  </Card>
+</CardGroup>

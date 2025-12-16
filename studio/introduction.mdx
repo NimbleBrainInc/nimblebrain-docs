@@ -1,7 +1,6 @@
 ---
 title: 'NimbleBrain Studio'
-description: 'Build AI-powered automations with natural language instructions and MCP integrations'
-icon: 'sparkles'
+description: 'Build AI-powered automations with natural language instructions and powerful integrations'
 ---
 
 <img
@@ -15,21 +14,33 @@ icon: 'sparkles'
   alt="NimbleBrain Studio Hero Dark"
 />
 
-# Welcome to NimbleBrain Studio
+# Build AI Automations in Minutes, Not Months
 
-NimbleBrain Studio is a web-based platform for building AI-powered automations. Create workflows that leverage MCP (Model Context Protocol) servers to connect to external APIs, databases, and services.
+NimbleBrain Studio lets you create powerful AI-powered automations using natural language. Connect to 20+ services, orchestrate complex workflows, and deploy - all through conversation with Nira, your AI assistant.
 
-<Note>
-**First time here?** NIRA, our AI assistant, can help you get started by building your first automation through conversation. Or explore the platform and build manually!
-</Note>
+<CardGroup cols={3}>
+  <Card title="No Code Required" icon="wand-magic-sparkles">
+    Describe what you want in plain English
+  </Card>
+  <Card title="20+ Integrations" icon="plug">
+    Slack, GitHub, HubSpot, databases, and more
+  </Card>
+  <Card title="Deploy Instantly" icon="rocket">
+    From idea to running automation in minutes
+  </Card>
+</CardGroup>
+
+<Tip>
+**New here?** Press **⌘K** (Mac) or **Ctrl+K** (Windows) to open Nira and start building your first automation through conversation.
+</Tip>
 
 ## What is NimbleBrain Studio?
 
 NimbleBrain Studio provides everything you need to build and manage AI automations:
 
 - **Playbooks**: AI-powered workflows with natural language instructions
-- **Connections**: 50+ MCP servers to connect external APIs and services
-- **NIRA**: AI assistant that can build automations through conversation
+- **Connections**: 50+ integrations to connect external APIs and services
+- **Nira**: AI assistant that can build automations through conversation
 - **Workspace Management**: Organize automations across isolated environments
 - **Monitoring & Logs**: Track execution history and debug issues
 - **API Tokens**: Generate secure tokens for Claude Desktop and programmatic access
@@ -38,14 +49,14 @@ NimbleBrain Studio provides everything you need to build and manage AI automatio
 
 <CardGroup cols={2}>
   <Card
-    title="NIRA - AI Assistant"
+    title="Nira"
     icon="robot"
     href="/studio/nira"
   >
-    Build automations conversationally - describe what you need and NIRA creates it
+    Build automations conversationally - describe what you need and Nira creates it
   </Card>
   <Card
-    title="Agents - Multi-Playbook Orchestration"
+    title="Agents"
     icon="diagram-project"
     href="/studio/agents"
   >
@@ -63,7 +74,7 @@ NimbleBrain Studio provides everything you need to build and manage AI automatio
     icon="plug"
     href="/studio/connections"
   >
-    50+ MCP servers providing access to APIs, databases, and external services
+    50+ integrations providing access to APIs, databases, and external services
   </Card>
   <Card
     title="Workspace Management"
@@ -81,17 +92,67 @@ NimbleBrain Studio provides everything you need to build and manage AI automatio
   </Card>
 </CardGroup>
 
+## What Can You Build?
+
+NimbleBrain Studio enables powerful automations across your entire business. Connect AI with your existing tools to create workflows that save hours of manual work.
+
+<CardGroup cols={3}>
+  <Card title="Sales & CRM" icon="chart-line">
+    Automate pipeline reporting, lead enrichment, and deal tracking
+  </Card>
+  <Card title="Engineering" icon="code">
+    PR reminders, CI/CD alerts, release notes, and repo health reports
+  </Card>
+  <Card title="Finance" icon="dollar-sign">
+    Market monitoring, portfolio updates, and earnings alerts
+  </Card>
+  <Card title="Operations" icon="gears">
+    Document processing, contract tracking, and weather-based alerts
+  </Card>
+  <Card title="Marketing" icon="megaphone">
+    Competitive intelligence, trend reports, and content automation
+  </Card>
+  <Card title="Support" icon="headset">
+    Client briefings, meeting prep, and automated research reports
+  </Card>
+</CardGroup>
+
+### Featured Example: CRM Daily Digest
+
+Automatically generate comprehensive sales reports with dual delivery:
+
+**Morning at 8am:**
+- **Slack** → Quick team digest with new deals, pipeline changes, and priorities
+- **Email** → Formatted PDF report for leadership with full metrics and trends
+
+**What it tracks:**
+- New deals and total value
+- Stage progressions and conversions
+- Closed deals (won/lost)
+- Activity by rep (calls, emails, meetings)
+- Forecast vs. target tracking
+
+Built with: `HubSpot → Nira → Slack + PDF.co → Email`
+
+<Card
+  title="Browse 20+ Use Case Examples"
+  icon="lightbulb"
+  href="/studio/use-cases"
+>
+  Explore practical automation examples you can build today - from stock alerts to incident response coordination
+</Card>
+
 ## Who Should Use Studio?
 
 <AccordionGroup>
   <Accordion title="Non-Technical Users">
-    Use NIRA to build automations through conversation - no coding required. Just describe what you want in plain English and NIRA creates the playbook for you.
+    Use Nira to build automations through conversation - no coding required. Just describe what you want in plain English and Nira creates the playbook for you.
   </Accordion>
   <Accordion title="Product Teams & Business Analysts">
-    Build data pipelines, reports, and alerts without engineering resources. Create playbooks manually or use NIRA to translate requirements into working automations.
+    Build data pipelines, reports, and alerts without engineering resources. Create playbooks manually or use Nira to translate requirements into working automations.
   </Accordion>
   <Accordion title="AI Engineers & Developers">
-    Rapidly prototype MCP integrations and complex workflows. Build manually with full control over playbook configuration, or use NIRA for quick foundations.
+    Rapidly prototype integrations and complex workflows. Build manually with full control over playbook configuration, or use Nira for quick foundations.
   </Accordion>
   <Accordion title="Enterprise Teams">
     Manage multiple workspaces, control access, and monitor deployments across your organization. Use the web UI or CLI for automation and CI/CD.
@@ -104,9 +165,9 @@ Both Studio and the [NimbleTools CLI](/cli/introduction) provide access to the s
 
 | Feature | Studio | CLI |
 |---------|--------|-----|
-| **Automation Building** | ✅ Visual UI + NIRA assistant | ❌ Not available |
+| **Automation Building** | ✅ Visual UI + Nira assistant | ❌ Not available |
 | **Workspace Management** | ✅ Visual UI | ✅ Command line |
-| **MCP Server Management** | ✅ One-click install | ✅ Deploy command |
+| **Connection Management** | One-click install | Deploy command |
 | **Playbooks** | ✅ Create & manage | ❌ Not available |
 | **Monitoring & Logs** | ✅ Real-time dashboard | ✅ Stream to terminal |
 | **Claude Integration** | ✅ Generate tokens | ✅ Generate config |
@@ -120,16 +181,16 @@ Both Studio and the [NimbleTools CLI](/cli/introduction) provide access to the s
 
 <Steps>
   <Step title="Sign Up">
-    Create your account at [studio.nimblebrain.dev](https://studio.nimblebrain.dev)
+    Create your account at [studio.nimblebrain.ai](https://studio.nimblebrain.ai?utm_source=docs&utm_campaign=studio)
   </Step>
   <Step title="Create a Workspace">
     Workspaces are isolated environments for organizing your automations
   </Step>
-  <Step title="Install MCP Servers">
-    Browse Connections and install servers you need (e.g., GitHub, Slack, PostgreSQL)
+  <Step title="Install Connections">
+    Browse Connections and install integrations you need (e.g., GitHub, Slack, PostgreSQL)
   </Step>
   <Step title="Build Your First Playbook">
-    Create a playbook manually or use NIRA to build it conversationally
+    Create a playbook manually or use Nira to build it conversationally
   </Step>
   <Step title="Deploy & Monitor">
     Run your playbook and track execution history in the dashboard
@@ -141,7 +202,7 @@ Both Studio and the [NimbleTools CLI](/cli/introduction) provide access to the s
   icon="rocket"
   href="/studio/quickstart"
 >
-  Follow the quickstart guide where NIRA walks you through building your first automation
+  Follow the quickstart guide where Nira walks you through building your first automation
 </Card>
 
 ## Next Steps
@@ -152,7 +213,7 @@ Both Studio and the [NimbleTools CLI](/cli/introduction) provide access to the s
     icon="graduation-cap"
     href="/studio/quickstart"
   >
-    Build your first automation with NIRA's help
+    Build your first automation with Nira's help
   </Card>
   <Card
     title="Playbooks"
@@ -166,14 +227,14 @@ Both Studio and the [NimbleTools CLI](/cli/introduction) provide access to the s
     icon="plug"
     href="/studio/connections"
   >
-    Browse 50+ available MCP servers
+    Browse 50+ available integrations
   </Card>
   <Card
-    title="NIRA Assistant"
+    title="Nira Assistant"
     icon="robot"
     href="/studio/nira"
   >
-    Discover NIRA's conversational automation building
+    Discover Nira's conversational automation building
   </Card>
   <Card
     title="Integrations"

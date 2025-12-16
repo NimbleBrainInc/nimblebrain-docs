@@ -1,71 +1,167 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "NimbleBrain MCP Platform",
+  "name": "NimbleBrain",
   "colors": {
     "primary": "#0070ff",
     "light": "#00d4ff",
     "dark": "#0050ff"
   },
   "favicon": "/images/favicon.ico",
+  "excludes": [".claude/**"],
   "navigation": {
-    "groups": [
+    "tabs": [
       {
-        "group": "Get Started",
-        "pages": [
-          "studio/introduction",
-          "studio/quickstart"
-        ]
-      },
-      {
-        "group": "Core Features",
-        "pages": [
-          "studio/nira",
-          "studio/agents",
-          "studio/playbooks",
-          "studio/connections",
-          "studio/workspace-management",
-          "studio/api-keys",
-          "studio/activity-logs"
-        ]
-      },
-      {
-        "group": "Developer Tools",
-        "pages": [
+        "tab": "Studio",
+        "groups": [
           {
-            "group": "Integrations",
-            "icon": "plug",
+            "group": "Getting Started",
+            "icon": "rocket",
             "pages": [
-              "dev/integrations",
-              "studio/integrations",
-              "studio/claude-desktop",
-              "studio/claude-code",
-              "studio/cursor",
-              "studio/langchain"
+              "studio/introduction",
+              "studio/concepts",
+              "studio/quickstart"
             ]
           },
           {
-            "group": "Runtime",
-            "icon": "server",
+            "group": "Building Automations",
+            "icon": "wand-magic-sparkles",
             "pages": [
-              "dev/runtime-overview",
+              "studio/nira",
+              "studio/playbooks",
+              "studio/agents",
+              "studio/agent-templates",
+              "studio/use-cases"
+            ]
+          },
+          {
+            "group": "Connections",
+            "icon": "plug",
+            "pages": [
+              "studio/connections",
+              {
+                "group": "Free",
+                "pages": [
+                  "studio/connections/free/nimblemail",
+                  "studio/connections/free/nimblesearch",
+                  "studio/connections/free/nimblenews",
+                  "studio/connections/free/nimbleweather"
+                ]
+              },
+              {
+                "group": "Business",
+                "pages": [
+                  "studio/connections/business/gmail",
+                  "studio/connections/business/slack",
+                  "studio/connections/business/calendly",
+                  "studio/connections/business/zoom",
+                  "studio/connections/business/hubspot",
+                  "studio/connections/business/googlesheets"
+                ]
+              },
+              {
+                "group": "Developer Tools",
+                "pages": [
+                  "studio/connections/developer-tools/github",
+                  "studio/connections/developer-tools/echo",
+                  "studio/connections/developer-tools/ref"
+                ]
+              },
+              {
+                "group": "Data & Analytics",
+                "pages": [
+                  "studio/connections/data/postgresql",
+                  "studio/connections/data/clickhouse",
+                  "studio/connections/data/abstract",
+                  "studio/connections/data/ipinfo"
+                ]
+              },
+              {
+                "group": "Utilities",
+                "pages": [
+                  "studio/connections/utilities/tavily",
+                  "studio/connections/utilities/deepl",
+                  "studio/connections/utilities/pdfco",
+                  "studio/connections/utilities/finnhub",
+                  "studio/connections/utilities/openweathermap"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Workspace & Settings",
+            "icon": "gear",
+            "pages": [
+              "studio/workspace-management",
+              "studio/api-keys",
+              "studio/activity-logs"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Developers",
+        "groups": [
+          {
+            "group": "TypeScript SDK",
+            "icon": "js",
+            "pages": [
+              "developers/sdk/overview",
+              "developers/sdk/quickstart",
+              "developers/sdk/agents",
+              "developers/sdk/playbooks",
+              "developers/sdk/streaming"
+            ]
+          },
+          {
+            "group": "API Reference",
+            "icon": "code",
+            "pages": [
+              "developers/api/overview"
+            ]
+          },
+          {
+            "group": "MCP Integrations",
+            "icon": "puzzle-piece",
+            "pages": [
+              "developers/integrations/overview",
+              "developers/integrations/claude-desktop",
+              "developers/integrations/claude-code",
+              "developers/integrations/cursor",
+              "developers/integrations/langchain"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Self-Hosted",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "icon": "rocket",
+            "pages": [
               "runtime/introduction",
               "runtime/installation",
-              "runtime/quickstart",
+              "runtime/quickstart"
+            ]
+          },
+          {
+            "group": "Architecture",
+            "icon": "sitemap",
+            "pages": [
               "runtime/architecture",
               "runtime/mcp-services"
             ]
           },
           {
-            "group": "CLI Reference",
+            "group": "CLI",
             "icon": "terminal",
             "pages": [
-              "dev/cli-overview",
               "cli/introduction",
               "cli/installation",
               "cli/quickstart",
               {
-                "group": "Core Concepts",
+                "group": "Concepts",
                 "pages": [
                   "cli/concepts/workspaces",
                   "cli/concepts/mcp-servers",
@@ -75,82 +171,97 @@
               {
                 "group": "Commands",
                 "pages": [
-                  "cli/commands/auth/login",
-                  "cli/commands/auth/logout",
-                  "cli/commands/auth/status",
-                  "cli/commands/auth/signup",
-                  "cli/commands/workspace/create",
-                  "cli/commands/workspace/list",
-                  "cli/commands/workspace/switch",
-                  "cli/commands/workspace/select",
-                  "cli/commands/workspace/delete",
-                  "cli/commands/workspace/clear",
-                  "cli/commands/workspace/debug",
-                  "cli/commands/workspace/sync",
-                  "cli/commands/server/deploy",
-                  "cli/commands/server/list",
-                  "cli/commands/server/info",
-                  "cli/commands/server/scale",
-                  "cli/commands/server/remove",
-                  "cli/commands/server/logs",
-                  "cli/commands/server/claude-config",
-                  "cli/commands/mcp/connect",
-                  "cli/commands/mcp/tools",
-                  "cli/commands/mcp/call",
-                  "cli/commands/registry/list",
-                  "cli/commands/registry/show",
-                  "cli/commands/secrets/list",
-                  "cli/commands/secrets/set",
-                  "cli/commands/secrets/unset",
-                  "cli/commands/token/create",
-                  "cli/commands/token/list",
-                  "cli/commands/token/refresh",
-                  "cli/commands/token/revoke",
-                  "cli/commands/token/show",
-                  "cli/commands/utilities/health"
+                  {
+                    "group": "Auth",
+                    "pages": [
+                      "cli/commands/auth/login",
+                      "cli/commands/auth/logout",
+                      "cli/commands/auth/status",
+                      "cli/commands/auth/signup"
+                    ]
+                  },
+                  {
+                    "group": "Workspace",
+                    "pages": [
+                      "cli/commands/workspace/create",
+                      "cli/commands/workspace/list",
+                      "cli/commands/workspace/switch",
+                      "cli/commands/workspace/select",
+                      "cli/commands/workspace/delete",
+                      "cli/commands/workspace/clear",
+                      "cli/commands/workspace/debug",
+                      "cli/commands/workspace/sync"
+                    ]
+                  },
+                  {
+                    "group": "Server",
+                    "pages": [
+                      "cli/commands/server/deploy",
+                      "cli/commands/server/list",
+                      "cli/commands/server/info",
+                      "cli/commands/server/scale",
+                      "cli/commands/server/remove",
+                      "cli/commands/server/logs",
+                      "cli/commands/server/claude-config"
+                    ]
+                  },
+                  {
+                    "group": "MCP",
+                    "pages": [
+                      "cli/commands/mcp/connect",
+                      "cli/commands/mcp/tools",
+                      "cli/commands/mcp/call"
+                    ]
+                  },
+                  {
+                    "group": "Registry",
+                    "pages": [
+                      "cli/commands/registry/list",
+                      "cli/commands/registry/show"
+                    ]
+                  },
+                  {
+                    "group": "Secrets",
+                    "pages": [
+                      "cli/commands/secrets/list",
+                      "cli/commands/secrets/set",
+                      "cli/commands/secrets/unset"
+                    ]
+                  },
+                  {
+                    "group": "Token",
+                    "pages": [
+                      "cli/commands/token/create",
+                      "cli/commands/token/list",
+                      "cli/commands/token/refresh",
+                      "cli/commands/token/revoke",
+                      "cli/commands/token/show"
+                    ]
+                  },
+                  {
+                    "group": "Utilities",
+                    "pages": [
+                      "cli/commands/utilities/health"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Advanced",
+                "pages": [
+                  "developers/api-architecture",
+                  "developers/mcp-protocol",
+                  "developers/environment-variables",
+                  "developers/ci-cd",
+                  "developers/best-practices",
+                  "developers/troubleshooting"
                 ]
               }
-            ]
-          },
-          {
-            "group": "Advanced",
-            "icon": "code",
-            "pages": [
-              "dev/overview",
-              "dev/api-architecture",
-              "dev/environment-variables",
-              "dev/claude-desktop-integration",
-              "dev/examples/langchain-integration",
-              "dev/ci-cd",
-              "dev/best-practices",
-              "dev/troubleshooting",
-              "dev/examples/complete-workflow",
-              "dev/examples/claude-desktop",
-              "dev/examples/advanced-usage"
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "GitHub",
-          "href": "https://github.com/NimbleBrainInc/nimbletools-core",
-          "icon": "github"
-        },
-        {
-          "anchor": "NPM Package",
-          "href": "https://www.npmjs.com/package/@nimbletools/ntcli",
-          "icon": "cube"
-        },
-        {
-          "anchor": "Discord",
-          "href": "https://www.nimblebrain.ai/discord",
-          "icon": "discord"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/images/nimblebrain-icon-color.png",
@@ -159,20 +270,19 @@
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "https://github.com/nimbletools/ntcli/issues"
+        "label": "Community",
+        "href": "https://www.nimblebrain.ai/discord?utm_source=docs&utm_campaign=navbar"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Home",
-      "href": "https://www.nimblebrain.ai"
+      "label": "Get Started",
+      "href": "https://studio.nimblebrain.ai?utm_source=docs&utm_campaign=navbar"
     }
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/nimblebraininc/ntcli",
-      "discord": "https://www.nimblebrain.ai/discor"
+      "discord": "https://www.nimblebrain.ai/discord?utm_source=docs&utm_campaign=footer"
     }
   },
   "search": {

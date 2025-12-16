@@ -1,0 +1,199 @@
+---
+title: 'Quickstart'
+description: 'Get started with the NimbleBrain SDK in 5 minutes'
+---
+
+This guide walks you through installing the SDK, authenticating, and making your first API call.
+
+## Step 1: Install the SDK
+
+```bash
+npm install @nimblebrain/sdk
+```
+
+## Step 2: Get Your API Key
+
+1. Log in to [NimbleBrain Studio](https://studio.nimblebrain.ai?utm_source=docs&utm_campaign=developers)
+2. Go to **Settings > API Keys**
+3. Click **Create API Key**
+4. Copy the key (starts with `nb_live_`)
+
+<Tip>
+Store your API key in an environment variable like `NIMBLEBRAIN_API_KEY` to keep it out of your code.
+</Tip>
+
+## Step 3: Initialize the SDK
+
+```typescript
+import { NimbleBrain } from '@nimblebrain/sdk';
+
+const nb = new NimbleBrain({
+  apiKey: process.env.NIMBLEBRAIN_API_KEY || 'nb_live_xxxxx',
+});
+```
+
+### Configuration Options
+
+```typescript
+const nb = new NimbleBrain({
+  apiKey: 'nb_live_xxxxx',           // Required
+  baseUrl: 'https://studio-api.nimblebrain.ai', // Optional (this is the default)
+});
+```
+
+## Step 4: Make Your First API Call
+
+### List Your Agents
+
+```typescript
+const agents = await nb.agents.list();
+
+console.log('Your agents:');
+for (const agent of agents) {
+  console.log(`- ${agent.name} (${agent.id})`);
+}
+```
+
+### List Your Playbooks
+
+```typescript
+const playbooks = await nb.playbooks.list();
+
+console.log('Your playbooks:');
+for (const playbook of playbooks) {
+  console.log(`- ${playbook.name} (${playbook.id})`);
+}
+```
+
+## Step 5: Chat with an Agent
+
+The most common use case is having a conversation with an agent:
+
+```typescript
+// Get the first agent
+const agents = await nb.agents.list();
+const agent = agents[0];
+
+// Create a new conversation
+const conversation = await nb.conversations.create(agent.id, 'My First Chat');
+console.log(`Created conversation: ${conversation.id}`);
+
+// Send a message and stream the response
+console.log('\nAgent response:');
+for await (const event of nb.messages.stream(agent.id, conversation.id, 'Hello! What can you help me with?')) {
+  if (event.type === 'content') {
+    process.stdout.write(event.data.text as string);
+  }
+}
+console.log('\n');
+```
+
+## Step 6: Execute a Playbook
+
+Run a playbook and wait for the result:
+
+```typescript
+// Get the first playbook
+const playbooks = await nb.playbooks.list();
+const playbook = playbooks[0];
+
+// Execute the playbook
+console.log(`Executing playbook: ${playbook.name}`);
+const { id: executionId } = await nb.playbooks.execute(playbook.id);
+
+// Wait for completion
+const execution = await nb.executions.waitForCompletion(executionId, {
+  timeoutMs: 120000,  // 2 minutes
+  pollIntervalMs: 2000, // Check every 2 seconds
+});
+
+console.log(`Status: ${execution.status}`);
+console.log(`Result: ${execution.result}`);
+```
+
+## Complete Example
+
+Here's a complete example that ties everything together:
+
+```typescript
+import { NimbleBrain } from '@nimblebrain/sdk';
+
+async function main() {
+  // Initialize
+  const nb = new NimbleBrain({
+    apiKey: process.env.NIMBLEBRAIN_API_KEY!,
+  });
+
+  try {
+    // List available agents
+    const agents = await nb.agents.list();
+    console.log(`Found ${agents.length} agents`);
+
+    if (agents.length === 0) {
+      console.log('No agents found. Create one in NimbleBrain Studio first.');
+      return;
+    }
+
+    // Chat with the first agent
+    const agent = agents[0];
+    console.log(`\nChatting with: ${agent.name}`);
+
+    const conversation = await nb.conversations.create(agent.id);
+
+    // Stream the response
+    process.stdout.write('\nAgent: ');
+    for await (const event of nb.messages.stream(
+      agent.id,
+      conversation.id,
+      'Hello! Give me a brief introduction of yourself.'
+    )) {
+      if (event.type === 'content') {
+        process.stdout.write(event.data.text as string);
+      }
+    }
+    console.log('\n');
+
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+main();
+```
+
+## Error Handling
+
+Always wrap API calls in try-catch blocks:
+
+```typescript
+try {
+  const agents = await nb.agents.list();
+} catch (error) {
+  if (error instanceof Error) {
+    console.error('API error:', error.message);
+  }
+}
+```
+
+Common errors:
+- **401 Unauthorized**: Invalid or expired API key
+- **403 Forbidden**: API key doesn't have access to this workspace
+- **404 Not Found**: Agent, conversation, or playbook doesn't exist
+- **429 Too Many Requests**: Rate limit exceeded
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Agents API" icon="robot" href="/sdk/agents">
+    Deep dive into the agents and conversations API
+  </Card>
+  <Card title="Playbooks API" icon="play" href="/sdk/playbooks">
+    Execute and monitor playbooks
+  </Card>
+  <Card title="Streaming" icon="wave-pulse" href="/sdk/streaming">
+    Build real-time chat interfaces
+  </Card>
+  <Card title="API Reference" icon="book" href="/api/overview">
+    Full REST API documentation
+  </Card>
+</CardGroup>
