@@ -1,7 +1,6 @@
 ---
 title: 'API Tokens'
 description: 'Generate and manage authentication tokens for workspace access'
-icon: 'key'
 ---
 
 <img
@@ -25,8 +24,8 @@ Workspace tokens provide programmatic access to your NimbleBrain workspace:
   <Card title="CI/CD Pipelines" icon="gears">
     Automate deployments in GitHub Actions, GitLab CI, etc.
   </Card>
-  <Card title="MCP Client" icon="plug">
-    Authenticate MCP server connections in Claude Desktop
+  <Card title="Claude Desktop" icon="plug">
+    Authenticate connections in Claude Desktop
   </Card>
 </CardGroup>
 
@@ -272,7 +271,7 @@ Immediately invalidate a token:
 ### GitHub Actions
 
 ```yaml
-name: Deploy MCP Server
+name: Deploy Connection
 
 on:
   push:
@@ -425,14 +424,14 @@ For services that don't auto-refresh:
   <Card
     title="API Architecture"
     icon="network-wired"
-    href="/dev/api-architecture"
+    href="/developers/api-architecture"
   >
     Understand API authentication flows
   </Card>
   <Card
     title="CI/CD Guide"
     icon="gears"
-    href="/dev/ci-cd"
+    href="/developers/ci-cd"
   >
     Automate deployments with CI/CD
   </Card>

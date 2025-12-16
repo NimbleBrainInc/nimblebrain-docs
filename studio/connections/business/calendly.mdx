@@ -1,0 +1,489 @@
+---
+title: 'Calendly'
+description: 'Scheduling automation for managing events, invitees, booking links, and calendar integrations'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="calendar-check">
+    Calendly integration connects AI tools directly to your Calendly account, enabling natural language interactions with scheduling, events, invitees, and booking links.
+
+    **Key Features:**
+    - Manage scheduled events
+    - Create and track invitees
+    - Generate booking links
+    - Configure event types
+    - Handle no-shows
+    - Manage webhooks
+    - Access user and organization data
+    - Create one-off event types
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **Scheduling Management:**
+    - View and cancel upcoming events
+    - Track meeting attendance
+    - Generate custom booking links
+    - Create temporary event types
+
+    **Invitee Tracking:**
+    - Monitor invitee details
+    - Mark and manage no-shows
+    - Handle data deletion requests
+    - Track booking history
+
+    **Automation:**
+    - Create scheduling links programmatically
+    - Set up webhook notifications
+    - Integrate with CRM systems
+    - Automate follow-up workflows
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+<Steps>
+  <Step title="Connect Your Calendly Account">
+    NimbleBrain Studio uses OAuth2 to securely connect to your Calendly account.
+
+    1. Navigate to **Connections** in the sidebar
+    2. Click **Browse Catalog**
+    3. Search for "Calendly"
+    4. Click **Install**
+    5. Click **Connect** and authorize with your Calendly account
+    6. Grant the requested permissions
+
+    <Tip>
+      OAuth2 provides secure, token-based authentication. You'll need to authorize access to your Calendly data.
+    </Tip>
+  </Step>
+
+  <Step title="Verify Connection">
+    Once connected, test the integration:
+
+    ```text
+    "Show me my upcoming Calendly events"
+    ```
+
+    **Other test prompts:**
+    - "Get my Calendly profile information"
+    - "Create a single-use booking link for a 30-minute meeting"
+    - "Show details for my last scheduled event"
+  </Step>
+</Steps>
+
+## Available Tools
+
+The Calendly connection provides **42+ tools** organized into the following categories:
+
+### Event Management
+
+<AccordionGroup>
+  <Accordion title="Event Operations" icon="calendar">
+    View, manage, and cancel scheduled events.
+
+    | Tool | Description |
+    |------|-------------|
+    | `CALENDLY_GET_EVENT` | Retrieve specific event details by UUID |
+    | `CALENDLY_CANCEL_EVENT` | Cancel a scheduled event with optional reason |
+    | `CALENDLY_CREATE_ONE_OFF_EVENT_TYPE` | Create temporary event types for unique meetings |
+    | `CALENDLY_DELETE_SCHEDULED_EVENT_DATA` | Delete event data (enterprise feature) |
+
+    **Example Usage:**
+    ```text
+    "Cancel my meeting with John Smith scheduled for tomorrow and include the reason 'rescheduling'"
+    ```
+
+    <Note>
+      One-off event types are useful for unique meetings outside your regular availability patterns.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Invitee Management
+
+<AccordionGroup>
+  <Accordion title="Invitee Operations" icon="user-check">
+    Track and manage event invitees and attendance.
+
+    | Tool | Description |
+    |------|-------------|
+    | `CALENDLY_GET_EVENT_INVITEE` | Get detailed information about a specific invitee |
+    | `CALENDLY_CREATE_INVITEE_NO_SHOW` | Mark an invitee as absent from an event |
+    | `CALENDLY_GET_INVITEE_NO_SHOW` | Retrieve no-show record details |
+    | `CALENDLY_DELETE_INVITEE_NO_SHOW` | Remove no-show status from an invitee |
+    | `CALENDLY_DELETE_INVITEE_DATA` | Permanently delete invitee data (GDPR compliance) |
+
+    **Example Usage:**
+    ```text
+    "Mark the invitee from yesterday's 2pm meeting as a no-show"
+    ```
+
+    <Warning>
+      `DELETE_INVITEE_DATA` is an enterprise feature for GDPR/privacy compliance. This action is irreversible.
+    </Warning>
+  </Accordion>
+</AccordionGroup>
+
+### Booking Links
+
+<AccordionGroup>
+  <Accordion title="Scheduling Link Operations" icon="link">
+    Create and manage booking links for scheduling.
+
+    | Tool | Description |
+    |------|-------------|
+    | `CALENDLY_CREATE_SCHEDULING_LINK` | Generate booking links with event limits |
+    | `CALENDLY_CREATE_SINGLE_USE_SCHEDULING_LINK` | Create one-time links that expire after booking |
+    | `CALENDLY_CREATE_SHARE` | Create customizable share links with setting overrides |
+
+    **Example Usage:**
+    ```text
+    "Create a single-use booking link for my 30-minute consultation event type"
+    ```
+
+    <Tip>
+      Single-use links are ideal for sending to specific prospects or high-value leads.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+### Event Types
+
+<AccordionGroup>
+  <Accordion title="Event Type Operations" icon="calendar-days">
+    Access and manage event type configurations.
+
+    | Tool | Description |
+    |------|-------------|
+    | `CALENDLY_GET_EVENT_TYPE` | Retrieve event type details and settings |
+    | `CALENDLY_CREATE_ONE_OFF_EVENT_TYPE` | Create temporary event types |
+
+    **Example Usage:**
+    ```text
+    "Show me the configuration for my 'Initial Consultation' event type"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### User & Organization
+
+<AccordionGroup>
+  <Accordion title="User Operations" icon="user">
+    Access user and organization information.
+
+    | Tool | Description |
+    |------|-------------|
+    | `CALENDLY_GET_CURRENT_USER` | Get authenticated user profile information |
+    | `CALENDLY_GET_ORGANIZATION_MEMBERSHIP` | Retrieve organization membership details |
+    | `CALENDLY_GET_ORGANIZATION_INVITATION` | Access pending organization invitations |
+
+    **Example Usage:**
+    ```text
+    "Show me my Calendly account information"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Groups
+
+<AccordionGroup>
+  <Accordion title="Group Operations" icon="users-rectangle">
+    Manage team groups and relationships.
+
+    | Tool | Description |
+    |------|-------------|
+    | `CALENDLY_GET_GROUP` | Retrieve group attributes and settings |
+    | `CALENDLY_GET_GROUP_RELATIONSHIP` | Get user-group association details |
+
+    **Example Usage:**
+    ```text
+    "Show me the members of our Sales team group"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Webhooks
+
+<AccordionGroup>
+  <Accordion title="Webhook Operations" icon="webhook">
+    Set up and manage event notifications.
+
+    | Tool | Description |
+    |------|-------------|
+    | `CALENDLY_CREATE_WEBHOOK_SUBSCRIPTION` | Create webhook subscriptions for event notifications |
+    | `CALENDLY_DELETE_WEBHOOK_SUBSCRIPTION` | Remove existing webhook subscriptions |
+
+    **Example Usage:**
+    ```text
+    "Set up a webhook to notify our CRM when new events are scheduled"
+    ```
+
+    <Note>
+      Webhooks enable real-time integrations with external systems like CRMs, notification services, and automation platforms.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Meeting Setup">
+    **Scenario:** Create a booking link for a prospect
+
+    **Prompt:**
+    ```text
+    "Create a single-use scheduling link for my 30-minute demo event type and send it to john@acme.com"
+    ```
+
+    **What happens:**
+    - Creates one-time booking link
+    - Link expires after first use
+    - Returns shareable URL
+  </Tab>
+
+  <Tab title="No-Show Tracking">
+    **Scenario:** Track and manage no-shows
+
+    **Prompt:**
+    ```text
+    "Mark yesterday's 3pm meeting invitee as a no-show and show me all no-shows from this week"
+    ```
+
+    **What happens:**
+    - Creates no-show record
+    - Retrieves weekly no-show list
+    - Returns attendance summary
+  </Tab>
+
+  <Tab title="Event Cancellation">
+    **Scenario:** Cancel and reschedule a meeting
+
+    **Prompt:**
+    ```text
+    "Cancel my meeting with Sarah tomorrow at 2pm with the reason 'Need to reschedule due to conflict'"
+    ```
+
+    **What happens:**
+    - Finds the scheduled event
+    - Cancels with provided reason
+    - Notifies invitee automatically
+  </Tab>
+
+  <Tab title="Event Details">
+    **Scenario:** Get information about upcoming events
+
+    **Prompt:**
+    ```text
+    "Show me the details of all my events scheduled for next week including invitee information"
+    ```
+
+    **What happens:**
+    - Retrieves scheduled events
+    - Includes invitee details
+    - Returns event configurations
+  </Tab>
+
+  <Tab title="Webhook Setup">
+    **Scenario:** Set up automated notifications
+
+    **Prompt:**
+    ```text
+    "Create a webhook to send notifications to our Slack integration when events are booked or cancelled"
+    ```
+
+    **What happens:**
+    - Creates webhook subscription
+    - Configures event triggers
+    - Returns webhook confirmation
+  </Tab>
+</Tabs>
+
+## Authentication
+
+<Info>
+  **OAuth2 Authentication**: This connection uses OAuth2 for secure authentication.
+</Info>
+
+### How It Works
+
+When you connect Calendly in NimbleBrain Studio:
+
+1. You'll be redirected to Calendly's authorization page
+2. Log in with your Calendly account
+3. Review and grant permissions
+4. You're automatically redirected back to Studio
+
+### Required Scopes
+
+The integration requests the following Calendly scopes:
+
+**Event Scopes:**
+- Read scheduled events
+- Cancel events
+- Create event types
+
+**User Scopes:**
+- Read user profile
+- Access organization data
+
+**Webhook Scopes:**
+- Create and manage webhooks
+
+<Tip>
+  You can manage connected apps in your Calendly account under **Integrations** → **Connected Apps**.
+</Tip>
+
+## Plan Requirements
+
+Different features require different Calendly plan levels:
+
+| Feature | Required Plan |
+|---------|---------------|
+| Basic scheduling | Free |
+| Custom booking links | Free |
+| Group events | Professional+ |
+| Webhooks | Professional+ |
+| Data deletion (GDPR) | Enterprise |
+| Round robin scheduling | Teams+ |
+| Admin features | Teams+ |
+
+<Warning>
+  Some API features require paid Calendly plans. Check your plan's capabilities before using advanced features.
+</Warning>
+
+## Rate Limits
+
+Calendly API enforces rate limits:
+
+| Limit Type | Restriction |
+|------------|-------------|
+| API requests | 2,000 requests per 5 minutes |
+| Webhook deliveries | Varies by plan |
+| Concurrent connections | Based on plan |
+
+<Info>
+  Studio automatically handles rate limiting with exponential backoff for retries.
+</Info>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection Failed" icon="triangle-exclamation">
+    **Issue:** OAuth authorization didn't complete
+
+    **Solutions:**
+    - Ensure you're logged into the correct Calendly account
+    - Try a different browser or incognito mode
+    - Check popup blockers aren't interfering
+    - Verify your Calendly account is active
+  </Accordion>
+
+  <Accordion title="Permission Denied" icon="lock">
+    **Issue:** Insufficient privileges error
+
+    **Solutions:**
+    - Reconnect to grant additional scopes
+    - Verify your Calendly plan supports the feature
+    - Check organization admin settings
+    - For team features, ensure proper role assignment
+  </Accordion>
+
+  <Accordion title="Event Not Found" icon="calendar-xmark">
+    **Issue:** Cannot find specified event
+
+    **Solutions:**
+    - Verify the event UUID is correct
+    - Event may have been cancelled or deleted
+    - Check you have access to the event
+    - Ensure event is within accessible date range
+  </Accordion>
+
+  <Accordion title="Webhook Failed" icon="webhook">
+    **Issue:** Webhook not receiving events
+
+    **Solutions:**
+    - Verify webhook URL is accessible
+    - Check subscription is active
+    - Ensure endpoint returns 2xx status
+    - Verify event types are subscribed
+  </Accordion>
+
+  <Accordion title="Feature Unavailable" icon="lock">
+    **Issue:** Feature requires higher plan
+
+    **Solutions:**
+    - Check Calendly plan requirements
+    - Upgrade plan for advanced features
+    - Enterprise features require Enterprise plan
+    - Contact Calendly for plan changes
+  </Accordion>
+
+  <Accordion title="Rate Limit Exceeded" icon="gauge">
+    **Issue:** Too many requests error
+
+    **Solutions:**
+    - Wait for rate limit to reset (5 minutes)
+    - Reduce frequency of requests
+    - Batch operations when possible
+    - Studio automatically handles retries
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Event Management" icon="calendar">
+    - Use descriptive event type names
+    - Set appropriate buffer times
+    - Configure timezone properly
+    - Use one-off events for unique meetings
+    - Archive old event types
+  </Card>
+
+  <Card title="Booking Links" icon="link">
+    - Use single-use links for VIPs
+    - Set expiration dates when needed
+    - Track link usage for analytics
+    - Customize link settings per use case
+    - Test links before sharing
+  </Card>
+
+  <Card title="No-Show Management" icon="user-xmark">
+    - Track no-shows consistently
+    - Follow up with no-show invitees
+    - Analyze no-show patterns
+    - Consider reminder integrations
+    - Document cancellation reasons
+  </Card>
+
+  <Card title="Integrations" icon="plug">
+    - Use webhooks for real-time updates
+    - Integrate with CRM for lead tracking
+    - Connect to communication tools
+    - Set up automated follow-ups
+    - Monitor webhook health
+  </Card>
+</CardGroup>
+
+## Links and Resources
+
+<CardGroup cols={2}>
+  <Card title="Calendly API Reference" icon="code" href="https://developer.calendly.com/">
+    Official Calendly API documentation
+  </Card>
+
+  <Card title="Calendly Help Center" icon="circle-question" href="https://help.calendly.com/">
+    Calendly support and guides
+  </Card>
+
+  <Card title="Calendly Integrations" icon="puzzle-piece" href="https://calendly.com/integrations">
+    Browse native Calendly integrations
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://discord.gg/nimblebrain) or email support@nimblebrain.ai

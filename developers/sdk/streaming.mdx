@@ -1,0 +1,346 @@
+---
+title: 'Streaming'
+description: 'Build real-time chat interfaces with Server-Sent Events streaming'
+---
+
+The NimbleBrain SDK supports real-time streaming of agent responses via Server-Sent Events (SSE). This enables you to display responses character-by-character as they're generated, creating a smooth typewriter effect for your users.
+
+## Why Streaming?
+
+<CardGroup cols={2}>
+  <Card title="Better UX" icon="face-smile">
+    Users see responses appear in real-time instead of waiting for the full response
+  </Card>
+  <Card title="Tool Visibility" icon="wrench">
+    Show when the agent is using tools (checking weather, searching, etc.)
+  </Card>
+  <Card title="Lower Perceived Latency" icon="gauge-high">
+    First token appears quickly, even for long responses
+  </Card>
+  <Card title="Progressive Rendering" icon="spinner">
+    Display partial results while the agent continues working
+  </Card>
+</CardGroup>
+
+## Basic Streaming
+
+The `messages.stream()` method returns an async generator that yields events:
+
+```typescript
+for await (const event of nb.messages.stream(agentId, conversationId, 'Hello!')) {
+  if (event.type === 'content') {
+    process.stdout.write(event.data.text as string);
+  }
+}
+```
+
+## Event Types
+
+The stream yields different event types as the response progresses:
+
+| Event Type | Description | Data Fields |
+|------------|-------------|-------------|
+| `message.start` | Agent began generating a response | - |
+| `content` | A chunk of text content | `text` |
+| `tool.start` | Agent started using a tool | `name`, `display` |
+| `tool.complete` | Tool finished executing | `name`, `result` |
+| `message.complete` | Full response is ready | `messageId` |
+| `error` | An error occurred | `error` |
+| `done` | Stream is complete | - |
+
+## Complete Event Handling
+
+Here's how to handle all event types:
+
+```typescript
+for await (const event of nb.messages.stream(agentId, conversationId, userMessage)) {
+  switch (event.type) {
+    case 'message.start':
+      // Response is beginning
+      console.log('[Agent is thinking...]');
+      break;
+
+    case 'content':
+      // Display the text chunk
+      const text = event.data.text as string;
+      process.stdout.write(text);
+      break;
+
+    case 'tool.start':
+      // Agent is using a tool
+      const toolName = event.data.display as string;
+      console.log(`\n[Using: ${toolName}]`);
+      break;
+
+    case 'tool.complete':
+      // Tool finished
+      console.log('[Tool complete]');
+      break;
+
+    case 'message.complete':
+      // Full response ready
+      const messageId = event.data.messageId as string;
+      console.log(`\n[Message ID: ${messageId}]`);
+      break;
+
+    case 'error':
+      // Handle error
+      const error = event.data.error as string;
+      console.error('\n[Error]:', error);
+      break;
+
+    case 'done':
+      // Stream finished
+      console.log('\n--- Stream complete ---');
+      break;
+  }
+}
+```
+
+## React Example
+
+Here's how to build a streaming chat component in React:
+
+```tsx
+import { useState, useCallback } from 'react';
+import { NimbleBrain } from '@nimblebrain/sdk';
+
+const nb = new NimbleBrain({ apiKey: 'nb_live_...' });
+
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+function Chat({ agentId, conversationId }: { agentId: string; conversationId: string }) {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [currentTool, setCurrentTool] = useState<string | null>(null);
+
+  const sendMessage = useCallback(async () => {
+    if (!input.trim() || isStreaming) return;
+
+    const userMessage = input;
+    setInput('');
+
+    // Add user message
+    setMessages((prev) => [...prev, { role: 'user', content: userMessage }]);
+
+    // Start streaming
+    setIsStreaming(true);
+    setMessages((prev) => [...prev, { role: 'assistant', content: '' }]);
+
+    try {
+      for await (const event of nb.messages.stream(agentId, conversationId, userMessage)) {
+        switch (event.type) {
+          case 'content':
+            // Append text to the last message
+            setMessages((prev) => {
+              const updated = [...prev];
+              const last = updated[updated.length - 1];
+              last.content += event.data.text as string;
+              return updated;
+            });
+            break;
+
+          case 'tool.start':
+            setCurrentTool(event.data.display as string);
+            break;
+
+          case 'tool.complete':
+            setCurrentTool(null);
+            break;
+
+          case 'error':
+            console.error('Stream error:', event.data.error);
+            break;
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setIsStreaming(false);
+      setCurrentTool(null);
+    }
+  }, [input, isStreaming, agentId, conversationId]);
+
+  return (
+    <div className="chat-container">
+      <div className="messages">
+        {messages.map((msg, i) => (
+          <div key={i} className={`message ${msg.role}`}>
+            {msg.content}
+          </div>
+        ))}
+
+        {currentTool && (
+          <div className="tool-indicator">
+            Using: {currentTool}...
+          </div>
+        )}
+      </div>
+
+      <div className="input-area">
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+          placeholder="Type a message..."
+          disabled={isStreaming}
+        />
+        <button onClick={sendMessage} disabled={isStreaming}>
+          {isStreaming ? 'Sending...' : 'Send'}
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+## Node.js CLI Example
+
+A complete command-line chat application:
+
+```typescript
+import { NimbleBrain } from '@nimblebrain/sdk';
+import * as readline from 'readline';
+
+async function main() {
+  const nb = new NimbleBrain({ apiKey: process.env.NIMBLEBRAIN_API_KEY! });
+
+  // Get agents and create conversation
+  const agents = await nb.agents.list();
+  const agent = agents[0];
+  const conversation = await nb.conversations.create(agent.id);
+
+  console.log(`Chatting with ${agent.name}`);
+  console.log('Type "quit" to exit\n');
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  const prompt = () => {
+    rl.question('You: ', async (input) => {
+      if (input.toLowerCase() === 'quit') {
+        rl.close();
+        return;
+      }
+
+      process.stdout.write('Agent: ');
+
+      for await (const event of nb.messages.stream(agent.id, conversation.id, input)) {
+        switch (event.type) {
+          case 'content':
+            process.stdout.write(event.data.text as string);
+            break;
+          case 'tool.start':
+            process.stdout.write(`\n  [${event.data.display}] `);
+            break;
+          case 'tool.complete':
+            process.stdout.write('done\n');
+            break;
+        }
+      }
+
+      console.log('\n');
+      prompt();
+    });
+  };
+
+  prompt();
+}
+
+main();
+```
+
+## Error Handling in Streams
+
+Always wrap streaming in try-catch:
+
+```typescript
+try {
+  for await (const event of nb.messages.stream(agentId, conversationId, message)) {
+    if (event.type === 'error') {
+      // Handle error event from the stream
+      throw new Error(event.data.error as string);
+    }
+
+    if (event.type === 'content') {
+      process.stdout.write(event.data.text as string);
+    }
+  }
+} catch (error) {
+  if (error instanceof Error) {
+    console.error('Stream error:', error.message);
+  }
+}
+```
+
+## Cancelling Streams
+
+To cancel a stream early, you can break out of the loop:
+
+```typescript
+let cancelled = false;
+
+// Somewhere else in your code
+cancelButton.onclick = () => { cancelled = true; };
+
+for await (const event of nb.messages.stream(agentId, conversationId, message)) {
+  if (cancelled) {
+    console.log('Stream cancelled by user');
+    break;
+  }
+
+  if (event.type === 'content') {
+    process.stdout.write(event.data.text as string);
+  }
+}
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Show Loading States" icon="spinner">
+    Display an indicator when waiting for `message.start`
+  </Card>
+  <Card title="Handle Tool Events" icon="wrench">
+    Show users when the agent is using tools for transparency
+  </Card>
+  <Card title="Buffer Content" icon="database">
+    For smooth rendering, consider buffering small chunks
+  </Card>
+  <Card title="Handle Disconnects" icon="plug">
+    Implement reconnection logic for long-running streams
+  </Card>
+</CardGroup>
+
+## StreamEvent Type Reference
+
+```typescript
+interface StreamEvent {
+  type: 'message.start' | 'content' | 'tool.start' | 'tool.complete' | 'message.complete' | 'error' | 'done';
+  data: Record<string, unknown>;
+}
+
+// Common data fields by event type:
+// content:          { text: string }
+// tool.start:       { name: string, display: string }
+// tool.complete:    { name: string, result?: unknown }
+// message.complete: { messageId: string }
+// error:            { error: string }
+```
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Agents API" icon="robot" href="/sdk/agents">
+    Full agents and conversations API reference
+  </Card>
+  <Card title="Quickstart" icon="rocket" href="/sdk/quickstart">
+    Get started with the SDK
+  </Card>
+</CardGroup>

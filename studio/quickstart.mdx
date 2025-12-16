@@ -1,7 +1,6 @@
 ---
 title: 'Quickstart'
 description: 'Build your first automation in under 5 minutes'
-icon: 'rocket'
 ---
 
 # Get Started with Your First Automation
@@ -16,7 +15,7 @@ Welcome to NimbleBrain Studio! This quickstart guide walks you through the NIRA-
 
 In this tutorial, NIRA will help you create a simple but powerful automation. You'll learn:
 - How to interact with NIRA conversationally
-- How NIRA selects and configures MCP tools
+- How NIRA selects and configures the right tools
 - How to provide API credentials securely
 - How to deploy and monitor your automation
 
@@ -37,7 +36,7 @@ No technical knowledge required! NIRA handles all the complexity.
 
 ## Step 1: NIRA's Introduction
 
-When you first log into NimbleBrain Studio at [studio.nimblebrain.dev](https://studio.nimblebrain.dev), you'll see NIRA's welcome message:
+When you first log into NimbleBrain Studio at [studio.nimblebrain.ai](https://studio.nimblebrain.ai?utm_source=docs&utm_campaign=studio), you'll see NIRA's welcome message:
 
 <Card>
 **NIRA says:** 👋
@@ -60,14 +59,14 @@ Don't worry about making mistakes—NIRA is patient and will help you every step
 NIRA will ask you what you'd like to automate. For this tutorial, try one of these examples:
 
 <AccordionGroup>
-  <Accordion title="Example 1: Weather Alert (Easiest) ⭐">
+  <Accordion title="Example 1: Weather Alert (Easiest)">
     **Say to NIRA:**
 
     "Send me a Slack message every morning at 8am with today's weather forecast for San Francisco"
 
     **What NIRA does:**
-    - Selects OpenWeatherMap MCP server for weather data
-    - Selects Slack MCP server for messaging
+    - Uses OpenWeatherMap for weather data
+    - Connects to Slack for messaging
     - Creates a daily 8am schedule
     - Asks for your OpenWeatherMap API key and Slack credentials
   </Accordion>
@@ -107,19 +106,19 @@ When you describe your automation, NIRA:
 
 <Steps>
   <Step title="Understands Intent">
-    ✅ Parses your natural language request to understand what you want
+    Parses your natural language request to understand what you want
   </Step>
   <Step title="Selects Tools">
-    ✅ Identifies which MCP servers are needed (e.g., OpenWeatherMap, Slack)
+    Identifies which integrations are needed (e.g., OpenWeatherMap, Slack)
   </Step>
   <Step title="Designs Workflow">
-    ✅ Determines the automation schedule, logic, and data flow
+    Determines the automation schedule, logic, and data flow
   </Step>
   <Step title="Generates Playbook">
-    ✅ Creates a complete playbook configuration
+    Creates a complete playbook configuration
   </Step>
   <Step title="Identifies Credentials">
-    ✅ Figures out which API keys you'll need to provide
+    Figures out which API keys you'll need to provide
   </Step>
 </Steps>
 
@@ -261,7 +260,7 @@ Now that you've completed the tutorial, you can:
     Ask NIRA to create more complex workflows
   </Card>
   <Card title="Explore Connections" icon="plug" href="/studio/connections">
-    See all 50+ MCP servers NIRA can use
+    See all 50+ integrations NIRA can use
   </Card>
   <Card title="Learn About Playbooks" icon="book" href="/studio/playbooks">
     Understand how NIRA structures automations
@@ -344,9 +343,9 @@ Make the most of your NIRA experience with these tips:
   </Accordion>
 
   <Accordion title="How do I know what tools/services NIRA can use?">
-    Browse [Connections](/studio/connections) to see all 50+ MCP servers. NIRA automatically knows about all of them and will select the best ones for your needs.
+    Browse [Connections](/studio/connections) to see all 50+ integrations. NIRA automatically knows about all of them and will select the best ones for your needs.
 
-    If NIRA doesn't have a tool for something, she'll let you know and may suggest alternatives.
+    If NIRA doesn't have an integration for something, she'll let you know and may suggest alternatives.
   </Accordion>
 
   <Accordion title="Can NIRA build really complex automations?">

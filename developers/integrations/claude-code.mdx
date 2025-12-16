@@ -1,0 +1,250 @@
+---
+title: 'Claude Code Integration'
+description: 'Connect your MCP servers to Claude Code for AI-powered coding assistance'
+---
+
+<img
+  src="/images/studio/connect-modal-claude-code.png"
+  alt="Claude Code integration"
+/>
+
+Integrate your deployed MCP servers with Claude Code to enhance your development workflow with AI-powered assistance.
+
+## Overview
+
+Claude Code is Anthropic's AI-powered coding assistant that runs directly in your editor. By connecting your MCP servers, you can extend Claude Code with custom tools and capabilities.
+
+## Setup Instructions
+
+<Steps>
+  <Step title="Open your Claude Code configuration">
+    Access Claude Code settings in your editor
+  </Step>
+  <Step title="Navigate to MCP Servers settings">
+    Find the MCP configuration section
+  </Step>
+  <Step title="Add the JSON configuration below">
+    Paste the generated JSON configuration
+  </Step>
+  <Step title="Reload the window (Cmd/Ctrl + R)">
+    Restart Claude Code to apply changes
+  </Step>
+  <Step title="The server will be available in your session">
+    The MCP server will now be accessible
+  </Step>
+</Steps>
+
+## Configuration Format
+
+```json
+{
+  "mcpServers": {
+    "echo": {
+      "command": "npx",
+      "args": [
+        "@nimbletools/mcp-http-bridge",
+        "--endpoint",
+        "https://mcp.nimbletools.dev/{workspace-id}/{server-name}/mcp",
+        "--token",
+        "YOUR_WORKSPACE_TOKEN"
+      ]
+    }
+  }
+}
+```
+
+<Callout type="info">
+  Claude Code uses a simplified configuration without auth fields.
+</Callout>
+
+## Getting Your Configuration
+
+<Steps>
+  <Step title="Navigate to Connections">
+    Go to the Connections section in NimbleBrain Studio
+  </Step>
+  <Step title="Find Your Server">
+    Locate the MCP server you want to connect
+  </Step>
+  <Step title="Click Connect">
+    Click the **Connect** button on the server card
+  </Step>
+  <Step title="Select Claude Code">
+    Choose "Claude Code" from the integration options
+  </Step>
+  <Step title="Copy Configuration">
+    Copy the generated configuration to your clipboard
+  </Step>
+</Steps>
+
+## Configuration Details
+
+The configuration includes:
+
+<ResponseField name="command" type="string">
+  The command to run (typically `npx` for Node packages)
+</ResponseField>
+
+<ResponseField name="args" type="array">
+  Arguments passed to the command:
+  - `@nimbletools/mcp-http-bridge` - The bridge package
+  - `--endpoint` - Your MCP server endpoint URL
+  - `--token` - Your workspace API token
+</ResponseField>
+
+## Workspace Token
+
+You need a workspace API token to authenticate:
+
+1. Navigate to **API Tokens** in Studio settings
+2. Click **Create Token**
+3. Copy the token value
+4. Replace `YOUR_WORKSPACE_TOKEN` in the configuration
+
+<Callout type="warning">
+  Store your token securely! Anyone with your token can access your workspace.
+</Callout>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Server not appearing in Claude Code">
+    **Possible causes:**
+    - Configuration not saved correctly
+    - Claude Code not reloaded
+    - Syntax error in JSON
+
+    **Solution:**
+    - Verify JSON is valid (use a JSON validator)
+    - Fully reload Claude Code window (Cmd/Ctrl + R)
+    - Check Claude Code logs for errors
+  </Accordion>
+
+  <Accordion title="Authentication errors">
+    **Possible causes:**
+    - Invalid or expired token
+    - Token not replaced in config
+    - Wrong workspace selected
+
+    **Solution:**
+    - Generate a new token in Studio
+    - Ensure `YOUR_WORKSPACE_TOKEN` is replaced with actual token
+    - Verify token is for the correct workspace
+  </Accordion>
+
+  <Accordion title="Connection timeouts">
+    **Possible causes:**
+    - Server not running
+    - Network connectivity issues
+    - Incorrect endpoint URL
+
+    **Solution:**
+    - Check server status in Connections (should show "Running")
+    - Verify internet connection
+    - Confirm endpoint URL matches your workspace and server
+  </Accordion>
+
+  <Accordion title="Tools not working">
+    **Possible causes:**
+    - Server error or crash
+    - Missing required environment variables
+    - Tool configuration issues
+
+    **Solution:**
+    - Check server logs in Studio
+    - Verify any required secrets are set
+    - Restart the server in Connections
+  </Accordion>
+</AccordionGroup>
+
+## Advanced Configuration
+
+### Multiple Servers
+
+You can connect multiple MCP servers:
+
+```json
+{
+  "mcpServers": {
+    "server-one": {
+      "command": "npx",
+      "args": [
+        "@nimbletools/mcp-http-bridge",
+        "--endpoint",
+        "https://mcp.nimbletools.dev/{workspace-id}/server-one/mcp",
+        "--token",
+        "YOUR_TOKEN"
+      ]
+    },
+    "server-two": {
+      "command": "npx",
+      "args": [
+        "@nimbletools/mcp-http-bridge",
+        "--endpoint",
+        "https://mcp.nimbletools.dev/{workspace-id}/server-two/mcp",
+        "--token",
+        "YOUR_TOKEN"
+      ]
+    }
+  }
+}
+```
+
+### Environment Variables
+
+Use environment variables for sensitive data:
+
+```json
+{
+  "mcpServers": {
+    "my-server": {
+      "command": "npx",
+      "args": [
+        "@nimbletools/mcp-http-bridge",
+        "--endpoint",
+        "https://mcp.nimbletools.dev/{workspace-id}/{server-name}/mcp",
+        "--token",
+        "${NIMBLEBRAIN_TOKEN}"
+      ]
+    }
+  }
+}
+```
+
+Set the environment variable in your shell:
+```bash
+export NIMBLEBRAIN_TOKEN="your-token-here"
+```
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card
+    title="Connections"
+    icon="plug"
+    href="/studio/connections"
+  >
+    Install and manage MCP servers
+  </Card>
+  <Card
+    title="API Tokens"
+    icon="key"
+    href="/studio/api-keys"
+  >
+    Generate workspace tokens
+  </Card>
+  <Card
+    title="All Integrations"
+    icon="plug"
+    href="/developers/integrations/overview"
+  >
+    View all client integrations
+  </Card>
+  <Card
+    title="Activity Logs"
+    icon="list"
+    href="/studio/activity-logs"
+  >
+    Monitor server usage
+  </Card>
+</CardGroup>

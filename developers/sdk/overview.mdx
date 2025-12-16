@@ -1,0 +1,135 @@
+---
+title: 'TypeScript SDK'
+description: 'Official TypeScript SDK for the NimbleBrain Studio API'
+---
+
+The NimbleBrain SDK provides a clean, type-safe interface for building applications that interact with NimbleBrain Studio. Use it to programmatically manage agents, run playbooks, and create conversational interfaces.
+
+## Features
+
+<CardGroup cols={2}>
+  <Card title="High-Level API" icon="layer-group">
+    Clean, intuitive interface for agents, playbooks, and conversations
+  </Card>
+  <Card title="Streaming Support" icon="wave-pulse">
+    Real-time SSE streaming for agent responses with typewriter effect
+  </Card>
+  <Card title="TypeScript First" icon="brackets-curly">
+    Full type definitions for all API responses and methods
+  </Card>
+  <Card title="Auto-Generated Types" icon="rotate">
+    OpenAPI-generated types ensure API compatibility
+  </Card>
+</CardGroup>
+
+## Installation
+
+```bash
+npm install @nimblebrain/sdk
+```
+
+Or with your preferred package manager:
+
+<CodeGroup>
+```bash npm
+npm install @nimblebrain/sdk
+```
+
+```bash yarn
+yarn add @nimblebrain/sdk
+```
+
+```bash pnpm
+pnpm add @nimblebrain/sdk
+```
+</CodeGroup>
+
+## Quick Example
+
+```typescript
+import { NimbleBrain } from '@nimblebrain/sdk';
+
+// Initialize the SDK with your API key
+const nb = new NimbleBrain({ apiKey: 'nb_live_...' });
+
+// List agents in your workspace
+const agents = await nb.agents.list();
+console.log('Available agents:', agents);
+
+// Create a conversation and chat with an agent
+const conversation = await nb.conversations.create(agents[0].id);
+
+// Stream the response in real-time
+for await (const event of nb.messages.stream(agents[0].id, conversation.id, 'Hello!')) {
+  if (event.type === 'content') {
+    process.stdout.write(event.data.text as string);
+  }
+}
+```
+
+## SDK Structure
+
+The SDK is organized into namespaces that mirror the NimbleBrain Studio concepts:
+
+| Namespace | Purpose |
+|-----------|---------|
+| `nb.agents` | List and interact with agents |
+| `nb.conversations` | Create and manage conversations |
+| `nb.messages` | Send messages and stream responses |
+| `nb.playbooks` | List and execute playbooks |
+| `nb.executions` | Track playbook execution status |
+
+## When to Use the SDK
+
+<AccordionGroup>
+  <Accordion title="Building Custom Chat Interfaces">
+    Create your own chat UI that connects to NimbleBrain agents. The streaming API provides real-time responses for a smooth user experience.
+  </Accordion>
+  <Accordion title="Backend Automation">
+    Run playbooks programmatically from your backend services. Integrate NimbleBrain automations into your existing workflows.
+  </Accordion>
+  <Accordion title="CI/CD Pipelines">
+    Trigger playbooks as part of your deployment process. For example, run a playbook that notifies your team after each deployment.
+  </Accordion>
+  <Accordion title="Custom Applications">
+    Build internal tools that leverage NimbleBrain's AI capabilities without using the Studio UI.
+  </Accordion>
+</AccordionGroup>
+
+## Requirements
+
+- **Node.js** 18.0 or later (for native fetch support)
+- **API Key** from NimbleBrain Studio
+
+## Getting Your API Key
+
+1. Log in to [NimbleBrain Studio](https://studio.nimblebrain.ai?utm_source=docs&utm_campaign=developers)
+2. Navigate to **Settings > API Keys**
+3. Click **Create API Key**
+4. Copy the key (it starts with `nb_live_` or `nb_test_`)
+
+<Warning>
+Keep your API key secure. Never commit it to version control or expose it in client-side code.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/sdk/quickstart">
+    Get up and running in 5 minutes
+  </Card>
+  <Card title="Agents API" icon="robot" href="/sdk/agents">
+    Work with agents and conversations
+  </Card>
+  <Card title="Playbooks API" icon="play" href="/sdk/playbooks">
+    Execute playbooks programmatically
+  </Card>
+  <Card title="Streaming" icon="wave-pulse" href="/sdk/streaming">
+    Real-time message streaming
+  </Card>
+</CardGroup>
+
+## Links
+
+- [NPM Package](https://www.npmjs.com/package/@nimblebrain/sdk)
+- [API Documentation](https://studio-api.nimblebrain.ai/v1/docs)

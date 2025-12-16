@@ -1,0 +1,320 @@
+---
+title: 'Playbooks API'
+description: 'Execute playbooks and track executions programmatically'
+---
+
+The Playbooks API lets you trigger playbook executions from your code and monitor their progress. This is useful for integrating NimbleBrain automations into your existing workflows, CI/CD pipelines, or custom applications.
+
+## Overview
+
+Working with playbooks involves two main operations:
+
+1. **Execute** - Trigger a playbook to run
+2. **Monitor** - Check the execution status and get results
+
+```
+Playbook.execute() → Execution ID → Poll for status → Get result
+```
+
+## Playbooks
+
+### List Playbooks
+
+Retrieve all playbooks in your workspace:
+
+```typescript
+const playbooks = await nb.playbooks.list();
+
+for (const playbook of playbooks) {
+  console.log(`${playbook.name} (${playbook.id})`);
+  console.log(`  Description: ${playbook.description}`);
+}
+```
+
+**Response type:**
+
+```typescript
+interface Playbook {
+  id: string;
+  name: string;
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+```
+
+### Execute a Playbook
+
+Trigger a playbook execution:
+
+```typescript
+const { id: executionId } = await nb.playbooks.execute(playbookId);
+console.log(`Execution started: ${executionId}`);
+```
+
+The `execute()` method returns immediately with an execution ID. The playbook runs asynchronously in the background.
+
+**With parameters:**
+
+If your playbook accepts input parameters:
+
+```typescript
+const { id: executionId } = await nb.playbooks.execute(playbookId, {
+  ticker: 'AAPL',
+  period: 'weekly',
+});
+```
+
+**Response type:**
+
+```typescript
+interface ExecutePlaybookResponse {
+  id: string;
+  status: 'queued';
+  message?: string;
+}
+```
+
+## Executions
+
+### Get Execution Status
+
+Check the current status of an execution:
+
+```typescript
+const execution = await nb.executions.get(executionId);
+
+console.log(`Status: ${execution.status}`);
+console.log(`Duration: ${execution.durationMs}ms`);
+
+if (execution.status === 'completed') {
+  console.log('Result:', execution.result);
+}
+```
+
+**Response type:**
+
+```typescript
+interface Execution {
+  id: string;
+  status: 'queued' | 'pending' | 'running' | 'completed' | 'completed_with_errors' | 'failed' | 'cancelled';
+  targetType?: 'playbook' | 'agent';
+  targetId?: string;
+  targetName?: string;
+  result?: string | Record<string, unknown> | null;
+  startedAt?: string;
+  completedAt?: string;
+  durationMs?: number;
+}
+```
+
+### Execution Status Values
+
+| Status | Description |
+|--------|-------------|
+| `queued` | Execution is waiting to start |
+| `pending` | Execution is being prepared |
+| `running` | Execution is in progress |
+| `completed` | Execution finished successfully |
+| `completed_with_errors` | Execution finished but encountered non-fatal errors |
+| `failed` | Execution failed |
+| `cancelled` | Execution was cancelled |
+
+### Wait for Completion
+
+The SDK provides a helper method that polls until the execution completes:
+
+```typescript
+const execution = await nb.executions.waitForCompletion(executionId, {
+  timeoutMs: 120000,     // Maximum wait time (2 minutes)
+  pollIntervalMs: 2000,  // Check every 2 seconds
+});
+
+if (execution.status === 'completed') {
+  console.log('Success! Result:', execution.result);
+} else {
+  console.log(`Execution ended with status: ${execution.status}`);
+}
+```
+
+**Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `timeoutMs` | number | 60000 | Maximum time to wait in milliseconds |
+| `pollIntervalMs` | number | 1000 | Interval between status checks |
+
+<Warning>
+If the execution doesn't complete within `timeoutMs`, the method throws a timeout error. The execution continues running - only the waiting stops.
+</Warning>
+
+## Complete Example: Playbook Runner
+
+Here's a complete script that runs a playbook and displays the result:
+
+```typescript
+import { NimbleBrain } from '@nimblebrain/sdk';
+
+async function runPlaybook(playbookName: string) {
+  const nb = new NimbleBrain({
+    apiKey: process.env.NIMBLEBRAIN_API_KEY!,
+  });
+
+  // Find the playbook by name
+  const playbooks = await nb.playbooks.list();
+  const playbook = playbooks.find((p) => p.name === playbookName);
+
+  if (!playbook) {
+    console.error(`Playbook not found: ${playbookName}`);
+    console.log('Available playbooks:');
+    playbooks.forEach((p) => console.log(`  - ${p.name}`));
+    return;
+  }
+
+  console.log(`Executing: ${playbook.name}`);
+  console.log(`ID: ${playbook.id}`);
+  console.log('---');
+
+  // Execute the playbook
+  const { id: executionId } = await nb.playbooks.execute(playbook.id);
+  console.log(`Execution ID: ${executionId}`);
+
+  // Show progress while waiting
+  const startTime = Date.now();
+  let lastStatus = '';
+
+  const checkStatus = async () => {
+    const exec = await nb.executions.get(executionId);
+    if (exec.status !== lastStatus) {
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+      console.log(`[${elapsed}s] Status: ${exec.status}`);
+      lastStatus = exec.status;
+    }
+    return exec;
+  };
+
+  // Poll until complete
+  let execution = await checkStatus();
+  while (!['completed', 'completed_with_errors', 'failed', 'cancelled'].includes(execution.status)) {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    execution = await checkStatus();
+  }
+
+  // Display result
+  console.log('\n--- Result ---');
+  console.log(`Final status: ${execution.status}`);
+  console.log(`Duration: ${execution.durationMs}ms`);
+
+  if (execution.result) {
+    console.log('\nOutput:');
+    if (typeof execution.result === 'string') {
+      console.log(execution.result);
+    } else {
+      console.log(JSON.stringify(execution.result, null, 2));
+    }
+  }
+}
+
+// Run from command line: npx ts-node run-playbook.ts "My Playbook Name"
+const playbookName = process.argv[2];
+if (!playbookName) {
+  console.error('Usage: npx ts-node run-playbook.ts "Playbook Name"');
+  process.exit(1);
+}
+
+runPlaybook(playbookName);
+```
+
+## CI/CD Integration Example
+
+Run a playbook as part of your deployment pipeline:
+
+```typescript
+import { NimbleBrain } from '@nimblebrain/sdk';
+
+async function notifyDeployment(environment: string, version: string) {
+  const nb = new NimbleBrain({ apiKey: process.env.NIMBLEBRAIN_API_KEY! });
+
+  // Find the deployment notification playbook
+  const playbooks = await nb.playbooks.list();
+  const notifyPlaybook = playbooks.find((p) => p.name === 'Deployment Notification');
+
+  if (!notifyPlaybook) {
+    console.warn('Deployment notification playbook not found, skipping');
+    return;
+  }
+
+  // Execute with deployment info
+  const { id } = await nb.playbooks.execute(notifyPlaybook.id, {
+    environment,
+    version,
+    timestamp: new Date().toISOString(),
+  });
+
+  // Wait for completion (with short timeout for CI)
+  try {
+    const result = await nb.executions.waitForCompletion(id, {
+      timeoutMs: 30000,
+      pollIntervalMs: 2000,
+    });
+
+    if (result.status === 'completed') {
+      console.log('Deployment notification sent successfully');
+    } else {
+      console.warn(`Notification ended with status: ${result.status}`);
+    }
+  } catch (error) {
+    console.warn('Notification timed out, continuing deployment');
+  }
+}
+
+// Usage in deployment script
+notifyDeployment('production', 'v1.2.3');
+```
+
+## Error Handling
+
+```typescript
+try {
+  const { id } = await nb.playbooks.execute(playbookId);
+  const result = await nb.executions.waitForCompletion(id);
+} catch (error) {
+  if (error instanceof Error) {
+    if (error.message.includes('timed out')) {
+      console.error('Playbook took too long to complete');
+    } else if (error.message.includes('404')) {
+      console.error('Playbook not found');
+    } else {
+      console.error('Execution failed:', error.message);
+    }
+  }
+}
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Set Appropriate Timeouts" icon="clock">
+    Know how long your playbooks typically take and set timeouts accordingly
+  </Card>
+  <Card title="Handle All Statuses" icon="list-check">
+    Check for `failed` and `completed_with_errors` in addition to `completed`
+  </Card>
+  <Card title="Log Execution IDs" icon="file-lines">
+    Always log execution IDs for debugging. You can look them up in Studio.
+  </Card>
+  <Card title="Don't Block Critical Paths" icon="route">
+    For non-critical notifications, use fire-and-forget pattern
+  </Card>
+</CardGroup>
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Agents API" icon="robot" href="/sdk/agents">
+    Chat with agents programmatically
+  </Card>
+  <Card title="Streaming Guide" icon="wave-pulse" href="/sdk/streaming">
+    Real-time message streaming
+  </Card>
+</CardGroup>

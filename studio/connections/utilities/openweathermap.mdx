@@ -1,0 +1,1091 @@
+---
+title: 'OpenWeatherMap'
+description: 'Real-time weather data, forecasts, air quality, and climate information for any location worldwide'
+category: 'Weather & Climate'
+difficulty: 'Beginner'
+required_auth: true
+api_provider:
+  name: 'OpenWeatherMap'
+  url: 'https://openweathermap.org'
+  signup_url: 'https://home.openweathermap.org/users/sign_up'
+tags: ['weather', 'forecast', 'climate', 'air-quality', 'meteorology']
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="cloud-sun">
+    Access comprehensive weather data from OpenWeatherMap, the world's leading weather data provider. Get current conditions, forecasts, air quality, alerts, and historical data for any location globally.
+
+    **Key Features:**
+    - Current weather conditions for any location worldwide
+    - 5-day/3-hour and hourly forecasts
+    - Severe weather alerts and warnings
+    - Air quality index and pollutant data
+    - UV index and solar radiation
+    - Historical weather data (last 5 days)
+    - Location search and geocoding
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    Perfect for building AI-powered weather assistants and climate-aware applications.
+
+    **Examples:**
+    - Travel planning and weather-based recommendations
+    - Agricultural and farming decisions
+    - Event planning and outdoor activity scheduling
+    - Logistics and supply chain optimization
+    - Construction project timing
+    - Air quality monitoring for health-conscious applications
+    - Solar energy potential assessment
+    - Emergency preparedness and alerts
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+<Steps>
+  <Step title="Get Your API Key">
+    Sign up for a free OpenWeatherMap account at [openweathermap.org/users/sign_up](https://home.openweathermap.org/users/sign_up)
+
+    **Free Tier Includes:**
+    - 1,000 API calls per day
+    - 60 calls per minute
+    - Current weather data
+    - 5-day/3-hour forecasts
+    - Air pollution data
+    - UV index
+    - Geocoding services
+
+    After signing up, find your API key in the "API keys" section of your account dashboard.
+  </Step>
+
+  <Step title="Add to NimbleBrain Studio">
+    In NimbleBrain Studio:
+
+    1. Navigate to **Connections** in the sidebar
+    2. Click **Add Server**
+    3. Search for "OpenWeatherMap" in the server registry
+    4. Click **Configure**
+    5. Paste your API key in the **OPENWEATHERMAP_API_KEY** field
+    6. Click **Save & Enable**
+
+    <Info>
+      The server will automatically connect and become available in your AI assistant within seconds.
+    </Info>
+  </Step>
+
+  <Step title="Test the Connection">
+    In your Studio chat, try this prompt:
+
+```text
+"What's the current weather in New York City?"
+```
+
+    You should see real-time weather data including temperature, conditions, humidity, wind speed, visibility, and pressure.
+
+    <Tip>
+      Look for the 🔧 tool usage indicator in Studio to confirm the server is working correctly.
+    </Tip>
+  </Step>
+</Steps>
+
+## Available Tools
+
+<AccordionGroup>
+  <Accordion title="get_current_weather" icon="temperature-three-quarters">
+    Get current weather conditions for any location worldwide, including temperature, humidity, pressure, wind, clouds, and visibility.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | location | string | No* | Location name (e.g., 'London', 'New York,US', 'Panama City, Panama') |
+    | lat | float | No* | Latitude coordinate (use with lon) |
+    | lon | float | No* | Longitude coordinate (use with lat) |
+    | units | string | No | Units of measurement: 'metric' (Celsius), 'imperial' (Fahrenheit), 'standard' (Kelvin). Default: 'metric' |
+
+    *Note: Must provide either `location` OR coordinates (`lat`/`lon`), not both.
+
+    **Returns:**
+    Current weather data including:
+    - Temperature (current, feels like, min, max)
+    - Atmospheric pressure and humidity
+    - Wind speed, direction, and gusts
+    - Cloudiness and visibility
+    - Weather conditions (rain, snow, clear, etc.)
+    - Sunrise and sunset times
+    - Geographic coordinates
+
+    **Example Usage:**
+
+```text
+"What's the weather like in Tokyo right now?"
+```
+
+    **Example Response:**
+
+```json
+{
+  "coord": {"lat": 35.6895, "lon": 139.6917},
+  "weather": [{
+    "main": "Clear",
+    "description": "clear sky",
+    "icon": "01d"
+  }],
+  "main": {
+    "temp": 18.5,
+    "feels_like": 17.8,
+    "temp_min": 16.2,
+    "temp_max": 20.1,
+    "pressure": 1013,
+    "humidity": 62
+  },
+  "wind": {
+    "speed": 3.5,
+    "deg": 180
+  },
+  "clouds": {"all": 0},
+  "visibility": 10000,
+  "dt": 1704067200,
+  "sys": {
+    "country": "JP",
+    "sunrise": 1704063600,
+    "sunset": 1704100800
+  },
+  "name": "Tokyo"
+}
+```
+
+    <Tip>
+      Use coordinates for precise locations. City names work well for major cities, but may be ambiguous for smaller locations.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="get_forecast" icon="calendar-week">
+    Get 5-day weather forecast with 3-hour intervals (up to 40 data points). Perfect for planning activities and trips over the next several days.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | city | string | No* | City name (e.g., 'London', 'New York,US') |
+    | lat | float | No* | Latitude coordinate (use with lon) |
+    | lon | float | No* | Longitude coordinate (use with lat) |
+    | units | string | No | Units of measurement ('metric', 'imperial', 'standard'). Default: 'metric' |
+    | cnt | number | No | Number of timestamps to return (max: 40) |
+
+    *Note: Must provide either `city` OR coordinates (`lat`/`lon`), not both.
+
+    **Returns:**
+    Forecast data containing:
+    - Array of 40 forecast items (5 days × 8 three-hour intervals)
+    - Temperature, humidity, pressure for each interval
+    - Weather conditions and probability of precipitation
+    - Wind speed and direction
+    - Cloud cover and visibility
+    - City information with timezone
+
+    **Example Usage:**
+
+```text
+"What will the weather be like in Paris over the next 3 days?"
+```
+
+    **Example Response:**
+
+```json
+{
+  "cod": "200",
+  "cnt": 40,
+  "list": [
+    {
+      "dt": 1704096000,
+      "dt_txt": "2025-01-01 12:00:00",
+      "main": {
+        "temp": 8.5,
+        "feels_like": 6.2,
+        "temp_min": 7.1,
+        "temp_max": 8.5,
+        "pressure": 1015,
+        "humidity": 75
+      },
+      "weather": [{
+        "main": "Rain",
+        "description": "light rain"
+      }],
+      "wind": {"speed": 4.2, "deg": 220},
+      "pop": 0.65
+    }
+  ],
+  "city": {
+    "name": "Paris",
+    "country": "FR",
+    "timezone": 3600,
+    "sunrise": 1704091200,
+    "sunset": 1704124800
+  }
+}
+```
+
+    <Tip>
+      Each forecast point represents a 3-hour window. Use the `dt_txt` field for human-readable timestamps.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="get_hourly_forecast" icon="clock">
+    Get detailed hourly weather forecast for the next 48 hours (requires coordinates). More precise than the 3-hour forecast for short-term planning.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | lat | float | Yes | Latitude coordinate |
+    | lon | float | Yes | Longitude coordinate |
+    | units | string | No | Units of measurement ('metric', 'imperial', 'standard'). Default: 'metric' |
+    | cnt | number | No | Number of hours to return (max: 96) |
+
+    **Returns:**
+    Hourly forecast data for next 48 hours including:
+    - Temperature and feels-like for each hour
+    - Weather conditions and precipitation probability
+    - Wind speed, direction, and gusts
+    - Cloud cover and visibility
+    - Atmospheric pressure and humidity
+
+    **Example Usage:**
+
+```text
+"Give me the hourly forecast for San Francisco (37.7749, -122.4194) for the next 24 hours"
+```
+
+    <Tip>
+      Use `search_city` tool first if you don't have coordinates. This tool provides more detailed short-term predictions than the 3-hour forecast.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="get_weather_alerts" icon="triangle-exclamation">
+    Get severe weather alerts and warnings for a location. Critical for safety and emergency preparedness planning.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | lat | float | Yes | Latitude coordinate |
+    | lon | float | Yes | Longitude coordinate |
+
+    **Returns:**
+    Alert data containing:
+    - `alerts` - Array of active weather alerts
+    - `sender_name` - Alert issuing authority
+    - `event` - Type of weather event
+    - `start` - Alert start time (Unix timestamp)
+    - `end` - Alert end time (Unix timestamp)
+    - `description` - Detailed alert description
+    - `timezone` - Location timezone
+
+    **Example Usage:**
+
+```text
+"Are there any severe weather warnings for Miami, Florida right now?"
+```
+
+    **Example Response:**
+
+```json
+{
+  "lat": 25.7617,
+  "lon": -80.1918,
+  "timezone": "America/New_York",
+  "alerts": [
+    {
+      "sender_name": "NWS Miami FL",
+      "event": "Hurricane Warning",
+      "start": 1704067200,
+      "end": 1704153600,
+      "description": "Hurricane Warning in effect. Winds of 74 mph or higher expected. Preparations to protect life and property should be rushed to completion."
+    }
+  ]
+}
+```
+
+    <Warning>
+      Always check for alerts before outdoor activities in unfamiliar areas. Empty alerts array means no active warnings.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="get_air_quality" icon="wind">
+    Get air quality index (AQI) and detailed pollutant concentrations. Essential for health-conscious applications and environmental monitoring.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | lat | float | Yes | Latitude coordinate |
+    | lon | float | Yes | Longitude coordinate |
+
+    **Returns:**
+    Air quality data containing:
+    - `aqi` - Air Quality Index (1=Good, 2=Fair, 3=Moderate, 4=Poor, 5=Very Poor)
+    - `co` - Carbon monoxide (μg/m³)
+    - `no` - Nitrogen monoxide (μg/m³)
+    - `no2` - Nitrogen dioxide (μg/m³)
+    - `o3` - Ozone (μg/m³)
+    - `so2` - Sulphur dioxide (μg/m³)
+    - `pm2_5` - Fine particles matter (μg/m³)
+    - `pm10` - Coarse particles matter (μg/m³)
+    - `nh3` - Ammonia (μg/m³)
+
+    **Example Usage:**
+
+```text
+"What's the air quality in Beijing? Is it safe to exercise outdoors?"
+```
+
+    **Example Response:**
+
+```json
+{
+  "coord": {"lat": 39.9042, "lon": 116.4074},
+  "list": [
+    {
+      "main": {"aqi": 4},
+      "components": {
+        "co": 500.5,
+        "no": 0.1,
+        "no2": 42.3,
+        "o3": 15.2,
+        "so2": 8.5,
+        "pm2_5": 65.2,
+        "pm10": 85.3,
+        "nh3": 2.1
+      },
+      "dt": 1704067200
+    }
+  ]
+}
+```
+
+    <Tip>
+      AQI levels: 1 (Good) - safe for everyone, 2 (Fair) - acceptable, 3 (Moderate) - sensitive groups may be affected, 4 (Poor) - everyone may be affected, 5 (Very Poor) - health alert.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="get_weather_by_zip" icon="location-dot">
+    Get current weather using ZIP or postal code. Convenient for applications that collect user ZIP codes.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | zip_code | string | Yes | ZIP or postal code |
+    | country_code | string | No | 2-letter country code (e.g., 'US', 'GB', 'CA', 'DE') |
+    | units | string | No | Units of measurement ('metric', 'imperial', 'standard'). Default: 'metric' |
+
+    **Returns:**
+    Same weather data as `get_current_weather`, including temperature, conditions, wind, humidity, and pressure.
+
+    **Example Usage:**
+
+```text
+"What's the weather for ZIP code 90210?"
+```
+
+    **Example Response:**
+
+```json
+{
+  "coord": {"lat": 34.0901, "lon": -118.4065},
+  "weather": [{"main": "Clear", "description": "clear sky"}],
+  "main": {
+    "temp": 22.5,
+    "feels_like": 21.8,
+    "humidity": 45,
+    "pressure": 1015
+  },
+  "wind": {"speed": 2.5},
+  "name": "Beverly Hills"
+}
+```
+
+    <Tip>
+      Including the country code (e.g., "90210,US") ensures accurate results, especially for postal codes that exist in multiple countries.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="search_city" icon="magnifying-glass-location">
+    Search for cities by name and get their coordinates. Essential for converting user-friendly location names to coordinates for other tools.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | city_name | string | Yes | City name to search for |
+    | limit | number | No | Number of results to return (max: 5). Default: 5 |
+
+    **Returns:**
+    Array of matching cities with:
+    - `name` - City name
+    - `lat` - Latitude
+    - `lon` - Longitude
+    - `country` - Country code
+    - `state` - State/region name (if available)
+    - `local_names` - Names in different languages
+
+    **Example Usage:**
+
+```text
+"Find the coordinates for Springfield"
+```
+
+    **Example Response:**
+
+```json
+{
+  "results": [
+    {
+      "name": "Springfield",
+      "lat": 42.1015,
+      "lon": -72.5898,
+      "country": "US",
+      "state": "Massachusetts"
+    },
+    {
+      "name": "Springfield",
+      "lat": 39.7817,
+      "lon": -89.6501,
+      "country": "US",
+      "state": "Illinois"
+    },
+    {
+      "name": "Springfield",
+      "lat": 37.2153,
+      "lon": -93.2982,
+      "country": "US",
+      "state": "Missouri"
+    }
+  ]
+}
+```
+
+    <Tip>
+      Many city names exist in multiple locations. Always present options to users when multiple matches are found.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="get_historical_weather" icon="clock-rotate-left">
+    Get historical weather data for a specific date within the last 5 days. Useful for analysis, reporting, and comparisons.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | lat | float | Yes | Latitude coordinate |
+    | lon | float | Yes | Longitude coordinate |
+    | dt | number | Yes | Unix timestamp (UTC) for the historical date |
+    | units | string | No | Units of measurement ('metric', 'imperial', 'standard'). Default: 'metric' |
+
+    **Returns:**
+    Historical weather data for the specified date including:
+    - Temperature and atmospheric conditions
+    - Weather descriptions
+    - Wind speed and direction
+    - Cloud cover and humidity
+    - Sunrise and sunset times
+
+    **Example Usage:**
+
+```text
+"What was the weather in Seattle 3 days ago?"
+```
+
+    <Warning>
+      Historical data is only available for the last 5 days. For older data, a paid OpenWeatherMap plan is required.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="get_uv_index" icon="sun">
+    Get UV index for a location. Critical for outdoor safety and health recommendations.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | lat | float | Yes | Latitude coordinate |
+    | lon | float | Yes | Longitude coordinate |
+
+    **Returns:**
+    UV index data including:
+    - `value` - UV index value
+    - `date` - Unix timestamp
+    - `date_iso` - ISO format date
+    - `lat` - Latitude
+    - `lon` - Longitude
+
+    **UV Index Scale:**
+    - 0-2: Low (minimal protection needed)
+    - 3-5: Moderate (protection recommended)
+    - 6-7: High (protection essential)
+    - 8-10: Very High (extra protection required)
+    - 11+: Extreme (avoid sun exposure)
+
+    **Example Usage:**
+
+```text
+"What's the UV index in Sydney today? Should I wear sunscreen?"
+```
+
+    **Example Response:**
+
+```json
+{
+  "lat": -33.8688,
+  "lon": 151.2093,
+  "date_iso": "2025-01-15T12:00:00Z",
+  "date": 1704067200,
+  "value": 8.5
+}
+```
+
+    <Tip>
+      UV index peaks between 10 AM and 4 PM. Always recommend sunscreen for UV index of 3 or higher.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="get_weather_map" icon="map">
+    Get weather map layer tile data for visualizations. Advanced feature for building custom weather map interfaces.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | layer | string | Yes | Map layer type: 'temp_new', 'precipitation_new', 'clouds_new', 'pressure_new', 'wind_new' |
+    | z | number | Yes | Zoom level (0-15) |
+    | x | number | Yes | Tile X coordinate |
+    | y | number | Yes | Tile Y coordinate |
+
+    **Returns:**
+    Map tile information including:
+    - `tile_url` - URL to fetch the weather map tile image
+    - `layer` - Layer type
+    - `zoom` - Zoom level
+    - `x`, `y` - Tile coordinates
+
+    **Example Usage:**
+
+```text
+"Get temperature map tile for zoom 5, coordinates 10,5"
+```
+
+    **Example Response:**
+
+```json
+{
+  "layer": "temp_new",
+  "zoom": 5,
+  "x": 10,
+  "y": 5,
+  "tile_url": "https://tile.openweathermap.org/map/temp_new/5/10/5.png?appid=...",
+  "info": "Use this URL to fetch the weather map tile image"
+}
+```
+
+    <Tip>
+      This is an advanced tool for developers building custom weather map visualizations. Most applications won't need this feature.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+## Authentication
+
+<Info>
+  **API Key Required**: This server requires an OpenWeatherMap API key to function.
+</Info>
+
+### Getting Your API Key
+
+1. Create a free account at [openweathermap.org/users/sign_up](https://home.openweathermap.org/users/sign_up)
+2. Verify your email address
+3. Navigate to your account dashboard
+4. Go to the "API keys" section
+5. Copy your default API key (or create a new one)
+6. Add it to your Studio server configuration
+
+### Rate Limits
+
+| Plan | Calls/Day | Calls/Minute | Price |
+|------|-----------|--------------|-------|
+| Free | 1,000 | 60 | $0 |
+| Startup | 100,000 | 600 | $40/month |
+| Developer | 1,000,000 | 600 | $125/month |
+| Professional | 3,000,000 | 600 | $500/month |
+| Enterprise | Custom | Custom | Contact sales |
+
+<Warning>
+  If you exceed rate limits, requests will fail with a 429 error. Monitor your usage in Studio's server settings and consider upgrading your OpenWeatherMap plan for production use.
+</Warning>
+
+### Managing Your API Key in Studio
+
+Your API key is securely stored in NimbleBrain Studio. To update it:
+
+1. Go to **Connections**
+2. Find "OpenWeatherMap" in your server list
+3. Click **Edit Configuration**
+4. Update your API key in the OPENWEATHERMAP_API_KEY field
+5. Click **Save**
+
+<Tip>
+  Studio automatically manages server connections - no manual restarts required. Changes take effect immediately.
+</Tip>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Current Weather Check">
+    **Scenario:** Quick weather check before commuting or meetings
+
+    **Prompt:**
+
+```text
+"What's the weather like in London right now?"
+```
+
+    **What happens:**
+    - Gets current temperature and conditions
+    - Shows humidity and wind speed
+    - Indicates precipitation and visibility
+    - Reports cloud cover and pressure
+
+    **Time:** ~1 second
+    **API calls:** 1
+
+    <Tip>
+      You can check multiple cities at once in Studio: "Compare weather in Paris, Tokyo, and New York"
+    </Tip>
+  </Tab>
+
+  <Tab title="Travel Planning">
+    **Scenario:** Plan a business trip or vacation
+
+    **Prompt:**
+
+```text
+"I'm planning a trip to Barcelona next week. What will the weather be like?"
+```
+
+    **What happens:**
+    - Retrieves 5-day forecast
+    - Shows daily temperature ranges
+    - Predicts precipitation probability
+    - Provides weather conditions for each day
+
+    **Time:** ~2 seconds
+    **API calls:** 1
+
+    <Tip>
+      Studio's AI will interpret "next week" and handle the date calculations for you.
+    </Tip>
+  </Tab>
+
+  <Tab title="Air Quality Monitoring">
+    **Scenario:** Health and safety awareness for outdoor activities
+
+    **Prompt:**
+
+```text
+"What's the air quality in Delhi? Is it safe to go for a run outside?"
+```
+
+    **What happens:**
+    - Retrieves current AQI (Air Quality Index)
+    - Shows pollutant levels (PM2.5, PM10, O3, NO2)
+    - Provides health recommendations
+    - Assesses outdoor activity safety
+
+    **Time:** ~2 seconds
+    **API calls:** 2
+
+    **AQI Scale:**
+    - 1 (Good) - Safe for all activities
+    - 2 (Fair) - Generally acceptable
+    - 3 (Moderate) - Sensitive groups may be affected
+    - 4 (Poor) - Health effects for everyone
+    - 5 (Very Poor) - Health warnings
+  </Tab>
+
+  <Tab title="Event Planning">
+    **Scenario:** Schedule outdoor events or activities
+
+    **Prompt:**
+
+```text
+"I'm planning an outdoor wedding in Miami this Saturday. What's the forecast?"
+```
+
+    **What happens:**
+    - Shows detailed Saturday forecast
+    - Predicts temperature and conditions
+    - Calculates precipitation probability
+    - Provides hour-by-hour breakdown
+
+    **Time:** ~2 seconds
+    **API calls:** 1
+  </Tab>
+
+  <Tab title="UV & Sun Safety">
+    **Scenario:** Outdoor health and safety planning
+
+    **Prompt:**
+
+```text
+"What's the UV index in Miami Beach today? Do I need sunscreen?"
+```
+
+    **What happens:**
+    - Retrieves current UV index
+    - Provides exposure risk level
+    - Recommends sun protection measures
+    - Suggests safe exposure times
+
+    **Time:** ~2 seconds
+    **API calls:** 2
+
+    **UV Index Scale:**
+    - 0-2 (Low) - Minimal protection needed
+    - 3-5 (Moderate) - Protection required
+    - 6-7 (High) - Extra protection needed
+    - 8-10 (Very High) - Stay in shade midday
+    - 11+ (Extreme) - Avoid sun exposure
+  </Tab>
+
+  <Tab title="Multi-Location Analysis">
+    **Scenario:** Compare weather across offices or destinations
+
+    **Prompt:**
+
+```text
+"Compare the weather in Miami, Seattle, and Denver for this weekend"
+```
+
+    **What happens:**
+    - Fetches forecasts for all 3 cities
+    - Presents side-by-side comparison
+    - Highlights significant differences
+    - Identifies best weather conditions
+
+    **Time:** ~3 seconds
+    **API calls:** 3
+
+    <Tip>
+      Studio's AI can analyze and synthesize weather data from multiple locations to help you make decisions.
+    </Tip>
+  </Tab>
+
+  <Tab title="Severe Weather Alerts">
+    **Scenario:** Monitor safety and emergency situations
+
+    **Prompt:**
+
+```text
+"Are there any weather alerts or warnings for Houston, Texas right now?"
+```
+
+    **What happens:**
+    - Checks for active severe weather alerts
+    - Shows warning details and timing
+    - Provides safety recommendations
+    - Indicates affected areas
+
+    **Time:** ~2 seconds
+    **API calls:** 2
+  </Tab>
+
+  <Tab title="ZIP Code Lookup">
+    **Scenario:** Weather lookup using postal code
+
+    **Prompt:**
+
+```text
+"What's the weather for ZIP code 10001?"
+```
+
+    **What happens:**
+    - Looks up weather by postal code
+    - Returns current conditions for location
+    - Shows temperature, humidity, wind
+    - Identifies city/location name
+
+    **Time:** ~1 second
+    **API calls:** 1
+
+    <Tip>
+      Perfect for applications that already have user ZIP codes stored.
+    </Tip>
+  </Tab>
+</Tabs>
+
+<Note>
+  All examples work in NimbleBrain Studio's natural language interface - no code or configuration required!
+</Note>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Rate Limit Exceeded" icon="triangle-exclamation">
+    **Error Message:**
+
+```
+429 Too Many Requests - API rate limit exceeded
+```
+
+    **Cause:** You've exceeded your daily (1,000 calls) or per-minute (60 calls) API limit on the free tier
+
+    **Solutions:**
+    - Wait until your limit resets (daily limits reset at midnight UTC, per-minute limits reset after 60 seconds)
+    - Check your usage in the OpenWeatherMap dashboard
+    - Upgrade to a paid plan for higher limits (100K-3M calls/day)
+    - Space out your requests over time in Studio conversations
+    - Reduce the number of locations you're tracking simultaneously
+
+    **To check your usage:**
+    1. Go to Studio Connections
+    2. Click on OpenWeatherMap
+    3. View API usage metrics
+
+    <Tip>
+      Studio shows real-time API usage. Consider upgrading your OpenWeatherMap plan if you frequently hit limits during normal use.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Invalid API Key" icon="key">
+    **Error Message:**
+
+```
+401 Unauthorized - Invalid API key
+```
+
+    **Cause:** API key is missing, incorrect, expired, or revoked
+
+    **Solutions:**
+    - Verify your API key in Studio server settings (no extra spaces)
+    - Check your OpenWeatherMap account is active and email verified
+    - Regenerate your API key from the OpenWeatherMap dashboard
+    - Ensure your API key hasn't been revoked (check account notifications)
+
+    **To update in Studio:**
+    1. Connections → OpenWeatherMap
+    2. Click **Edit Configuration**
+    3. Paste new API key in OPENWEATHERMAP_API_KEY field
+    4. Click **Save**
+    5. Test with: "What's the weather in London?"
+
+    **Common Mistakes:**
+    - Extra spaces before/after the API key when pasting
+    - Copying only part of the API key from the dashboard
+    - Using an API key from a different weather service
+
+    <Info>
+      Studio validates your API key automatically when you save. You'll see a success message if it's correct.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Location Not Found" icon="map-pin">
+    **Error Message:**
+
+```
+404 Not Found - City not found
+```
+
+    **Cause:** Invalid or ambiguous location name, or location doesn't exist in OpenWeatherMap's database
+
+    **Solutions:**
+    - Use more specific location names (e.g., "London, UK" instead of just "London")
+    - Check spelling of city name
+    - Use major cities or well-known locations (small towns may not be in database)
+    - Add country code to disambiguate (e.g., "Paris, FR" vs "Paris, TX, US")
+    - For small towns, try using the nearest major city
+
+    **Examples in Studio:**
+
+```text
+❌ "What's the weather in Springfield?" → Too ambiguous
+✅ "What's the weather in Springfield, Illinois?" → Much better
+✅ "What's the weather in London, UK?" → Clear and specific
+```
+
+    <Tip>
+      Studio's AI can help disambiguate locations if you provide context in your conversation. For example: "I'm planning a trip to Paris, France next month."
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Coordinates Out of Range" icon="globe">
+    **Error Message:**
+
+```
+400 Bad Request - Invalid coordinates
+```
+
+    **Cause:** Latitude or longitude values are outside valid ranges
+
+    **Solutions:**
+    - Verify latitude is between -90 and 90
+    - Verify longitude is between -180 and 180
+    - Check for swapped lat/lon values (common mistake)
+    - Ensure coordinates are decimal degrees, not degrees-minutes-seconds
+    - Remove any degree symbols or directional letters (N, S, E, W)
+
+    **Valid Coordinate Examples:**
+    - New York: lat=40.7128, lon=-74.0060
+    - Sydney: lat=-33.8688, lon=151.2093
+    - London: lat=51.5074, lon=-0.1278
+  </Accordion>
+
+  <Accordion title="Server Not Responding" icon="server">
+    **Error Message:**
+
+```
+Server connection timeout
+```
+or
+```
+Server not responding
+```
+
+    **Cause:** Studio cannot connect to the OpenWeatherMap integration
+
+    **Solutions:**
+    - Check your internet connection
+    - Verify the server is enabled in Studio (Connections)
+    - Try disabling and re-enabling the server in Studio
+    - Check Studio status page for any service interruptions
+    - Refresh your Studio browser tab
+
+    **Quick Fix in Studio:**
+    1. Go to Connections
+    2. Find OpenWeatherMap in the list
+    3. Toggle it Off, wait 5 seconds
+    4. Toggle it On again
+    5. Try your query again
+
+    <Info>
+      Studio manages all server infrastructure automatically - there's no local setup or Docker containers to troubleshoot.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Data Not Available" icon="circle-question">
+    **Error Message:**
+
+```
+Data not available for this location
+```
+or certain fields return null
+
+    **Cause:** Some features require paid plans or aren't available for all locations
+
+    **Possible Reasons:**
+    - Severe weather alerts only available where local weather services provide them
+    - Historical data beyond 5 days requires a paid plan
+    - Minute-by-minute precipitation data (paid feature)
+    - Some small towns have limited data coverage
+    - UV index may not be available for all coordinates
+
+    **Solutions:**
+    - Try nearby major cities for better data coverage
+    - Check OpenWeatherMap's data coverage map for your region
+    - Verify the feature is included in your plan tier (check documentation)
+    - Upgrade to a paid plan for extended features (historical data, minute forecasts)
+    - Use alternative tools when specific data is unavailable (e.g., forecast instead of alerts)
+  </Accordion>
+
+  <Accordion title="Slow Response Times" icon="clock">
+    **Symptoms:**
+    - Requests taking longer than 3-5 seconds
+    - Timeouts when fetching weather data
+    - Intermittent slow responses
+
+    **Cause:** Network latency, OpenWeatherMap API delays, or server load
+
+    **Solutions:**
+    - Check your internet connection speed and stability
+    - Verify OpenWeatherMap API status at [status.openweathermap.org](https://openweathermap.org)
+    - Try again in a few moments (may be temporary API congestion)
+    - Use smaller forecast ranges (`cnt` parameter) for faster responses
+    - Implement timeout handling in your application (recommend 10s timeout)
+    - Consider caching responses locally for frequently requested locations
+
+    **Expected Response Times:**
+    - Current weather: 0.5-1 second
+    - 5-day forecast: 1-2 seconds
+    - Air quality: 1-2 seconds
+    - Search city: 1-2 seconds
+    - Weather alerts: 2-3 seconds (uses One Call API)
+    - Multiple queries: 2-5 seconds
+  </Accordion>
+
+  <Accordion title="Historical Data Limitations" icon="clock-rotate-left">
+    **Error Message:**
+
+```
+Historical data not available or requires paid plan
+```
+
+    **Cause:** Attempting to access historical data beyond the free tier's 5-day limit
+
+    **Free Tier Limitations:**
+    - Only last 5 days of historical data
+    - Hourly data availability varies by location
+    - No historical forecasts (only actual conditions)
+
+    **Solutions:**
+    - For dates within last 5 days: Use `get_historical_weather` with proper Unix timestamp
+    - For older data: Upgrade to a paid OpenWeatherMap plan
+    - For climate averages: Consider using monthly climate normals (separate API)
+    - Store your own historical data by polling current conditions regularly
+
+    **Converting Dates to Unix Timestamps:**
+    - Use online converters or programming languages
+    - Example: January 10, 2025 12:00 UTC = 1704891600
+    - Ensure timestamp is in UTC, not local time
+  </Accordion>
+</AccordionGroup>
+
+## Links & Resources
+
+<CardGroup cols={2}>
+  <Card title="GitHub Repository" icon="github" href="https://github.com/NimbleBrainInc/mcp-openweathermap">
+    View source code, report issues, and contribute to the project
+  </Card>
+
+  <Card title="OpenWeatherMap API Docs" icon="book" href="https://openweathermap.org/api">
+    Official OpenWeatherMap API reference, data coverage, and features
+  </Card>
+
+  <Card title="Docker Image" icon="docker" href="https://github.com/NimbleBrainInc/mcp-openweathermap/pkgs/container/mcp-openweathermap">
+    Pull the latest container image from GitHub Container Registry
+  </Card>
+
+  <Card title="Report Issues" icon="bug" href="https://github.com/NimbleBrainInc/mcp-openweathermap/issues">
+    Found a bug or have a feature request? Submit an issue on GitHub
+  </Card>
+</CardGroup>
+
+## Related Connections
+
+<CardGroup cols={3}>
+  <Card title="National Parks" icon="mountain-sun" href="/mcp-servers/travel/nationalparks">
+    Plan outdoor activities with park information and visitor data
+  </Card>
+
+  <Card title="Google Maps" icon="map" href="/mcp-servers/mapping/google-maps">
+    Get directions and travel time estimates affected by weather
+  </Card>
+
+  <Card title="Cal.com" icon="calendar" href="/mcp-servers/productivity/cal">
+    Schedule events and meetings based on weather conditions
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://discord.gg/nimblebrain) or email support@nimblebrain.ai

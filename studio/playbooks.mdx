@@ -1,7 +1,6 @@
 ---
 title: 'Playbooks'
 description: 'Create and manage AI-powered workflows with natural language instructions'
-icon: 'play'
 ---
 
 <img
@@ -9,7 +8,7 @@ icon: 'play'
   alt="Playbooks main view"
 />
 
-**Playbooks** are AI-powered workflows that automate complex tasks using natural language instructions. They execute using Claude AI and can leverage any MCP servers installed in your workspace via Connections.
+**Playbooks** are AI-powered workflows that automate complex tasks using natural language instructions. They execute using Claude AI and can leverage any connections installed in your workspace.
 
 <Note>
 **New Way to Build**: Instead of creating playbooks manually, most users now build them conversationally with [NIRA](/studio/nira). This page explains what playbooks are and how to edit them.
@@ -19,7 +18,7 @@ icon: 'play'
 **Understanding the Hierarchy:**
 - **Agents** orchestrate multiple playbooks → [Learn about Agents](/studio/agents)
 - **Playbooks** (you are here) are individual automation tasks
-- **MCP Tools** are the building blocks playbooks use → [Browse Connections](/studio/connections)
+- **Connections** are the integrations playbooks use → [Browse Connections](/studio/connections)
 </Info>
 
 ## What are Playbooks?
@@ -27,7 +26,7 @@ icon: 'play'
 Playbooks allow you to:
 
 - **Automate workflows** with natural language instructions
-- **Use MCP tools** installed via Connections to access external APIs and services
+- **Use integrations** installed via Connections to access external APIs and services
 - **Track execution history** with detailed logs and results
 - **Schedule runs** or trigger them manually
 - **Configure AI parameters** like model, temperature, and timeouts
@@ -49,7 +48,7 @@ In this example, we asked NIRA:
 
 NIRA automatically:
 - Created a new playbook with appropriate instructions
-- Selected the necessary MCP servers (GitHub for monitoring, email for notifications)
+- Selected the necessary tools (GitHub for monitoring, email for notifications)
 - Generated the natural language instructions for the playbook
 - Configured the playbook settings
 
@@ -80,7 +79,7 @@ You can then review, modify, and deploy the playbook that NIRA created. This con
 </Steps>
 
 <Callout type="tip">
-  Playbooks have access to all MCP servers installed via Connections. Make sure to install the necessary servers first!
+  Playbooks have access to all connections installed via the Connections page. Make sure to install the necessary connections first!
 </Callout>
 
 ## Playbook Instructions
@@ -196,8 +195,96 @@ Each execution shows:
   <Accordion title="Execution Steps">
     A detailed breakdown of each step:
     - **Reasoning**: The AI's thought process
-    - **Tool Calls**: Which MCP tools were invoked
+    - **Tool Calls**: Which tools were invoked
     - **Results**: The output from each step
+  </Accordion>
+</AccordionGroup>
+
+## Scheduling Playbooks
+
+Playbooks can run on a schedule for automated, recurring execution. Schedules use **cron expressions** to define when playbooks run.
+
+### Creating a Schedule
+
+You can create schedules through:
+1. **NIRA**: "Run this playbook every day at 8am"
+2. **UI**: Click "Schedule" in the playbook settings
+3. **API**: POST to `/api/workspaces/:id/schedules`
+
+### Cron Expression Format
+
+Schedules use standard cron syntax with 5 fields:
+
+```
+┌───────────── minute (0-59)
+│ ┌───────────── hour (0-23)
+│ │ ┌───────────── day of month (1-31)
+│ │ │ ┌───────────── month (1-12)
+│ │ │ │ ┌───────────── day of week (0-6, Sunday=0)
+│ │ │ │ │
+* * * * *
+```
+
+### Common Schedule Examples
+
+| Schedule | Cron Expression | Description |
+|----------|-----------------|-------------|
+| Every hour | `0 * * * *` | At minute 0 of every hour |
+| Daily at 8am | `0 8 * * *` | Every day at 8:00 AM |
+| Daily at 8am & 6pm | `0 8,18 * * *` | Twice daily |
+| Weekdays at 9am | `0 9 * * 1-5` | Monday through Friday at 9 AM |
+| Every Monday at 9am | `0 9 * * 1` | Weekly on Monday |
+| First of month at 6am | `0 6 1 * *` | Monthly on the 1st |
+| Every 15 minutes | `*/15 * * * *` | At 0, 15, 30, 45 minutes |
+| Every 6 hours | `0 */6 * * *` | At 0, 6, 12, 18 hours |
+
+### Timezone Support
+
+All schedules support timezone configuration. Set the timezone to ensure your playbook runs at the expected local time:
+
+- `America/New_York` - Eastern Time
+- `America/Los_Angeles` - Pacific Time
+- `Europe/London` - UK Time
+- `Asia/Tokyo` - Japan Time
+- `UTC` - Coordinated Universal Time
+
+<Tip>
+Always specify a timezone to avoid confusion with daylight saving time changes.
+</Tip>
+
+### Schedule Settings
+
+<ResponseField name="Skip if Previous Running" type="toggle">
+  Don't start a new execution if the previous one is still running. Prevents overlap for long-running playbooks.
+</ResponseField>
+
+<ResponseField name="Max Concurrent Executions" type="number">
+  Maximum number of simultaneous executions (default: 1). Increase for playbooks that can safely run in parallel.
+</ResponseField>
+
+<ResponseField name="Auto-Pause on Failures" type="number">
+  Automatically pause the schedule after N consecutive failures. Prevents runaway failures.
+</ResponseField>
+
+### Schedule Status
+
+| Status | Description |
+|--------|-------------|
+| **Active** | Schedule is running normally |
+| **Paused** | Schedule is temporarily stopped (manual or auto) |
+| **Error** | Schedule paused due to consecutive failures |
+
+### Managing Schedules
+
+<AccordionGroup>
+  <Accordion title="Pause a Schedule">
+    Temporarily stop a schedule without deleting it. The schedule will retain its configuration and can be resumed later.
+  </Accordion>
+  <Accordion title="Resume a Schedule">
+    Restart a paused schedule. The next execution will occur at the next matching cron time.
+  </Accordion>
+  <Accordion title="View Schedule History">
+    Check the Activity Logs to see all scheduled executions, including timing and results.
   </Accordion>
 </AccordionGroup>
 
@@ -241,7 +328,7 @@ Playbooks can have the following statuses:
     Write clear, detailed instructions about what you want the playbook to do
   </Card>
   <Card title="Install Tools First" icon="plug">
-    Make sure required MCP servers are installed via Connections before creating playbooks
+    Make sure required connections are installed before creating playbooks
   </Card>
   <Card title="Test Thoroughly" icon="flask">
     Run your playbook multiple times to ensure consistent results
@@ -276,7 +363,7 @@ Playbooks can have the following statuses:
     icon="plug"
     href="/studio/connections"
   >
-    Install MCP servers to give your playbooks new capabilities
+    Install integrations to give your playbooks new capabilities
   </Card>
   <Card
     title="Activity Logs"

@@ -1,0 +1,1235 @@
+---
+title: 'Echo'
+description: 'Test and debug integration interactions with a simple echo service for learning and development'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="message-dots">
+    Echo is a testing and learning tool that helps you understand how integrations work. It echoes back any message you send, with optional formatting and timing, making integration behavior visible and testable.
+
+    **Key Features:**
+    - Echo back text messages with optional uppercase formatting
+    - Test timing and delays with simulated processing
+    - Validate JSON data structures with analysis
+    - No external API or authentication required
+    - Zero cost, no rate limits
+    - Works completely offline
+    - Perfect for MCP training and debugging
+    - Instant response for quick testing
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    Echo is designed for testing, learning, and development:
+
+    - **Test Studio Setup**: Verify integration connectivity
+    - **Learn MCP Basics**: Understand how tools receive parameters
+    - **Debug Workflows**: Test conversation flow logic
+    - **Train Teams**: Teach MCP concepts without production APIs
+    - **Prototype Workflows**: Design multi-step processes before production
+    - **Demo Capabilities**: Show MCP functionality to clients
+    - **Validate Integration**: Confirm Studio MCP integration works
+    - **Development Testing**: Test your MCP client implementations
+  </Card>
+</CardGroup>
+
+<Warning>
+  **Development Tool**: Echo is designed for testing and learning. It's not intended for production business workflows. Use production integrations like DeepL, IPInfo, or Salesforce for actual business operations.
+</Warning>
+
+## Quick Start
+
+<Steps>
+  <Step title="No API Key Needed">
+    Echo is a local testing server that requires **zero configuration**.
+
+    **Benefits:**
+    - No signup or registration
+    - No API keys to manage
+    - No rate limits or quotas
+    - No billing or costs
+    - Works completely offline
+    - Instant availability
+    - No external dependencies
+
+    <Info>
+      Echo is perfect for learning how integrations work before configuring production services with real API keys and costs.
+    </Info>
+  </Step>
+
+  <Step title="Add to NimbleBrain Studio">
+    1. Open **NimbleBrain Studio**
+    2. Navigate to **Connections**
+    3. Click **Add Server**
+    4. Search for "Echo" in the server registry
+    5. Click **Add** - no configuration needed!
+    6. Server will show "Connected" status immediately
+
+    <Tip>
+      Setup takes less than 30 seconds. Echo is pre-configured and ready to use with zero setup.
+    </Tip>
+  </Step>
+
+  <Step title="Test the Connection">
+    In your Studio chat, try this prompt:
+
+    *"Echo this message: Hello, World!"*
+
+    **What happens:**
+    - Studio sends your message to Echo server
+    - Echo processes and returns: "Hello, World!"
+    - You see the 🔧 tool usage indicator
+    - Response includes metadata (message length, timestamp)
+
+    <Check>
+      If you see the echoed message, your MCP setup is working perfectly!
+    </Check>
+  </Step>
+</Steps>
+
+## Available Tools
+
+<AccordionGroup>
+  <Accordion title="echo_message - Simple text echo with formatting" icon="message">
+    Echo back a text message with optional uppercase transformation. Perfect for testing basic integration connectivity and parameter passing.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Default | Description |
+    |-----------|------|----------|---------|-------------|
+    | message | string | Yes | - | The text message to echo back |
+    | uppercase | boolean | No | false | Convert message to uppercase |
+
+    **Returns:**
+    - `original_message` - Your original input message
+    - `echoed_message` - The echoed message (transformed if uppercase=true)
+    - `uppercase_applied` - Whether uppercase was applied
+    - `message_length` - Length of the original message in characters
+    - `timestamp` - ISO 8601 timestamp when echo occurred
+
+    **Example Usage:**
+
+    *Natural language in Studio:*
+    ```text
+    "Echo this message: Testing 1, 2, 3"
+    ```
+
+    *With uppercase:*
+    ```text
+    "Echo this in uppercase: hello world"
+    ```
+
+    **Example Response:**
+    ```json
+    {
+      "original_message": "Testing 1, 2, 3",
+      "echoed_message": "Testing 1, 2, 3",
+      "uppercase_applied": false,
+      "message_length": 15,
+      "timestamp": "2025-01-04T20:15:30.123456Z"
+    }
+    ```
+
+    <Tip>
+      Watch for the 🔧 tool indicator in Studio to confirm the integration tool was called vs a natural AI response.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="echo_with_delay - Test timing and asynchronous operations" icon="clock">
+    Echo back a message after a simulated processing delay. Perfect for testing asynchronous operations, conversation flow timing, and understanding how Studio handles delayed responses.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Default | Description |
+    |-----------|------|----------|---------|-------------|
+    | message | string | Yes | - | The text message to echo back |
+    | delay_seconds | float | No | 1.0 | Delay duration in seconds (max: 5.0) |
+
+    **Returns:**
+    - `original_message` - Your original input message
+    - `echoed_message` - The echoed message (unchanged)
+    - `requested_delay` - The delay you requested in seconds
+    - `actual_delay` - The actual delay experienced in seconds
+    - `start_time` - ISO 8601 timestamp when delay started
+    - `end_time` - ISO 8601 timestamp when delay ended
+    - `timestamp` - ISO 8601 timestamp of operation completion
+
+    **Example Usage:**
+
+    *Natural language in Studio:*
+    ```text
+    "Echo this message with a 2 second delay: Processing..."
+    ```
+
+    *Testing quick response:*
+    ```text
+    "Echo 'Fast response' with 0.5 second delay"
+    ```
+
+    **Example Response:**
+    ```json
+    {
+      "original_message": "Processing...",
+      "echoed_message": "Processing...",
+      "requested_delay": 2.0,
+      "actual_delay": 2.001234,
+      "start_time": "2025-01-04T20:15:30.000000Z",
+      "end_time": "2025-01-04T20:15:32.001234Z",
+      "timestamp": "2025-01-04T20:15:32.001234Z"
+    }
+    ```
+
+    <Note>
+      Maximum delay is 5 seconds for safety. Requests above 5 seconds will be automatically capped at 5.0.
+    </Note>
+
+    <Tip>
+      Use this tool to understand how Studio handles long-running operations and manages conversation state during delays.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="echo_json - Validate structured data with analysis" icon="brackets-curly">
+    Echo back structured JSON data with comprehensive analysis. Perfect for testing how Studio handles complex data structures, validating JSON parsing, and understanding data transformation between natural language and structured formats.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | data | object | Yes | JSON object to echo back and analyze |
+
+    **Returns:**
+    - `original_data` - Your original JSON data
+    - `echoed_data` - The echoed JSON data (unchanged)
+    - `analysis` - Detailed analysis including:
+      - `key_count` - Number of keys in the JSON object
+      - `keys` - List of all keys present
+      - `data_types` - Type of each value (string, int, bool, etc.)
+      - `total_size` - Total size in bytes
+    - `timestamp` - ISO 8601 timestamp of operation
+
+    **Example Usage:**
+
+    *Natural language in Studio:*
+    ```text
+    "Echo this JSON data: {\"name\": \"John\", \"age\": 30, \"active\": true}"
+    ```
+
+    *Testing complex structure:*
+    ```text
+    "Validate this user data: {\"user\": \"sarah\", \"email\": \"sarah@example.com\", \"roles\": [\"admin\", \"user\"]}"
+    ```
+
+    **Example Response:**
+    ```json
+    {
+      "original_data": {
+        "name": "John",
+        "age": 30,
+        "active": true
+      },
+      "echoed_data": {
+        "name": "John",
+        "age": 30,
+        "active": true
+      },
+      "analysis": {
+        "key_count": 3,
+        "keys": ["name", "age", "active"],
+        "data_types": {
+          "name": "str",
+          "age": "int",
+          "active": "bool"
+        },
+        "total_size": 45
+      },
+      "timestamp": "2025-01-04T20:15:30.123456Z"
+    }
+    ```
+
+    <Tip>
+      The analysis helps you understand how Studio converts natural language descriptions into structured JSON, and how data types are preserved during MCP tool calls.
+    </Tip>
+
+    <Note>
+      Use this tool to verify JSON data structures before using production APIs that require specific formats (like Salesforce, HubSpot, or Airtable).
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+## Authentication
+
+<Info>
+  **No Authentication Required**: Echo is a local testing server that requires no API keys, credentials, or external authentication.
+</Info>
+
+### Zero Configuration
+
+Echo works immediately after enabling in Studio:
+
+- ✅ No signup required
+- ✅ No API keys to manage
+- ✅ No rate limits to monitor
+- ✅ No costs or billing
+- ✅ Works completely offline
+- ✅ Instant availability
+- ✅ No external dependencies
+
+<Tip>
+  Echo is perfect for teaching your team how integrations work before implementing production services with authentication, rate limits, and API costs.
+</Tip>
+
+### Why No Authentication?
+
+Echo is designed as a **learning and testing tool**:
+
+1. **Educational**: Learn MCP concepts without external dependencies
+2. **Debugging**: Test Studio integration without API costs or rate limits
+3. **Prototyping**: Build workflows before connecting real services
+4. **Demonstration**: Show MCP capabilities in demos and training sessions
+5. **Development**: Test your own MCP client implementations
+
+<Note>
+  For production workflows with real business data, use authenticated servers like:
+  - **[DeepL](/studio/mcp-servers/utilities/deepl)** - Professional translation
+  - **[IPInfo](/studio/mcp-servers/data/ipinfo)** - IP intelligence
+  - **[Abstract API](/studio/mcp-servers/data/abstract)** - Data validation
+  - **[Finnhub](/studio/mcp-servers/utilities/finnhub)** - Financial data
+</Note>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Basic Echo Test">
+    **Scenario:** Verify Studio can communicate with integrations
+
+    **Your Goal:** Confirm your Studio MCP setup is working correctly before connecting production servers.
+
+    **Prompt:**
+    ```text
+    "Use the echo server to repeat this: Testing MCP connectivity"
+    ```
+
+    **What happens:**
+    1. Studio receives your natural language request
+    2. AI determines the Echo tool should be used
+    3. Sends message parameter to echo_message tool
+    4. Echo processes and returns the message
+    5. Studio displays the result with 🔧 tool indicator
+    6. You see confirmation that MCP is working
+
+    **Results:**
+    ```
+    Original: "Testing MCP connectivity"
+    Echoed: "Testing MCP connectivity"
+    Length: 24 characters
+    Timestamp: 2025-01-04T20:15:30Z
+    ```
+
+    **Time:** &lt;1 second
+
+    **Business Value:** Confirms MCP infrastructure is functioning before configuring expensive production APIs
+
+    <Check>
+      If this works, your Studio MCP setup is correct and you're ready to add production servers!
+    </Check>
+  </Tab>
+
+  <Tab title="Parameter Testing">
+    **Scenario:** Learn how MCP tools receive and process parameters
+
+    **Your Goal:** Understand how Studio converts your natural language into structured tool parameters.
+
+    **Prompt:**
+    ```text
+    "Echo these details in uppercase: Name: John Doe, Role: Developer"
+    ```
+
+    **What happens:**
+    1. Studio parses your natural language
+    2. Extracts message: "Name: John Doe, Role: Developer"
+    3. Identifies uppercase requirement
+    4. Calls echo_message with uppercase=true
+    5. Echo shows exactly what parameters it received
+    6. You learn the parameter mapping process
+
+    **Results:**
+    ```
+    Original: "Name: John Doe, Role: Developer"
+    Echoed: "NAME: JOHN DOE, ROLE: DEVELOPER"
+    Uppercase Applied: true
+    Length: 33 characters
+    ```
+
+    **Time:** &lt;1 second
+
+    **Learning Outcome:** You now understand how Studio converts conversational prompts into tool parameters with specific types and values.
+
+    <Tip>
+      Try varying your prompts to see how Studio interprets different phrasings and extracts parameters.
+    </Tip>
+  </Tab>
+
+  <Tab title="Timing & Delays">
+    **Scenario:** Understand how Studio handles asynchronous operations
+
+    **Your Goal:** Test conversation flow with delayed responses, simulating real-world API calls that take time.
+
+    **Prompt:**
+    ```text
+    "Echo 'Processing your request...' with a 3 second delay"
+    ```
+
+    **What happens:**
+    1. Studio calls echo_with_delay tool
+    2. Echo starts 3-second timer
+    3. You see a loading indicator in Studio
+    4. After 3 seconds, response returns
+    5. You see timing metadata
+    6. Learn how Studio manages waiting states
+
+    **Results:**
+    ```
+    Original: "Processing your request..."
+    Echoed: "Processing your request..."
+    Requested Delay: 3.0 seconds
+    Actual Delay: 3.001 seconds
+    Start: 2025-01-04T20:15:30Z
+    End: 2025-01-04T20:15:33Z
+    ```
+
+    **Time:** 3 seconds (as requested)
+
+    **Learning Outcome:** You understand how Studio handles long-running operations, maintains conversation context, and displays loading states.
+
+    <Note>
+      Production APIs often have variable response times. Echo helps you test how your workflows handle delays.
+    </Note>
+  </Tab>
+
+  <Tab title="JSON Structure Testing">
+    **Scenario:** Validate complex data structures before production APIs
+
+    **Your Goal:** Test how Studio handles structured data formats required by production APIs like Salesforce, HubSpot, or Airtable.
+
+    **Prompt:**
+    ```text
+    "Validate this user data: {\"firstName\": \"Sarah\", \"lastName\": \"Smith\", \"email\": \"sarah@company.com\", \"active\": true, \"age\": 28}"
+    ```
+
+    **What happens:**
+    1. Studio parses your JSON string
+    2. Converts to structured data object
+    3. Calls echo_json with the data
+    4. Echo analyzes the structure
+    5. Returns analysis with type information
+    6. You verify data integrity
+
+    **Results:**
+    ```json
+    {
+      "analysis": {
+        "key_count": 5,
+        "keys": ["firstName", "lastName", "email", "active", "age"],
+        "data_types": {
+          "firstName": "str",
+          "lastName": "str",
+          "email": "str",
+          "active": "bool",
+          "age": "int"
+        },
+        "total_size": 87
+      }
+    }
+    ```
+
+    **Time:** &lt;1 second
+
+    **Business Value:** Verify data structures are correct before sending to production APIs, preventing errors and API costs.
+
+    <Tip>
+      Use this to prototype data structures for CRM integrations before connecting real Salesforce or HubSpot accounts.
+    </Tip>
+  </Tab>
+
+  <Tab title="Multi-Step Flow">
+    **Scenario:** Debug multi-turn conversations with sequential tool calls
+
+    **Your Goal:** Understand how Studio maintains context across multiple tool calls and builds complex workflows.
+
+    **Prompt:**
+    ```text
+    "First, echo 'Step 1: Initialize', then echo 'Step 2: Process' with a 1 second delay, and finally echo 'Step 3: Complete' in uppercase"
+    ```
+
+    **What happens:**
+    1. Studio identifies three separate echo operations
+    2. Calls echo_message("Step 1: Initialize")
+    3. Calls echo_with_delay("Step 2: Process", 1.0)
+    4. Calls echo_message("Step 3: Complete", uppercase=true)
+    5. You see the order of operations
+    6. Understand how Studio chains tool calls
+
+    **Results:**
+    ```
+    1. Step 1: Initialize (instant)
+    2. Step 2: Process (after 1 second delay)
+    3. STEP 3: COMPLETE (uppercase, instant)
+    ```
+
+    **Time:** ~2 seconds total
+
+    **Learning Outcome:** You understand how Studio handles sequential operations, maintains context between calls, and builds complex workflows from natural language.
+
+    <Note>
+      Production workflows often involve multiple API calls (fetch data → transform → send to CRM). Echo helps you design these flows.
+    </Note>
+  </Tab>
+
+  <Tab title="Team Training">
+    **Scenario:** Train team members on MCP concepts without production risks
+
+    **Your Goal:** Teach non-technical team members how integrations work in Studio without using production API quotas or risking data issues.
+
+    **Training Flow:**
+
+    **Step 1 - Introduction:**
+    ```text
+    "Echo this: Hello from MCP!"
+    ```
+    *Shows basic tool interaction*
+
+    **Step 2 - Parameters:**
+    ```text
+    "Echo 'Learn MCP' in uppercase"
+    ```
+    *Demonstrates how tools receive parameters*
+
+    **Step 3 - Structured Data:**
+    ```text
+    "Echo this JSON: {\"concept\": \"MCP\", \"learned\": true}"
+    ```
+    *Shows how complex data is handled*
+
+    **Time:** 5-10 minutes for complete training
+
+    **Business Value:**
+    - Team understands MCP before production use
+    - No API costs during training
+    - Safe learning environment
+    - Faster production adoption
+    - Reduced errors and support tickets
+
+    <Tip>
+      Use Echo in onboarding sessions to build MCP confidence before granting access to production servers.
+    </Tip>
+  </Tab>
+
+  <Tab title="Workflow Prototyping">
+    **Scenario:** Design and test workflow logic before production deployment
+
+    **Your Goal:** Prototype a multi-step business workflow without connecting production APIs or incurring costs.
+
+    **Example Workflow Design:**
+
+    A customer service automation workflow:
+
+    ```text
+    "Prototype this workflow:
+    1. Echo 'Received customer inquiry'
+    2. Echo 'Processing with 2 second delay' with delay
+    3. Echo JSON response: {\"status\": \"resolved\", \"ticket\": \"12345\"}
+    4. Echo 'Sent confirmation email' in uppercase"
+    ```
+
+    **What happens:**
+    1. Each step is tested with Echo
+    2. You see timing and data flow
+    3. Identify logic issues early
+    4. Refine workflow before production
+    5. No production API costs
+    6. Safe to experiment and iterate
+
+    **Results:**
+    - Workflow logic validated
+    - Timing requirements understood
+    - Data structures verified
+    - Edge cases identified
+    - Ready for production implementation
+
+    **Time:** ~3 seconds
+
+    **Business Value:** Test and refine workflows before connecting expensive APIs like Salesforce ($25-75/user/month), saving costs and preventing errors.
+
+    <Info>
+      Once workflow is perfected with Echo, swap in production servers (DeepL, IPInfo, Salesforce, etc.) with confidence.
+    </Info>
+  </Tab>
+
+  <Tab title="Error Understanding">
+    **Scenario:** Learn how Studio handles tool errors and edge cases
+
+    **Your Goal:** Understand error patterns before encountering them with production APIs where failures might cost money or cause data issues.
+
+    **Test Cases:**
+
+    **Missing Required Parameter:**
+    ```text
+    "Call echo_message without providing a message"
+    ```
+    *Studio will prompt for the required parameter*
+
+    **Invalid Parameter Type:**
+    ```text
+    "Echo with delay of 'five' seconds"
+    ```
+    *Studio converts "five" to numeric 5*
+
+    **Exceeding Limits:**
+    ```text
+    "Echo with a 10 second delay"
+    ```
+    *Echo caps at 5 seconds maximum*
+
+    **Learning Outcomes:**
+    - How Studio validates parameters
+    - How type conversion works
+    - How limits are enforced
+    - How errors are displayed
+    - How to recover from errors
+
+    **Time:** &lt;1 second per test
+
+    **Business Value:** Understand error handling patterns before working with production APIs where errors might cause failed transactions, wasted API calls, or data corruption.
+
+    <Warning>
+      Production APIs have stricter validation and may charge for failed requests. Use Echo to learn error patterns first.
+    </Warning>
+  </Tab>
+</Tabs>
+
+<Note>
+  All examples work in NimbleBrain Studio's natural language interface - no code, CLI, or technical configuration required!
+</Note>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Echo Not Responding" icon="triangle-exclamation">
+    **Issue:** Echo server doesn't respond to your prompts
+
+    **Symptoms:**
+    - No response after sending echo request
+    - Timeout errors
+    - "Server unavailable" messages
+
+    **Solutions:**
+
+    1. **Verify Server Status:**
+       - Go to **Connections**
+       - Find "Echo" in the list
+       - Check if status shows "Connected" (green)
+       - If "Disconnected" (red), click **Reconnect**
+
+    2. **Re-enable the Server:**
+       - Click **Edit** next to Echo server
+       - Toggle off, then toggle back on
+       - Click **Save**
+       - Refresh your browser
+
+    3. **Check Browser Console:**
+       - Press F12 to open developer tools
+       - Look for errors in Console tab
+       - Report errors to support if found
+
+    4. **Test with Simple Prompt:**
+       ```text
+       "Echo: test"
+       ```
+       If this works, issue may be with prompt phrasing
+
+    <Tip>
+      Echo runs locally in Studio's infrastructure - no internet required. Connection issues are usually browser or session related.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Tool Not Triggered" icon="wrench">
+    **Issue:** Studio doesn't use Echo tool when you expect it to
+
+    **Symptoms:**
+    - Natural AI response instead of tool usage
+    - No 🔧 tool indicator shown
+    - Echo server not being called
+
+    **Cause:** Studio's AI decides when tools are needed. Ambiguous prompts may not trigger tools.
+
+    **Solutions:**
+
+    **Use Explicit Language:**
+
+    ✅ **Good prompts (will trigger Echo):**
+    - "Echo this message: Hello World"
+    - "Use echo to repeat: Testing"
+    - "Echo server, send back: My message"
+    - "Test echo with: Sample text"
+
+    ❌ **Ambiguous prompts (might not trigger Echo):**
+    - "Say Hello" (might just respond naturally)
+    - "Repeat this" (might respond without tool)
+    - "Hello World" (no clear tool request)
+
+    **Force Tool Usage:**
+    - Explicitly mention "echo" in your prompt
+    - Use phrases like "use echo", "echo back", "echo this"
+    - Mention "echo server" or "echo tool" specifically
+
+    <Note>
+      Studio's AI is designed to use tools when necessary. For production servers, this works well. For Echo (a testing tool), be explicit to ensure the tool is called.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Understanding Echo vs Natural Responses" icon="circle-question">
+    **Issue:** Confused about when Echo tool is used vs Studio's natural AI responses
+
+    **Explanation:**
+
+    **Echo Server (MCP Tool):**
+    - Shows 🔧 tool usage indicator
+    - Returns structured response with metadata
+    - Processes through MCP protocol
+    - Tests server connectivity
+    - Demonstrates MCP behavior
+    - Includes timing and analysis data
+
+    **Studio Natural Response:**
+    - No tool indicator
+    - Direct conversational response
+    - Faster (no server call)
+    - Uses AI's knowledge directly
+    - No server involved
+
+    **Example Comparison:**
+
+    *Prompt:* "Hello"
+    - **Natural Response:** "Hello! How can I help you today?"
+    - **No tool used** - just AI responding
+
+    *Prompt:* "Echo: Hello"
+    - **Echo Tool Response:** Shows 🔧 and structured data
+    - **Tool used** - integration called
+
+    <Tip>
+      Always look for the 🔧 indicator to confirm Echo was used. If you don't see it, rephrase your prompt to be more explicit about using the echo tool.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Delay Not Working as Expected" icon="clock">
+    **Issue:** echo_with_delay doesn't delay or delays wrong amount
+
+    **Common Scenarios:**
+
+    **Delay is Capped at 5 Seconds:**
+    - You requested 10 seconds but got 5
+    - **Cause:** Maximum delay is 5 seconds for safety
+    - **Solution:** Echo automatically caps at 5.0 seconds
+    - Check `actual_delay` in response for real timing
+
+    **Delay Seems Shorter/Longer:**
+    - Requested 2.0 seconds, got 2.1 seconds
+    - **Cause:** Small variance due to processing overhead
+    - **Solution:** This is normal - check `actual_delay` field
+    - Variance is typically less than 0.01 seconds
+
+    **No Delay at All:**
+    - Response is instant despite requesting delay
+    - **Cause:** Parameter not passed correctly
+    - **Solution:** Try explicit phrasing:
+      ```text
+      "Use echo_with_delay with message 'test' and delay_seconds 2"
+      ```
+
+    <Note>
+      The `actual_delay` field in the response shows the precise delay experienced, useful for learning about timing variance.
+    </Note>
+  </Accordion>
+
+  <Accordion title="JSON Data Not Parsing" icon="brackets-curly">
+    **Issue:** echo_json doesn't accept your JSON data
+
+    **Common Causes:**
+
+    **Invalid JSON Syntax:**
+    ```text
+    ❌ Bad: "Echo JSON: {name: John, age: 30}"
+    ✅ Good: "Echo JSON: {\"name\": \"John\", \"age\": 30}"
+    ```
+    Keys must be quoted in valid JSON.
+
+    **Single vs Double Quotes:**
+    ```text
+    ❌ Bad: "Echo JSON: {'name': 'John'}"
+    ✅ Good: "Echo JSON: {\"name\": \"John\"}"
+    ```
+    JSON requires double quotes.
+
+    **Complex Nested Structures:**
+    - Very deeply nested JSON might not parse well from natural language
+    - **Solution:** Start with simple structures to test
+    - Example:
+      ```text
+      "Echo this simple JSON: {\"test\": \"value\"}"
+      ```
+
+    **Studio's JSON Interpretation:**
+    - Studio converts your natural language to JSON
+    - May simplify or restructure
+    - Check the `original_data` field to see what was sent
+
+    <Tip>
+      Start with simple JSON structures when learning. Once comfortable, gradually increase complexity.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Testing Other Connections" icon="server">
+    **Issue:** Want to apply Echo testing patterns to production servers
+
+    **Solution:** Use Echo as a template for testing real servers
+
+    **Echo Testing Pattern:**
+    1. Start with simplest tool/feature
+    2. Verify basic connectivity
+    3. Test parameter passing
+    4. Validate response structure
+    5. Test error cases
+    6. Build to complex workflows
+
+    **Apply to Production Servers:**
+
+    **Example: Testing DeepL Translation:**
+    ```text
+    1. "Translate 'hello' to Spanish" (basic test)
+    2. "Translate 'hello world' to French" (verify it works)
+    3. "Translate [paragraph] to German" (test with more content)
+    4. Build multi-language workflow
+    ```
+
+    **Example: Testing IPInfo:**
+    ```text
+    1. "Get info for IP 8.8.8.8" (basic test)
+    2. "Check if IP is from VPN" (specific feature)
+    3. "Analyze these IPs: [list]" (batch operation)
+    ```
+
+    <Info>
+      Echo teaches you the testing methodology. Apply the same systematic approach to any integration.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Echo Always Succeeds - No Errors" icon="check-circle">
+    **Issue:** Echo never fails - how do I learn error handling?
+
+    **Explanation:**
+
+    Echo is intentionally simple and reliable. For error handling training:
+
+    **Use Production Servers for Error Scenarios:**
+
+    1. **Rate Limit Errors:**
+       - Use DeepL free tier (500K chars/month)
+       - Exceed quota to see rate limit messages
+
+    2. **Authentication Errors:**
+       - Use Abstract API with wrong key
+       - See authentication failure messages
+
+    3. **Validation Errors:**
+       - IPInfo with invalid IP format
+       - See validation error responses
+
+    4. **Data Format Errors:**
+       - Send wrong data structure to Salesforce
+       - Learn about schema validation
+
+    **Echo's Role:**
+    - Perfect for "happy path" testing
+    - Confirms MCP infrastructure works
+    - Tests conversation flow logic
+    - Validates data structures
+
+    **Production Servers' Role:**
+    - Real-world error scenarios
+    - Rate limiting behavior
+    - Authentication failures
+    - Data validation errors
+
+    <Warning>
+      Echo's reliability makes it perfect for testing success scenarios, but you need real servers to learn comprehensive error handling.
+    </Warning>
+  </Accordion>
+</AccordionGroup>
+
+## Links & Resources
+
+<CardGroup cols={2}>
+  <Card title="GitHub Repository" icon="github" href="https://github.com/NimbleBrainInc/mcp-echo">
+    View source code, report issues, and contribute to Echo
+  </Card>
+
+  <Card title="MCP Protocol Documentation" icon="book" href="https://modelcontextprotocol.io">
+    Learn about the Model Context Protocol specification
+  </Card>
+
+  <Card title="NimbleBrain Studio" icon="brain" href="https://studio.nimblebrain.ai?utm_source=docs&utm_campaign=studio">
+    Access your Studio workspace to start testing Echo
+  </Card>
+
+  <Card title="Report Issues" icon="bug" href="https://github.com/NimbleBrainInc/mcp-echo/issues">
+    Found a bug or have a suggestion? Submit on GitHub
+  </Card>
+</CardGroup>
+
+## Next Steps: Production Connections
+
+<Info>
+  Once you're comfortable with Echo and understand MCP basics, explore production-ready integrations for real business workflows.
+</Info>
+
+### Recommended Learning Path
+
+<Steps>
+  <Step title="Master Echo Basics">
+    Spend 15-30 minutes testing all Echo tools. Understand:
+    - How tools are triggered
+    - How parameters work
+    - How responses are structured
+    - How timing works
+    - How data flows
+  </Step>
+
+  <Step title="Choose Your First Production Server">
+    Based on your needs:
+
+    **For Content & Translation:**
+    - [DeepL](/studio/mcp-servers/utilities/deepl) - Professional translation
+
+    **For Data Validation:**
+    - [Abstract API](/studio/mcp-servers/data/abstract) - Email, phone, data validation
+
+    **For Intelligence & Analytics:**
+    - [IPInfo](/studio/mcp-servers/data/ipinfo) - IP geolocation and intelligence
+
+    **For Financial Data:**
+    - [Finnhub](/studio/mcp-servers/utilities/finnhub) - Stock market and company data
+  </Step>
+
+  <Step title="Apply Echo Testing Patterns">
+    Use the same systematic approach:
+    1. Test basic connectivity
+    2. Try simple operations
+    3. Validate parameters and responses
+    4. Build complex workflows
+    5. Handle errors gracefully
+  </Step>
+
+  <Step title="Scale to Production">
+    Graduate to production workflows:
+    - Connect CRM systems (Salesforce, HubSpot)
+    - Integrate communication tools (Gmail, Slack)
+    - Build automation pipelines
+    - Create business intelligence workflows
+  </Step>
+</Steps>
+
+### Production Server Comparison
+
+<CardGroup cols={3}>
+  <Card title="DeepL Translation" icon="language" href="/studio/mcp-servers/utilities/deepl">
+    **Perfect for:** Content localization, multilingual support
+
+    **Free Tier:** 500K characters/month
+
+    **Use After Echo:** Translate content, support global customers
+  </Card>
+
+  <Card title="IPInfo Intelligence" icon="location-dot" href="/studio/mcp-servers/data/ipinfo">
+    **Perfect for:** Fraud detection, personalization
+
+    **Free Tier:** 50K requests/month
+
+    **Use After Echo:** Analyze visitors, detect threats
+  </Card>
+
+  <Card title="Abstract API Validation" icon="check-double" href="/studio/mcp-servers/data/abstract">
+    **Perfect for:** Data quality, validation
+
+    **Free Tier:** 100-20,000/month per service
+
+    **Use After Echo:** Validate emails, phone numbers, data
+  </Card>
+
+  <Card title="Finnhub Financial" icon="chart-line" href="/studio/mcp-servers/utilities/finnhub">
+    **Perfect for:** Market analysis, financial research
+
+    **Free Tier:** 60 calls/minute
+
+    **Use After Echo:** Track stocks, analyze companies
+  </Card>
+
+  <Card title="Browse All Servers" icon="grid" href="/mcp-servers">
+    **Explore:** 50+ production integrations
+
+    **Categories:** CRM, Communication, Data, Finance, Travel, Weather
+
+    **Next Step:** Find servers for your workflows
+  </Card>
+</CardGroup>
+
+## Learning Resources
+
+<AccordionGroup>
+  <Accordion title="What is an MCP Server?" icon="circle-question">
+    **MCP (Model Context Protocol) Basics:**
+
+    integrations extend AI capabilities by connecting to external services and providing specialized tools:
+
+    **Key Concepts:**
+    - **Tools**: Functions that AI can call (like echo_message)
+    - **Parameters**: Input data for tools (like message, uppercase)
+    - **Returns**: Structured responses with data (like timestamps, analysis)
+    - **Context**: Conversation state maintained across calls
+
+    **How It Works:**
+    1. You send a natural language request
+    2. Studio's AI decides if tools are needed
+    3. Calls appropriate integration tool(s)
+    4. Processes the structured response
+    5. Responds to you conversationally
+
+    **Echo's Educational Value:**
+    - Makes this process visible and understandable
+    - Shows exact parameter passing
+    - Displays structured responses
+    - Demonstrates timing and flow
+    - Safe environment for experimentation
+
+    <Tip>
+      Echo demonstrates MCP concepts in the simplest possible way, making it the perfect learning tool before production servers.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="How Studio Uses Connections" icon="brain">
+    **Studio Integration Architecture:**
+
+    **Your Experience:**
+    ```text
+    You → Natural Language → Studio AI → MCP Tool → Result → Natural Response
+    ```
+
+    **What Happens Behind the Scenes:**
+
+    1. **Prompt Analysis:**
+       - You type natural language
+       - Studio's AI analyzes intent
+       - Determines if tools are needed
+       - Selects appropriate server(s)
+
+    2. **Parameter Extraction:**
+       - AI extracts required parameters
+       - Converts natural language to structured data
+       - Validates parameter types
+       - Prepares tool call
+
+    3. **MCP Tool Call:**
+       - Calls server tool with parameters
+       - Waits for response (shows loading)
+       - Receives structured data
+       - Handles errors if any
+
+    4. **Response Integration:**
+       - Processes tool response
+       - Integrates with conversation context
+       - Formats for user display
+       - Maintains conversation flow
+
+    **Echo Makes This Visible:**
+    - See exact parameters sent
+    - View structured responses
+    - Understand timing
+    - Learn error handling
+    - Build intuition for production use
+
+    <Info>
+      This same architecture powers all integrations in Studio - from simple Echo to complex Salesforce integrations.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Building Your Own MCP Server" icon="code">
+    **For Developers: Create Custom Connections**
+
+    Echo's simple codebase (only 3 tools!) makes it an excellent reference for learning integration development.
+
+    **Echo's Architecture:**
+    ```python
+    # 1. Define tools with @mcp.tool() decorator
+    @mcp.tool()
+    async def echo_message(message: str, uppercase: bool = False):
+        # Tool implementation
+        return EchoMessageResponse(...)
+
+    # 2. Use Pydantic models for type safety
+    class EchoMessageResponse(BaseModel):
+        original_message: str
+        echoed_message: str
+        # ... more fields
+
+    # 3. Expose via FastMCP framework
+    app = mcp.streamable_http_app()
+    ```
+
+    **Learning Resources:**
+    - **[MCP Specification](https://modelcontextprotocol.io)** - Protocol details
+    - **[FastMCP Framework](https://github.com/jlowin/fastmcp)** - Python framework
+    - **[Echo Source Code](https://github.com/NimbleBrainInc/mcp-echo)** - Simple reference implementation
+    - **[NimbleBrain Examples](https://github.com/NimbleBrainInc)** - Production server examples
+
+    **Why Start with Echo:**
+    - Only 137 lines of code
+    - No external API dependencies
+    - Clear tool patterns
+    - Type-safe responses
+    - Good error handling
+    - Well-documented
+
+    **Next Steps for Developers:**
+    1. Study Echo's source code
+    2. Modify Echo to add your own tools
+    3. Connect your own APIs
+    4. Deploy to Studio
+    5. Share with community
+
+    <Note>
+      Echo's MIT license allows you to use it as a template for your own integrations.
+    </Note>
+  </Accordion>
+
+  <Accordion title="MCP vs Traditional APIs" icon="code-compare">
+    **Understanding the Difference:**
+
+    **Traditional API Integration:**
+    ```
+    1. Write code to call API
+    2. Handle authentication
+    3. Parse responses
+    4. Map to your data model
+    5. Handle errors in code
+    6. Deploy your application
+    7. Maintain API client code
+    ```
+
+    **MCP Server Approach:**
+    ```
+    1. Enable integration in Studio
+    2. Add API key in GUI
+    3. Use natural language
+    4. Studio handles everything
+    5. No code required
+    6. No deployment needed
+    7. No maintenance overhead
+    ```
+
+    **Benefits of MCP:**
+    - **No Code**: Natural language instead of programming
+    - **Managed**: Studio handles infrastructure
+    - **Flexible**: Change servers without code changes
+    - **Composable**: Combine multiple services easily
+    - **Accessible**: Business users can leverage APIs
+
+    **When to Use Each:**
+
+    **Use MCP When:**
+    - Business users need API access
+    - Rapid prototyping required
+    - Combining multiple services
+    - No custom development resources
+    - Conversational interface desired
+
+    **Use Traditional APIs When:**
+    - Highly custom integration needed
+    - Real-time performance critical
+    - Specific SDK required
+    - Embedded in application
+    - Programmatic automation only
+
+    <Tip>
+      Echo helps you understand MCP's value proposition by making server interactions transparent and accessible.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Best Practices for Production" icon="medal">
+    **Lessons from Echo to Apply in Production:**
+
+    **1. Start Simple:**
+    - Test basic connectivity first (like Echo)
+    - Use simplest features before advanced
+    - Verify one tool at a time
+    - Build complexity gradually
+
+    **2. Explicit Prompts:**
+    - Mention server name when ambiguous
+    - Be specific about parameters
+    - Clear about expected output
+    - Reference tool names if needed
+
+    **3. Verify Data Structures:**
+    - Test JSON formats with echo_json first
+    - Validate structures before production APIs
+    - Understand type requirements
+    - Check size limits
+
+    **4. Monitor Timing:**
+    - Use echo_with_delay to understand timing
+    - Plan for API latency
+    - Handle long-running operations
+    - Set appropriate timeouts
+
+    **5. Error Handling:**
+    - Test error scenarios early
+    - Understand failure modes
+    - Have fallback strategies
+    - Monitor error rates
+
+    **6. Cost Management:**
+    - Prototype with Echo (free) first
+    - Understand rate limits
+    - Monitor API usage
+    - Use free tiers when learning
+
+    **7. Security:**
+    - Never share API keys
+    - Rotate keys regularly
+    - Use minimum required permissions
+    - Monitor for unusual activity
+
+    <Note>
+      Echo teaches these patterns in a risk-free environment before applying them to production servers with costs and data sensitivity.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+---
+
+<CardGroup cols={2}>
+  <Card title="Need Help?" icon="question-circle">
+    **Support Channels:**
+    - Join [NimbleBrain Discord](https://discord.gg/nimblebrain)
+    - Email: support@nimblebrain.ai
+    - GitHub Issues: [Report bugs](https://github.com/NimbleBrainInc/mcp-echo/issues)
+  </Card>
+
+  <Card title="Ready for Production?" icon="rocket">
+    **Next Steps:**
+    - Explore [MCP Server Registry](/mcp-servers)
+    - Connect your [first production server](/studio/mcp-servers/utilities/deepl)
+    - Build [real workflows](https://studio.nimblebrain.ai?utm_source=docs&utm_campaign=studio)
+  </Card>
+</CardGroup>

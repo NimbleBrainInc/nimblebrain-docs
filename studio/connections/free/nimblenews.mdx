@@ -1,0 +1,92 @@
+---
+title: 'NimbleNews'
+description: 'News headlines and article search for your automations'
+---
+
+NimbleNews gives your playbooks access to current news and headlines. It's included free with every NimbleBrain Studio account.
+
+<Info>
+**Free Forever**: NimbleNews is included with all NimbleBrain Studio plans at no additional cost.
+</Info>
+
+## What is NimbleNews?
+
+NimbleNews provides access to news headlines and articles. Use it to:
+
+- Monitor news about specific topics or companies
+- Get daily news briefings
+- Track industry trends
+- Stay informed about current events
+
+## Capabilities
+
+<CardGroup cols={2}>
+  <Card title="Headlines" icon="newspaper">
+    Get the latest news headlines
+  </Card>
+  <Card title="Topic Search" icon="magnifying-glass">
+    Search news by topic, company, or keyword
+  </Card>
+  <Card title="No Setup Required" icon="check">
+    Works immediately - no API keys needed
+  </Card>
+  <Card title="Multiple Sources" icon="layer-group">
+    Aggregates news from various sources
+  </Card>
+</CardGroup>
+
+## Example Usage
+
+### Daily News Briefing
+
+```
+Get the top 5 technology news headlines from today
+```
+
+### Company Monitoring
+
+```
+Search for news about Apple in the last 24 hours
+```
+
+### Industry Tracking
+
+```
+Find recent news about renewable energy and sustainability
+```
+
+### Event Monitoring
+
+```
+Every morning, check for news about our competitors and summarize any major announcements
+```
+
+## Limitations
+
+- **Rate limits**: Reasonable request limits apply
+- **Recency**: Best for current news (not historical archives)
+- **Summary only**: Returns headlines and summaries, not full articles
+
+## Example Automation
+
+**Morning News Brief**
+
+```
+Every weekday at 7am:
+1. Get top headlines in technology and finance
+2. Search for news about [your company name]
+3. Search for news about [competitor names]
+4. Compile into a summary
+5. Send via NimbleMail to the team
+```
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="NimbleSearch" href="/studio/connections/free/nimblesearch">
+    General web search
+  </Card>
+  <Card title="Tavily" href="/studio/connections/utilities/tavily">
+    AI-powered search with full content extraction
+  </Card>
+</CardGroup>

@@ -1,0 +1,289 @@
+---
+title: 'Cursor Integration'
+description: 'Connect your MCP servers to Cursor AI-first code editor'
+---
+
+<img
+  src="/images/studio/connect-modal-cursor.png"
+  alt="Cursor integration"
+/>
+
+Integrate your deployed MCP servers with Cursor, the AI-first code editor, to supercharge your development workflow.
+
+## Overview
+
+Cursor is an AI-first code editor built for productivity. By connecting your MCP servers to Cursor, you can extend its AI capabilities with custom tools tailored to your workflow.
+
+## Setup Instructions
+
+<Steps>
+  <Step title="Open Cursor settings (Cmd/Ctrl + ,)">
+    Access the Cursor settings panel
+  </Step>
+  <Step title='Search for "MCP" or "Model Context Protocol"'>
+    Navigate to the MCP configuration section
+  </Step>
+  <Step title="Add the configuration below to your MCP servers">
+    Paste the generated configuration
+  </Step>
+  <Step title="Restart Cursor">
+    Fully quit and restart Cursor
+  </Step>
+  <Step title="Access the server through Cursor's AI features">
+    Use Cursor's AI chat and features with your MCP server
+  </Step>
+</Steps>
+
+## Configuration Format
+
+```json
+{
+  "mcpServers": {
+    "echo": {
+      "command": "npx",
+      "args": [
+        "@nimbletools/mcp-http-bridge",
+        "--endpoint",
+        "https://mcp.nimbletools.dev/{workspace-id}/{server-name}/mcp",
+        "--token",
+        "YOUR_WORKSPACE_TOKEN"
+      ]
+    }
+  }
+}
+```
+
+## Getting Your Configuration
+
+<Steps>
+  <Step title="Navigate to Connections">
+    Go to the Connections section in NimbleBrain Studio
+  </Step>
+  <Step title="Find Your Server">
+    Locate the MCP server you want to connect
+  </Step>
+  <Step title="Click Connect">
+    Click the **Connect** button on the server card
+  </Step>
+  <Step title="Select Cursor">
+    Choose "Cursor" from the integration options
+  </Step>
+  <Step title="Copy Configuration">
+    Copy the generated configuration to your clipboard
+  </Step>
+</Steps>
+
+## Configuration Details
+
+The configuration includes:
+
+<ResponseField name="command" type="string">
+  The command to run (typically `npx` for Node packages)
+</ResponseField>
+
+<ResponseField name="args" type="array">
+  Arguments passed to the command:
+  - `@nimbletools/mcp-http-bridge` - The bridge package
+  - `--endpoint` - Your MCP server endpoint URL
+  - `--token` - Your workspace API token
+</ResponseField>
+
+## Workspace Token
+
+You need a workspace API token to authenticate:
+
+1. Navigate to **API Tokens** in Studio settings
+2. Click **Create Token**
+3. Copy the token value
+4. Replace `YOUR_WORKSPACE_TOKEN` in the configuration
+
+<Callout type="warning">
+  Store your token securely! Anyone with your token can access your workspace.
+</Callout>
+
+## Using MCP Tools in Cursor
+
+Once configured, you can access your MCP tools through Cursor's AI features:
+
+### In Chat
+
+Ask Cursor's AI to use your tools:
+```
+Can you use the search_knowledge_base tool to find information about authentication?
+```
+
+### In Code
+
+Cursor will automatically suggest using your tools when relevant:
+```python
+# Cursor may suggest: "Use the data_api tool to fetch user data"
+user_data = fetch_user_data(user_id)
+```
+
+### In Terminal
+
+Some MCP tools can be invoked from Cursor's integrated terminal.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Server not appearing in Cursor">
+    **Possible causes:**
+    - Configuration not saved correctly
+    - Cursor not restarted
+    - Syntax error in JSON
+
+    **Solution:**
+    - Verify JSON is valid (use a JSON validator)
+    - Fully quit and restart Cursor (not just reload window)
+    - Check Cursor logs for errors (Help - Show Logs)
+  </Accordion>
+
+  <Accordion title="Authentication errors">
+    **Possible causes:**
+    - Invalid or expired token
+    - Token not replaced in config
+    - Wrong workspace selected
+
+    **Solution:**
+    - Generate a new token in Studio
+    - Ensure `YOUR_WORKSPACE_TOKEN` is replaced with actual token
+    - Verify token is for the correct workspace
+  </Accordion>
+
+  <Accordion title="Connection timeouts">
+    **Possible causes:**
+    - Server not running
+    - Network connectivity issues
+    - Incorrect endpoint URL
+
+    **Solution:**
+    - Check server status in Connections (should show "Running")
+    - Verify internet connection
+    - Confirm endpoint URL matches your workspace and server
+  </Accordion>
+
+  <Accordion title="Tools not being suggested">
+    **Possible causes:**
+    - Tool descriptions not clear
+    - Context not relevant to tool
+    - AI model not recognizing tool use case
+
+    **Solution:**
+    - Explicitly ask Cursor to use the tool
+    - Provide more context about what you're trying to do
+    - Check tool descriptions in your MCP server
+  </Accordion>
+</AccordionGroup>
+
+## Advanced Configuration
+
+### Multiple Servers
+
+You can connect multiple MCP servers:
+
+```json
+{
+  "mcpServers": {
+    "database": {
+      "command": "npx",
+      "args": [
+        "@nimbletools/mcp-http-bridge",
+        "--endpoint",
+        "https://mcp.nimbletools.dev/{workspace-id}/database/mcp",
+        "--token",
+        "YOUR_TOKEN"
+      ]
+    },
+    "api": {
+      "command": "npx",
+      "args": [
+        "@nimbletools/mcp-http-bridge",
+        "--endpoint",
+        "https://mcp.nimbletools.dev/{workspace-id}/api/mcp",
+        "--token",
+        "YOUR_TOKEN"
+      ]
+    }
+  }
+}
+```
+
+### Environment Variables
+
+Use environment variables for sensitive data:
+
+```json
+{
+  "mcpServers": {
+    "my-server": {
+      "command": "npx",
+      "args": [
+        "@nimbletools/mcp-http-bridge",
+        "--endpoint",
+        "https://mcp.nimbletools.dev/{workspace-id}/{server-name}/mcp",
+        "--token",
+        "${NIMBLEBRAIN_TOKEN}"
+      ]
+    }
+  }
+}
+```
+
+Set the environment variable:
+```bash
+export NIMBLEBRAIN_TOKEN="your-token-here"
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Tool Naming">
+    Use clear, descriptive names for your tools so Cursor's AI understands when to use them.
+  </Accordion>
+
+  <Accordion title="Tool Descriptions">
+    Provide detailed descriptions in your MCP server to help Cursor's AI understand tool capabilities.
+  </Accordion>
+
+  <Accordion title="Context Matters">
+    The more context you provide in your prompts, the better Cursor will understand which tools to use.
+  </Accordion>
+
+  <Accordion title="Explicit Requests">
+    When Cursor doesn't automatically suggest a tool, explicitly ask it to use the tool by name.
+  </Accordion>
+</AccordionGroup>
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card
+    title="Connections"
+    icon="plug"
+    href="/studio/connections"
+  >
+    Install and manage MCP servers
+  </Card>
+  <Card
+    title="API Tokens"
+    icon="key"
+    href="/studio/api-keys"
+  >
+    Generate workspace tokens
+  </Card>
+  <Card
+    title="All Integrations"
+    icon="plug"
+    href="/developers/integrations/overview"
+  >
+    View all client integrations
+  </Card>
+  <Card
+    title="Activity Logs"
+    icon="list"
+    href="/studio/activity-logs"
+  >
+    Monitor server usage
+  </Card>
+</CardGroup>

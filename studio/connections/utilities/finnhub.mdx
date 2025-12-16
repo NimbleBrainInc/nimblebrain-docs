@@ -1,0 +1,760 @@
+---
+title: 'Finnhub'
+description: 'Real-time stock market data, financial metrics, and company information'
+category: 'Finance'
+difficulty: 'Beginner'
+required_auth: true
+api_provider:
+  name: 'Finnhub'
+  url: 'https://finnhub.io'
+  signup_url: 'https://finnhub.io/register'
+tags: ['stocks', 'market-data', 'financial-analysis', 'real-time']
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="chart-line">
+    Access comprehensive financial market data and news powered by the Finnhub API. Get real-time stock quotes, company profiles, financial metrics, analyst recommendations, and market news through natural language in NimbleBrain Studio.
+
+    **Key Features:**
+    - Real-time stock quotes with pricing and volume data
+    - Company profiles and business information
+    - Financial metrics including P/E ratios, ROE, margins
+    - Analyst recommendation trends over time
+    - Market news across multiple categories
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    Perfect for building AI-powered financial assistants and market analysis tools without any coding required.
+
+    **Examples:**
+    - Portfolio performance tracking and monitoring
+    - Investment research and company analysis
+    - Market sentiment analysis from news
+    - Stock comparison and valuation screening
+    - Analyst consensus tracking
+    - Real-time market alerts and notifications
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+<Steps>
+  <Step title="Get Your API Key">
+    Sign up for a free Finnhub account at [finnhub.io/register](https://finnhub.io/register)
+
+    **Free Tier Includes:**
+    - 60 API calls/minute
+    - Real-time US stock data
+    - Company profiles and basic financials
+    - Market news across categories
+    - Analyst recommendations
+
+    Copy your API key from the dashboard - you'll need it in the next step.
+  </Step>
+
+  <Step title="Add to NimbleBrain Studio">
+    In NimbleBrain Studio:
+
+    1. Navigate to **Connections** in the sidebar
+    2. Click **Add Server**
+    3. Search for "Finnhub" in the server registry
+    4. Click **Configure**
+    5. Paste your API key in the **FINNHUB_API_KEY** field
+    6. Click **Save & Enable**
+
+    <Info>
+      The server will automatically connect and become available in your AI assistant within seconds.
+    </Info>
+  </Step>
+
+  <Step title="Test the Connection">
+    In your Studio chat, try this prompt:
+
+```text
+"What's the current stock price of Apple (AAPL)?"
+```
+
+    You should see real-time quote data including current price, change, percent change, high, low, open, previous close, and timestamp.
+
+    <Tip>
+      Look for the 🔧 tool usage indicator in Studio to confirm the server is working correctly.
+    </Tip>
+  </Step>
+</Steps>
+
+## Available Tools
+
+<AccordionGroup>
+  <Accordion title="get_stock_quote" icon="dollar-sign">
+    Get real-time stock quote data including current price, change, volume, and trading metrics for any stock symbol.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | symbol | string | Yes | Stock ticker symbol (e.g., AAPL, MSFT, GOOGL) |
+    | api_key | string | No | Override default API key (rarely needed) |
+
+    **Returns:**
+    JSON object containing:
+    - `current_price` - Current trading price
+    - `change` - Dollar change from previous close
+    - `percent_change` - Percentage change from previous close
+    - `high` - Today's high price
+    - `low` - Today's low price
+    - `open` - Opening price
+    - `previous_close` - Previous day's closing price
+    - `timestamp` - Quote timestamp
+    - `retrieved_at` - When the data was fetched
+
+    **Example Usage:**
+
+```text
+"What's the current price of Tesla stock?"
+```
+
+    **Example Response:**
+
+```json
+{
+  "symbol": "TSLA",
+  "current_price": 242.84,
+  "change": 5.22,
+  "percent_change": 2.20,
+  "high": 245.50,
+  "low": 238.12,
+  "open": 240.00,
+  "previous_close": 237.62,
+  "timestamp": "2025-01-15T20:00:00",
+  "retrieved_at": "2025-01-15T20:15:30.123456+00:00"
+}
+```
+
+    <Tip>
+      This tool is perfect for portfolio tracking in Studio. You can request multiple quotes in a single prompt: "Show me current prices for AAPL, MSFT, and GOOGL"
+    </Tip>
+  </Accordion>
+
+  <Accordion title="get_company_profile" icon="building">
+    Get detailed company information including business description, market cap, industry, and corporate details for any publicly traded company.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | symbol | string | Yes | Stock ticker symbol (e.g., AAPL, MSFT, GOOGL) |
+    | api_key | string | No | Override default API key (rarely needed) |
+
+    **Returns:**
+    JSON object containing:
+    - `name` - Company name
+    - `country` - Country of incorporation
+    - `currency` - Trading currency
+    - `exchange` - Stock exchange (e.g., NASDAQ, NYSE)
+    - `industry` - Finnhub industry classification
+    - `logo` - URL to company logo
+    - `market_cap` - Market capitalization
+    - `phone` - Corporate phone number
+    - `share_outstanding` - Outstanding shares
+    - `ticker` - Stock ticker symbol
+    - `web_url` - Company website
+    - `ipo_date` - Initial public offering date
+    - `retrieved_at` - When the data was fetched
+
+    **Example Usage:**
+
+```text
+"Tell me about Microsoft - what industry are they in and what's their market cap?"
+```
+
+    **Example Response:**
+
+```json
+{
+  "symbol": "MSFT",
+  "name": "Microsoft Corporation",
+  "country": "US",
+  "currency": "USD",
+  "exchange": "NASDAQ",
+  "industry": "Technology",
+  "logo": "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MSFT.png",
+  "market_cap": 2847000,
+  "phone": "14258828080",
+  "share_outstanding": 7432.64,
+  "ticker": "MSFT",
+  "web_url": "https://www.microsoft.com",
+  "ipo_date": "1986-03-13",
+  "retrieved_at": "2025-01-15T20:15:30.123456+00:00"
+}
+```
+
+    <Tip>
+      Use this tool in Studio for investment research and company due diligence. Combine it with get_basic_financials for a complete company overview.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="get_basic_financials" icon="chart-bar">
+    Get comprehensive financial metrics and ratios including profitability, valuation, efficiency, and liquidity measures for fundamental analysis.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | symbol | string | Yes | Stock ticker symbol (e.g., AAPL, MSFT, GOOGL) |
+    | metric | string | No | Metric type (default: "all") |
+    | api_key | string | No | Override default API key (rarely needed) |
+
+    **Returns:**
+    JSON object containing key_metrics with:
+    - `52_week_high` - Highest price in past 52 weeks
+    - `52_week_low` - Lowest price in past 52 weeks
+    - `beta` - Stock volatility vs market
+    - `pe_ratio` - Price-to-earnings ratio (TTM)
+    - `eps` - Earnings per share (TTM)
+    - `market_cap` - Market capitalization
+    - `dividend_yield` - Current dividend yield (TTM)
+    - `roe` - Return on equity (TTM)
+    - `roa` - Return on assets (TTM)
+    - `debt_to_equity` - Debt to equity ratio (quarterly)
+    - `current_ratio` - Current ratio (quarterly)
+    - `gross_margin` - Gross profit margin (TTM)
+    - `operating_margin` - Operating margin (TTM)
+    - `net_margin` - Net profit margin (TTM)
+
+    **Example Usage:**
+
+```text
+"Show me Apple's financial metrics including P/E ratio, margins, and returns"
+```
+
+    **Example Response:**
+
+```json
+{
+  "symbol": "AAPL",
+  "key_metrics": {
+    "52_week_high": 199.62,
+    "52_week_low": 164.08,
+    "beta": 1.24,
+    "pe_ratio": 29.34,
+    "eps": 6.42,
+    "market_cap": 2940000,
+    "dividend_yield": 0.51,
+    "roe": 1.47,
+    "roa": 0.27,
+    "debt_to_equity": 1.78,
+    "current_ratio": 0.98,
+    "gross_margin": 0.44,
+    "operating_margin": 0.30,
+    "net_margin": 0.26
+  },
+  "all_metrics_available": true,
+  "total_metrics": 67,
+  "retrieved_at": "2025-01-15T20:15:30.123456+00:00"
+}
+```
+
+    <Tip>
+      Use financial metrics in Studio to compare companies in the same industry. For example: "Compare the P/E ratios and profit margins of AAPL, MSFT, and GOOGL"
+    </Tip>
+  </Accordion>
+
+  <Accordion title="get_recommendation_trends" icon="star">
+    Get analyst recommendation trends showing buy, hold, and sell ratings over time from financial analysts covering the stock.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | symbol | string | Yes | Stock ticker symbol (e.g., AAPL, MSFT, GOOGL) |
+    | api_key | string | No | Override default API key (rarely needed) |
+
+    **Returns:**
+    JSON object containing:
+    - `recommendations` - Array of recommendation periods with:
+      - `period` - Time period (e.g., "2025-01")
+      - `strong_buy` - Number of strong buy ratings
+      - `buy` - Number of buy ratings
+      - `hold` - Number of hold ratings
+      - `sell` - Number of sell ratings
+      - `strong_sell` - Number of strong sell ratings
+    - `periods_available` - Number of periods with data
+    - `retrieved_at` - When the data was fetched
+
+    **Example Usage:**
+
+```text
+"What are analysts saying about NVIDIA? Show me the recommendation trends."
+```
+
+    **Example Response:**
+
+```json
+{
+  "symbol": "NVDA",
+  "recommendations": [
+    {
+      "period": "2025-01",
+      "strong_buy": 28,
+      "buy": 12,
+      "hold": 5,
+      "sell": 0,
+      "strong_sell": 0
+    },
+    {
+      "period": "2024-12",
+      "strong_buy": 27,
+      "buy": 11,
+      "hold": 6,
+      "sell": 1,
+      "strong_sell": 0
+    }
+  ],
+  "periods_available": 2,
+  "retrieved_at": "2025-01-15T20:15:30.123456+00:00"
+}
+```
+
+    <Tip>
+      Track changes in analyst sentiment over time in Studio to identify shifting market consensus. A change from hold to buy ratings can signal improving fundamentals.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="get_market_news" icon="newspaper">
+    Get latest market news articles from multiple sources across different categories including general market, forex, crypto, and merger news.
+
+    **Parameters:**
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | category | string | No | News category: "general", "forex", "crypto", "merger" (default: "general") |
+    | min_id | string | No | Minimum news ID for pagination (default: "0") |
+    | api_key | string | No | Override default API key (rarely needed) |
+
+    **Returns:**
+    JSON object containing:
+    - `news` - Array of up to 10 news articles with:
+      - `headline` - Article headline
+      - `summary` - Article summary/description
+      - `url` - Full article URL
+      - `datetime` - Publication timestamp
+      - `source` - News source
+      - `category` - Article category
+    - `category` - Requested category
+    - `count` - Number of articles returned
+    - `timestamp` - When the data was fetched
+
+    **Example Usage:**
+
+```text
+"What's the latest general market news?"
+```
+
+    **Example Response:**
+
+```json
+{
+  "news": [
+    {
+      "headline": "Fed Signals Potential Rate Cut in March",
+      "summary": "Federal Reserve officials indicated openness to cutting interest rates as inflation shows signs of moderating...",
+      "url": "https://example.com/article/123",
+      "datetime": "2025-01-15T14:30:00",
+      "source": "Reuters",
+      "category": "general"
+    },
+    {
+      "headline": "Tech Stocks Rally on Strong Earnings",
+      "summary": "Major technology stocks surged today following better-than-expected quarterly earnings reports...",
+      "url": "https://example.com/article/124",
+      "datetime": "2025-01-15T13:15:00",
+      "source": "Bloomberg",
+      "category": "general"
+    }
+  ],
+  "category": "general",
+  "count": 10,
+  "timestamp": "2025-01-15T20:15:30.123456+00:00"
+}
+```
+
+    <Tip>
+      Use different categories in Studio to track specific market segments. Try: "Show me the latest crypto news" or "What's happening in merger and acquisition news?"
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+## Authentication
+
+<Info>
+  **API Key Required**: This server requires a Finnhub API key to function.
+</Info>
+
+### Getting Your API Key
+
+1. Create a free account at [finnhub.io/register](https://finnhub.io/register)
+2. Verify your email address
+3. Copy your API key from the dashboard
+4. Add it to your Studio server configuration
+
+### Rate Limits
+
+| Plan | Requests/Minute | Features |
+|------|-----------------|----------|
+| Free | 60 | Real-time US stocks, basic data |
+| Starter | 300 | + International stocks, extended data |
+| Professional | 600 | + Premium data feeds, priority support |
+
+<Warning>
+  If you exceed rate limits, requests will fail with a 429 error. Monitor your usage in Studio's server settings and consider upgrading your Finnhub plan for production use.
+</Warning>
+
+### Managing Your API Key in Studio
+
+Your API key is securely stored in NimbleBrain Studio. To update it:
+
+1. Go to **Connections**
+2. Find "Finnhub" in your server list
+3. Click **Edit Configuration**
+4. Update your API key in the FINNHUB_API_KEY field
+5. Click **Save**
+
+<Tip>
+  Studio automatically manages server connections - no manual restarts required. Changes take effect immediately.
+</Tip>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Portfolio Tracking">
+    **Scenario:** Monitor your investment portfolio in real-time
+
+    **Prompt:**
+
+```text
+"Show me current prices and today's performance for AAPL, GOOGL, MSFT, and TSLA"
+```
+
+    **What happens:**
+    - Retrieves real-time quotes for all 4 stocks
+    - Calculates daily change ($ and %)
+    - Shows volume and trading status
+    - Presents data in an easy-to-read format
+
+    **Time:** ~2 seconds
+    **API calls:** 4
+
+    <Tip>
+      You can track up to 10 stocks in a single prompt in Studio without hitting rate limits on the free tier.
+    </Tip>
+  </Tab>
+
+  <Tab title="Company Research">
+    **Scenario:** Deep dive into a company before investing
+
+    **Prompt:**
+
+```text
+"Give me detailed information about Tesla including company profile, financial metrics, and analyst recommendations"
+```
+
+    **What happens:**
+    - Fetches company profile with business description and market cap
+    - Retrieves comprehensive financial metrics (P/E, ROE, margins, etc.)
+    - Shows analyst recommendation trends over time
+    - Provides a complete investment research package
+
+    **Time:** ~3 seconds
+    **API calls:** 3
+
+    <Tip>
+      This workflow is perfect for due diligence in Studio. The AI will synthesize all the data into actionable insights.
+    </Tip>
+  </Tab>
+
+  <Tab title="Market Screening">
+    **Scenario:** Find investment opportunities based on specific criteria
+
+    **Prompt:**
+
+```text
+"Compare the P/E ratios and profit margins of Apple, Microsoft, and Google. Which is the best value?"
+```
+
+    **What happens:**
+    - Retrieves fundamental data for each company
+    - Compares key valuation metrics side-by-side
+    - AI analyzes and provides investment perspective
+    - Highlights relative strengths and weaknesses
+
+    **Time:** ~3 seconds
+    **API calls:** 3
+
+    <Tip>
+      Use natural language to specify your screening criteria. Studio's AI will interpret your requirements and present relevant comparisons.
+    </Tip>
+  </Tab>
+
+  <Tab title="News Monitoring">
+    **Scenario:** Stay updated on market-moving news
+
+    **Prompt:**
+
+```text
+"What are the latest news articles about the stock market today?"
+```
+
+    **What happens:**
+    - Fetches recent general market news
+    - Provides headlines and summaries
+    - Includes source attribution and timestamps
+    - Links to full articles for deep reading
+
+    **Time:** ~2 seconds
+    **API calls:** 1
+
+    <Tip>
+      You can specify categories: "Show me crypto news" or "What's the latest merger and acquisition activity?" to filter news in Studio.
+    </Tip>
+  </Tab>
+
+  <Tab title="Sentiment Analysis">
+    **Scenario:** Gauge market sentiment on a specific stock
+
+    **Prompt:**
+
+```text
+"How are analysts rating Amazon stock? Has the sentiment improved recently?"
+```
+
+    **What happens:**
+    - Retrieves analyst recommendation trends
+    - Shows changes over multiple time periods
+    - AI interprets shifts in buy/hold/sell ratings
+    - Provides context on sentiment changes
+
+    **Time:** ~2 seconds
+    **API calls:** 1
+
+    <Tip>
+      Combine with news to get a complete sentiment picture: "Show me AMZN analyst ratings and recent news articles"
+    </Tip>
+  </Tab>
+</Tabs>
+
+<Note>
+  All examples work in NimbleBrain Studio's natural language interface - no code or configuration required!
+</Note>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Rate Limit Exceeded" icon="triangle-exclamation">
+    **Error Message:**
+
+```
+429 Too Many Requests - API rate limit exceeded
+```
+
+    **Cause:** You've exceeded 60 requests/minute (free tier)
+
+    **Solutions:**
+    - Wait 1 minute before making more requests
+    - Upgrade to a paid Finnhub plan (300 or 600 requests/minute)
+    - Reduce the number of stocks you're tracking simultaneously
+    - Space out your requests over time in Studio conversations
+
+    **To check your usage:**
+    1. Go to Studio Connections
+    2. Click on Finnhub
+    3. View API usage metrics
+
+    <Tip>
+      Studio shows real-time API usage. Consider upgrading your Finnhub plan if you frequently hit limits during market hours.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Invalid API Key" icon="key">
+    **Error Message:**
+
+```
+401 Unauthorized - Invalid API key
+```
+
+    **Cause:** API key is missing, incorrect, or expired
+
+    **Solutions:**
+    - Verify your API key in Studio server settings
+    - Check for extra spaces or characters when you pasted it
+    - Regenerate your API key from the Finnhub dashboard
+    - Ensure your Finnhub account is active and email verified
+
+    **To update in Studio:**
+    1. Connections → Finnhub
+    2. Click **Edit Configuration**
+    3. Paste your new API key in FINNHUB_API_KEY field
+    4. Click **Save**
+    5. Test with a simple query like "What's AAPL stock price?"
+
+    <Info>
+      Studio validates your API key automatically when you save. You'll see a success message if it's correct.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Symbol Not Found" icon="magnifying-glass">
+    **Error Message:**
+
+```
+Symbol not found or invalid
+```
+
+    **Cause:** Invalid ticker symbol or the stock is not available in Finnhub's database
+
+    **Solutions:**
+    - Verify the ticker symbol is correct (e.g., AAPL not APPLE)
+    - Use the company name instead: "What's Apple's stock price?" (Studio will find the symbol)
+    - Check if the symbol is listed on a supported exchange
+    - Try alternative ticker formats (e.g., BRK.B for Berkshire Hathaway Class B)
+
+    **Common Mistakes:**
+    - Using company name as symbol: "APPLE" instead of "AAPL"
+    - Wrong exchange suffix: "AAPL.US" instead of "AAPL"
+    - Delisted or merged companies
+    - International stocks not in free tier
+
+    <Tip>
+      Let Studio's AI help! Ask: "What's the ticker symbol for Tesla?" before requesting detailed data.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Server Not Responding" icon="server">
+    **Error Message:**
+
+```
+Server connection timeout or Server not responding
+```
+
+    **Cause:** Studio cannot connect to the Finnhub integration
+
+    **Solutions:**
+    - Check your internet connection
+    - Verify the server is enabled in Studio (Connections)
+    - Try disabling and re-enabling the server in Studio
+    - Check Studio status page for any service interruptions
+    - Refresh your Studio browser tab
+
+    **Quick Fix in Studio:**
+    1. Go to Connections
+    2. Find Finnhub in the list
+    3. Toggle it Off, wait 5 seconds
+    4. Toggle it On again
+    5. Try your query again
+
+    <Info>
+      Studio manages all server infrastructure automatically - there's no local setup or Docker containers to troubleshoot.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Data Unavailable" icon="circle-exclamation">
+    **Error Message:**
+
+```
+Data not available for this symbol/timeframe
+```
+
+    **Cause:** Some data requires paid Finnhub plans or isn't available for certain stocks
+
+    **Free tier limitations:**
+    - US stocks only (NYSE, NASDAQ)
+    - Basic fundamentals
+    - Limited historical data
+    - No international exchanges
+
+    **Solutions:**
+    - Verify the stock is actively traded on US exchanges
+    - Check if your plan includes the requested data type
+    - Try requesting data for major stocks (AAPL, MSFT, GOOGL) as a test
+    - Upgrade to a paid Finnhub plan for extended data access
+
+    **To upgrade:**
+    1. Visit [finnhub.io/pricing](https://finnhub.io/pricing)
+    2. Choose a plan (Starter or Professional)
+    3. Update your API key in Studio if it changes
+
+    <Tip>
+      Most common US stocks work perfectly on the free tier. Upgrade only if you need international stocks or advanced data feeds.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Slow Response Times" icon="clock">
+    **Symptoms:**
+    - Queries taking longer than 5 seconds
+    - Studio showing "thinking" indicator for extended periods
+    - Intermittent timeouts
+
+    **Possible Causes:**
+    - Finnhub API experiencing high load
+    - Network connectivity issues
+    - Requesting too much data at once
+
+    **Solutions:**
+    - Break large queries into smaller ones
+    - Avoid requesting 10+ stocks simultaneously
+    - Check Finnhub status at [status.finnhub.io](https://finnhub.io)
+    - Try again during off-peak market hours
+    - Clear Studio cache (Settings → Clear Cache)
+
+    **Expected Response Times in Studio:**
+    - Single stock quote: 1-2 seconds
+    - Company profile: 1-2 seconds
+    - Financial metrics: 2-3 seconds
+    - News articles: 2-3 seconds
+    - Multi-stock comparison: 3-5 seconds
+
+    <Info>
+      Studio automatically retries failed requests. If you see consistent slowness, check the Finnhub status page or contact support.
+    </Info>
+  </Accordion>
+</AccordionGroup>
+
+## Links & Resources
+
+<CardGroup cols={2}>
+  <Card title="GitHub Repository" icon="github" href="https://github.com/NimbleBrainInc/mcp-finnhub">
+    View source code, report issues, and contribute to the project
+  </Card>
+
+  <Card title="Finnhub API Documentation" icon="book" href="https://finnhub.io/docs/api">
+    Official Finnhub API reference, data coverage, and features
+  </Card>
+
+  <Card title="NimbleBrain Studio" icon="brain" href="https://studio.nimblebrain.ai?utm_source=docs&utm_campaign=studio">
+    Access your Studio workspace and manage integrations
+  </Card>
+
+  <Card title="Report Issues" icon="bug" href="https://github.com/NimbleBrainInc/mcp-finnhub/issues">
+    Found a bug or have a feature request? Submit an issue on GitHub
+  </Card>
+</CardGroup>
+
+## Related Connections
+
+<CardGroup cols={3}>
+  <Card title="Alpha Vantage" icon="chart-mixed" href="/mcp-servers/finance/alpha-vantage">
+    Alternative financial data with forex and crypto support
+  </Card>
+
+  <Card title="Yahoo Finance" icon="y" href="/mcp-servers/finance/yahoo-finance">
+    Historical market data, options chains, and free data access
+  </Card>
+
+  <Card title="CoinGecko" icon="bitcoin-sign" href="/mcp-servers/finance/coingecko">
+    Cryptocurrency prices and comprehensive crypto market data
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://discord.gg/nimblebrain) or email support@nimblebrain.ai

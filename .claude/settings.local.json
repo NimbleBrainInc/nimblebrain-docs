@@ -31,7 +31,11 @@
       "WebFetch(domain:docs.composio.dev)",
       "WebSearch",
       "WebFetch(domain:composio.dev)",
-      "WebFetch(domain:mcp.composio.dev)"
+      "WebFetch(domain:mcp.composio.dev)",
+      "Bash(curl:*)",
+      "Bash(find:*)",
+      "WebFetch(domain:mintlify.com)",
+      "WebFetch(domain:www.mintlify.com)"
     ],
     "deny": [],
     "ask": []
