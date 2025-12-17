@@ -93,6 +93,7 @@
             "icon": "gear",
             "pages": [
               "studio/workspace-management",
+              "studio/pricing",
               "studio/api-keys",
               "studio/activity-logs"
             ]

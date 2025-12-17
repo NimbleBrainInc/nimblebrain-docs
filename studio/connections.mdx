@@ -23,89 +23,62 @@ Connections provides:
 - **Connection Management**: View status, logs, and control installed connections
 - **Integration with Playbooks**: All installed connections are available to your playbooks
 
-## Connection Pricing
+## Connection Tiers
 
-NimbleBrain Studio offers connections in two tiers:
+NimbleBrain Studio connections are organized into two tiers:
 
-<Tabs>
-  <Tab title="Free Tier">
-    **Available on all plans at no additional cost:**
+### Free Connections
 
-    <CardGroup cols={2}>
-      <Card title="NimbleMail" icon="envelope">
-        Send emails via AWS SES integration
-      </Card>
-      <Card title="NimbleNews" icon="newspaper">
-        News headlines and article search
-      </Card>
-      <Card title="NimbleSearch" icon="magnifying-glass">
-        Web search powered by Brave
-      </Card>
-      <Card title="NimbleWeather" icon="cloud-sun">
-        Weather data and forecasts
-      </Card>
-    </CardGroup>
+These NimbleBrain-built connections are **included with every plan**, including Free:
 
-    <Tip>
-      These core connections are included with every NimbleBrain Studio account, making it easy to build automations for email, web search, news monitoring, and weather alerts.
-    </Tip>
-  </Tab>
+<CardGroup cols={2}>
+  <Card title="NimbleMail" icon="envelope" href="/studio/connections/free/nimblemail">
+    Send emails via AWS SES integration
+  </Card>
+  <Card title="NimbleNews" icon="newspaper" href="/studio/connections/free/nimblenews">
+    News headlines and article search
+  </Card>
+  <Card title="NimbleSearch" icon="magnifying-glass" href="/studio/connections/free/nimblesearch">
+    Web search powered by Brave
+  </Card>
+  <Card title="NimbleWeather" icon="cloud-sun" href="/studio/connections/free/nimbleweather">
+    Weather data and forecasts
+  </Card>
+</CardGroup>
 
-  <Tab title="Paid Tier">
-    **Available with paid subscription:**
+<Tip>
+  Free connections have no install limits. You can install all 4 on any plan.
+</Tip>
 
-    All premium connections require a paid NimbleBrain Studio subscription:
+### Premium Connections
 
-    **Business and Collaboration:**
-    - **Calendly** - Scheduling automation, event management, booking links, invitee tracking
-    - **Gmail** - Email automation, drafts, labels, threads, contacts
-    - **Google Sheets** - Spreadsheet automation, data analysis, SQL queries, charts
-    - **HubSpot** - CRM, marketing automation, sales pipeline management
-    - **Slack** - Team messaging, channels, file sharing, workflow automation
-    - **Zoom** - Video meetings, webinars, recordings, participant management
+All other connections are **premium** and require a paid subscription. Premium connections include third-party integrations like Gmail, Slack, GitHub, PostgreSQL, and more.
 
-    **Developer Tools:**
-    - **GitHub** - Repositories, issues, pull requests, Actions, code search
-    - **Ref** - Token-efficient documentation search for 1000+ sites
+<Info>
+  **Install Limits by Plan:**
 
-    **Finance and Market Data:**
-    - **Finnhub** - Stock quotes, company fundamentals, financial news, market analysis
+  | Plan | Premium Connection Limit |
+  |------|--------------------------|
+  | Free | 0 (free connections only) |
+  | Starter | 5 installed at once |
+  | Business | 10 installed at once |
+  | Enterprise | Unlimited |
 
-    **Document Processing:**
-    - **PDF.co** - PDF manipulation, OCR, document automation, conversion
+  Limits apply across all workspaces in your account. You can uninstall and reinstall different premium connections as needed.
+</Info>
 
-    **Data and Analytics:**
-    - **ClickHouse** - OLAP database analytics and data warehousing
-    - **PostgreSQL** - Full database access with read/write capabilities
+**Available Premium Connections:**
 
-    **Data Intelligence:**
-    - **Abstract API** - Email/phone validation, IP geolocation, company enrichment
-    - **IPInfo** - IP geolocation and network intelligence
-
-    **Language and Translation:**
-    - **DeepL** - Professional AI translation in 30+ languages
-
-    **Search and Research:**
-    - **Tavily** - AI-powered web search, content extraction, crawling
-
-    **Weather and Environment:**
-    - **OpenWeatherMap** - Weather, solar radiation, air quality data
-
-    **Travel and Recreation:**
-    - **National Parks** - US National Parks Service data
-
-    **Utilities:**
-    - **Echo** - Testing and debugging connections
-    - **Reverse Text** - Text manipulation and analysis
-
-    <Info>
-      Paid tier includes all free tier connections plus access to 18+ premium integrations. [View pricing →](https://www.nimblebrain.ai/pricing)
-    </Info>
-  </Tab>
-</Tabs>
+| Category | Connections |
+|----------|-------------|
+| Business & Collaboration | Calendly, Gmail, Google Sheets, HubSpot, Slack, Zoom |
+| Developer Tools | GitHub, Ref, Echo |
+| Data & Analytics | ClickHouse, PostgreSQL, Abstract API, IPInfo |
+| Utilities | Tavily, DeepL, PDF.co, Finnhub, OpenWeatherMap |
+| Other | National Parks, Reverse Text |
 
 <Warning>
-**Important:** Attempting to use paid-tier connections without a valid subscription will result in connection errors. Upgrade your plan to access premium integrations.
+**Important:** Attempting to install premium connections without a paid subscription, or exceeding your plan's install limit, will result in an error. [Upgrade your plan →](https://www.nimblebrain.ai/pricing)
 </Warning>
 
 ## Installed Connections
