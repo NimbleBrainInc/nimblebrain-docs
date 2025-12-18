@@ -51,12 +51,16 @@
               {
                 "group": "Business",
                 "pages": [
-                  "studio/connections/business/gmail",
-                  "studio/connections/business/slack",
+                  "studio/connections/business/ahrefs",
                   "studio/connections/business/calendly",
-                  "studio/connections/business/zoom",
+                  "studio/connections/business/gmail",
+                  "studio/connections/business/googlesheets",
                   "studio/connections/business/hubspot",
-                  "studio/connections/business/googlesheets"
+                  "studio/connections/business/intercom",
+                  "studio/connections/business/slack",
+                  "studio/connections/business/x",
+                  "studio/connections/business/zohocrm",
+                  "studio/connections/business/zoom"
                 ]
               },
               {
@@ -73,7 +77,8 @@
                   "studio/connections/data/postgresql",
                   "studio/connections/data/clickhouse",
                   "studio/connections/data/abstract",
-                  "studio/connections/data/ipinfo"
+                  "studio/connections/data/ipinfo",
+                  "studio/connections/data/serpapi"
                 ]
               },
               {
@@ -95,7 +100,8 @@
               "studio/workspace-management",
               "studio/pricing",
               "studio/api-keys",
-              "studio/activity-logs"
+              "studio/activity-logs",
+              "studio/security"
             ]
           }
         ]

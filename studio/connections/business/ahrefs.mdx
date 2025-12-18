@@ -1,0 +1,777 @@
+---
+title: 'Ahrefs'
+sidebarTitle: 'Ahrefs'
+description: 'SEO toolset for backlink analysis, keyword research, and competitive analysis'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="chart-line">
+    Ahrefs is a comprehensive SEO platform that provides powerful tools for backlink analysis, keyword research, competitive intelligence, and site auditing. Access real-time SEO data, track rankings, analyze competitor strategies, and discover content opportunities to improve your search engine visibility.
+
+    **Key Features:**
+    - Backlink analysis and monitoring
+    - Keyword research and difficulty scoring
+    - Competitor analysis and benchmarking
+    - Site auditing and health monitoring
+    - Rank tracking across search engines
+    - Content gap analysis
+    - Domain metrics and authority scoring
+    - Top pages and content performance
+    - Keyword rankings and visibility
+    - Organic traffic estimates
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **SEO Research**: Discover keyword opportunities, analyze search volume and difficulty, track keyword rankings, identify content gaps
+
+    **Competitive Intelligence**: Monitor competitor backlinks, analyze their top-performing content, discover their keyword strategies, benchmark performance
+
+    **Link Building**: Find backlink opportunities, analyze link quality, monitor new and lost backlinks, track referring domains
+
+    **Content Strategy**: Identify high-traffic content opportunities, analyze top-performing pages, discover trending topics, optimize existing content
+  </Card>
+</CardGroup>
+
+<Info>
+  Ahrefs maintains one of the largest backlink databases in the industry, crawling over 8 billion pages daily to provide accurate, up-to-date SEO intelligence.
+</Info>
+
+## Quick Start
+
+<Steps>
+  <Step title="Get your API key">
+    Obtain your Ahrefs API key from your account dashboard.
+
+    **API Access:**
+    - Available on Ahrefs subscriptions (Lite, Standard, Advanced, Enterprise)
+    - API access may require specific plans or add-ons
+    - Check your plan details at [ahrefs.com/api](https://ahrefs.com/api)
+
+    To find your API key:
+    1. Log in to your Ahrefs account
+    2. Navigate to **Account Settings**
+    3. Find the **API** section
+    4. Copy your API key
+
+    <Tip>
+      Contact Ahrefs support if you don't see API access in your account settings, as it may require a plan upgrade or add-on.
+    </Tip>
+  </Step>
+
+  <Step title="Add to NimbleBrain Studio">
+    In NimbleBrain Studio:
+
+    1. Navigate to **Connections** in the sidebar
+    2. Click **Browse Catalog**
+    3. Search for "Ahrefs"
+    4. Click **Install**
+    5. Enter your API key in the **AHREFS_API_KEY** field
+    6. Click **Save & Connect**
+
+    <Info>
+      Your API key is securely encrypted and stored. NimbleBrain never shares your credentials.
+    </Info>
+  </Step>
+
+  <Step title="Test your connection">
+    In your Studio chat, try this prompt:
+
+    ```text
+    "Analyze the backlink profile for example.com"
+    ```
+
+    You should see:
+    - Domain metrics and authority scores
+    - Backlink statistics
+    - Referring domains data
+    - Top backlinks and their quality
+
+    **Other test prompts:**
+    - "What are the top keywords for [your-domain.com]?"
+    - "Show me the top pages for [competitor-domain.com]"
+    - "Find keyword opportunities related to [topic]"
+
+    <Tip>
+      Look for detailed SEO metrics to confirm your Ahrefs connection is working properly.
+    </Tip>
+  </Step>
+</Steps>
+
+## Available Tools
+
+The Ahrefs connection provides comprehensive SEO analysis tools organized into the following categories:
+
+### Backlink Analysis
+
+<AccordionGroup>
+  <Accordion title="Backlink Operations" icon="link">
+    Analyze and monitor backlinks pointing to any domain or URL.
+
+    | Tool | Description |
+    |------|-------------|
+    | `AHREFS_GET_BACKLINKS` | Retrieve backlinks for a target URL or domain with filtering options |
+    | `AHREFS_GET_REFERRING_DOMAINS` | Get list of domains linking to your target |
+    | `AHREFS_GET_NEW_BACKLINKS` | Monitor recently acquired backlinks |
+    | `AHREFS_GET_LOST_BACKLINKS` | Track lost or removed backlinks |
+    | `AHREFS_GET_BROKEN_BACKLINKS` | Identify broken backlinks pointing to your site |
+
+    **Example Usage:**
+    ```text
+    "Show me all new backlinks to mysite.com from the last 30 days"
+    ```
+
+    ```text
+    "Analyze the quality of referring domains linking to competitor.com"
+    ```
+
+    <Note>
+      Backlink metrics include Domain Rating (DR), URL Rating (UR), traffic estimates, and link attributes (dofollow/nofollow).
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Keyword Research
+
+<AccordionGroup>
+  <Accordion title="Keyword Operations" icon="magnifying-glass">
+    Research keywords, search volume, difficulty, and ranking opportunities.
+
+    | Tool | Description |
+    |------|-------------|
+    | `AHREFS_KEYWORD_RESEARCH` | Research keywords with volume, difficulty, and CPC data |
+    | `AHREFS_GET_KEYWORD_DIFFICULTY` | Get keyword difficulty score and SERP analysis |
+    | `AHREFS_GET_KEYWORD_IDEAS` | Discover related keyword opportunities |
+    | `AHREFS_GET_SEARCH_VOLUME` | Get search volume data across multiple search engines |
+    | `AHREFS_GET_KEYWORD_RANKINGS` | Track keyword position for a domain |
+
+    **Example Usage:**
+    ```text
+    "Find keyword ideas related to 'digital marketing tools' with search volume over 1000"
+    ```
+
+    ```text
+    "What's the keyword difficulty for 'best CRM software'?"
+    ```
+
+    <Tip>
+      Keyword difficulty ranges from 0-100, with higher scores indicating more competitive keywords requiring stronger backlink profiles to rank.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+### Domain Analysis
+
+<AccordionGroup>
+  <Accordion title="Domain Metrics" icon="globe">
+    Analyze domain authority, metrics, and overall SEO health.
+
+    | Tool | Description |
+    |------|-------------|
+    | `AHREFS_GET_DOMAIN_METRICS` | Get Domain Rating, backlinks, referring domains, and traffic estimates |
+    | `AHREFS_GET_ORGANIC_KEYWORDS` | Retrieve all organic keywords a domain ranks for |
+    | `AHREFS_GET_DOMAIN_TRAFFIC` | Estimate organic traffic and top traffic-driving pages |
+    | `AHREFS_GET_TOP_PAGES` | Find the highest-traffic pages on any domain |
+    | `AHREFS_COMPARE_DOMAINS` | Compare metrics between multiple domains |
+
+    **Example Usage:**
+    ```text
+    "Compare the domain metrics between mysite.com and competitor1.com and competitor2.com"
+    ```
+
+    ```text
+    "What are the top 10 pages driving traffic to competitor.com?"
+    ```
+
+    <Note>
+      Domain Rating (DR) is Ahrefs' proprietary metric measuring domain authority on a scale of 0-100 based on backlink profile quality.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Site Audit
+
+<AccordionGroup>
+  <Accordion title="Site Health" icon="stethoscope">
+    Audit your website for technical SEO issues and optimization opportunities.
+
+    | Tool | Description |
+    |------|-------------|
+    | `AHREFS_SITE_AUDIT` | Run comprehensive site audit for technical SEO issues |
+    | `AHREFS_GET_AUDIT_ISSUES` | Retrieve specific issues found during site audit |
+    | `AHREFS_GET_BROKEN_LINKS` | Find broken internal and external links |
+    | `AHREFS_GET_REDIRECT_CHAINS` | Identify redirect chains and loops |
+    | `AHREFS_GET_CRAWL_STATS` | Get crawl statistics and coverage data |
+
+    **Example Usage:**
+    ```text
+    "Run a site audit for mywebsite.com and show me critical issues"
+    ```
+
+    ```text
+    "Find all broken links on mysite.com"
+    ```
+
+    <Warning>
+      Site audits crawl your entire website, which may take time for large sites. Results are typically cached and updated periodically.
+    </Warning>
+  </Accordion>
+</AccordionGroup>
+
+### Rank Tracking
+
+<AccordionGroup>
+  <Accordion title="Position Monitoring" icon="ranking-star">
+    Track keyword rankings and visibility across search engines.
+
+    | Tool | Description |
+    |------|-------------|
+    | `AHREFS_TRACK_RANKINGS` | Monitor keyword position changes over time |
+    | `AHREFS_GET_RANK_HISTORY` | View historical ranking data for keywords |
+    | `AHREFS_GET_VISIBILITY_SCORE` | Calculate overall search visibility |
+    | `AHREFS_GET_SERP_FEATURES` | Identify SERP features (featured snippets, etc.) |
+    | `AHREFS_COMPARE_RANKINGS` | Compare rankings against competitors |
+
+    **Example Usage:**
+    ```text
+    "Track my rankings for these keywords: [keyword1, keyword2, keyword3]"
+    ```
+
+    ```text
+    "Show me ranking history for 'SEO tools' over the last 90 days"
+    ```
+
+    <Tip>
+      Set up regular rank tracking for your most important keywords to monitor SEO performance and catch ranking drops early.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+### Content Analysis
+
+<AccordionGroup>
+  <Accordion title="Content Intelligence" icon="file-lines">
+    Analyze content performance and discover content opportunities.
+
+    | Tool | Description |
+    |------|-------------|
+    | `AHREFS_CONTENT_EXPLORER` | Search for top-performing content on any topic |
+    | `AHREFS_GET_CONTENT_GAP` | Find keywords competitors rank for but you don't |
+    | `AHREFS_GET_TOP_CONTENT` | Discover most shared and linked-to content |
+    | `AHREFS_ANALYZE_CONTENT` | Analyze content metrics for any URL |
+    | `AHREFS_GET_SHARERS` | Find who shared specific content on social media |
+
+    **Example Usage:**
+    ```text
+    "Find content gaps between mysite.com and competitor.com"
+    ```
+
+    ```text
+    "Show me the most popular content about 'content marketing' from the last 6 months"
+    ```
+
+    <Note>
+      Content Explorer indexes billions of pages and provides metrics like social shares, referring domains, and organic traffic estimates.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Competitor Analysis">
+    **Scenario:** Analyze a competitor's SEO strategy and identify opportunities
+
+    **Prompt:**
+    ```text
+    "Analyze competitor.com's SEO performance: domain metrics, top keywords, top pages, and backlink profile. Then compare it to mysite.com and identify gaps"
+    ```
+
+    **What happens:**
+    - Retrieves domain authority and metrics
+    - Lists top-performing keywords and rankings
+    - Identifies highest-traffic pages
+    - Analyzes backlink profile quality
+    - Compares metrics with your domain
+    - Highlights keyword and content gaps
+
+    **Time:** 10-15 seconds
+    **API calls:** 4-6 requests
+
+    **Example Response:**
+    - Competitor's Domain Rating: 65 (vs. yours: 48)
+    - Top 10 keywords they rank for
+    - Their top 5 traffic-driving pages
+    - 250 referring domains (vs. yours: 120)
+    - Content gaps: 45 keywords they rank for that you don't
+
+    **Follow-up prompts:**
+    - "What are the easiest keywords I could target from their list?"
+    - "Show me their newest backlinks from the last month"
+    - "Analyze the content on their top-performing page"
+
+    <Tip>
+      Regular competitor monitoring helps you spot new strategies and opportunities. Check monthly for shifts in their approach.
+    </Tip>
+  </Tab>
+
+  <Tab title="Keyword Research">
+    **Scenario:** Find keyword opportunities for a new content piece
+
+    **Prompt:**
+    ```text
+    "I want to write about 'email marketing automation'. Find keyword opportunities with search volume between 500-5000, keyword difficulty under 40, and list related questions people are asking"
+    ```
+
+    **What happens:**
+    - Searches for related keywords
+    - Filters by volume and difficulty criteria
+    - Identifies question-based keywords
+    - Provides search volume and CPC data
+    - Estimates ranking difficulty
+    - Suggests long-tail variations
+
+    **Time:** 5-8 seconds
+    **API calls:** 2-3 requests
+
+    **Example Response:**
+    - 25 keyword opportunities found
+    - "email automation tools" - 2,400 vol, KD 35
+    - "best email automation software" - 1,800 vol, KD 38
+    - "how to automate email campaigns" - 900 vol, KD 28
+    - Related questions: "What is email marketing automation?" etc.
+
+    **Follow-up prompts:**
+    - "Which of these keywords have featured snippets?"
+    - "Show me the top-ranking pages for 'email automation tools'"
+    - "What's the content gap for these keywords between me and competitors?"
+
+    <Note>
+      Target keywords with KD scores you can realistically rank for based on your domain's authority and backlink profile.
+    </Note>
+  </Tab>
+
+  <Tab title="Backlink Audit">
+    **Scenario:** Monitor and analyze your backlink profile
+
+    **Prompt:**
+    ```text
+    "Audit my backlink profile for mysite.com: show me new backlinks from the last 30 days, lost backlinks, and identify any low-quality or toxic links"
+    ```
+
+    **What happens:**
+    - Retrieves recent backlinks
+    - Identifies lost backlinks
+    - Analyzes link quality metrics
+    - Flags potentially toxic links
+    - Provides referring domain stats
+    - Highlights follow vs. nofollow ratio
+
+    **Time:** 8-12 seconds
+    **API calls:** 3-4 requests
+
+    **Example Response:**
+    - 15 new backlinks acquired (12 dofollow, 3 nofollow)
+    - 8 backlinks lost
+    - 3 potentially toxic links identified (DR < 10, spam domains)
+    - Total referring domains: 245 (+7 this month)
+    - Average DR of new links: 42
+
+    **Follow-up prompts:**
+    - "Show me details on the highest quality new backlink"
+    - "Which pages on my site gained the most backlinks?"
+    - "Create a disavow file for the toxic links"
+    - "Compare my backlink growth to competitor.com"
+
+    <Warning>
+      Regularly monitor lost backlinks to identify and fix broken links or reclaim valuable link equity through outreach.
+    </Warning>
+  </Tab>
+
+  <Tab title="Content Strategy">
+    **Scenario:** Discover content opportunities and optimize existing content
+
+    **Prompt:**
+    ```text
+    "Find the top-performing content about 'project management software' from the last year. Show me what makes them successful: backlinks, social shares, word count, and ranking keywords"
+    ```
+
+    **What happens:**
+    - Searches Content Explorer for topic
+    - Filters by recency (last year)
+    - Retrieves top-performing articles
+    - Analyzes success metrics
+    - Identifies ranking keywords
+    - Provides content insights
+
+    **Time:** 6-10 seconds
+    **API calls:** 2-3 requests
+
+    **Example Response:**
+    - Top 10 articles found
+    - Average word count: 3,500 words
+    - Average backlinks: 85 referring domains
+    - Common ranking keywords per article: 120+
+    - Top SERP features: Featured snippets, People Also Ask
+    - Most successful format: Comparison articles and listicles
+
+    **Follow-up prompts:**
+    - "Analyze the keyword strategy of the top article"
+    - "What content gaps exist in this topic?"
+    - "Show me who's linking to these top articles"
+    - "Find similar topics with less competition"
+
+    <Tip>
+      Study top-performing content to understand what works, then create superior content that's more comprehensive, updated, or better optimized.
+    </Tip>
+  </Tab>
+
+  <Tab title="Site Health Check">
+    **Scenario:** Audit your website for technical SEO issues
+
+    **Prompt:**
+    ```text
+    "Run a comprehensive site audit for mywebsite.com and prioritize the issues by severity. Focus on critical errors affecting rankings"
+    ```
+
+    **What happens:**
+    - Crawls entire website
+    - Identifies technical issues
+    - Categorizes by severity
+    - Provides issue descriptions
+    - Suggests fixes
+    - Generates health score
+
+    **Time:** 15-30 seconds (varies by site size)
+    **API calls:** 2-3 requests
+
+    **Example Response:**
+    - Overall Health Score: 78/100
+    - Critical Issues (5): Broken internal links, duplicate content, missing meta descriptions
+    - Warnings (12): Slow page speed, large images, redirect chains
+    - Recommendations: 301 redirects for broken links, optimize images, add meta descriptions
+
+    **Follow-up prompts:**
+    - "Show me all pages with broken links"
+    - "List all duplicate content issues with URLs"
+    - "What are the redirect chains and how do I fix them?"
+    - "Export a prioritized action plan for these issues"
+
+    <Info>
+      Regular site audits (monthly) help catch issues before they impact rankings. Fix critical issues first for maximum impact.
+    </Info>
+  </Tab>
+
+  <Tab title="Link Building">
+    **Scenario:** Find link building opportunities
+
+    **Prompt:**
+    ```text
+    "Find websites that link to competitor1.com and competitor2.com but not to mysite.com. Filter for domains with DR above 40"
+    ```
+
+    **What happens:**
+    - Analyzes competitor backlinks
+    - Compares to your backlinks
+    - Identifies unique linking domains
+    - Filters by domain authority
+    - Provides contact opportunities
+    - Suggests outreach targets
+
+    **Time:** 10-15 seconds
+    **API calls:** 3-4 requests
+
+    **Example Response:**
+    - 127 link opportunities found
+    - Top prospects (DR 40+): 45 domains
+    - Industry blogs: 18
+    - Resource pages: 12
+    - Guest post opportunities: 8
+    - Broken link opportunities: 7
+
+    **Follow-up prompts:**
+    - "Show me the top 10 prospects by Domain Rating"
+    - "Find contact information for these domains"
+    - "What content did they link to on competitor sites?"
+    - "Identify broken link building opportunities"
+
+    <Tip>
+      Prioritize link building outreach to high-DR domains in your industry. Personalize outreach by referencing the content they linked to for competitors.
+    </Tip>
+  </Tab>
+</Tabs>
+
+## Authentication
+
+<Info>
+  **API Key Required**: This connection requires an Ahrefs API key to access SEO data and analysis tools.
+</Info>
+
+### Getting Your API Key
+
+1. Log in to your Ahrefs account at [ahrefs.com](https://ahrefs.com)
+2. Navigate to **Account Settings**
+3. Find the **API** or **API Access** section
+4. Copy your API key
+5. Add it to your Studio connection configuration
+
+<Tip>
+  API access is included with most Ahrefs subscription plans. Contact Ahrefs support if you don't see API settings in your account.
+</Tip>
+
+### Rate Limits & Pricing
+
+| Plan Tier | API Limits | Features | Typical Price |
+|-----------|------------|----------|---------------|
+| **Lite** | Limited requests | Basic metrics, limited history | $99/mo |
+| **Standard** | Standard rate limits | Full features, 3 months history | $199/mo |
+| **Advanced** | Higher limits | Full features, unlimited history | $399/mo |
+| **Enterprise** | Custom limits | Dedicated support, custom integrations | $999+/mo |
+
+**API Usage:**
+- Rate limits vary by subscription plan
+- Typically measured in API units per month
+- Different endpoints consume different units
+- Monitor usage in your Ahrefs dashboard
+- Overage handling varies by plan
+
+<Warning>
+  Check your specific plan's API limits in your Ahrefs account settings. Some features may require higher-tier plans.
+</Warning>
+
+### Managing Your API Key in Studio
+
+Your API key is securely stored in NimbleBrain Studio. To update it:
+
+1. Go to **Connections**
+2. Find "Ahrefs" in your connections list
+3. Click **Edit** or **Settings**
+4. Update your API key
+5. Click **Save**
+
+<Info>
+  Studio automatically manages the connection. No manual restarts required after updating credentials.
+</Info>
+
+### Security Best Practices
+
+<AccordionGroup>
+  <Accordion title="Protect Your API Key" icon="lock">
+    Your Ahrefs API key provides access to your account's data and quota:
+
+    - Never share your API key publicly
+    - Don't commit keys to version control
+    - Rotate keys periodically (every 90 days recommended)
+    - Monitor API usage for unexpected activity
+    - Use separate keys for different environments if available
+    - Revoke compromised keys immediately
+
+    <Warning>
+      If your key is compromised, generate a new one immediately in your Ahrefs account settings and update Studio.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Monitor Usage" icon="chart-line">
+    Track your API usage to stay within limits:
+
+    - Check usage dashboard in your Ahrefs account regularly
+    - Set up usage alerts if available
+    - Optimize query patterns for efficiency
+    - Cache results when appropriate
+    - Batch requests when possible
+    - Review monthly consumption patterns
+
+    **Usage optimization tips:**
+    - Cache domain metrics that don't change frequently
+    - Batch keyword research queries
+    - Use filters to reduce unnecessary data retrieval
+    - Schedule regular audits rather than ad-hoc requests
+
+    <Tip>
+      Studio can cache some Ahrefs results. Enable caching in settings to reduce API calls for repeated queries.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Invalid API Key" icon="key">
+    **Issue:** Authentication failed or invalid API key error
+
+    **Solutions:**
+    - Verify you copied the entire API key without extra spaces
+    - Check if your Ahrefs subscription includes API access
+    - Confirm your account is active and paid
+    - Regenerate API key in Ahrefs settings if necessary
+    - Ensure no special characters were added during copy/paste
+    - Contact Ahrefs support if API access isn't visible in your account
+
+    <Warning>
+      API access requires an active paid Ahrefs subscription. Free trials may have limited or no API access.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Rate Limit Exceeded" icon="gauge">
+    **Issue:** Too many requests or quota exceeded
+
+    **Solutions:**
+    - Check your usage in Ahrefs dashboard
+    - Wait for rate limit to reset (typically monthly or hourly)
+    - Upgrade to a higher plan for increased limits
+    - Implement caching for frequently accessed data
+    - Reduce query frequency
+    - Optimize requests to fetch only needed data
+    - Contact Ahrefs about increasing your limits
+
+    <Tip>
+      Monitor usage patterns and adjust query frequency before hitting limits. Plan large research projects around quota reset dates.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="No Data Returned" icon="circle-question">
+    **Issue:** Query succeeds but returns empty or no results
+
+    **Solutions:**
+    - Verify the domain or URL is indexed in Ahrefs database
+    - Check if domain is too new (requires crawling time)
+    - Ensure correct domain format (use example.com, not https://example.com)
+    - Try different filters or broader search criteria
+    - Verify the domain has backlinks or ranking keywords
+    - Some niche domains may have limited data
+
+    <Note>
+      New websites may not have data immediately. Ahrefs needs time to crawl and index new domains and backlinks.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Slow Response Times" icon="clock">
+    **Issue:** Queries taking longer than expected
+
+    **Solutions:**
+    - Large domain analyses can take 10-30 seconds
+    - Site audits for large sites may take longer
+    - Check your internet connection
+    - Verify Ahrefs API status (check Ahrefs status page)
+    - Reduce the scope of queries (limit results, narrow date ranges)
+    - Break large queries into smaller, focused requests
+    - Try again during off-peak hours
+
+    **Typical response times:**
+    - Domain metrics: 3-5 seconds
+    - Backlink queries: 5-10 seconds
+    - Keyword research: 4-8 seconds
+    - Site audits: 15-60 seconds (depends on site size)
+    - Content Explorer: 5-10 seconds
+
+    <Tip>
+      Cache results for domains you query frequently to improve response times and reduce API usage.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Connection Failed" icon="triangle-exclamation">
+    **Issue:** Cannot connect to Ahrefs API
+
+    **Solutions:**
+    - Verify your internet connection
+    - Check Ahrefs API status page for outages
+    - Ensure API key is correctly entered in Studio
+    - Try disconnecting and reconnecting in Studio
+    - Clear Studio cache and retry
+    - Verify firewall isn't blocking API requests
+    - Contact Ahrefs support if issue persists
+
+    <Info>
+      Studio handles all connection management automatically. No manual configuration needed beyond entering your API key.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Incorrect Metrics" icon="chart-mixed">
+    **Issue:** Data seems inaccurate or outdated
+
+    **Solutions:**
+    - Verify you're analyzing the correct domain/URL
+    - Check the data freshness date in results
+    - Ahrefs updates data on different schedules (backlinks: daily, some metrics: weekly)
+    - Some metrics are estimates, not exact counts
+    - Compare with Ahrefs web interface for verification
+    - Refresh data if cached results are old
+    - Large fluctuations may be legitimate (link gains/losses)
+
+    **Data freshness:**
+    - Backlinks: Updated daily
+    - Domain Rating: Updated weekly
+    - Keyword rankings: Updated based on tracking frequency
+    - Organic traffic: Estimated monthly
+    - Site audits: On-demand or scheduled
+
+    <Note>
+      Ahrefs metrics are estimates based on their crawl data. Use them for directional insights rather than exact numbers.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Regular Monitoring" icon="calendar">
+    - Track key metrics weekly or monthly
+    - Monitor competitor changes
+    - Set up rank tracking for important keywords
+    - Audit backlink profile monthly
+    - Run site audits quarterly
+    - Review content performance regularly
+  </Card>
+
+  <Card title="Data-Driven Strategy" icon="lightbulb">
+    - Use keyword difficulty to prioritize targets
+    - Focus on achievable keyword opportunities
+    - Analyze top pages before creating content
+    - Study competitor gaps systematically
+    - Base link building on data, not guesses
+    - Track ROI of SEO efforts
+  </Card>
+
+  <Card title="Efficient Usage" icon="gauge-high">
+    - Cache frequently accessed domain metrics
+    - Batch keyword research queries
+    - Use filters to reduce unnecessary data
+    - Schedule large audits during off-peak times
+    - Monitor API usage to avoid overages
+    - Focus on actionable insights
+  </Card>
+
+  <Card title="Security" icon="shield">
+    - Protect your API key
+    - Rotate keys periodically
+    - Monitor for unusual usage
+    - Use separate keys per environment
+    - Revoke compromised keys immediately
+    - Never share credentials
+  </Card>
+</CardGroup>
+
+## Links and Resources
+
+<CardGroup cols={2}>
+  <Card title="Ahrefs API Documentation" icon="code" href="https://ahrefs.com/api/documentation">
+    Official API reference and guides
+  </Card>
+
+  <Card title="Ahrefs Help Center" icon="circle-question" href="https://help.ahrefs.com">
+    Tutorials, guides, and support articles
+  </Card>
+
+  <Card title="Ahrefs Academy" icon="graduation-cap" href="https://ahrefs.com/academy">
+    Free SEO courses and training
+  </Card>
+
+  <Card title="Ahrefs Blog" icon="newspaper" href="https://ahrefs.com/blog">
+    SEO insights, case studies, and updates
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://www.nimblebrain.ai/discord?utm_source=docs&utm_campaign=studio) or email support@nimblebrain.ai

@@ -1,0 +1,470 @@
+---
+title: 'Zoho CRM'
+description: 'Customer relationship management platform for managing leads, contacts, deals, and sales pipelines'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="chart-network">
+    Zoho CRM integration connects AI tools directly to your Zoho CRM account, enabling natural language interactions with leads, contacts, deals, accounts, and tasks.
+
+    **Key Features:**
+    - Lead and contact management
+    - Deal pipeline tracking
+    - Account and opportunity management
+    - Task and activity tracking
+    - Sales automation
+    - Custom fields and modules
+    - Advanced filtering and search
+    - Bulk operations
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **Sales Pipeline Management:**
+    - Track leads through conversion funnel
+    - Monitor deal progress and revenue
+    - Update deal stages automatically
+    - Generate sales forecasts
+
+    **Contact Organization:**
+    - Create and update contact records
+    - Segment contacts by criteria
+    - Track communication history
+    - Manage account relationships
+
+    **Activity Tracking:**
+    - Create and assign tasks
+    - Schedule follow-up activities
+    - Track team productivity
+    - Automate reminder workflows
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+<Steps>
+  <Step title="Connect Your Zoho CRM Account">
+    NimbleBrain Studio uses OAuth2 to securely connect to your Zoho CRM account.
+
+    1. Navigate to **Connections** in the sidebar
+    2. Click **Browse Catalog**
+    3. Search for "Zoho CRM"
+    4. Click **Install**
+    5. Click **Connect** and authorize with your Zoho account
+    6. Grant the requested permissions for CRM access
+
+    <Tip>
+      OAuth2 provides secure, token-based authentication without exposing your credentials.
+    </Tip>
+  </Step>
+
+  <Step title="Verify Connection">
+    Once connected, test the integration:
+
+    ```text
+    "Show me my recent leads in Zoho CRM"
+    ```
+
+    **Other test prompts:**
+    - "List my open deals in the pipeline"
+    - "Show me contacts created this week"
+    - "What tasks are due today?"
+  </Step>
+</Steps>
+
+## Available Tools
+
+The Zoho CRM connection provides comprehensive tools organized into the following categories:
+
+### Lead Management
+
+<AccordionGroup>
+  <Accordion title="Lead Operations" icon="user-plus">
+    Manage and track leads through your sales funnel.
+
+    | Tool | Description |
+    |------|-------------|
+    | `ZOHOCRM_CREATE_LEAD` | Create a new lead record with custom fields |
+    | `ZOHOCRM_GET_LEAD` | Retrieve a specific lead by ID |
+    | `ZOHOCRM_UPDATE_LEAD` | Update lead information and status |
+    | `ZOHOCRM_DELETE_LEAD` | Remove a lead from the system |
+    | `ZOHOCRM_SEARCH_LEADS` | Search leads with filters and criteria |
+    | `ZOHOCRM_CONVERT_LEAD` | Convert a lead to contact, account, and deal |
+
+    **Example Usage:**
+    ```text
+    "Create a new lead named John Smith from Acme Corp with email john@acme.com"
+    ```
+
+    <Note>
+      Converting leads automatically creates associated contact, account, and optional deal records.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Contact Management
+
+<AccordionGroup>
+  <Accordion title="Contact Operations" icon="address-book">
+    Manage your customer and prospect contact database.
+
+    | Tool | Description |
+    |------|-------------|
+    | `ZOHOCRM_CREATE_CONTACT` | Create a new contact with properties |
+    | `ZOHOCRM_GET_CONTACT` | Retrieve contact details by ID |
+    | `ZOHOCRM_UPDATE_CONTACT` | Update contact information |
+    | `ZOHOCRM_DELETE_CONTACT` | Remove a contact from the system |
+    | `ZOHOCRM_SEARCH_CONTACTS` | Search contacts with advanced filters |
+    | `ZOHOCRM_LIST_CONTACTS` | List contacts with pagination |
+
+    **Example Usage:**
+    ```text
+    "Find all contacts from California who haven't been contacted in 30 days"
+    ```
+
+    <Tip>
+      Use custom fields to store industry-specific data and segment contacts effectively.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+### Deal Management
+
+<AccordionGroup>
+  <Accordion title="Deal Operations" icon="handshake">
+    Track opportunities and manage your sales pipeline.
+
+    | Tool | Description |
+    |------|-------------|
+    | `ZOHOCRM_CREATE_DEAL` | Create a new deal with amount and stage |
+    | `ZOHOCRM_GET_DEAL` | Retrieve deal details and history |
+    | `ZOHOCRM_UPDATE_DEAL` | Update deal stage, amount, or properties |
+    | `ZOHOCRM_DELETE_DEAL` | Remove a deal from the pipeline |
+    | `ZOHOCRM_SEARCH_DEALS` | Search deals by criteria and filters |
+    | `ZOHOCRM_LIST_DEALS` | List all deals with pagination |
+
+    **Example Usage:**
+    ```text
+    "Show me all deals in the proposal stage worth over $50,000"
+    ```
+
+    <Note>
+      Track deal progression through customizable stages to forecast revenue accurately.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Account Management
+
+<AccordionGroup>
+  <Accordion title="Account Operations" icon="building">
+    Manage company and organization records.
+
+    | Tool | Description |
+    |------|-------------|
+    | `ZOHOCRM_CREATE_ACCOUNT` | Create a new account record |
+    | `ZOHOCRM_GET_ACCOUNT` | Retrieve account details by ID |
+    | `ZOHOCRM_UPDATE_ACCOUNT` | Update account information |
+    | `ZOHOCRM_DELETE_ACCOUNT` | Remove an account from the system |
+    | `ZOHOCRM_SEARCH_ACCOUNTS` | Search accounts with filters |
+    | `ZOHOCRM_LIST_ACCOUNTS` | List all accounts with pagination |
+
+    **Example Usage:**
+    ```text
+    "Update the annual revenue for Acme Corporation account"
+    ```
+
+    <Tip>
+      Link contacts and deals to accounts for comprehensive relationship tracking.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+### Task Management
+
+<AccordionGroup>
+  <Accordion title="Task Operations" icon="list-check">
+    Create and track activities and follow-ups.
+
+    | Tool | Description |
+    |------|-------------|
+    | `ZOHOCRM_CREATE_TASK` | Create a new task or activity |
+    | `ZOHOCRM_GET_TASK` | Retrieve task details by ID |
+    | `ZOHOCRM_UPDATE_TASK` | Update task status or properties |
+    | `ZOHOCRM_DELETE_TASK` | Remove a task from the system |
+    | `ZOHOCRM_SEARCH_TASKS` | Search tasks with filters |
+    | `ZOHOCRM_LIST_TASKS` | List tasks with pagination |
+
+    **Example Usage:**
+    ```text
+    "Create a follow-up call task for tomorrow assigned to Sarah for the Acme deal"
+    ```
+
+    <Note>
+      Tasks can be associated with leads, contacts, deals, or accounts for context tracking.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Lead Qualification">
+    **Scenario:** Automatically qualify and route new leads
+
+    **Prompt:**
+    ```text
+    "Find all new leads from the enterprise segment, score them based on company size and industry, and create follow-up tasks for the sales team"
+    ```
+
+    **What happens:**
+    - Searches for recent leads matching criteria
+    - Evaluates lead quality based on properties
+    - Creates assigned tasks for sales reps
+    - Updates lead status to "Qualified"
+  </Tab>
+
+  <Tab title="Deal Pipeline Review">
+    **Scenario:** Review deals nearing close date
+
+    **Prompt:**
+    ```text
+    "Show me all deals in the negotiation stage with close dates in the next 7 days"
+    ```
+
+    **What happens:**
+    - Filters deals by stage and date range
+    - Returns deal details with amounts
+    - Includes associated contacts and accounts
+    - Highlights next steps and tasks
+  </Tab>
+
+  <Tab title="Contact Enrichment">
+    **Scenario:** Update contact records with new information
+
+    **Prompt:**
+    ```text
+    "Update all contacts from TechCorp with the new headquarters address and phone number"
+    ```
+
+    **What happens:**
+    - Searches for matching contacts
+    - Batch updates address and phone fields
+    - Logs activity history
+    - Confirms number of records updated
+  </Tab>
+
+  <Tab title="Sales Activity Report">
+    **Scenario:** Generate activity summary for a time period
+
+    **Prompt:**
+    ```text
+    "List all tasks completed this week grouped by sales rep and deal stage"
+    ```
+
+    **What happens:**
+    - Retrieves completed tasks from date range
+    - Groups by assignee and associated deal
+    - Provides summary statistics
+    - Identifies top performers
+  </Tab>
+
+  <Tab title="Account Management">
+    **Scenario:** Review account health and opportunities
+
+    **Prompt:**
+    ```text
+    "Show me all enterprise accounts with no deals created in the last 90 days"
+    ```
+
+    **What happens:**
+    - Searches accounts by segment
+    - Filters by deal activity date
+    - Returns account details and contacts
+    - Suggests re-engagement actions
+  </Tab>
+</Tabs>
+
+## Authentication
+
+<Info>
+  **OAuth2 Authentication**: This connection uses OAuth2 for secure authentication.
+</Info>
+
+### How It Works
+
+When you connect Zoho CRM in NimbleBrain Studio:
+
+1. You'll be redirected to Zoho's authorization page
+2. Log in with your Zoho account
+3. Review and grant permissions
+4. You're automatically redirected back to Studio
+
+### Required Scopes
+
+The integration requests the following Zoho CRM scopes:
+
+**CRM Scopes:**
+- `ZohoCRM.modules.ALL` - Full access to read and write CRM modules
+- `ZohoCRM.settings.ALL` - Access to CRM settings and metadata
+- `ZohoCRM.users.READ` - Read user and team information
+- `ZohoCRM.org.READ` - Read organization details
+
+**Specific Module Permissions:**
+- Read and write access to Leads, Contacts, Deals, Accounts, and Tasks
+- Search and filter across all modules
+- Create, update, and delete records
+- Manage custom fields and properties
+
+<Tip>
+  You can manage connected applications in your Zoho Account under **Security** → **Active Sessions** → **Connected Apps**.
+</Tip>
+
+## Rate Limits
+
+Zoho CRM API enforces quota limits based on your plan:
+
+| Plan Type | API Calls per Day | Concurrent Requests |
+|-----------|-------------------|---------------------|
+| Free | 5,000 | 10 |
+| Standard | 25,000 | 10 |
+| Professional | 50,000 | 25 |
+| Enterprise | 100,000 | 25 |
+| Ultimate | 200,000 | 50 |
+
+**Rate Limit Headers:**
+- Calls are tracked per 24-hour rolling window
+- Remaining quota is returned in response headers
+- API calls reset at midnight UTC
+
+<Info>
+  Studio automatically handles rate limiting with exponential backoff and retry logic.
+</Info>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection Failed" icon="triangle-exclamation">
+    **Issue:** OAuth authorization didn't complete
+
+    **Solutions:**
+    - Ensure you're logged into the correct Zoho account
+    - Try a different browser or incognito mode
+    - Check popup blockers aren't interfering
+    - Verify your Zoho CRM subscription is active
+    - For enterprise accounts, check admin policies
+  </Accordion>
+
+  <Accordion title="Permission Denied" icon="lock">
+    **Issue:** Insufficient privileges error
+
+    **Solutions:**
+    - Reconnect to grant additional scopes
+    - Verify your user role has CRM module access
+    - Check organization-level permissions
+    - For enterprise, ensure app is approved by admin
+    - Contact Zoho support to verify account status
+  </Accordion>
+
+  <Accordion title="Record Not Found" icon="circle-xmark">
+    **Issue:** Cannot find specified record
+
+    **Solutions:**
+    - Verify the record ID is correct
+    - Record may have been deleted or archived
+    - Check if you have permission to view the module
+    - Ensure record type matches the operation
+    - Try searching by alternate criteria
+  </Accordion>
+
+  <Accordion title="Update Failed" icon="pen-slash">
+    **Issue:** Cannot update record
+
+    **Solutions:**
+    - Verify you have edit permissions for the module
+    - Check for required fields that are missing
+    - Ensure field values match expected data types
+    - Some system fields cannot be updated
+    - Check for validation rules or workflows blocking the update
+  </Accordion>
+
+  <Accordion title="Duplicate Record Error" icon="copy">
+    **Issue:** Record already exists
+
+    **Solutions:**
+    - Zoho CRM has duplicate detection rules
+    - Search for existing record before creating
+    - Update existing record instead of creating new
+    - Modify unique field values
+    - Disable duplicate checking if appropriate
+  </Accordion>
+
+  <Accordion title="Rate Limit Exceeded" icon="gauge">
+    **Issue:** Too many API calls error
+
+    **Solutions:**
+    - Wait for rate limit to reset (24-hour window)
+    - Upgrade to higher plan for more quota
+    - Optimize workflows to reduce API calls
+    - Use batch operations where possible
+    - Studio automatically handles retries
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Data Quality" icon="database">
+    - Use required fields consistently
+    - Implement data validation rules
+    - Regularly clean duplicate records
+    - Standardize naming conventions
+    - Leverage custom fields appropriately
+  </Card>
+
+  <Card title="Pipeline Management" icon="chart-line">
+    - Define clear deal stages
+    - Set realistic close dates
+    - Track activities on every deal
+    - Use probability scoring
+    - Review pipeline regularly
+  </Card>
+
+  <Card title="Performance" icon="gauge-high">
+    - Use search filters to limit results
+    - Implement pagination for large datasets
+    - Batch operations when possible
+    - Cache frequently accessed data
+    - Monitor API quota usage
+  </Card>
+
+  <Card title="Security" icon="shield">
+    - Review connected apps regularly
+    - Use role-based access control
+    - Audit data access logs
+    - Encrypt sensitive data
+    - Revoke access when not needed
+  </Card>
+</CardGroup>
+
+## Links and Resources
+
+<CardGroup cols={2}>
+  <Card title="Zoho CRM API Reference" icon="code" href="https://www.zoho.com/crm/developer/docs/api/">
+    Official Zoho CRM API documentation
+  </Card>
+
+  <Card title="Zoho CRM Help Center" icon="circle-question" href="https://help.zoho.com/portal/en/kb/crm">
+    Zoho CRM support and troubleshooting
+  </Card>
+
+  <Card title="Zoho Developer Console" icon="terminal" href="https://api-console.zoho.com/">
+    Manage API credentials and quotas
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://www.nimblebrain.ai/discord?utm_source=docs&utm_campaign=studio) or email support@nimblebrain.ai

@@ -1,0 +1,126 @@
+---
+title: 'X'
+description: 'Social media platform for posts, engagement, and messaging'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="twitter">
+    Connect your X (Twitter) account to automate social media workflows, monitor mentions, and engage with your audience programmatically.
+  </Card>
+  <Card title="Use Cases" icon="lightbulb">
+    - Auto-post content on schedule
+    - Monitor brand mentions
+    - Engage with followers
+    - Analyze tweet performance
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+<Steps>
+  <Step title="Add the Connection">
+    Navigate to **Connections** in your workspace and click **Add Connection**. Select **X** from the list.
+  </Step>
+  <Step title="Authorize Access">
+    Click **Connect** and authorize NimbleBrain to access your X account. You'll be redirected to X to grant permissions.
+  </Step>
+  <Step title="Start Using">
+    Once connected, X tools will be available in your playbooks and agents. Try asking Nira to "post a tweet" or "check my mentions".
+  </Step>
+</Steps>
+
+## Available Tools
+
+<AccordionGroup>
+  <Accordion title="Tweets" icon="message">
+    | Tool | Description |
+    |------|-------------|
+    | `X_CREATE_TWEET` | Post a new tweet |
+    | `X_GET_TWEET` | Retrieve a specific tweet |
+    | `X_DELETE_TWEET` | Delete a tweet |
+    | `X_SEARCH_TWEETS` | Search for tweets |
+  </Accordion>
+
+  <Accordion title="Direct Messages" icon="envelope">
+    | Tool | Description |
+    |------|-------------|
+    | `X_SEND_DM` | Send a direct message |
+    | `X_GET_DMS` | Retrieve direct messages |
+  </Accordion>
+
+  <Accordion title="Users & Followers" icon="users">
+    | Tool | Description |
+    |------|-------------|
+    | `X_GET_USER` | Get user profile information |
+    | `X_GET_FOLLOWERS` | List followers |
+    | `X_GET_FOLLOWING` | List accounts being followed |
+    | `X_FOLLOW_USER` | Follow a user |
+    | `X_UNFOLLOW_USER` | Unfollow a user |
+  </Accordion>
+
+  <Accordion title="Lists" icon="list">
+    | Tool | Description |
+    |------|-------------|
+    | `X_GET_LISTS` | Get your lists |
+    | `X_GET_LIST_MEMBERS` | Get members of a list |
+  </Accordion>
+</AccordionGroup>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Post Content">
+    **Prompt:** "Post a tweet about our new product launch"
+
+    Nira will use `X_CREATE_TWEET` to post the content to your connected X account.
+  </Tab>
+  <Tab title="Monitor Mentions">
+    **Prompt:** "Show me recent mentions of @nimblebrain"
+
+    Nira will search for mentions and present them in a readable format.
+  </Tab>
+  <Tab title="Engage with Followers">
+    **Prompt:** "Reply to the last 3 people who mentioned us thanking them"
+
+    Nira will find recent mentions and compose personalized replies.
+  </Tab>
+</Tabs>
+
+## Authentication
+
+X uses **OAuth 2.0** for authentication. When you connect, you'll authorize NimbleBrain to:
+- Read your tweets and profile
+- Post tweets on your behalf
+- Access direct messages
+- Manage your following/followers
+
+<Warning>
+  X API has rate limits. Heavy usage may result in temporary restrictions. See [X API documentation](https://developer.x.com/en/docs/twitter-api/rate-limits) for details.
+</Warning>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection failed">
+    Ensure you're logged into the correct X account. Try disconnecting and reconnecting.
+  </Accordion>
+  <Accordion title="Rate limit errors">
+    X has strict rate limits. Wait 15 minutes and try again, or reduce request frequency.
+  </Accordion>
+  <Accordion title="Permission denied">
+    Some actions require elevated API access. Contact support if you need enhanced permissions.
+  </Accordion>
+</AccordionGroup>
+
+## Links and Resources
+
+<CardGroup cols={2}>
+  <Card title="X Developer Portal" icon="code" href="https://developer.x.com/">
+    Official X API documentation
+  </Card>
+  <Card title="Need Help?" icon="discord" href="https://www.nimblebrain.ai/discord?utm_source=docs&utm_campaign=studio">
+    Join our Discord community
+  </Card>
+</CardGroup>

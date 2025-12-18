@@ -1,0 +1,507 @@
+---
+title: 'Intercom'
+description: 'Customer messaging platform for sales, marketing, and support'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="comment">
+    Intercom integration connects AI tools directly to your customer messaging platform, enabling natural language interactions with conversations, contacts, companies, and support content.
+
+    **Key Features:**
+    - Manage conversations and messages
+    - Access and update contacts
+    - Organize company data
+    - Create and manage articles
+    - Send targeted messages
+    - Track customer interactions
+    - Automate support workflows
+    - Search knowledge base
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **Customer Support:**
+    - Automate responses to common questions
+    - Search and share knowledge base articles
+    - Track and prioritize support conversations
+    - Update contact information from conversations
+
+    **Sales & Marketing:**
+    - Send personalized outreach messages
+    - Track company engagement
+    - Create targeted campaigns
+    - Update lead information
+
+    **Workflow Automation:**
+    - Sync customer data with CRM
+    - Generate support reports
+    - Escalate urgent conversations
+    - Create tickets from email threads
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+<Steps>
+  <Step title="Connect Your Intercom Account">
+    NimbleBrain Studio uses OAuth2 to securely connect to your Intercom workspace.
+
+    1. Navigate to **Connections** in the sidebar
+    2. Click **Browse Catalog**
+    3. Search for "Intercom"
+    4. Click **Install**
+    5. Click **Connect** and authorize with your Intercom account
+    6. Grant the requested permissions for Intercom access
+
+    <Tip>
+      OAuth2 provides secure, token-based authentication. You'll need admin permissions to install integrations in your Intercom workspace.
+    </Tip>
+  </Step>
+
+  <Step title="Verify Connection">
+    Once connected, test the integration:
+
+    ```text
+    "Show me my recent Intercom conversations"
+    ```
+
+    **Other test prompts:**
+    - "List all contacts in my Intercom workspace"
+    - "Find articles about pricing in my knowledge base"
+    - "Show me all companies with more than 50 employees"
+  </Step>
+</Steps>
+
+## Available Tools
+
+The Intercom connection provides tools organized into the following categories:
+
+### Conversation Management
+
+<AccordionGroup>
+  <Accordion title="Conversation Operations" icon="messages">
+    Manage customer conversations and messages.
+
+    | Tool | Description |
+    |------|-------------|
+    | `INTERCOM_LIST_CONVERSATIONS` | Retrieve conversations with filtering and pagination |
+    | `INTERCOM_GET_CONVERSATION` | Get detailed information about a specific conversation |
+    | `INTERCOM_REPLY_TO_CONVERSATION` | Send a reply in an existing conversation |
+    | `INTERCOM_CREATE_CONVERSATION` | Start a new conversation with a contact |
+    | `INTERCOM_CLOSE_CONVERSATION` | Close or resolve a conversation |
+    | `INTERCOM_ASSIGN_CONVERSATION` | Assign conversation to a team member |
+    | `INTERCOM_SEARCH_CONVERSATIONS` | Search conversations by keywords and filters |
+
+    **Example Usage:**
+    ```text
+    "Reply to the conversation with John Smith: 'Thanks for reaching out! I'll look into this for you.'"
+    ```
+
+    <Note>
+      Conversations can include multiple messages and can be assigned to different team members or teams.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Contact Management
+
+<AccordionGroup>
+  <Accordion title="Contact Operations" icon="user">
+    Access and manage customer contact information.
+
+    | Tool | Description |
+    |------|-------------|
+    | `INTERCOM_LIST_CONTACTS` | List all contacts with pagination |
+    | `INTERCOM_GET_CONTACT` | Get detailed contact information |
+    | `INTERCOM_CREATE_CONTACT` | Create a new contact |
+    | `INTERCOM_UPDATE_CONTACT` | Update contact details and attributes |
+    | `INTERCOM_DELETE_CONTACT` | Remove a contact from workspace |
+    | `INTERCOM_SEARCH_CONTACTS` | Search contacts by email, name, or attributes |
+    | `INTERCOM_ARCHIVE_CONTACT` | Archive inactive contacts |
+
+    **Example Usage:**
+    ```text
+    "Create a new contact with email sarah@example.com and name 'Sarah Johnson'"
+    ```
+
+    <Tip>
+      Contacts can have custom attributes for segmentation and personalization. Update these to power targeted campaigns.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+### Company Management
+
+<AccordionGroup>
+  <Accordion title="Company Operations" icon="building">
+    Manage company records and account information.
+
+    | Tool | Description |
+    |------|-------------|
+    | `INTERCOM_LIST_COMPANIES` | List all companies in workspace |
+    | `INTERCOM_GET_COMPANY` | Get detailed company information |
+    | `INTERCOM_CREATE_COMPANY` | Create a new company record |
+    | `INTERCOM_UPDATE_COMPANY` | Update company details and attributes |
+    | `INTERCOM_DELETE_COMPANY` | Remove a company from workspace |
+    | `INTERCOM_ATTACH_CONTACT_TO_COMPANY` | Link a contact to a company |
+    | `INTERCOM_SEARCH_COMPANIES` | Search companies by name or attributes |
+
+    **Example Usage:**
+    ```text
+    "Update the company 'Acme Corp' to set the plan attribute to 'Enterprise'"
+    ```
+
+    <Note>
+      Companies help organize contacts by organization, enabling account-based workflows and reporting.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Knowledge Base & Articles
+
+<AccordionGroup>
+  <Accordion title="Article Operations" icon="book">
+    Manage help center articles and knowledge base content.
+
+    | Tool | Description |
+    |------|-------------|
+    | `INTERCOM_LIST_ARTICLES` | List all help center articles |
+    | `INTERCOM_GET_ARTICLE` | Get article content and details |
+    | `INTERCOM_CREATE_ARTICLE` | Create a new help article |
+    | `INTERCOM_UPDATE_ARTICLE` | Update article content or metadata |
+    | `INTERCOM_DELETE_ARTICLE` | Remove an article |
+    | `INTERCOM_SEARCH_ARTICLES` | Search knowledge base by keywords |
+    | `INTERCOM_PUBLISH_ARTICLE` | Publish a draft article |
+
+    **Example Usage:**
+    ```text
+    "Search my knowledge base for articles about 'password reset'"
+    ```
+
+    <Tip>
+      Keep your knowledge base up to date to reduce support volume and empower customers with self-service.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+### Messaging
+
+<AccordionGroup>
+  <Accordion title="Message Operations" icon="envelope">
+    Send targeted messages to contacts and leads.
+
+    | Tool | Description |
+    |------|-------------|
+    | `INTERCOM_SEND_MESSAGE` | Send a message to a specific contact |
+    | `INTERCOM_SEND_EMAIL` | Send an email to a contact |
+    | `INTERCOM_CREATE_MESSAGE` | Create a new message or broadcast |
+    | `INTERCOM_GET_MESSAGE` | Retrieve message details |
+
+    **Example Usage:**
+    ```text
+    "Send a message to contact with email john@example.com: 'We've just released a new feature you might like!'"
+    ```
+
+    <Warning>
+      Be mindful of message frequency to avoid overwhelming your contacts. Follow messaging best practices and respect user preferences.
+    </Warning>
+  </Accordion>
+</AccordionGroup>
+
+### Tags & Segmentation
+
+<AccordionGroup>
+  <Accordion title="Tag Operations" icon="tags">
+    Organize contacts and companies with tags.
+
+    | Tool | Description |
+    |------|-------------|
+    | `INTERCOM_LIST_TAGS` | List all tags in workspace |
+    | `INTERCOM_CREATE_TAG` | Create a new tag |
+    | `INTERCOM_TAG_CONTACT` | Add tag to a contact |
+    | `INTERCOM_TAG_COMPANY` | Add tag to a company |
+    | `INTERCOM_UNTAG_CONTACT` | Remove tag from contact |
+    | `INTERCOM_DELETE_TAG` | Delete a tag from workspace |
+
+    **Example Usage:**
+    ```text
+    "Tag all contacts from Acme Corp with 'vip-customer'"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Support Automation">
+    **Scenario:** Auto-respond to common support questions
+
+    **Prompt:**
+    ```text
+    "Search for articles about 'billing questions', then reply to the conversation with Sarah with the most relevant article link"
+    ```
+
+    **What happens:**
+    - Searches knowledge base for relevant articles
+    - Finds best matching content
+    - Sends article link in conversation reply
+    - Provides quick self-service resolution
+  </Tab>
+
+  <Tab title="Contact Enrichment">
+    **Scenario:** Update contact data from conversation
+
+    **Prompt:**
+    ```text
+    "Update the contact john@example.com to set company to 'Acme Corp' and plan to 'Enterprise'"
+    ```
+
+    **What happens:**
+    - Finds contact by email
+    - Updates custom attributes
+    - Enriches contact profile for segmentation
+  </Tab>
+
+  <Tab title="Conversation Triage">
+    **Scenario:** Prioritize and assign urgent conversations
+
+    **Prompt:**
+    ```text
+    "Find all open conversations with tag 'urgent', assign them to the support team, and send me a summary"
+    ```
+
+    **What happens:**
+    - Searches for urgent conversations
+    - Assigns to appropriate team
+    - Generates summary report
+    - Ensures quick response to high-priority issues
+  </Tab>
+
+  <Tab title="Company Research">
+    **Scenario:** Gather account information
+
+    **Prompt:**
+    ```text
+    "Show me all contacts at Acme Corp, their recent conversations, and the company plan status"
+    ```
+
+    **What happens:**
+    - Retrieves company record
+    - Lists associated contacts
+    - Pulls recent conversation history
+    - Provides comprehensive account overview
+  </Tab>
+
+  <Tab title="Knowledge Base Management">
+    **Scenario:** Create help content from conversations
+
+    **Prompt:**
+    ```text
+    "Create a new article titled 'How to Reset Your Password' with step-by-step instructions"
+    ```
+
+    **What happens:**
+    - Creates new article in knowledge base
+    - Adds detailed content
+    - Publishes for customer self-service
+    - Reduces future support volume
+  </Tab>
+</Tabs>
+
+## Authentication
+
+<Info>
+  **OAuth2 Authentication**: This connection uses OAuth2 for secure authentication.
+</Info>
+
+### How It Works
+
+When you connect Intercom in NimbleBrain Studio:
+
+1. You'll be redirected to Intercom's authorization page
+2. Log in with your Intercom account
+3. Review and grant permissions
+4. You're automatically redirected back to Studio
+
+### Required Permissions
+
+The integration requests the following Intercom permissions:
+
+**Conversation Permissions:**
+- Read conversations
+- Write and reply to conversations
+- Manage conversation assignments
+
+**Contact & Company Permissions:**
+- Read contact and company data
+- Create and update contacts and companies
+- Manage tags and attributes
+
+**Content Permissions:**
+- Read articles and knowledge base content
+- Create and update articles
+- Publish help center content
+
+**Messaging Permissions:**
+- Send messages to contacts
+- Create and send email campaigns
+
+<Tip>
+  You can manage connected apps in Intercom under **Settings** → **Developers** → **Apps**.
+</Tip>
+
+### Access Levels
+
+Different Intercom plans provide different API access:
+
+| Plan | API Access |
+|------|-----------|
+| Starter | Basic API access with rate limits |
+| Pro | Full API access |
+| Premium | Full API access with higher limits |
+
+<Note>
+  Some advanced features may require specific Intercom plan levels. Check your plan details if you encounter permission issues.
+</Note>
+
+## Rate Limits
+
+Intercom enforces rate limits based on your plan:
+
+| Plan | Rate Limit |
+|------|-----------|
+| Starter | 500 requests per minute |
+| Pro | 1,000 requests per minute |
+| Premium | 2,000 requests per minute |
+
+**Rate Limit Headers:**
+- `X-RateLimit-Limit` - Total requests allowed
+- `X-RateLimit-Remaining` - Requests remaining
+- `X-RateLimit-Reset` - Time when limit resets
+
+<Info>
+  Studio automatically handles rate limiting with exponential backoff for retries.
+</Info>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection Failed" icon="triangle-exclamation">
+    **Issue:** OAuth authorization didn't complete
+
+    **Solutions:**
+    - Ensure you're logged into the correct Intercom workspace
+    - Try a different browser or incognito mode
+    - Check popup blockers aren't interfering
+    - Verify you have admin permissions in Intercom
+    - Contact your workspace admin if you lack permissions
+  </Accordion>
+
+  <Accordion title="Permission Denied" icon="lock">
+    **Issue:** Insufficient privileges error
+
+    **Solutions:**
+    - Reconnect to grant additional permissions
+    - Verify your Intercom plan supports the API feature
+    - Check if your admin has restricted API access
+    - Ensure the app is approved in your workspace
+  </Accordion>
+
+  <Accordion title="Contact Not Found" icon="user-slash">
+    **Issue:** Cannot find specified contact
+
+    **Solutions:**
+    - Verify the contact email or ID is correct
+    - Contact may have been deleted or archived
+    - Check if contact exists in a different workspace
+    - Try searching with different criteria
+  </Accordion>
+
+  <Accordion title="Rate Limit Exceeded" icon="gauge">
+    **Issue:** Too many requests error (429)
+
+    **Solutions:**
+    - Wait for rate limit to reset (shown in retry-after header)
+    - Reduce frequency of requests
+    - Upgrade Intercom plan for higher limits
+    - Studio automatically handles retries with backoff
+  </Accordion>
+
+  <Accordion title="Conversation Reply Failed" icon="message-xmark">
+    **Issue:** Cannot send reply to conversation
+
+    **Solutions:**
+    - Verify conversation is still open
+    - Check if conversation is assigned to you
+    - Ensure conversation exists and hasn't been deleted
+    - Verify message content meets Intercom requirements
+  </Accordion>
+
+  <Accordion title="Article Not Published" icon="file-circle-xmark">
+    **Issue:** Cannot publish article
+
+    **Solutions:**
+    - Ensure article has required fields (title, body)
+    - Check article is in draft state
+    - Verify you have permission to publish
+    - Review article content for invalid formatting
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Customer Communication" icon="comments">
+    - Respond to conversations promptly
+    - Personalize messages with contact data
+    - Use templates for consistency
+    - Tag conversations for organization
+    - Close conversations when resolved
+  </Card>
+
+  <Card title="Data Management" icon="database">
+    - Keep contact information up to date
+    - Use custom attributes for segmentation
+    - Archive inactive contacts regularly
+    - Link contacts to companies
+    - Maintain clean tag taxonomy
+  </Card>
+
+  <Card title="Knowledge Base" icon="book-open">
+    - Keep articles current and accurate
+    - Use clear, searchable titles
+    - Organize with collections
+    - Link related articles
+    - Monitor article performance
+  </Card>
+
+  <Card title="Security" icon="shield">
+    - Review connected apps regularly
+    - Use minimal required permissions
+    - Monitor API usage and activity
+    - Don't share access tokens
+    - Rotate credentials periodically
+  </Card>
+</CardGroup>
+
+## Links and Resources
+
+<CardGroup cols={2}>
+  <Card title="Intercom API Reference" icon="code" href="https://developers.intercom.com/docs/references/rest-api">
+    Official Intercom API documentation
+  </Card>
+
+  <Card title="Intercom Help Center" icon="circle-question" href="https://www.intercom.com/help">
+    Intercom support and guides
+  </Card>
+
+  <Card title="Developer Hub" icon="rocket" href="https://developers.intercom.com/">
+    Intercom developer resources
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://www.nimblebrain.ai/discord?utm_source=docs&utm_campaign=studio) or email support@nimblebrain.ai

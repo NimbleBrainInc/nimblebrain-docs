@@ -1,0 +1,468 @@
+---
+title: 'SerpApi'
+description: 'Search engine results API for Google, Bing, and other search engines'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="magnifying-glass">
+    SerpApi integration provides programmatic access to search engine results from Google, Bing, and other platforms, enabling AI tools to retrieve real-time search data, images, news, shopping results, and more.
+
+    **Key Features:**
+    - Google Search results
+    - Bing Search results
+    - Image Search
+    - News Search
+    - Shopping results
+    - Maps and local search
+    - Video search
+    - Scholar search
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **Research & Analysis:**
+    - Gather competitive intelligence
+    - Monitor brand mentions
+    - Track product pricing
+    - Analyze search trends
+
+    **Content Discovery:**
+    - Find relevant news articles
+    - Source images for projects
+    - Discover related content
+    - Research topics and keywords
+
+    **Data Automation:**
+    - Build custom search dashboards
+    - Create automated alerts
+    - Extract structured data
+    - Generate market research reports
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+<Steps>
+  <Step title="Get Your SerpApi API Key">
+    You'll need a SerpApi API key to use this integration.
+
+    1. Sign up at [SerpApi.com](https://serpapi.com)
+    2. Navigate to your dashboard
+    3. Copy your API key from the account settings
+    4. Free tier includes 100 searches/month
+
+    <Tip>
+      SerpApi offers a free plan with 100 searches per month, perfect for testing and small projects.
+    </Tip>
+  </Step>
+
+  <Step title="Connect to NimbleBrain Studio">
+    Add SerpApi to your workspace:
+
+    1. Navigate to **Connections** in the sidebar
+    2. Click **Browse Catalog**
+    3. Search for "SerpApi"
+    4. Click **Install**
+    5. Enter your API key when prompted
+    6. Click **Connect** to complete setup
+
+    <Info>
+      Your API key is stored securely and encrypted. SerpApi uses API key authentication for all requests.
+    </Info>
+  </Step>
+
+  <Step title="Verify Connection">
+    Once connected, test the integration:
+
+    ```text
+    "Search Google for recent news about artificial intelligence"
+    ```
+
+    **Other test prompts:**
+    - "Find images of mountain landscapes"
+    - "Search Bing for Python tutorials"
+    - "Get shopping results for wireless headphones"
+    - "Search Google Scholar for machine learning papers"
+  </Step>
+</Steps>
+
+## Available Tools
+
+The SerpApi connection provides **10+ tools** for accessing different search engines and result types:
+
+### Search Engines
+
+<AccordionGroup>
+  <Accordion title="Google Search" icon="google">
+    Retrieve Google search results with rich metadata.
+
+    | Tool | Description |
+    |------|-------------|
+    | `SERPAPI_GOOGLE_SEARCH` | Search Google with filters for location, language, date range, and result count |
+    | `SERPAPI_GOOGLE_IMAGES` | Search Google Images with size, type, and color filters |
+    | `SERPAPI_GOOGLE_NEWS` | Get Google News results with date and source filtering |
+    | `SERPAPI_GOOGLE_SHOPPING` | Search Google Shopping for products with pricing |
+    | `SERPAPI_GOOGLE_MAPS` | Find local businesses and locations |
+
+    **Example Usage:**
+    ```text
+    "Search Google for Python web frameworks and show me the top 10 results"
+    ```
+
+    <Note>
+      Results include titles, snippets, URLs, rankings, and rich metadata like featured snippets and knowledge graphs.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Bing Search" icon="magnifying-glass">
+    Access Bing search results and features.
+
+    | Tool | Description |
+    |------|-------------|
+    | `SERPAPI_BING_SEARCH` | Search Bing with customizable parameters |
+    | `SERPAPI_BING_NEWS` | Get Bing News results |
+    | `SERPAPI_BING_IMAGES` | Search Bing Images |
+
+    **Example Usage:**
+    ```text
+    "Use Bing to find recent news about climate change"
+    ```
+
+    <Tip>
+      Bing can provide different results than Google, useful for cross-referencing and broader coverage.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Specialized Search" icon="graduation-cap">
+    Access specialized search engines and features.
+
+    | Tool | Description |
+    |------|-------------|
+    | `SERPAPI_GOOGLE_SCHOLAR` | Search academic papers and citations |
+    | `SERPAPI_GOOGLE_VIDEOS` | Find video content across platforms |
+    | `SERPAPI_GOOGLE_JOBS` | Search for job listings |
+
+    **Example Usage:**
+    ```text
+    "Find academic papers about neural networks published in the last year"
+    ```
+
+    <Note>
+      Google Scholar results include citation counts, authors, publication dates, and PDF links.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Search Parameters
+
+All search tools support advanced filtering:
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `q` | Search query | `"machine learning"` |
+| `location` | Geographic location | `"New York, NY"` |
+| `hl` | Language | `"en"` |
+| `gl` | Country | `"us"` |
+| `num` | Number of results | `10` |
+| `start` | Pagination offset | `0` |
+| `tbs` | Time-based search | `"qdr:d"` (past day) |
+
+<Info>
+  Time-based search (tbs) values: `qdr:h` (hour), `qdr:d` (day), `qdr:w` (week), `qdr:m` (month), `qdr:y` (year)
+</Info>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Competitive Research">
+    **Scenario:** Monitor competitor mentions and activities
+
+    **Prompt:**
+    ```text
+    "Search Google News for articles about [competitor name] from the past week and summarize the key developments"
+    ```
+
+    **What happens:**
+    - Searches Google News with date filter
+    - Retrieves recent articles
+    - Extracts titles, sources, and snippets
+    - Provides structured summary
+  </Tab>
+
+  <Tab title="Content Discovery">
+    **Scenario:** Find visual assets for a project
+
+    **Prompt:**
+    ```text
+    "Find high-resolution images of modern office spaces with natural lighting"
+    ```
+
+    **What happens:**
+    - Searches Google Images with size filters
+    - Returns image URLs and metadata
+    - Includes dimensions and source websites
+    - Provides preview links
+  </Tab>
+
+  <Tab title="Market Research">
+    **Scenario:** Analyze product pricing across retailers
+
+    **Prompt:**
+    ```text
+    "Search Google Shopping for wireless noise-canceling headphones under $300 and compare the top 5 results"
+    ```
+
+    **What happens:**
+    - Searches Google Shopping with price filter
+    - Retrieves product listings with prices
+    - Shows merchant information
+    - Provides comparison data
+  </Tab>
+
+  <Tab title="Academic Research">
+    **Scenario:** Find scholarly sources for a paper
+
+    **Prompt:**
+    ```text
+    "Search Google Scholar for papers about transformer models in NLP published since 2020, sorted by citations"
+    ```
+
+    **What happens:**
+    - Searches Google Scholar with filters
+    - Returns academic papers with metadata
+    - Includes citation counts and authors
+    - Provides PDF links when available
+  </Tab>
+
+  <Tab title="Local Business Search">
+    **Scenario:** Find local services
+
+    **Prompt:**
+    ```text
+    "Find coffee shops in downtown Seattle with ratings above 4 stars"
+    ```
+
+    **What happens:**
+    - Searches Google Maps for locations
+    - Filters by ratings
+    - Returns business details
+    - Includes addresses and reviews
+  </Tab>
+</Tabs>
+
+## Authentication
+
+<Info>
+  **API Key Authentication**: This connection uses API key authentication.
+</Info>
+
+### How It Works
+
+SerpApi authenticates requests using your API key:
+
+1. You provide your API key during connection setup
+2. NimbleBrain stores it securely and encrypted
+3. Each request includes your key in the query parameters
+4. SerpApi validates the key and processes the request
+
+### API Key Security
+
+**Best Practices:**
+- Never share your API key publicly
+- Rotate keys periodically
+- Monitor usage in SerpApi dashboard
+- Use different keys for different projects
+- Revoke compromised keys immediately
+
+<Tip>
+  You can manage your API keys and monitor usage at [serpapi.com/account](https://serpapi.com/account)
+</Tip>
+
+## Rate Limits
+
+SerpApi enforces usage limits based on your plan:
+
+| Plan | Monthly Searches | Rate Limit |
+|------|------------------|------------|
+| Free | 100 searches | 5 searches/second |
+| Developer | 5,000 searches | 10 searches/second |
+| Production | 30,000 searches | 20 searches/second |
+| Enterprise | Custom | Custom |
+
+**Quota Tracking:**
+- Each search consumes 1 credit
+- Pagination counts as separate searches
+- Credits reset monthly
+- Overage charges apply on paid plans
+
+<Info>
+  Studio automatically handles rate limiting and will queue requests if limits are reached.
+</Info>
+
+### Search Optimization
+
+To maximize your quota:
+- Use specific queries to reduce result pagination
+- Cache frequently accessed results
+- Combine multiple data points in single searches
+- Use time filters to narrow results
+- Batch similar searches together
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Invalid API Key" icon="key">
+    **Issue:** Authentication failed or invalid API key error
+
+    **Solutions:**
+    - Verify your API key is correct (no extra spaces)
+    - Check if key was revoked in SerpApi dashboard
+    - Ensure account is active and not suspended
+    - Try generating a new API key
+    - Reconnect the integration with fresh credentials
+  </Accordion>
+
+  <Accordion title="Rate Limit Exceeded" icon="gauge">
+    **Issue:** Too many requests or quota exceeded
+
+    **Solutions:**
+    - Check your monthly quota in SerpApi dashboard
+    - Wait for rate limit window to reset
+    - Upgrade to higher tier for more searches
+    - Optimize queries to use fewer searches
+    - Implement caching for repeated searches
+  </Accordion>
+
+  <Accordion title="No Results Found" icon="magnifying-glass-minus">
+    **Issue:** Search returns empty results
+
+    **Solutions:**
+    - Try broader search terms
+    - Remove overly specific filters
+    - Check spelling and syntax
+    - Verify location/language settings
+    - Try different search engine (Bing vs Google)
+  </Accordion>
+
+  <Accordion title="Search Timeout" icon="clock">
+    **Issue:** Request times out or takes too long
+
+    **Solutions:**
+    - Reduce number of results requested
+    - Simplify complex queries
+    - Check SerpApi status page for outages
+    - Try again with more specific search
+    - Contact SerpApi support if persistent
+  </Accordion>
+
+  <Accordion title="Missing Data Fields" icon="database">
+    **Issue:** Expected data not in results
+
+    **Solutions:**
+    - Not all searches return all fields
+    - Check SerpApi documentation for field availability
+    - Try different search parameters
+    - Some data depends on search engine features
+    - Verify your query matches the search type
+  </Accordion>
+
+  <Accordion title="Location Not Working" icon="location-dot">
+    **Issue:** Location parameter not affecting results
+
+    **Solutions:**
+    - Use full location names (city, state/country)
+    - Try canonical location format
+    - Verify location is supported by search engine
+    - Check spelling of location name
+    - Some searches ignore location parameter
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Query Optimization" icon="wand-magic-sparkles">
+    - Use specific, targeted queries
+    - Leverage advanced search operators
+    - Filter by date when relevant
+    - Specify language and location
+    - Request only needed result count
+  </Card>
+
+  <Card title="Data Management" icon="database">
+    - Cache frequently accessed results
+    - Store search data for analysis
+    - Track search patterns over time
+    - Deduplicate similar searches
+    - Archive historical data
+  </Card>
+
+  <Card title="Cost Efficiency" icon="dollar-sign">
+    - Monitor quota usage regularly
+    - Batch related searches
+    - Use pagination wisely
+    - Implement result caching
+    - Choose appropriate plan tier
+  </Card>
+
+  <Card title="Result Quality" icon="star">
+    - Validate search results
+    - Cross-reference multiple sources
+    - Check result freshness
+    - Verify URLs are accessible
+    - Filter spam or low-quality results
+  </Card>
+</CardGroup>
+
+## Advanced Features
+
+### Search Operators
+
+Google and Bing support advanced search operators:
+
+| Operator | Description | Example |
+|----------|-------------|---------|
+| `"exact phrase"` | Exact match | `"machine learning"` |
+| `site:` | Specific domain | `site:github.com python` |
+| `filetype:` | File type | `filetype:pdf research` |
+| `intitle:` | In page title | `intitle:tutorial` |
+| `-` | Exclude term | `python -java` |
+| `OR` | Either term | `python OR javascript` |
+
+### Structured Data
+
+SerpApi returns structured data including:
+
+- **Organic Results**: Title, URL, snippet, position
+- **Featured Snippets**: Direct answers, definitions
+- **Knowledge Graph**: Entity information, facts
+- **People Also Ask**: Related questions
+- **Related Searches**: Similar queries
+- **Shopping Results**: Products, prices, merchants
+- **Local Pack**: Business listings, maps
+- **Images**: URLs, thumbnails, metadata
+
+## Links and Resources
+
+<CardGroup cols={2}>
+  <Card title="SerpApi Documentation" icon="book" href="https://serpapi.com/docs">
+    Official API documentation and guides
+  </Card>
+
+  <Card title="SerpApi Playground" icon="flask" href="https://serpapi.com/playground">
+    Test searches and explore parameters
+  </Card>
+
+  <Card title="Account Dashboard" icon="gauge" href="https://serpapi.com/account">
+    Manage API keys and monitor usage
+  </Card>
+
+  <Card title="Search Parameters" icon="sliders" href="https://serpapi.com/search-api">
+    Complete parameter reference
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://www.nimblebrain.ai/discord?utm_source=docs&utm_campaign=studio) or email support@nimblebrain.ai

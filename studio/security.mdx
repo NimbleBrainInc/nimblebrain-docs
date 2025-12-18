@@ -1,0 +1,153 @@
+---
+title: 'Security'
+description: 'How NimbleBrain protects your data and keeps your automations secure'
+---
+
+NimbleBrain is designed with security at its core. We understand that your automations often involve sensitive business data, and we take that responsibility seriously.
+
+## Our Approach to Data
+
+<Callout type="info" title="We Don't Train on Your Data">
+  Your business data is never used to train AI models. NimbleBrain orchestrates and automates your workflows, but we don't learn from your information.
+</Callout>
+
+### How NimbleBrain Handles Data
+
+NimbleBrain acts as an **orchestration layer** between your tools. Here's what that means:
+
+| What We Do | What We Don't Do |
+|------------|------------------|
+| Connect to your integrations via OAuth or API keys | Store your raw data long-term |
+| Execute automation workflows you define | Train AI models on your data |
+| Log activity for audit purposes | Share data between customers |
+| Cache data temporarily during execution | Sell or monetize your data |
+
+When Nira runs an automation, data flows through NimbleBrain to reach its destination (like sending an email or updating a CRM record), but we don't retain that data beyond what's needed for execution and logging.
+
+## Infrastructure
+
+NimbleBrain runs on trusted cloud infrastructure with industry-standard security practices.
+
+### Cloud Providers
+
+We leverage major cloud providers (AWS) for hosting, which provide:
+
+- Physical security at data centers
+- Network isolation and firewalls
+- Regular security audits and compliance certifications
+- Redundancy and high availability
+
+### Encryption
+
+<CardGroup cols={2}>
+  <Card title="In Transit" icon="lock">
+    All connections to NimbleBrain use TLS encryption. Your data is encrypted as it travels between your browser, our servers, and your connected tools.
+  </Card>
+  <Card title="Credentials" icon="key">
+    OAuth tokens and API keys are encrypted before storage. We never store credentials in plain text.
+  </Card>
+</CardGroup>
+
+## Access Controls
+
+NimbleBrain provides role-based access control (RBAC) to help you manage who can do what within your organization.
+
+### User Roles
+
+| Role | Permissions |
+|------|-------------|
+| **Owner** | Full access including billing, team management, and workspace deletion |
+| **Admin** | Manage playbooks, connections, and team members |
+| **Member** | Create and run playbooks, manage own connections |
+| **Viewer** | Read-only access to playbooks and activity logs |
+
+### Organization Features
+
+- **Team Management**: Invite team members and assign appropriate roles
+- **Workspace Isolation**: Separate environments for different projects or teams
+- **API Token Scoping**: Generate tokens with specific permissions for integrations
+
+<Callout type="tip">
+  Follow the principle of least privilege: grant team members only the access they need to do their work.
+</Callout>
+
+## Audit Logging
+
+Every action in NimbleBrain is logged for accountability and troubleshooting.
+
+### What We Log
+
+- Playbook executions (start time, status, duration)
+- Connection changes (added, removed, updated)
+- Team member actions (invites, role changes)
+- API token usage
+- Login events
+
+### Accessing Logs
+
+Activity logs are available in the Studio dashboard under **Activity**. You can filter by:
+
+- Date range
+- Action type
+- User
+- Playbook
+
+<Card title="Activity Logs" icon="list" href="/studio/activity-logs">
+  Learn more about viewing and filtering activity logs
+</Card>
+
+## Connection Security
+
+When you connect third-party services to NimbleBrain, we use secure authentication methods.
+
+### OAuth Connections
+
+For services that support OAuth (like Slack, Google, HubSpot):
+
+- We never see or store your password
+- You authorize NimbleBrain directly with the service
+- You can revoke access at any time from the service's settings
+- Tokens are encrypted at rest
+
+### API Key Connections
+
+For services using API keys:
+
+- Keys are encrypted before storage
+- Keys are never displayed in full after initial entry
+- You can rotate keys at any time
+
+<Callout type="warning">
+  Be careful when sharing API keys. Anyone with a key may have access to that service. Use NimbleBrain's built-in connection management rather than sharing keys directly.
+</Callout>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use Strong Authentication">
+    Enable two-factor authentication on your NimbleBrain account and on the services you connect.
+  </Accordion>
+  <Accordion title="Review Connected Services">
+    Periodically review your connections and remove any you no longer use.
+  </Accordion>
+  <Accordion title="Manage Team Access">
+    Remove team members who no longer need access. Use appropriate roles for each person.
+  </Accordion>
+  <Accordion title="Rotate API Tokens">
+    Regularly rotate API tokens, especially for production workspaces.
+  </Accordion>
+  <Accordion title="Monitor Activity Logs">
+    Check activity logs periodically for unexpected actions or access patterns.
+  </Accordion>
+</AccordionGroup>
+
+## Questions?
+
+If you have security questions or concerns, reach out to us:
+
+- **Email**: security@nimblebrain.ai
+- **Discord**: [Join our community](https://www.nimblebrain.ai/discord)
+
+<Callout type="info">
+  For enterprise security requirements (SSO, custom data retention, dedicated infrastructure), [schedule a call with our team](https://meetings.hubspot.com/nimblebrain/nimblebrain-discovery).
+</Callout>
