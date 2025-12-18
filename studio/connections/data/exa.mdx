@@ -1,0 +1,451 @@
+---
+title: 'Exa'
+description: 'AI-powered search engine for retrieving high-quality web content and data'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="magnifying-glass">
+    Exa is an AI-powered search engine that retrieves high-quality web content using semantic search. Unlike traditional keyword search, Exa understands the meaning and context of your queries to find the most relevant results.
+
+    **Key Features:**
+    - Semantic web search
+    - Content retrieval and extraction
+    - Find similar pages
+    - Highlights extraction
+    - Search by domain and date
+    - Filter by content type
+    - Auto-generated snippets
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **Research & Intelligence:**
+    - Find expert articles on specific topics
+    - Track competitor content and mentions
+    - Gather industry news and trends
+    - Research technical documentation
+    - Discover similar resources
+
+    **Content Discovery:**
+    - Find high-quality sources for research
+    - Discover related articles and papers
+    - Extract key highlights from pages
+    - Build knowledge bases from web content
+
+    **Automation Workflows:**
+    - Monitor web mentions and updates
+    - Aggregate content from multiple sources
+    - Build news digests and briefings
+    - Enrich data with web context
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+<Steps>
+  <Step title="Get Your Exa API Key">
+    Sign up for Exa and obtain your API key:
+
+    1. Visit [exa.ai](https://exa.ai) and create an account
+    2. Navigate to your dashboard
+    3. Generate a new API key
+    4. Copy the key for the next step
+
+    <Tip>
+      Store your API key securely. You'll need it to connect Exa to NimbleBrain Studio.
+    </Tip>
+  </Step>
+
+  <Step title="Connect Exa to Studio">
+    Add Exa to your NimbleBrain workspace:
+
+    1. Navigate to **Connections** in the sidebar
+    2. Click **Browse Catalog**
+    3. Search for "Exa"
+    4. Click **Install**
+    5. Enter your API key when prompted
+    6. Click **Connect**
+
+    <Info>
+      Your API key is encrypted and stored securely. NimbleBrain never shares your credentials.
+    </Info>
+  </Step>
+
+  <Step title="Verify Connection">
+    Once connected, test the integration:
+
+    ```text
+    "Search Exa for recent articles about artificial intelligence"
+    ```
+
+    **Other test prompts:**
+    - "Find pages similar to https://example.com"
+    - "Get the full content from the top 3 results about machine learning"
+    - "Extract highlights from articles about climate change"
+  </Step>
+</Steps>
+
+## Available Tools
+
+The Exa connection provides **4 core tools** for semantic search and content retrieval:
+
+### Search Tools
+
+<AccordionGroup>
+  <Accordion title="Web Search" icon="magnifying-glass">
+    Perform semantic searches to find relevant web content.
+
+    | Tool | Description |
+    |------|-------------|
+    | `EXA_SEARCH` | Search the web using AI-powered semantic understanding. Returns URLs, titles, and metadata. |
+
+    **Parameters:**
+    - `query` - Your search query (natural language)
+    - `numResults` - Number of results to return (default: 10, max: 100)
+    - `type` - Search type: `neural` (semantic) or `keyword` (traditional)
+    - `category` - Filter by content category (news, research, company, etc.)
+    - `startPublishedDate` - Only results after this date (ISO 8601)
+    - `endPublishedDate` - Only results before this date (ISO 8601)
+    - `includeDomains` - Array of domains to include
+    - `excludeDomains` - Array of domains to exclude
+
+    **Example Usage:**
+    ```text
+    "Search Exa for the latest research papers on quantum computing published in 2024"
+    ```
+
+    <Note>
+      Neural search understands context and meaning, while keyword search is more traditional and literal.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Find Similar Pages" icon="clone">
+    Discover pages similar to a given URL.
+
+    | Tool | Description |
+    |------|-------------|
+    | `EXA_FIND_SIMILAR` | Find web pages similar to a reference URL. Great for discovering related content. |
+
+    **Parameters:**
+    - `url` - The reference URL to find similar pages for
+    - `numResults` - Number of similar pages to return (default: 10, max: 100)
+    - `category` - Filter by content category
+    - `startPublishedDate` - Only results after this date
+    - `endPublishedDate` - Only results before this date
+    - `excludeSourceDomain` - Exclude results from the same domain
+
+    **Example Usage:**
+    ```text
+    "Find pages similar to this research paper: https://arxiv.org/abs/2103.00020"
+    ```
+
+    <Tip>
+      Use `excludeSourceDomain: true` to discover content from different sources, not just more pages from the same site.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Get Content" icon="file-lines">
+    Retrieve full content from search results or specific URLs.
+
+    | Tool | Description |
+    |------|-------------|
+    | `EXA_GET_CONTENTS` | Fetch the full text content, HTML, or cleaned text from web pages. |
+
+    **Parameters:**
+    - `ids` - Array of Exa result IDs (from search results)
+    - `text` - Include cleaned text content (default: true)
+    - `highlights` - Include key highlights/snippets
+    - `summary` - Include AI-generated summary
+    - `html` - Include raw HTML content
+
+    **Example Usage:**
+    ```text
+    "Get the full content and summary from the top 5 results about climate science"
+    ```
+
+    <Info>
+      The `text` field provides cleaned, readable content without ads or navigation elements.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Extract Highlights" icon="highlighter">
+    Extract key highlights and snippets from search results.
+
+    | Tool | Description |
+    |------|-------------|
+    | `EXA_HIGHLIGHTS` | Get the most relevant excerpts and highlights from web pages based on your query. |
+
+    **Parameters:**
+    - `ids` - Array of Exa result IDs (from search results)
+    - `query` - Optional query to focus highlights on specific aspects
+    - `numSentences` - Number of sentences per highlight (default: 3)
+    - `highlightsPerUrl` - Number of highlights per page (default: 3)
+
+    **Example Usage:**
+    ```text
+    "Extract highlights about pricing from the top competitor websites"
+    ```
+
+    <Tip>
+      Highlights are automatically selected based on relevance to your query, saving you from reading full pages.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Research Assistant">
+    **Scenario:** Gather recent research on a topic
+
+    **Prompt:**
+    ```text
+    "Search Exa for research papers about large language models published in 2024, get the content from the top 5 results, and summarize the key findings"
+    ```
+
+    **What happens:**
+    - Performs semantic search with date filter
+    - Retrieves full content from top results
+    - Provides summaries and key insights
+  </Tab>
+
+  <Tab title="Competitive Intelligence">
+    **Scenario:** Monitor competitor content
+
+    **Prompt:**
+    ```text
+    "Search Exa for recent blog posts from competitor.com about their new features, extract highlights about pricing and capabilities"
+    ```
+
+    **What happens:**
+    - Searches within specific domain
+    - Extracts relevant highlights
+    - Focuses on specific topics (pricing, features)
+  </Tab>
+
+  <Tab title="Content Discovery">
+    **Scenario:** Find similar high-quality sources
+
+    **Prompt:**
+    ```text
+    "Find pages similar to this article: https://example.com/article. Exclude results from example.com and show me the top 10"
+    ```
+
+    **What happens:**
+    - Analyzes the reference article
+    - Finds semantically similar content
+    - Excludes the source domain
+    - Returns diverse sources
+  </Tab>
+
+  <Tab title="News Aggregation">
+    **Scenario:** Build a daily news digest
+
+    **Prompt:**
+    ```text
+    "Search Exa for news articles about artificial intelligence published today, get highlights from the top 10, and create a digest"
+    ```
+
+    **What happens:**
+    - Filters by date and category
+    - Extracts key highlights
+    - Aggregates into digest format
+  </Tab>
+
+  <Tab title="Research Deep Dive">
+    **Scenario:** Comprehensive topic exploration
+
+    **Prompt:**
+    ```text
+    "Search Exa for expert articles about renewable energy, find similar pages to the top 3 results, and compile all the content into a research brief"
+    ```
+
+    **What happens:**
+    - Initial semantic search
+    - Expands with similar pages
+    - Retrieves full content
+    - Compiles comprehensive brief
+  </Tab>
+</Tabs>
+
+## Authentication
+
+<Info>
+  **API Key Authentication**: This connection uses API key authentication.
+</Info>
+
+### How It Works
+
+When you connect Exa in NimbleBrain Studio:
+
+1. You'll be prompted to enter your Exa API key
+2. The key is encrypted and stored securely in your workspace
+3. All API requests include the key in the authorization header
+4. You can rotate or update your key anytime in connection settings
+
+### Security Best Practices
+
+**Protecting Your API Key:**
+- Never share your API key publicly
+- Don't commit API keys to version control
+- Rotate keys periodically
+- Use separate keys for different environments
+- Revoke unused keys in your Exa dashboard
+
+<Tip>
+  You can manage your API keys in the Exa dashboard under Settings. Create separate keys for different applications to improve security and tracking.
+</Tip>
+
+## Rate Limits
+
+Exa enforces rate limits based on your plan:
+
+| Plan | Monthly Searches | Rate Limit |
+|------|-----------------|------------|
+| Free | 1,000 searches | 10 requests/minute |
+| Basic | 10,000 searches | 60 requests/minute |
+| Pro | 100,000 searches | 300 requests/minute |
+| Enterprise | Custom | Custom |
+
+**Usage Tips:**
+- Monitor your usage in the Exa dashboard
+- Batch requests when possible
+- Cache frequently accessed content
+- Use appropriate `numResults` limits
+- Consider upgrading for higher volume needs
+
+<Info>
+  Studio automatically handles rate limiting and will retry requests with exponential backoff if limits are reached.
+</Info>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection Failed" icon="triangle-exclamation">
+    **Issue:** API key not accepted
+
+    **Solutions:**
+    - Verify you copied the entire API key
+    - Check for extra spaces or characters
+    - Ensure the key hasn't been revoked
+    - Generate a new key in Exa dashboard
+    - Verify your Exa account is active
+  </Accordion>
+
+  <Accordion title="No Results Found" icon="magnifying-glass-minus">
+    **Issue:** Search returns empty results
+
+    **Solutions:**
+    - Try a different query phrasing
+    - Remove restrictive filters (dates, domains)
+    - Switch between `neural` and `keyword` search types
+    - Broaden your search terms
+    - Check if the content exists in Exa's index
+  </Accordion>
+
+  <Accordion title="Content Retrieval Failed" icon="file-circle-xmark">
+    **Issue:** Cannot fetch page content
+
+    **Solutions:**
+    - Verify the URL is accessible
+    - Some sites block automated access
+    - Try the `highlights` option instead of full content
+    - Check if the page requires authentication
+    - Content may have been removed or moved
+  </Accordion>
+
+  <Accordion title="Rate Limit Exceeded" icon="gauge">
+    **Issue:** Too many requests error
+
+    **Solutions:**
+    - Wait for rate limit to reset
+    - Reduce request frequency
+    - Upgrade to a higher plan
+    - Batch operations to reduce total requests
+    - Studio will automatically retry after cooldown
+  </Accordion>
+
+  <Accordion title="Invalid Parameters" icon="exclamation-circle">
+    **Issue:** Query parameters rejected
+
+    **Solutions:**
+    - Check date format (must be ISO 8601)
+    - Verify `numResults` is within limits (1-100)
+    - Ensure domain filters are valid domains
+    - Category must be a valid Exa category
+    - Review the Exa API documentation for valid values
+  </Accordion>
+
+  <Accordion title="Search Quality Issues" icon="ranking-star">
+    **Issue:** Results not relevant enough
+
+    **Solutions:**
+    - Use `neural` search for semantic understanding
+    - Make queries more specific and detailed
+    - Use date filters to get recent content
+    - Exclude irrelevant domains
+    - Try `findSimilar` with a good reference URL
+    - Experiment with different query phrasings
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Search Optimization" icon="magnifying-glass-chart">
+    - Use descriptive, natural language queries
+    - Leverage neural search for semantic understanding
+    - Filter by date for timely content
+    - Use domain filters to focus on quality sources
+    - Start with fewer results, expand if needed
+  </Card>
+
+  <Card title="Content Retrieval" icon="download">
+    - Request only needed fields (text, highlights, summary)
+    - Use highlights for quick scanning
+    - Cache frequently accessed content
+    - Batch content requests when possible
+    - Handle missing/blocked content gracefully
+  </Card>
+
+  <Card title="Rate Limit Management" icon="gauge-high">
+    - Monitor usage in Exa dashboard
+    - Cache results when appropriate
+    - Batch similar queries together
+    - Use reasonable `numResults` values
+    - Implement retry logic for rate limits
+  </Card>
+
+  <Card title="Query Design" icon="wand-magic-sparkles">
+    - Be specific about what you're looking for
+    - Use context words for better semantic matching
+    - Combine search with findSimilar for depth
+    - Filter by category for focused results
+    - Test queries to refine results
+  </Card>
+</CardGroup>
+
+## Links and Resources
+
+<CardGroup cols={2}>
+  <Card title="Exa Documentation" icon="book" href="https://docs.exa.ai">
+    Official Exa API documentation
+  </Card>
+
+  <Card title="Exa Dashboard" icon="chart-line" href="https://exa.ai/dashboard">
+    Manage API keys and view usage
+  </Card>
+
+  <Card title="API Reference" icon="code" href="https://docs.exa.ai/reference">
+    Detailed API endpoint reference
+  </Card>
+
+  <Card title="Exa Blog" icon="newspaper" href="https://exa.ai/blog">
+    Updates and best practices
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://www.nimblebrain.ai/discord?utm_source=docs&utm_campaign=studio) or email support@nimblebrain.ai

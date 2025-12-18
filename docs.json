@@ -52,6 +52,7 @@
                 "group": "Business",
                 "pages": [
                   "studio/connections/business/ahrefs",
+                  "studio/connections/business/airtable",
                   "studio/connections/business/calendly",
                   "studio/connections/business/gmail",
                   "studio/connections/business/googlesheets",
@@ -59,6 +60,7 @@
                   "studio/connections/business/intercom",
                   "studio/connections/business/slack",
                   "studio/connections/business/x",
+                  "studio/connections/business/zendesk",
                   "studio/connections/business/zohocrm",
                   "studio/connections/business/zoom"
                 ]
@@ -77,7 +79,9 @@
                   "studio/connections/data/postgresql",
                   "studio/connections/data/clickhouse",
                   "studio/connections/data/abstract",
+                  "studio/connections/data/exa",
                   "studio/connections/data/ipinfo",
+                  "studio/connections/data/perplexityai",
                   "studio/connections/data/serpapi"
                 ]
               },

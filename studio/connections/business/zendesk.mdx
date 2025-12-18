@@ -1,0 +1,462 @@
+---
+title: 'Zendesk'
+description: 'Customer service and support ticketing platform for managing tickets, users, organizations, and support workflows'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="ticket">
+    Zendesk integration connects AI tools directly to your Zendesk account, enabling natural language interactions with tickets, users, organizations, and support workflows.
+
+    **Key Features:**
+    - Create and manage support tickets
+    - Search and update ticket status
+    - Manage users and organizations
+    - Add comments and responses
+    - Apply macros for workflow automation
+    - Track ticket history and activity
+    - Manage ticket assignees and groups
+    - Handle custom fields and tags
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **Customer Support:**
+    - Automatically create tickets from customer inquiries
+    - Update ticket status and priority
+    - Add internal notes and public replies
+    - Assign tickets to the right team members
+
+    **Workflow Automation:**
+    - Apply macros for common responses
+    - Escalate high-priority tickets
+    - Auto-tag and categorize tickets
+    - Generate support reports
+
+    **Customer Management:**
+    - Create and update customer records
+    - Manage organizations and relationships
+    - Track customer interaction history
+    - Sync customer data across systems
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+<Steps>
+  <Step title="Connect Your Zendesk Account">
+    NimbleBrain Studio uses OAuth2 to securely connect to your Zendesk account.
+
+    1. Navigate to **Connections** in the sidebar
+    2. Click **Browse Catalog**
+    3. Search for "Zendesk"
+    4. Click **Install**
+    5. Click **Connect** and authorize with your Zendesk account
+    6. Grant the requested permissions for Zendesk access
+
+    <Tip>
+      OAuth2 provides secure, token-based authentication. You'll need admin or agent permissions to authorize the integration.
+    </Tip>
+  </Step>
+
+  <Step title="Verify Connection">
+    Once connected, test the integration:
+
+    ```text
+    "Show me all open tickets assigned to me"
+    ```
+
+    **Other test prompts:**
+    - "List all tickets created in the last 24 hours"
+    - "Show me high-priority tickets"
+    - "Get information about ticket #12345"
+  </Step>
+</Steps>
+
+## Available Tools
+
+The Zendesk connection provides comprehensive tools organized into the following categories:
+
+### Ticket Management
+
+<AccordionGroup>
+  <Accordion title="Ticket Operations" icon="ticket">
+    Create, read, update, and manage support tickets.
+
+    | Tool | Description |
+    |------|-------------|
+    | `ZENDESK_CREATE_TICKET` | Create a new support ticket with subject, description, priority, and assignee |
+    | `ZENDESK_GET_TICKET` | Retrieve full ticket details including comments and history |
+    | `ZENDESK_UPDATE_TICKET` | Update ticket status, priority, assignee, or custom fields |
+    | `ZENDESK_DELETE_TICKET` | Permanently delete a ticket |
+    | `ZENDESK_LIST_TICKETS` | List tickets with filtering by status, priority, assignee |
+    | `ZENDESK_SEARCH_TICKETS` | Search tickets using Zendesk query syntax |
+    | `ZENDESK_GET_TICKET_COMMENTS` | Get all comments and replies on a ticket |
+    | `ZENDESK_BULK_UPDATE_TICKETS` | Update multiple tickets at once |
+
+    **Example Usage:**
+    ```text
+    "Create a ticket for customer John Doe about login issues with high priority"
+    ```
+
+    <Note>
+      Tickets can be created with custom fields, tags, and assigned to specific agents or groups.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Comments & Responses
+
+<AccordionGroup>
+  <Accordion title="Comment Operations" icon="comment">
+    Add comments, notes, and responses to tickets.
+
+    | Tool | Description |
+    |------|-------------|
+    | `ZENDESK_ADD_COMMENT` | Add public reply or internal note to a ticket |
+    | `ZENDESK_LIST_COMMENTS` | Get all comments for a specific ticket |
+    | `ZENDESK_UPDATE_COMMENT` | Edit an existing comment |
+
+    **Example Usage:**
+    ```text
+    "Add an internal note to ticket #12345: 'Customer verified their identity via email'"
+    ```
+
+    <Tip>
+      Comments can be public (visible to requester) or internal (agent-only notes). Specify the type when adding comments.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+### User Management
+
+<AccordionGroup>
+  <Accordion title="User Operations" icon="user">
+    Manage customer and agent user accounts.
+
+    | Tool | Description |
+    |------|-------------|
+    | `ZENDESK_CREATE_USER` | Create a new user (customer or agent) |
+    | `ZENDESK_GET_USER` | Retrieve user details by ID or email |
+    | `ZENDESK_UPDATE_USER` | Update user information and properties |
+    | `ZENDESK_DELETE_USER` | Deactivate or delete a user |
+    | `ZENDESK_LIST_USERS` | List all users with filtering options |
+    | `ZENDESK_SEARCH_USERS` | Search users by name, email, or properties |
+    | `ZENDESK_GET_CURRENT_USER` | Get authenticated user information |
+
+    **Example Usage:**
+    ```text
+    "Find the user with email customer@example.com and show their ticket history"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Organization Management
+
+<AccordionGroup>
+  <Accordion title="Organization Operations" icon="building">
+    Manage customer organizations and company accounts.
+
+    | Tool | Description |
+    |------|-------------|
+    | `ZENDESK_CREATE_ORGANIZATION` | Create a new organization |
+    | `ZENDESK_GET_ORGANIZATION` | Get organization details and members |
+    | `ZENDESK_UPDATE_ORGANIZATION` | Update organization information |
+    | `ZENDESK_DELETE_ORGANIZATION` | Delete an organization |
+    | `ZENDESK_LIST_ORGANIZATIONS` | List all organizations |
+    | `ZENDESK_SEARCH_ORGANIZATIONS` | Search organizations by name or attributes |
+    | `ZENDESK_ADD_USER_TO_ORGANIZATION` | Add a user to an organization |
+
+    **Example Usage:**
+    ```text
+    "Create an organization called 'Acme Corporation' and add john@acme.com as a member"
+    ```
+
+    <Note>
+      Organizations group users from the same company and can have shared SLA policies and custom fields.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Macros
+
+<AccordionGroup>
+  <Accordion title="Macro Operations" icon="wand-magic-sparkles">
+    Apply macros for automated ticket workflows.
+
+    | Tool | Description |
+    |------|-------------|
+    | `ZENDESK_APPLY_MACRO` | Apply a macro to a ticket for batch updates |
+    | `ZENDESK_LIST_MACROS` | Get all available macros |
+    | `ZENDESK_GET_MACRO` | Get macro details and actions |
+
+    **Example Usage:**
+    ```text
+    "Apply the 'Password Reset Instructions' macro to ticket #12345"
+    ```
+
+    <Tip>
+      Macros can automatically update multiple ticket fields, add comments, and trigger notifications in one action.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Ticket Creation">
+    **Scenario:** Create and assign a support ticket from customer inquiry
+
+    **Prompt:**
+    ```text
+    "Create a high-priority ticket for Sarah Johnson (sarah@company.com) about payment processing errors. Assign it to the billing team and add tag 'payment-issue'"
+    ```
+
+    **What happens:**
+    - Creates ticket with specified priority
+    - Sets requester based on email
+    - Assigns to billing team
+    - Applies relevant tags for categorization
+  </Tab>
+
+  <Tab title="Ticket Triage">
+    **Scenario:** Review and prioritize new tickets
+
+    **Prompt:**
+    ```text
+    "Show me all new tickets from the last 2 hours, prioritize any with 'urgent' or 'down' in the subject, and assign them to the on-call engineer"
+    ```
+
+    **What happens:**
+    - Searches recent tickets
+    - Identifies urgent issues by keywords
+    - Auto-assigns to appropriate team member
+    - Updates ticket status
+  </Tab>
+
+  <Tab title="Customer Lookup">
+    **Scenario:** Find customer information and history
+
+    **Prompt:**
+    ```text
+    "Find all tickets for customer john@acme.com from the last 30 days and show me their status"
+    ```
+
+    **What happens:**
+    - Searches by customer email
+    - Filters by date range
+    - Returns ticket history with status
+    - Shows interaction patterns
+  </Tab>
+
+  <Tab title="Bulk Update">
+    **Scenario:** Update multiple tickets at once
+
+    **Prompt:**
+    ```text
+    "Find all open tickets tagged 'migration' and update their status to 'pending', add comment 'Migration completed, please verify', and assign to customer success team"
+    ```
+
+    **What happens:**
+    - Searches tickets by tag
+    - Bulk updates status
+    - Adds comment to all tickets
+    - Reassigns to new team
+  </Tab>
+
+  <Tab title="Macro Application">
+    **Scenario:** Apply standard response workflow
+
+    **Prompt:**
+    ```text
+    "Apply the 'Account Verification Required' macro to ticket #12345"
+    ```
+
+    **What happens:**
+    - Applies predefined macro
+    - Updates ticket fields automatically
+    - Adds templated response
+    - Changes ticket status as configured
+  </Tab>
+</Tabs>
+
+## Authentication
+
+<Info>
+  **OAuth2 Authentication**: This connection uses OAuth2 for secure authentication.
+</Info>
+
+### How It Works
+
+When you connect Zendesk in NimbleBrain Studio:
+
+1. You'll be redirected to Zendesk's authorization page
+2. Log in with your Zendesk account
+3. Review and grant permissions
+4. You're automatically redirected back to Studio
+
+### Required Permissions
+
+The integration requests the following Zendesk permissions:
+
+**Read Access:**
+- View tickets and comments
+- Read user and organization information
+- Access macros and automation rules
+- View ticket fields and custom fields
+
+**Write Access:**
+- Create and update tickets
+- Add comments and notes
+- Manage users and organizations
+- Apply macros and workflows
+- Update ticket status and assignments
+
+<Tip>
+  You can manage connected apps in your Zendesk Admin Center under **Apps and integrations** → **APIs** → **Zendesk API**.
+</Tip>
+
+### Subdomain Configuration
+
+During setup, you'll need to specify your Zendesk subdomain (e.g., `yourcompany.zendesk.com`). Make sure to enter only the subdomain portion without the full URL.
+
+## Rate Limits
+
+Zendesk API enforces rate limits based on your plan:
+
+| Plan Type | Rate Limit |
+|-----------|------------|
+| Essential | 200 requests/minute |
+| Team | 400 requests/minute |
+| Professional | 700 requests/minute |
+| Enterprise | 2,500 requests/minute |
+
+**Additional Limits:**
+- Search API: 20 requests/minute
+- Incremental exports: 10 requests/minute
+- Concurrent requests: 5 per account
+
+<Info>
+  Studio automatically handles rate limiting with exponential backoff for retries.
+</Info>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection Failed" icon="triangle-exclamation">
+    **Issue:** OAuth authorization didn't complete
+
+    **Solutions:**
+    - Verify your Zendesk subdomain is correct
+    - Ensure you have agent or admin permissions
+    - Try a different browser or incognito mode
+    - Check popup blockers aren't interfering
+    - Verify your Zendesk account is active
+  </Accordion>
+
+  <Accordion title="Permission Denied" icon="lock">
+    **Issue:** Insufficient privileges error
+
+    **Solutions:**
+    - Reconnect to grant additional permissions
+    - Ensure you have agent or admin role
+    - Check your role permissions in Zendesk Admin
+    - Verify API access is enabled for your account
+  </Accordion>
+
+  <Accordion title="Ticket Not Found" icon="ticket">
+    **Issue:** Cannot find specified ticket
+
+    **Solutions:**
+    - Verify the ticket ID is correct
+    - Ticket may have been deleted or merged
+    - Check if you have permission to view the ticket
+    - Ensure the ticket is in your account
+  </Accordion>
+
+  <Accordion title="Create Ticket Failed" icon="circle-xmark">
+    **Issue:** Cannot create new ticket
+
+    **Solutions:**
+    - Verify requester email is valid
+    - Check required custom fields are provided
+    - Ensure ticket type and priority are valid
+    - Verify group or assignee exists
+  </Accordion>
+
+  <Accordion title="Rate Limit Exceeded" icon="gauge">
+    **Issue:** Too many requests error
+
+    **Solutions:**
+    - Wait for rate limit to reset (1 minute)
+    - Reduce frequency of requests
+    - Consider upgrading your Zendesk plan
+    - Studio automatically handles retries
+  </Accordion>
+
+  <Accordion title="User Not Found" icon="user-xmark">
+    **Issue:** Cannot find user or organization
+
+    **Solutions:**
+    - Verify email address or ID is correct
+    - User may have been deleted or suspended
+    - Check spelling and formatting
+    - Try searching by alternate fields
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Ticket Management" icon="clipboard-list">
+    - Use consistent priority levels
+    - Apply tags for categorization
+    - Keep ticket descriptions clear
+    - Update status regularly
+    - Use macros for common workflows
+  </Card>
+
+  <Card title="Customer Experience" icon="star">
+    - Respond to tickets promptly
+    - Use public vs. internal notes appropriately
+    - Keep customers informed of progress
+    - Personalize responses when possible
+    - Follow up on resolved tickets
+  </Card>
+
+  <Card title="Security" icon="shield">
+    - Review connected apps regularly
+    - Monitor API usage
+    - Use minimal required permissions
+    - Don't share API tokens
+    - Audit user access levels
+  </Card>
+
+  <Card title="Automation" icon="robot">
+    - Test macros before applying widely
+    - Use bulk operations carefully
+    - Validate data before updates
+    - Handle errors gracefully
+    - Monitor automation impact
+  </Card>
+</CardGroup>
+
+## Links and Resources
+
+<CardGroup cols={2}>
+  <Card title="Zendesk API Reference" icon="code" href="https://developer.zendesk.com/api-reference/">
+    Official Zendesk API documentation
+  </Card>
+
+  <Card title="Zendesk Help Center" icon="circle-question" href="https://support.zendesk.com/">
+    Zendesk support and troubleshooting
+  </Card>
+
+  <Card title="Zendesk Admin Center" icon="gear" href="https://www.zendesk.com/login/">
+    Manage your Zendesk account
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://www.nimblebrain.ai/discord?utm_source=docs&utm_campaign=studio) or email support@nimblebrain.ai

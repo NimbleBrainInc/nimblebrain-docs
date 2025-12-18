@@ -1,0 +1,446 @@
+---
+title: 'Airtable'
+description: 'Collaborative database platform for organizing work and building custom applications'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="table">
+    Airtable integration connects AI tools directly to your Airtable bases, enabling natural language interactions with bases, tables, records, views, and automations.
+
+    **Key Features:**
+    - List and access bases
+    - Create, read, update, and delete records
+    - Manage tables and fields
+    - Work with views and filters
+    - Query data with complex filters
+    - Batch operations
+    - Attachment handling
+    - Field type support (text, number, date, attachments, etc.)
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **Data Management:**
+    - Automatically add records from external sources
+    - Update records based on triggers or schedules
+    - Sync data between Airtable and other systems
+    - Archive or delete outdated records
+
+    **Workflow Automation:**
+    - Create project tracking from emails
+    - Generate reports from Airtable data
+    - Send notifications for record updates
+    - Build custom approval workflows
+
+    **Integration Workflows:**
+    - Import customer data from forms
+    - Create CRM entries from various sources
+    - Generate invoices from Airtable records
+    - Export data to analytics platforms
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+<Steps>
+  <Step title="Connect Your Airtable Account">
+    NimbleBrain Studio uses OAuth2 to securely connect to your Airtable account.
+
+    1. Navigate to **Connections** in the sidebar
+    2. Click **Browse Catalog**
+    3. Search for "Airtable"
+    4. Click **Install**
+    5. Click **Connect** and authorize with your Airtable account
+    6. Grant the requested permissions for Airtable access
+
+    <Tip>
+      OAuth2 provides secure, token-based authentication. You'll need to authorize access to your Airtable bases.
+    </Tip>
+  </Step>
+
+  <Step title="Verify Connection">
+    Once connected, test the integration:
+
+    ```text
+    "List all my Airtable bases"
+    ```
+
+    **Other test prompts:**
+    - "Show me the tables in my Marketing base"
+    - "Get the first 10 records from my Contacts table"
+    - "What fields are in my Projects table?"
+  </Step>
+</Steps>
+
+## Available Tools
+
+The Airtable connection provides comprehensive tools for managing your bases and records:
+
+### Base Management
+
+<AccordionGroup>
+  <Accordion title="Base Operations" icon="database">
+    List and access your Airtable bases.
+
+    | Tool | Description |
+    |------|-------------|
+    | `AIRTABLE_LIST_BASES` | Retrieve all bases you have access to with metadata |
+    | `AIRTABLE_GET_BASE_SCHEMA` | Get the complete schema of a base including all tables and fields |
+    | `AIRTABLE_LIST_TABLES` | List all tables within a specific base |
+
+    **Example Usage:**
+    ```text
+    "Show me all my Airtable bases and their IDs"
+    ```
+
+    <Note>
+      Base IDs and table names are required for most operations. Use these tools to discover them.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Record Operations
+
+<AccordionGroup>
+  <Accordion title="Record Management" icon="file-lines">
+    Create, read, update, and delete records in your tables.
+
+    | Tool | Description |
+    |------|-------------|
+    | `AIRTABLE_LIST_RECORDS` | Retrieve records with filtering, sorting, and pagination |
+    | `AIRTABLE_GET_RECORD` | Get a specific record by ID with all field values |
+    | `AIRTABLE_CREATE_RECORD` | Create a new record with specified field values |
+    | `AIRTABLE_UPDATE_RECORD` | Update an existing record (partial or complete) |
+    | `AIRTABLE_DELETE_RECORD` | Permanently delete a record |
+    | `AIRTABLE_BATCH_CREATE_RECORDS` | Create multiple records in a single operation |
+    | `AIRTABLE_BATCH_UPDATE_RECORDS` | Update multiple records simultaneously |
+    | `AIRTABLE_BATCH_DELETE_RECORDS` | Delete multiple records at once |
+
+    **Example Usage:**
+    ```text
+    "Create a new record in my Contacts table with name 'John Doe' and email 'john@example.com'"
+    ```
+
+    <Tip>
+      Use batch operations for better performance when working with multiple records.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+### Field & Table Operations
+
+<AccordionGroup>
+  <Accordion title="Schema Management" icon="table-columns">
+    Manage table structures and field definitions.
+
+    | Tool | Description |
+    |------|-------------|
+    | `AIRTABLE_LIST_FIELDS` | Get all fields in a table with their types and properties |
+    | `AIRTABLE_CREATE_FIELD` | Add a new field to a table with specified type |
+    | `AIRTABLE_UPDATE_FIELD` | Modify field properties (name, description, options) |
+    | `AIRTABLE_CREATE_TABLE` | Create a new table in a base |
+
+    **Example Usage:**
+    ```text
+    "Add a new 'Status' field to my Projects table with options: To Do, In Progress, Done"
+    ```
+
+    <Warning>
+      Schema changes affect the entire table. Ensure changes are intentional and won't break existing workflows.
+    </Warning>
+  </Accordion>
+</AccordionGroup>
+
+### Views & Filtering
+
+<AccordionGroup>
+  <Accordion title="View Operations" icon="eye">
+    Work with views and apply filters to records.
+
+    | Tool | Description |
+    |------|-------------|
+    | `AIRTABLE_LIST_VIEWS` | Get all views in a table |
+    | `AIRTABLE_QUERY_RECORDS` | Query records with advanced filter formulas |
+    | `AIRTABLE_SORT_RECORDS` | Retrieve records with custom sorting |
+
+    **Example Usage:**
+    ```text
+    "Get all records from my Tasks table where Status is 'In Progress' and Priority is 'High'"
+    ```
+
+    <Note>
+      Airtable uses a formula syntax for filtering. The integration handles common filter patterns automatically.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="CRM Sync">
+    **Scenario:** Add new contacts from form submissions to Airtable
+
+    **Prompt:**
+    ```text
+    "Create a new contact in my CRM base with name 'Sarah Johnson', email 'sarah@company.com', company 'Acme Corp', and status 'Lead'"
+    ```
+
+    **What happens:**
+    - Creates a new record in the Contacts table
+    - Populates all specified fields
+    - Returns the created record with its ID
+  </Tab>
+
+  <Tab title="Project Tracking">
+    **Scenario:** Update project status automatically
+
+    **Prompt:**
+    ```text
+    "Find all projects in my Projects table with status 'In Review' for more than 7 days and update their status to 'Overdue'"
+    ```
+
+    **What happens:**
+    - Queries records with status filter and date comparison
+    - Batch updates matching records
+    - Returns updated record count
+  </Tab>
+
+  <Tab title="Data Export">
+    **Scenario:** Generate a report from Airtable data
+
+    **Prompt:**
+    ```text
+    "Get all completed tasks from last month and summarize them by assignee"
+    ```
+
+    **What happens:**
+    - Filters records by completion status and date
+    - Retrieves relevant fields
+    - Organizes data for reporting
+  </Tab>
+
+  <Tab title="Bulk Import">
+    **Scenario:** Import multiple records at once
+
+    **Prompt:**
+    ```text
+    "Add these 5 new inventory items to my Inventory table: [provides list with names, quantities, and locations]"
+    ```
+
+    **What happens:**
+    - Uses batch create operation
+    - Adds all records in single API call
+    - Returns created record IDs
+  </Tab>
+
+  <Tab title="Field Management">
+    **Scenario:** Add new tracking field to table
+
+    **Prompt:**
+    ```text
+    "Add a 'Last Contacted' date field to my Customers table"
+    ```
+
+    **What happens:**
+    - Creates new field with date type
+    - Adds to existing table schema
+    - Field becomes available for all records
+  </Tab>
+</Tabs>
+
+## Authentication
+
+<Info>
+  **OAuth2 Authentication**: This connection uses OAuth2 for secure authentication.
+</Info>
+
+### How It Works
+
+When you connect Airtable in NimbleBrain Studio:
+
+1. You'll be redirected to Airtable's authorization page
+2. Log in with your Airtable account
+3. Review and grant permissions
+4. You're automatically redirected back to Studio
+
+### Required Scopes
+
+The integration requests the following Airtable scopes:
+
+**Data Scopes:**
+- `data.records:read` - Read records from bases
+- `data.records:write` - Create, update, and delete records
+- `schema.bases:read` - Read base and table schemas
+- `schema.bases:write` - Create and modify tables and fields
+
+**Workspace Scopes:**
+- `workspace.bases:read` - List all accessible bases
+- `workspace.bases:write` - Create new bases (optional)
+
+<Tip>
+  You can manage connected apps in your Airtable account under **Account** → **Connected apps**.
+</Tip>
+
+## Rate Limits
+
+Airtable API enforces rate limits:
+
+| Limit Type | Restriction |
+|------------|-------------|
+| Requests per second | 5 requests/second per base |
+| Records per request | 10 records max (create/update) |
+| Records in response | 100 records max per page |
+| Field limit | 500 fields per table |
+| Attachment size | 20MB per file |
+
+**Best Practices:**
+- Use batch operations to minimize request count
+- Implement pagination for large datasets
+- Cache schema information when possible
+- Respect rate limits to avoid throttling
+
+<Info>
+  Studio automatically handles rate limiting with exponential backoff for retries.
+</Info>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection Failed" icon="triangle-exclamation">
+    **Issue:** OAuth authorization didn't complete
+
+    **Solutions:**
+    - Ensure you're logged into the correct Airtable account
+    - Try a different browser or incognito mode
+    - Check popup blockers aren't interfering
+    - Verify your Airtable account is active
+    - For Enterprise accounts, check workspace admin policies
+  </Accordion>
+
+  <Accordion title="Permission Denied" icon="lock">
+    **Issue:** Insufficient privileges error
+
+    **Solutions:**
+    - Reconnect to grant additional scopes
+    - Verify you have access to the specific base
+    - For shared bases, ensure you have edit permissions
+    - Check workspace-level permissions
+    - Confirm base isn't locked or read-only
+  </Accordion>
+
+  <Accordion title="Base or Table Not Found" icon="database">
+    **Issue:** Cannot find specified base or table
+
+    **Solutions:**
+    - Verify base ID is correct (use LIST_BASES)
+    - Check table name spelling and case sensitivity
+    - Base may have been deleted or access revoked
+    - Ensure base is in a workspace you have access to
+  </Accordion>
+
+  <Accordion title="Record Creation Failed" icon="file-circle-xmark">
+    **Issue:** Cannot create or update record
+
+    **Solutions:**
+    - Verify all required fields are provided
+    - Check field names match exactly (case-sensitive)
+    - Ensure field values match expected types
+    - Validate data against field constraints
+    - Check for duplicate values in unique fields
+  </Accordion>
+
+  <Accordion title="Field Type Mismatch" icon="exclamation">
+    **Issue:** Field type error
+
+    **Solutions:**
+    - Verify field type (text, number, date, select, etc.)
+    - Format dates correctly (ISO 8601 format)
+    - For select fields, use exact option values
+    - For linked records, use record IDs
+    - Check field configuration for constraints
+  </Accordion>
+
+  <Accordion title="Rate Limit Exceeded" icon="gauge">
+    **Issue:** Too many requests error
+
+    **Solutions:**
+    - Wait for rate limit to reset (1 second)
+    - Reduce request frequency
+    - Use batch operations to combine requests
+    - Studio automatically handles retries
+    - Consider caching frequently accessed data
+  </Accordion>
+
+  <Accordion title="Attachment Upload Failed" icon="paperclip">
+    **Issue:** Cannot upload attachments
+
+    **Solutions:**
+    - Check file size is under 20MB
+    - Verify file URL is publicly accessible
+    - Ensure attachment field exists in table
+    - Use proper attachment format (array of objects)
+    - Check network connectivity for upload
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Data Organization" icon="folder-tree">
+    - Use consistent naming conventions
+    - Create views for common queries
+    - Link related tables appropriately
+    - Document field purposes in descriptions
+    - Keep table schemas organized
+  </Card>
+
+  <Card title="Performance" icon="gauge-high">
+    - Use batch operations for multiple records
+    - Implement pagination for large datasets
+    - Filter records server-side, not client-side
+    - Cache base schemas to reduce API calls
+    - Request only needed fields
+  </Card>
+
+  <Card title="Security" icon="shield">
+    - Review connected apps regularly
+    - Use specific scopes, not full access
+    - Don't store sensitive data in public bases
+    - Monitor for unusual activity
+    - Revoke access when not needed
+  </Card>
+
+  <Card title="Data Quality" icon="check-circle">
+    - Validate data before creation
+    - Use field constraints (required, unique)
+    - Implement consistent data formats
+    - Regular audits of record accuracy
+    - Handle errors gracefully
+  </Card>
+</CardGroup>
+
+## Links and Resources
+
+<CardGroup cols={2}>
+  <Card title="Airtable API Reference" icon="code" href="https://airtable.com/developers/web/api/introduction">
+    Official Airtable API documentation
+  </Card>
+
+  <Card title="Airtable Support" icon="circle-question" href="https://support.airtable.com/">
+    Airtable support and troubleshooting
+  </Card>
+
+  <Card title="Field Types Guide" icon="book" href="https://support.airtable.com/docs/supported-field-types-in-airtable">
+    Complete guide to Airtable field types
+  </Card>
+
+  <Card title="Formula Reference" icon="function" href="https://support.airtable.com/docs/formula-field-reference">
+    Airtable formula syntax reference
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://www.nimblebrain.ai/discord?utm_source=docs&utm_campaign=studio) or email support@nimblebrain.ai

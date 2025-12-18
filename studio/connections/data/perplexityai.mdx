@@ -1,0 +1,519 @@
+---
+title: 'Perplexity'
+description: 'AI-powered search engine for research and real-time answers with source citations'
+---
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="What it does" icon="magnifying-glass">
+    Perplexity provides AI-powered web search capabilities with real-time internet access and authoritative source citations. Unlike traditional search engines, Perplexity delivers direct answers with context, citations, and follow-up questions to help you research more effectively.
+
+    **Key Features:**
+    - AI-powered search with natural language queries
+    - Real-time internet access for current information
+    - Automatic source citation and verification
+    - Follow-up question suggestions
+    - Summarization of search results
+    - Research-grade answer quality
+  </Card>
+
+  <Card title="Use Cases" icon="lightbulb">
+    **Research & Discovery:**
+    - Market research and competitive analysis
+    - Academic research with citations
+    - Fact-checking and verification
+    - Current events and news monitoring
+
+    **Content & Analysis:**
+    - Content research for writing projects
+    - Technical documentation discovery
+    - Product comparison and evaluation
+    - Trend analysis and insights
+
+    **Business Intelligence:**
+    - Industry research
+    - Due diligence investigations
+    - Real-time data gathering
+    - Strategic planning support
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+<Steps>
+  <Step title="Get Your API Key">
+    You'll need a Perplexity API key to use this integration.
+
+    1. Sign up at [perplexity.ai](https://www.perplexity.ai)
+    2. Navigate to [Settings → API](https://www.perplexity.ai/settings/api)
+    3. Generate a new API key
+    4. Copy your API key for use in Studio
+
+    <Tip>
+      Perplexity offers various pricing tiers. Check their pricing page for current API rates and limits.
+    </Tip>
+  </Step>
+
+  <Step title="Connect to NimbleBrain Studio">
+    Add Perplexity to your workspace:
+
+    1. Navigate to **Connections** in the sidebar
+    2. Click **Browse Catalog**
+    3. Search for "Perplexity"
+    4. Click **Install**
+    5. Enter your API key when prompted
+    6. Click **Connect** to complete setup
+
+    <Info>
+      Your API key is stored securely and encrypted. Perplexity uses API key authentication for all requests.
+    </Info>
+  </Step>
+
+  <Step title="Verify Connection">
+    Once connected, test the integration:
+
+    ```text
+    "Search Perplexity for the latest developments in artificial intelligence"
+    ```
+
+    **Other test prompts:**
+    - "What are the current trends in renewable energy?"
+    - "Explain quantum computing with citations"
+    - "Find recent research on climate change solutions"
+    - "Compare the top project management tools in 2024"
+  </Step>
+</Steps>
+
+## Available Tools
+
+The Perplexity connection provides AI-powered search capabilities with intelligent summarization and source citations:
+
+<AccordionGroup>
+  <Accordion title="Search" icon="magnifying-glass">
+    Perform AI-powered web searches that deliver comprehensive answers with citations.
+
+    | Tool | Description |
+    |------|-------------|
+    | `PERPLEXITY_SEARCH` | Search the web using Perplexity's AI engine with natural language queries |
+
+    **Example Usage:**
+    ```text
+    "Search Perplexity for recent breakthroughs in battery technology"
+    ```
+
+    ```text
+    "What are the key differences between React and Vue.js?"
+    ```
+
+    <Note>
+      Perplexity automatically provides source citations for all information, making it ideal for research that requires verification.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Citations & Research" icon="quote-left">
+    All search results include authoritative source citations.
+
+    **What You Get:**
+    - Direct, summarized answers to your questions
+    - Multiple authoritative source citations
+    - Follow-up question suggestions
+    - Real-time information from the web
+    - Context and background information
+
+    **Example Usage:**
+    ```text
+    "Find the latest GDP growth statistics for major economies with sources"
+    ```
+
+    <Tip>
+      Perplexity excels at research questions where you need both a clear answer and verifiable sources.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Summarization" icon="file-lines">
+    Perplexity synthesizes information from multiple sources into coherent answers.
+
+    **Capabilities:**
+    - Multi-source synthesis
+    - Key point extraction
+    - Context preservation
+    - Balanced perspective
+    - Citation tracking
+
+    **Example Usage:**
+    ```text
+    "Summarize the current state of the electric vehicle market"
+    ```
+
+    <Note>
+      Perplexity's AI synthesis helps you understand complex topics quickly by combining insights from multiple authoritative sources.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Real-time Data" icon="clock">
+    Access current information from the live web.
+
+    **Real-time Capabilities:**
+    - Current news and events
+    - Latest product releases
+    - Stock prices and market data
+    - Weather and conditions
+    - Social media trends
+    - Breaking developments
+
+    **Example Usage:**
+    ```text
+    "What are today's major tech industry announcements?"
+    ```
+
+    <Tip>
+      Use Perplexity for time-sensitive queries where you need the most current information available.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+## Example Workflows
+
+<Tabs>
+  <Tab title="Market Research">
+    **Scenario:** Research competitors and market positioning
+
+    **Prompt:**
+    ```text
+    "Search Perplexity for analysis of the AI coding assistant market, including major players and their market positioning"
+    ```
+
+    **What happens:**
+    - Searches multiple authoritative sources
+    - Synthesizes market analysis
+    - Identifies key competitors
+    - Provides market insights
+    - Cites all information sources
+    - Suggests follow-up research questions
+
+    **Benefits:**
+    - Comprehensive market overview
+    - Verified information with citations
+    - Multiple perspectives
+    - Current market state
+  </Tab>
+
+  <Tab title="Technical Research">
+    **Scenario:** Research technical solutions and best practices
+
+    **Prompt:**
+    ```text
+    "What are the best practices for implementing OAuth 2.0 authentication in web applications?"
+    ```
+
+    **What happens:**
+    - Searches technical documentation
+    - Finds authoritative guides
+    - Summarizes best practices
+    - Provides implementation examples
+    - Links to official specifications
+    - Suggests related topics
+
+    **Benefits:**
+    - Clear, actionable information
+    - Links to official docs
+    - Security considerations
+    - Implementation guidance
+  </Tab>
+
+  <Tab title="Fact Checking">
+    **Scenario:** Verify claims and statements
+
+    **Prompt:**
+    ```text
+    "Verify the claim that solar power costs have decreased by 90% over the past decade"
+    ```
+
+    **What happens:**
+    - Searches authoritative sources
+    - Finds relevant statistics
+    - Verifies the claim
+    - Provides context
+    - Cites data sources
+    - Offers related information
+
+    **Benefits:**
+    - Reliable verification
+    - Multiple source confirmation
+    - Historical context
+    - Clear citations
+  </Tab>
+
+  <Tab title="Current Events">
+    **Scenario:** Stay informed on breaking news and developments
+
+    **Prompt:**
+    ```text
+    "What are the major developments in AI regulation this week?"
+    ```
+
+    **What happens:**
+    - Searches recent news
+    - Identifies key developments
+    - Summarizes changes
+    - Provides context
+    - Links to news sources
+    - Highlights implications
+
+    **Benefits:**
+    - Up-to-date information
+    - Context and background
+    - Multiple news sources
+    - Analysis included
+  </Tab>
+
+  <Tab title="Product Comparison">
+    **Scenario:** Compare products and make informed decisions
+
+    **Prompt:**
+    ```text
+    "Compare the features, pricing, and user reviews of Notion, Obsidian, and Roam Research"
+    ```
+
+    **What happens:**
+    - Gathers product information
+    - Compares key features
+    - Analyzes pricing models
+    - Reviews user feedback
+    - Identifies pros and cons
+    - Provides recommendations
+
+    **Benefits:**
+    - Side-by-side comparison
+    - Real user insights
+    - Current pricing
+    - Informed decision-making
+  </Tab>
+</Tabs>
+
+## Authentication
+
+<Info>
+  **API Key Authentication**: This connection uses API key authentication.
+</Info>
+
+### How It Works
+
+Perplexity authenticates requests using your API key:
+
+1. You provide your API key during connection setup
+2. NimbleBrain stores it securely and encrypted
+3. Each request includes your key in the authorization header
+4. Perplexity validates the key and processes the request
+
+### API Key Security
+
+**Best Practices:**
+- Never share your API key publicly
+- Rotate keys periodically for security
+- Monitor usage in Perplexity dashboard
+- Use different keys for different projects
+- Revoke compromised keys immediately
+
+<Tip>
+  You can manage your API keys and monitor usage at [perplexity.ai/settings/api](https://www.perplexity.ai/settings/api)
+</Tip>
+
+### Getting Your API Key
+
+1. Visit [perplexity.ai](https://www.perplexity.ai)
+2. Sign in to your account (or create one)
+3. Navigate to **Settings → API**
+4. Click **Generate New API Key**
+5. Copy your API key
+6. Add it to Studio during connection setup
+
+<Warning>
+  Keep your API key secure. It provides access to your Perplexity account and quota. Never commit it to version control or share it publicly.
+</Warning>
+
+## Rate Limits
+
+Perplexity enforces usage limits based on your plan:
+
+**Quota Tracking:**
+- Each search query consumes API credits
+- Limits vary by subscription tier
+- Monitor usage in Perplexity dashboard
+- Costs depend on your pricing plan
+
+<Info>
+  Studio automatically handles rate limiting and will queue requests if limits are reached. Check your Perplexity dashboard for detailed usage information.
+</Info>
+
+### Query Optimization
+
+To maximize your quota:
+- Use specific, well-crafted queries
+- Combine related questions when possible
+- Cache frequently accessed information
+- Avoid redundant searches
+- Monitor usage patterns
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Invalid API Key" icon="key">
+    **Issue:** Authentication failed or invalid API key error
+
+    **Solutions:**
+    - Verify your API key is correct (no extra spaces)
+    - Check if key was revoked in Perplexity dashboard
+    - Ensure account is active and in good standing
+    - Try generating a new API key
+    - Reconnect the integration with fresh credentials
+    - Verify you copied the complete key
+  </Accordion>
+
+  <Accordion title="Rate Limit Exceeded" icon="gauge">
+    **Issue:** Too many requests or quota exceeded
+
+    **Solutions:**
+    - Check your quota in Perplexity dashboard
+    - Wait for rate limit window to reset
+    - Upgrade to higher tier for more queries
+    - Optimize query frequency
+    - Implement result caching
+    - Review usage patterns
+  </Accordion>
+
+  <Accordion title="No Results Found" icon="magnifying-glass-minus">
+    **Issue:** Search returns empty or poor results
+
+    **Solutions:**
+    - Try broader search terms
+    - Rephrase your query
+    - Check spelling and syntax
+    - Use more specific questions
+    - Break complex queries into parts
+    - Try alternative keywords
+  </Accordion>
+
+  <Accordion title="Search Timeout" icon="clock">
+    **Issue:** Request times out or takes too long
+
+    **Solutions:**
+    - Simplify complex queries
+    - Check internet connection
+    - Verify Perplexity service status
+    - Try again with more specific query
+    - Contact support if persistent
+  </Accordion>
+
+  <Accordion title="Connection Error" icon="plug">
+    **Issue:** Cannot connect to Perplexity service
+
+    **Solutions:**
+    - Verify API key is correctly configured
+    - Check internet connectivity
+    - Ensure Perplexity service is operational
+    - Try disconnecting and reconnecting
+    - Check for service status updates
+    - Contact support if issue persists
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Query Optimization" icon="wand-magic-sparkles">
+    - Use clear, specific questions
+    - Provide context in your queries
+    - Ask one question at a time
+    - Use natural language
+    - Include relevant keywords
+    - Specify time frames when needed
+  </Card>
+
+  <Card title="Research Quality" icon="star">
+    - Review source citations
+    - Cross-reference information
+    - Check publication dates
+    - Verify authoritative sources
+    - Use follow-up questions
+    - Save important findings
+  </Card>
+
+  <Card title="Cost Efficiency" icon="dollar-sign">
+    - Monitor quota usage regularly
+    - Cache frequently needed info
+    - Optimize query structure
+    - Avoid duplicate searches
+    - Plan research sessions
+    - Track spending patterns
+  </Card>
+
+  <Card title="Result Verification" icon="check-double">
+    - Always check citations
+    - Verify critical information
+    - Compare multiple sources
+    - Consider source credibility
+    - Note publication dates
+    - Document your sources
+  </Card>
+</CardGroup>
+
+## Advanced Features
+
+### Natural Language Queries
+
+Perplexity excels at understanding natural language questions:
+
+| Query Type | Example |
+|------------|---------|
+| Direct questions | "What is machine learning?" |
+| Comparisons | "Compare React vs Vue" |
+| Current events | "Latest news on climate policy" |
+| How-to | "How to implement JWT authentication" |
+| Analysis | "Analyze the impact of remote work" |
+| Trends | "Current trends in web development" |
+
+### Follow-up Questions
+
+Perplexity suggests relevant follow-up questions to deepen your research:
+
+- Explore related topics
+- Dig deeper into specific aspects
+- Discover new angles
+- Build comprehensive understanding
+- Track evolving topics
+
+### Source Citations
+
+Every answer includes citations to authoritative sources:
+
+- **Credibility**: Links to reputable sources
+- **Verification**: Check original content
+- **Attribution**: Proper credit to sources
+- **Transparency**: See where information comes from
+- **Research Trail**: Track information sources
+
+## Links and Resources
+
+<CardGroup cols={2}>
+  <Card title="Perplexity Website" icon="globe" href="https://www.perplexity.ai">
+    Official website and product information
+  </Card>
+
+  <Card title="API Settings" icon="key" href="https://www.perplexity.ai/settings/api">
+    Manage API keys and monitor usage
+  </Card>
+
+  <Card title="Documentation" icon="book" href="https://docs.perplexity.ai">
+    Official API documentation and guides
+  </Card>
+
+  <Card title="Pricing" icon="dollar-sign" href="https://www.perplexity.ai/pro">
+    View pricing plans and features
+  </Card>
+</CardGroup>
+
+---
+
+**Need help?** Join the [NimbleBrain Discord](https://www.nimblebrain.ai/discord?utm_source=docs&utm_campaign=studio) or email support@nimblebrain.ai
