@@ -109,7 +109,7 @@ import requests
 import os
 
 # MCP Configuration
-MCP_ENDPOINT = "https://mcp.nimbletools.dev/ws-my-workspace/knowledge-base/mcp"
+MCP_ENDPOINT = "https://mcp.nimbletools.dev/ws-my-workspace-550e8400-e29b-41d4-a716-446655440000/knowledge-base/mcp"
 MCP_TOKEN = os.getenv("NIMBLEBRAIN_TOKEN")
 
 def search_knowledge_base(query: str) -> str:
@@ -193,7 +193,7 @@ class MCPTool extends Tool {
 // Initialize
 const tools = [
   new MCPTool(
-    "https://mcp.nimbletools.dev/ws-my-workspace/knowledge-base/mcp",
+    "https://mcp.nimbletools.dev/ws-my-workspace-550e8400-e29b-41d4-a716-446655440000/knowledge-base/mcp",
     process.env.NIMBLEBRAIN_TOKEN!
   )
 ];

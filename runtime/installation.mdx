@@ -43,9 +43,9 @@ This script will:
   The entire installation process takes approximately 2-3 minutes.
 </Callout>
 
-## Manual Installation
+## Manual Installation (Advanced)
 
-For production deployments or custom configurations, follow these steps:
+For production deployments or custom configurations, install directly from the OCI registry.
 
 ### Step 1: Create Kubernetes Cluster (Local)
 
@@ -55,68 +55,70 @@ If you don't have a Kubernetes cluster, create one locally with k3d:
 # Install k3d
 curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
 
-# Create cluster
-k3d cluster create nimbletools \
-  --api-port 6550 \
-  --servers 1 \
-  --agents 3 \
-  --port "8080:80@loadbalancer"
+# Create cluster with ingress ports
+k3d cluster create nimbletools-quickstart \
+  --port "80:80@loadbalancer" \
+  --port "443:443@loadbalancer" \
+  --k3s-arg "--disable=traefik@server:0"
 
 # Verify cluster
 kubectl cluster-info
 ```
 
-### Step 2: Add Helm Repository
+### Step 2: Install NimbleTools Core
+
+NimbleTools uses an OCI-based Helm chart hosted on GitHub Container Registry:
 
 ```bash
-# Add NimbleTools Helm repository
-helm repo add nimbletools https://nimblebraininc.github.io/nimbletools-core
-
-# Update repo
-helm repo update
-```
-
-### Step 3: Install NimbleTools Operator
-
-```bash
-# Create namespace
-kubectl create namespace nimbletools-system
-
-# Install operator
-helm install nimbletools-operator nimbletools/nimbletools-operator \
+# Install the complete platform (operator + control plane + RBAC)
+helm upgrade --install nimbletools-core \
+  oci://ghcr.io/nimblebraininc/charts/nimbletools-core \
   --namespace nimbletools-system \
-  --set image.tag=latest \
-  --wait
-```
-
-### Step 4: Install NimbleTools API
-
-```bash
-# Install REST API
-helm install nimbletools-api nimbletools/nimbletools-api \
-  --namespace nimbletools-system \
+  --create-namespace \
+  --set global.domain=nimbletools.dev \
   --set ingress.enabled=true \
   --wait
 ```
 
-### Step 5: Verify Installation
+<Callout type="info">
+  The unified `nimbletools-core` chart includes the MCP operator, control plane API, and RBAC controller.
+</Callout>
+
+### Step 3: Verify Installation
 
 ```bash
-# Check operator status
+# Check all pods are running
 kubectl get pods -n nimbletools-system
 
-# Check CRDs
-kubectl get crd mcpservices.nimbletools.ai
+# Check CRD is installed
+kubectl get crd mcpservices.mcp.nimbletools.dev
 
-# Check API service
+# Check services
 kubectl get svc -n nimbletools-system
 ```
 
 Expected output:
 ```
-NAME                           READY   STATUS    RESTARTS   AGE
-nimbletools-operator-xxx       1/1     Running   0          2m
-nimbletools-api-xxx            1/1     Running   0          1m
+NAME                                    READY   STATUS    RESTARTS   AGE
+nimbletools-core-operator-xxx           1/1     Running   0          2m
+nimbletools-core-control-plane-xxx      1/1     Running   0          2m
+nimbletools-core-rbac-controller-xxx    1/1     Running   0          2m
+```
+
+### Step 4: Configure Local DNS
+
+Add these entries to `/etc/hosts` for local access:
+
+```bash
+127.0.0.1 api.nimbletools.dev
+127.0.0.1 mcp.nimbletools.dev
+```
+
+Then verify the endpoints:
+
+```bash
+curl http://api.nimbletools.dev/health
+curl http://mcp.nimbletools.dev/health
 ```
 
 ## Production Installation
@@ -125,27 +127,17 @@ For production environments, consider these additional configurations:
 
 ### High Availability
 
-Deploy multiple replicas of the operator and API:
+Deploy with multiple replicas and resource limits:
 
 ```bash
-helm install nimbletools-operator nimbletools/nimbletools-operator \
+helm upgrade --install nimbletools-core \
+  oci://ghcr.io/nimblebraininc/charts/nimbletools-core \
   --namespace nimbletools-system \
-  --set replicaCount=3 \
-  --set resources.requests.memory="512Mi" \
-  --set resources.requests.cpu="500m" \
-  --wait
-```
-
-### Persistent Storage
-
-Configure persistent volumes for the service registry:
-
-```bash
-helm install nimbletools-operator nimbletools/nimbletools-operator \
-  --namespace nimbletools-system \
-  --set persistence.enabled=true \
-  --set persistence.size=20Gi \
-  --set persistence.storageClass=standard \
+  --create-namespace \
+  --set operator.replicaCount=3 \
+  --set controlPlane.replicaCount=3 \
+  --set operator.resources.requests.memory="512Mi" \
+  --set operator.resources.requests.cpu="500m" \
   --wait
 ```
 
@@ -154,12 +146,15 @@ helm install nimbletools-operator nimbletools/nimbletools-operator \
 Enable TLS for secure communications:
 
 ```bash
-helm install nimbletools-api nimbletools/nimbletools-api \
+helm upgrade --install nimbletools-core \
+  oci://ghcr.io/nimblebraininc/charts/nimbletools-core \
   --namespace nimbletools-system \
+  --create-namespace \
+  --set global.domain=nimbletools.example.com \
   --set ingress.enabled=true \
   --set ingress.tls.enabled=true \
-  --set ingress.tls.secretName=nimbletools-tls \
-  --set ingress.hosts[0].host=api.nimbletools.example.com \
+  --set ingress.className=nginx \
+  --set ingress.annotations."cert-manager\.io/cluster-issuer"=letsencrypt-prod \
   --wait
 ```
 
@@ -169,54 +164,48 @@ Create a `values.yaml` for complex configurations:
 
 ```yaml
 # values.yaml
-replicaCount: 3
+global:
+  domain: nimbletools.example.com
 
-image:
-  repository: ghcr.io/nimblebraininc/nimbletools-operator
-  tag: v1.0.0
-  pullPolicy: IfNotPresent
+operator:
+  replicaCount: 3
+  image:
+    tag: "0.4.0"
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
 
-resources:
-  requests:
-    memory: "512Mi"
-    cpu: "500m"
-  limits:
-    memory: "1Gi"
-    cpu: "1000m"
+controlPlane:
+  replicaCount: 3
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
 
 ingress:
   enabled: true
   className: nginx
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
-  hosts:
-    - host: api.nimbletools.example.com
-      paths:
-        - path: /
-          pathType: Prefix
   tls:
-    - secretName: nimbletools-tls
-      hosts:
-        - api.nimbletools.example.com
-
-persistence:
-  enabled: true
-  size: 20Gi
-  storageClass: standard
+    enabled: true
 
 monitoring:
   enabled: true
-  prometheus:
-    enabled: true
-  grafana:
-    enabled: true
 ```
 
 Install with custom values:
 
 ```bash
-helm install nimbletools-operator nimbletools/nimbletools-operator \
+helm upgrade --install nimbletools-core \
+  oci://ghcr.io/nimblebraininc/charts/nimbletools-core \
   --namespace nimbletools-system \
+  --create-namespace \
   -f values.yaml \
   --wait
 ```
@@ -235,10 +224,12 @@ helm install nimbletools-operator nimbletools/nimbletools-operator \
       --nodes 3
 
     # Install NimbleTools
-    helm install nimbletools-operator nimbletools/nimbletools-operator \
+    helm upgrade --install nimbletools-core \
+      oci://ghcr.io/nimblebraininc/charts/nimbletools-core \
       --namespace nimbletools-system \
       --create-namespace \
-      --set cloud.provider=aws \
+      --set global.domain=nimbletools.example.com \
+      --set ingress.enabled=true \
       --wait
     ```
   </Tab>
@@ -251,10 +242,12 @@ helm install nimbletools-operator nimbletools/nimbletools-operator \
       --machine-type n1-standard-2
 
     # Install NimbleTools
-    helm install nimbletools-operator nimbletools/nimbletools-operator \
+    helm upgrade --install nimbletools-core \
+      oci://ghcr.io/nimblebraininc/charts/nimbletools-core \
       --namespace nimbletools-system \
       --create-namespace \
-      --set cloud.provider=gcp \
+      --set global.domain=nimbletools.example.com \
+      --set ingress.enabled=true \
       --wait
     ```
   </Tab>
@@ -273,10 +266,12 @@ helm install nimbletools-operator nimbletools/nimbletools-operator \
       --name nimbletools
 
     # Install NimbleTools
-    helm install nimbletools-operator nimbletools/nimbletools-operator \
+    helm upgrade --install nimbletools-core \
+      oci://ghcr.io/nimblebraininc/charts/nimbletools-core \
       --namespace nimbletools-system \
       --create-namespace \
-      --set cloud.provider=azure \
+      --set global.domain=nimbletools.example.com \
+      --set ingress.enabled=true \
       --wait
     ```
   </Tab>
@@ -332,10 +327,12 @@ ntcli health
 
     **Solution**:
     ```bash
-    # Reinstall operator
-    helm uninstall nimbletools-operator -n nimbletools-system
-    helm install nimbletools-operator nimbletools/nimbletools-operator \
+    # Reinstall the platform
+    helm uninstall nimbletools-core -n nimbletools-system
+    helm upgrade --install nimbletools-core \
+      oci://ghcr.io/nimblebraininc/charts/nimbletools-core \
       --namespace nimbletools-system \
+      --create-namespace \
       --wait
 
     # Verify CRDs
@@ -368,9 +365,10 @@ ntcli health
     kubectl get rolebinding,clusterrolebinding -n nimbletools-system
 
     # Reinstall with proper RBAC
-    helm upgrade nimbletools-operator nimbletools/nimbletools-operator \
+    helm upgrade --install nimbletools-core \
+      oci://ghcr.io/nimblebraininc/charts/nimbletools-core \
       --namespace nimbletools-system \
-      --set rbac.create=true \
+      --set rbacController.enabled=true \
       --wait
     ```
   </Accordion>
