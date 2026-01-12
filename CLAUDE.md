@@ -7,7 +7,7 @@ Mintlify documentation site. Config in `docs.json`.
 3-tab navigation: **Studio** | **Developers** | **Self-Hosted**
 
 ```
-studio/           # Main product docs (NIRA, playbooks, agents, connections)
+studio/           # Main product docs (Nira, playbooks, connections)
 developers/       # SDK and API reference (for integrating with Studio)
   sdk/            # TypeScript SDK (@nimblebrain/sdk)
   api/            # REST API docs
@@ -25,7 +25,7 @@ cli/              # ntcli command reference (under Self-Hosted tab)
 
 - `docs.json` - Navigation (tabs inside `navigation` object)
 - `studio/concepts.mdx` - Core terminology definitions
-- `studio/agent-templates.mdx` - Seed agents (Riley, Alex, Casey)
+- `studio/nira.mdx` - Nira AI assistant documentation
 
 ## Internal Link Patterns
 
@@ -51,7 +51,7 @@ mintlify broken-links # Check internal links
 ## Source of Truth
 
 For Studio features, check `/apps/studio/` in the monorepo:
-- Agent templates: `docs/features/SEED_AGENTS.md`
+- Architecture: `docs/architecture/` (Nira, playbooks, connections)
 - SDK: `/sdks/typescript/README.md`
 
 ## Conventions

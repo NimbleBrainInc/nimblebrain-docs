@@ -3,16 +3,16 @@ title: 'TypeScript SDK'
 description: 'Official TypeScript SDK for the NimbleBrain Studio API'
 ---
 
-The NimbleBrain SDK provides a clean, type-safe interface for building applications that interact with NimbleBrain Studio. Use it to programmatically manage agents, run playbooks, and create conversational interfaces.
+The NimbleBrain SDK provides a clean, type-safe interface for building applications that interact with NimbleBrain Studio. Use it to programmatically chat with Nira, run playbooks, and create conversational interfaces.
 
 ## Features
 
 <CardGroup cols={2}>
   <Card title="High-Level API" icon="layer-group">
-    Clean, intuitive interface for agents, playbooks, and conversations
+    Clean, intuitive interface for Nira, playbooks, and conversations
   </Card>
   <Card title="Streaming Support" icon="wave-pulse">
-    Real-time SSE streaming for agent responses with typewriter effect
+    Real-time SSE streaming for Nira responses with typewriter effect
   </Card>
   <Card title="TypeScript First" icon="brackets-curly">
     Full type definitions for all API responses and methods
@@ -52,19 +52,19 @@ import { NimbleBrain } from '@nimblebrain/sdk';
 // Initialize the SDK with your API key
 const nb = new NimbleBrain({ apiKey: 'nb_live_...' });
 
-// List agents in your workspace
-const agents = await nb.agents.list();
-console.log('Available agents:', agents);
-
-// Create a conversation and chat with an agent
-const conversation = await nb.conversations.create(agents[0].id);
+// Create a conversation with Nira
+const conversation = await nb.nira.conversations.create('My chat session');
 
 // Stream the response in real-time
-for await (const event of nb.messages.stream(agents[0].id, conversation.id, 'Hello!')) {
+for await (const event of nb.nira.messages.stream(conversation.id, 'Hello!')) {
   if (event.type === 'content') {
     process.stdout.write(event.data.text as string);
   }
 }
+
+// Or run a playbook
+const result = await nb.playbooks.invoke('playbook-id');
+console.log('Playbook result:', result);
 ```
 
 ## SDK Structure
@@ -73,17 +73,16 @@ The SDK is organized into namespaces that mirror the NimbleBrain Studio concepts
 
 | Namespace | Purpose |
 |-----------|---------|
-| `nb.agents` | List and interact with agents |
-| `nb.conversations` | Create and manage conversations |
-| `nb.messages` | Send messages and stream responses |
+| `nb.nira` | Chat with Nira (conversations, messages, streaming) |
 | `nb.playbooks` | List and execute playbooks |
 | `nb.executions` | Track playbook execution status |
+| `nb.connections` | Manage workspace connections |
 
 ## When to Use the SDK
 
 <AccordionGroup>
   <Accordion title="Building Custom Chat Interfaces">
-    Create your own chat UI that connects to NimbleBrain agents. The streaming API provides real-time responses for a smooth user experience.
+    Create your own chat UI that connects to Nira. The streaming API provides real-time responses for a smooth user experience.
   </Accordion>
   <Accordion title="Backend Automation">
     Run playbooks programmatically from your backend services. Integrate NimbleBrain automations into your existing workflows.
@@ -115,16 +114,16 @@ Keep your API key secure. Never commit it to version control or expose it in cli
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Quickstart" icon="rocket" href="/sdk/quickstart">
+  <Card title="Quickstart" icon="rocket" href="/developers/sdk/quickstart">
     Get up and running in 5 minutes
   </Card>
-  <Card title="Agents API" icon="robot" href="/sdk/agents">
-    Work with agents and conversations
+  <Card title="Nira API" icon="robot" href="/developers/sdk/nira">
+    Chat with Nira programmatically
   </Card>
-  <Card title="Playbooks API" icon="play" href="/sdk/playbooks">
+  <Card title="Playbooks API" icon="play" href="/developers/sdk/playbooks">
     Execute playbooks programmatically
   </Card>
-  <Card title="Streaming" icon="wave-pulse" href="/sdk/streaming">
+  <Card title="Streaming" icon="wave-pulse" href="/developers/sdk/streaming">
     Real-time message streaming
   </Card>
 </CardGroup>

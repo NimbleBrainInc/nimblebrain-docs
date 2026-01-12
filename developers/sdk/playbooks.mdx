@@ -98,7 +98,7 @@ if (execution.status === 'completed') {
 interface Execution {
   id: string;
   status: 'queued' | 'pending' | 'running' | 'completed' | 'completed_with_errors' | 'failed' | 'cancelled';
-  targetType?: 'playbook' | 'agent';
+  targetType?: 'playbook';
   targetId?: string;
   targetName?: string;
   result?: string | Record<string, unknown> | null;
@@ -311,10 +311,10 @@ try {
 ## Related
 
 <CardGroup cols={2}>
-  <Card title="Agents API" icon="robot" href="/sdk/agents">
-    Chat with agents programmatically
+  <Card title="Nira API" icon="robot" href="/developers/sdk/nira">
+    Chat with Nira programmatically
   </Card>
-  <Card title="Streaming Guide" icon="wave-pulse" href="/sdk/streaming">
+  <Card title="Streaming Guide" icon="wave-pulse" href="/developers/sdk/streaming">
     Real-time message streaming
   </Card>
 </CardGroup>

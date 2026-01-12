@@ -7,24 +7,26 @@ Before diving into NimbleBrain Studio, it helps to understand the core concepts 
 
 ## Platform Overview
 
-NimbleBrain Studio is an **AI-native automation platform** where you build, manage, and run intelligent workflows. The platform centers around **Nira**, an AI assistant that serves as your primary interface for creating and managing automations.
+NimbleBrain Studio is an **AI-native automation platform** where Nira is your primary interface. Press **⌘K** (Mac) or **Ctrl+K** (Windows) anywhere to open Nira and start building automations through conversation.
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        WORKSPACE                            │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │                       Nira                           │   │
-│  │            (AI Assistant - Primary Interface)        │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                            │                                │
-│              Creates & Manages                              │
-│                            ▼                                │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐  │
-│  │    AGENTS    │───▶│  PLAYBOOKS   │◀───│ CONNECTIONS  │  │
-│  │ (Orchestrate │    │   (Single    │    │(Integrations)│  │
-│  │  Playbooks)  │    │  Workflows)  │    │              │  │
-│  └──────────────┘    └──────────────┘    └──────────────┘  │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph Workspace["WORKSPACE"]
+        direction TB
+        Nira["Nira<br/><i>Primary Interface</i><br/>Press ⌘K"]
+        Nira -->|creates & manages| Playbooks
+
+        subgraph Playbooks["PLAYBOOKS"]
+            direction TB
+            P1["AI-Powered Automations"]
+            Connections["CONNECTIONS<br/><i>Integrations & Tools</i>"]
+        end
+    end
+
+    style Workspace fill:#f0f4ff,stroke:#3b82f6,stroke-width:2px
+    style Nira fill:#e0f2fe,stroke:#0ea5e9,stroke-width:2px
+    style Playbooks fill:#f0fdf4,stroke:#22c55e,stroke-width:2px
+    style Connections fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
 ```
 
 ## Key Concepts
@@ -43,7 +45,7 @@ A **Workspace** is your isolated environment within NimbleBrain Studio. Think of
 </CardGroup>
 
 **Key points:**
-- All playbooks, agents, and connections are scoped to a workspace
+- All playbooks and connections are scoped to a workspace
 - API keys are workspace-specific
 - You can have multiple workspaces for different projects or teams
 
@@ -51,7 +53,7 @@ A **Workspace** is your isolated environment within NimbleBrain Studio. Think of
 
 ### Nira
 
-**Nira** (NimbleBrain Intelligent Research Assistant) is your AI copilot built into the platform. Instead of clicking through menus and forms, you describe what you want in natural language, and Nira builds it for you.
+**Nira** is your AI assistant and the primary way to interact with NimbleBrain Studio. Instead of clicking through menus and forms, you describe what you want in natural language, and Nira builds it for you.
 
 <CardGroup cols={2}>
   <Card title="Primary Interface" icon="message-bot">
@@ -63,10 +65,11 @@ A **Workspace** is your isolated environment within NimbleBrain Studio. Think of
 </CardGroup>
 
 **Nira can:**
-- Create playbooks and agents from natural language descriptions
+- Create playbooks from natural language descriptions
 - Select and configure the right tools automatically
 - Help troubleshoot issues with your automations
 - Answer questions about the platform
+- Search and navigate your workspace
 
 <Tip>
 **Example:** "Create a playbook that checks our GitHub repository for new issues every hour and posts a summary to Slack" - Nira will build this entire automation for you.
@@ -78,7 +81,7 @@ A **Workspace** is your isolated environment within NimbleBrain Studio. Think of
 
 ### Playbook
 
-A **Playbook** is a single automation task defined in natural language. It's the fundamental building block of all automations in NimbleBrain Studio.
+A **Playbook** is an AI-powered automation defined in natural language. It's the fundamental building block of all automations in NimbleBrain Studio.
 
 <CardGroup cols={2}>
   <Card title="Natural Language" icon="pen">
@@ -92,6 +95,7 @@ A **Playbook** is a single automation task defined in natural language. It's the
 **Playbook components:**
 - **Instructions**: Natural language description of what the playbook should do
 - **Configuration**: AI model, temperature, timeout settings
+- **Schedule**: Optional recurring execution (daily, hourly, etc.)
 - **Status**: Active or inactive
 - **Execution history**: Log of all runs with results
 
@@ -103,42 +107,6 @@ returns over the next week. Include your reasoning for each pick.
 ```
 
 [Learn more about Playbooks](/studio/playbooks)
-
----
-
-### Agent
-
-An **Agent** orchestrates multiple playbooks into complex, multi-step workflows. When a single playbook isn't enough, agents coordinate several playbooks to accomplish larger goals.
-
-<CardGroup cols={2}>
-  <Card title="Multi-Step Workflows" icon="diagram-project">
-    Chain multiple playbooks together, running them sequentially or in parallel.
-  </Card>
-  <Card title="Scheduled Execution" icon="clock">
-    Run automatically on schedules (daily, hourly, weekly) or triggered by events.
-  </Card>
-</CardGroup>
-
-**When to use an Agent vs. a Playbook:**
-
-| Use Case | Playbook | Agent |
-|----------|----------|-------|
-| Single task (send email, fetch data) | Yes | No |
-| Multiple steps with dependencies | No | Yes |
-| Combining data from multiple sources | No | Yes |
-| Complex scheduled workflows | No | Yes |
-
-**Example Agent: Morning Briefing**
-```
-Agent: "Daily Morning Briefing"
-├── Playbook 1: Fetch weather forecast
-├── Playbook 2: Get calendar events
-├── Playbook 3: Summarize unread emails
-└── Playbook 4: Compile and send to Slack
-Schedule: Weekdays at 7:00 AM
-```
-
-[Learn more about Agents](/studio/agents)
 
 ---
 
@@ -168,9 +136,31 @@ A **Connection** is an integration that gives your playbooks access to external 
 
 ---
 
+### Scheduling
+
+**Scheduling** allows your playbooks to run automatically at specified times or intervals without manual intervention.
+
+<CardGroup cols={2}>
+  <Card title="Time-Based" icon="clock">
+    Run at specific times: daily at 9am, weekdays at 8am, first of month
+  </Card>
+  <Card title="Interval-Based" icon="arrows-rotate">
+    Run at regular intervals: every 15 minutes, hourly, every 6 hours
+  </Card>
+</CardGroup>
+
+**Schedule types:**
+- **Time-Based**: Specific times (e.g., "Every Monday at 9am")
+- **Interval-Based**: Regular intervals (e.g., "Every 15 minutes")
+- **Event-Triggered**: Run when webhooks receive data
+
+[Learn more about Scheduling](/studio/scheduling)
+
+---
+
 ### Execution
 
-An **Execution** is a single run of a playbook or agent. Each time you run an automation (manually or on schedule), it creates an execution record.
+An **Execution** is a single run of a playbook. Each time you run an automation (manually or on schedule), it creates an execution record.
 
 **Execution details include:**
 - **Status**: Running, completed, or failed
@@ -207,28 +197,37 @@ API keys grant access to your workspace. Keep them secure and never share them p
 
 Here's how everything fits together:
 
-```
-WORKSPACE
-    │
-    ├── Nira (creates and manages everything)
-    │
-    ├── CONNECTIONS (installed integrations)
-    │   ├── Slack
-    │   ├── GitHub
-    │   └── Finnhub
-    │
-    ├── PLAYBOOKS (single tasks)
-    │   ├── "Fetch stock data"
-    │   ├── "Post to Slack"
-    │   └── "Check GitHub issues"
-    │
-    ├── AGENTS (orchestrate playbooks)
-    │   └── "Daily Market Report"
-    │       ├── Uses: Fetch stock data
-    │       ├── Uses: Post to Slack
-    │       └── Schedule: Daily at 9am
-    │
-    └── API KEYS (for external access)
+```mermaid
+flowchart LR
+    subgraph W["WORKSPACE"]
+        direction TB
+
+        N["Nira"]
+
+        subgraph C["Connections"]
+            C1[Slack]
+            C2[GitHub]
+            C3[Finnhub]
+        end
+
+        subgraph P["Playbooks"]
+            P1["Fetch stock data<br/><i>scheduled</i>"]
+            P2["Post to Slack<br/><i>manual</i>"]
+            P3["Check GitHub issues<br/><i>hourly</i>"]
+        end
+
+        K["API Keys"]
+    end
+
+    N -.->|manages| C
+    N -.->|creates| P
+    P -->|use| C
+
+    style W fill:#f8fafc,stroke:#64748b,stroke-width:2px
+    style N fill:#e0f2fe,stroke:#0ea5e9,stroke-width:2px
+    style C fill:#fef3c7,stroke:#f59e0b,stroke-width:1px
+    style P fill:#f0fdf4,stroke:#22c55e,stroke-width:1px
+    style K fill:#fce7f3,stroke:#ec4899,stroke-width:1px
 ```
 
 ## Common Workflows
@@ -242,11 +241,11 @@ WORKSPACE
     5. Click "Run" to test it
   </Accordion>
 
-  <Accordion title="Set up a recurring report">
+  <Accordion title="Set up a scheduled report">
     1. Tell Nira: "Create a daily report that..."
-    2. Nira suggests creating an Agent
-    3. Configure the schedule
-    4. Agent runs automatically
+    2. Nira creates the playbook with scheduling
+    3. Configure the schedule (time, frequency)
+    4. Playbook runs automatically
   </Accordion>
 
   <Accordion title="Connect to Claude Desktop">
@@ -263,11 +262,11 @@ WORKSPACE
 | Term | Definition |
 |------|------------|
 | **Workspace** | Isolated environment containing all your automations |
-| **Nira** | AI assistant for building and managing automations |
-| **Playbook** | Single automation task with natural language instructions |
-| **Agent** | Multi-playbook orchestrator with scheduling |
+| **Nira** | AI assistant for building and managing automations (⌘K) |
+| **Playbook** | AI-powered automation with natural language instructions |
 | **Connection** | Integration providing access to external APIs and services |
-| **Execution** | Single run of a playbook or agent |
+| **Scheduling** | Automatic recurring execution of playbooks |
+| **Execution** | Single run of a playbook |
 | **API Key** | Token for programmatic workspace access |
 
 ## Next Steps

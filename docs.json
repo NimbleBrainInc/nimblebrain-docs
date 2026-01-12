@@ -29,8 +29,7 @@
             "pages": [
               "studio/nira",
               "studio/playbooks",
-              "studio/agents",
-              "studio/agent-templates",
+              "studio/scheduling",
               "studio/use-cases"
             ]
           },
@@ -119,7 +118,7 @@
             "pages": [
               "developers/sdk/overview",
               "developers/sdk/quickstart",
-              "developers/sdk/agents",
+              "developers/sdk/nira",
               "developers/sdk/playbooks",
               "developers/sdk/streaming"
             ]

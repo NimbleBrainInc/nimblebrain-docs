@@ -1,0 +1,342 @@
+---
+title: 'Nira API'
+description: 'Chat with Nira programmatically using the SDK'
+---
+
+The Nira API lets you interact with NimbleBrain's AI assistant programmatically. Create conversations, send messages, and stream responses in real-time to build custom chat interfaces.
+
+## Overview
+
+Working with Nira involves two main concepts:
+
+1. **Conversations** - Chat sessions with Nira (preserves context)
+2. **Messages** - Individual messages within a conversation
+
+```
+Nira
+  └── Conversation
+        ├── Message (user)
+        ├── Message (assistant)
+        ├── Message (user)
+        └── Message (assistant)
+```
+
+## Conversations
+
+Conversations maintain context across multiple messages. Always create a conversation before sending messages to Nira.
+
+### Create a Conversation
+
+```typescript
+const conversation = await nb.nira.conversations.create('Optional title');
+
+console.log(`Conversation ID: ${conversation.id}`);
+```
+
+**Parameters:**
+- `title` (string, optional) - A descriptive title for the conversation
+
+### Get Conversation Details
+
+```typescript
+const conversation = await nb.nira.conversations.get(conversationId);
+
+console.log(`Title: ${conversation.title}`);
+console.log(`Messages: ${conversation.messageCount}`);
+console.log(`Status: ${conversation.status}`);
+```
+
+**Response type:**
+
+```typescript
+interface Conversation {
+  id: string;
+  title?: string;
+  context?: string;
+  status?: string;
+  messageCount?: number;
+  lastMessageAt?: string;
+  createdAt?: string;
+}
+```
+
+### List Conversations
+
+```typescript
+const conversations = await nb.nira.conversations.list();
+
+for (const conv of conversations) {
+  console.log(`${conv.title} (${conv.id})`);
+}
+```
+
+## Messages
+
+### Send a Message (Non-Streaming)
+
+For simple use cases where you don't need real-time streaming:
+
+```typescript
+const response = await nb.nira.messages.send(
+  conversationId,
+  'What is the weather like today?'
+);
+
+console.log('Nira response:', response.content);
+```
+
+**Response type:**
+
+```typescript
+interface SendMessageResponse {
+  messageId?: string;
+  content?: string;
+  role?: string;
+  executionId?: string;
+  tokensUsed?: number;
+}
+```
+
+<Warning>
+Non-streaming requests block until Nira finishes responding. For long responses, this can take 30+ seconds. Use streaming for a better user experience.
+</Warning>
+
+### Send a Message (Streaming)
+
+Stream the response in real-time for a typewriter effect:
+
+```typescript
+for await (const event of nb.nira.messages.stream(conversationId, 'Tell me a story')) {
+  switch (event.type) {
+    case 'message.start':
+      console.log('Nira started responding...');
+      break;
+    case 'content':
+      // Display text as it arrives
+      process.stdout.write(event.data.text as string);
+      break;
+    case 'tool.start':
+      console.log(`\n[Using tool: ${event.data.display}]`);
+      break;
+    case 'tool.complete':
+      console.log('[Tool finished]');
+      break;
+    case 'done':
+      console.log('\n--- Response complete ---');
+      break;
+    case 'error':
+      console.error('Error:', event.data.error);
+      break;
+  }
+}
+```
+
+See [Streaming](/developers/sdk/streaming) for more details on building streaming chat interfaces.
+
+### List Messages in a Conversation
+
+Retrieve the full message history:
+
+```typescript
+const messages = await nb.nira.messages.list(conversationId);
+
+for (const message of messages) {
+  console.log(`[${message.role}]: ${message.content}`);
+}
+```
+
+**Response type:**
+
+```typescript
+interface Message {
+  id: string;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  createdAt?: string;
+}
+```
+
+## Complete Example: Chat Application
+
+Here's a complete example of a simple chat loop:
+
+```typescript
+import { NimbleBrain } from '@nimblebrain/sdk';
+import * as readline from 'readline';
+
+async function chat() {
+  const nb = new NimbleBrain({ apiKey: process.env.NIMBLEBRAIN_API_KEY! });
+
+  // Create a conversation
+  const conversation = await nb.nira.conversations.create('CLI Chat');
+  console.log(`Started conversation: ${conversation.id}\n`);
+
+  // Set up readline for user input
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  const askQuestion = () => {
+    rl.question('You: ', async (input) => {
+      if (input.toLowerCase() === 'quit') {
+        rl.close();
+        return;
+      }
+
+      // Stream the response
+      process.stdout.write('Nira: ');
+      for await (const event of nb.nira.messages.stream(conversation.id, input)) {
+        if (event.type === 'content') {
+          process.stdout.write(event.data.text as string);
+        }
+      }
+      console.log('\n');
+
+      askQuestion(); // Continue the loop
+    });
+  };
+
+  console.log('Type "quit" to exit\n');
+  askQuestion();
+}
+
+chat();
+```
+
+## Using Nira with Tools
+
+Nira has access to all connections installed in your workspace. When you ask Nira to do something that requires a tool, she'll use it automatically:
+
+```typescript
+const conversation = await nb.nira.conversations.create('Weather Check');
+
+for await (const event of nb.nira.messages.stream(
+  conversation.id,
+  'What is the weather in San Francisco?'
+)) {
+  switch (event.type) {
+    case 'tool.start':
+      console.log(`[Nira is checking ${event.data.display}...]`);
+      break;
+    case 'content':
+      process.stdout.write(event.data.text as string);
+      break;
+  }
+}
+```
+
+**Example output:**
+```
+[Nira is checking weather...]
+The current weather in San Francisco is 65°F with partly cloudy skies.
+The forecast shows a high of 68°F today with no chance of rain.
+```
+
+## Building Automations via API
+
+You can ask Nira to create playbooks programmatically:
+
+```typescript
+const conversation = await nb.nira.conversations.create('Build Automation');
+
+const response = await nb.nira.messages.send(
+  conversation.id,
+  'Create a playbook that checks our GitHub repo for new issues every hour and posts a summary to #dev-alerts on Slack'
+);
+
+console.log(response.content);
+// Nira will confirm the playbook creation and provide details
+```
+
+## Error Handling
+
+```typescript
+try {
+  const conversation = await nb.nira.conversations.create();
+} catch (error) {
+  if (error instanceof Error) {
+    if (error.message.includes('404')) {
+      console.error('Conversation not found');
+    } else if (error.message.includes('401')) {
+      console.error('Invalid API key');
+    } else if (error.message.includes('429')) {
+      console.error('Rate limit exceeded');
+    } else {
+      console.error('Error:', error.message);
+    }
+  }
+}
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Reuse Conversations" icon="arrows-rotate">
+    Keep the same conversation ID to maintain context across multiple messages
+  </Card>
+  <Card title="Use Streaming" icon="wave-pulse">
+    Always use streaming for user-facing applications for better UX
+  </Card>
+  <Card title="Handle Errors" icon="shield">
+    Wrap all API calls in try-catch and handle specific error types
+  </Card>
+  <Card title="Store Conversation IDs" icon="database">
+    Persist conversation IDs if users need to resume chats later
+  </Card>
+</CardGroup>
+
+## Conversation Context
+
+Nira maintains context within a conversation. Follow-up messages can reference previous context:
+
+```typescript
+const conversation = await nb.nira.conversations.create('Project Planning');
+
+// First message
+await nb.nira.messages.send(conversation.id,
+  'I need to set up daily sales reports from Salesforce to Slack'
+);
+
+// Follow-up - Nira remembers the context
+await nb.nira.messages.send(conversation.id,
+  'Actually, make it weekly instead of daily'
+);
+
+// Another follow-up
+await nb.nira.messages.send(conversation.id,
+  'And add a summary of support tickets from Zendesk too'
+);
+```
+
+## Rate Limits
+
+The Nira API has the following limits:
+
+| Limit | Value |
+|-------|-------|
+| Messages per minute | 60 |
+| Conversations per hour | 100 |
+| Max message length | 32,000 characters |
+| Max response length | 16,000 characters |
+
+<Note>
+Enterprise plans have higher limits. Contact sales for details.
+</Note>
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Streaming Guide" icon="wave-pulse" href="/developers/sdk/streaming">
+    Build real-time chat interfaces
+  </Card>
+  <Card title="Playbooks API" icon="play" href="/developers/sdk/playbooks">
+    Execute playbooks programmatically
+  </Card>
+  <Card title="SDK Overview" icon="book" href="/developers/sdk/overview">
+    Full SDK documentation
+  </Card>
+  <Card title="Nira in Studio" icon="robot" href="/studio/nira">
+    Learn about Nira's capabilities
+  </Card>
+</CardGroup>

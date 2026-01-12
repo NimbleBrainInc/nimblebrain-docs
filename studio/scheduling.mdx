@@ -1,0 +1,343 @@
+---
+title: 'Scheduling'
+description: 'Automate recurring playbooks with flexible scheduling options'
+---
+
+# Scheduling
+
+Scheduling allows your playbooks to run automatically at specified times or intervals without manual intervention. Set up daily reports, hourly monitors, or event-triggered workflows that run reliably in the background.
+
+<Note>
+**Quick Setup:** Tell Nira "Run this every morning at 9am" and she'll configure the schedule automatically. Press **⌘K** to get started.
+</Note>
+
+## Schedule Types
+
+NimbleBrain Studio supports three types of scheduling:
+
+<CardGroup cols={3}>
+  <Card title="Time-Based" icon="clock">
+    Run at specific times (daily at 9am, weekdays at 8am)
+  </Card>
+  <Card title="Interval-Based" icon="arrows-rotate">
+    Run at regular intervals (every 15 minutes, hourly)
+  </Card>
+  <Card title="Event-Triggered" icon="bolt">
+    Run when webhooks receive data
+  </Card>
+</CardGroup>
+
+## Time-Based Scheduling
+
+Run playbooks at specific times on specific days.
+
+<Tabs>
+  <Tab title="Examples">
+    - **Daily at 9:00 AM** - Morning reports
+    - **Weekdays at 8:00 AM and 5:00 PM** - Start and end of day summaries
+    - **Every Monday at 10:00 AM** - Weekly reports
+    - **First day of month at 9:00 AM** - Monthly summaries
+    - **Last Friday of month at 4:00 PM** - End of month reviews
+  </Tab>
+
+  <Tab title="Configuration">
+```json
+{
+  "schedule": {
+    "type": "time",
+    "time": "09:00",
+    "days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+    "timezone": "America/New_York"
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+### Setting Up with Nira
+
+Just describe when you want your playbook to run:
+
+<Card>
+**You:** "Create a sales report that runs every weekday at 8am Eastern time"
+
+**Nira:** "I'll create a playbook that queries your CRM data and sends a summary. It will run Monday through Friday at 8:00 AM Eastern. Would you like me to set that up?"
+</Card>
+
+## Interval-Based Scheduling
+
+Run playbooks at regular intervals throughout the day.
+
+<Tabs>
+  <Tab title="Examples">
+    - **Every 15 minutes** - Real-time monitoring
+    - **Every hour** - Hourly status checks
+    - **Every 6 hours** - Periodic data sync
+    - **Every 24 hours** - Daily batch processing
+  </Tab>
+
+  <Tab title="Configuration">
+```json
+{
+  "schedule": {
+    "type": "interval",
+    "interval": "1h",  // Options: 15m, 30m, 1h, 6h, 24h
+    "startTime": "08:00"
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+**Interval values:** `15m` (15 min), `30m` (30 min), `1h` (hourly), `6h` (6 hours), `24h` (daily)
+
+### Setting Up with Nira
+
+<Card>
+**You:** "Monitor our API endpoints every 15 minutes and alert me if response time exceeds 2 seconds"
+
+**Nira:** "I'll create a monitoring playbook that checks your endpoints every 15 minutes. If any endpoint takes longer than 2 seconds to respond, I'll send you an alert via Slack. Sound good?"
+</Card>
+
+## Event-Triggered Scheduling
+
+Run playbooks when external events occur via webhooks.
+
+<Tabs>
+  <Tab title="Examples">
+    - **New customer signup** - Welcome email workflow
+    - **Support ticket created** - Triage and routing
+    - **Payment received** - Invoice processing
+    - **File uploaded** - Document processing
+  </Tab>
+
+  <Tab title="Configuration">
+```json
+{
+  "schedule": {
+    "type": "trigger",
+    "trigger": "webhook",
+    "endpoint": "/webhooks/playbook-abc123"
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+### Setting Up with Nira
+
+<Card>
+**You:** "When a new customer signs up in Stripe, send them a welcome email and create a ticket in Zendesk"
+
+**Nira:** "I'll set up a webhook that triggers when Stripe detects a new subscription. The playbook will send a personalized welcome email and create a customer success ticket. I'll provide you with the webhook URL to configure in Stripe."
+</Card>
+
+## Managing Schedules
+
+### Viewing Scheduled Playbooks
+
+All scheduled playbooks appear in your Playbooks list with a clock icon. You can see:
+
+- **Next run time** - When the playbook will execute next
+- **Last run time** - When it last executed
+- **Status** - Active, paused, or failed
+
+### Pausing & Resuming
+
+Temporarily disable a schedule without deleting the playbook:
+
+<CardGroup cols={2}>
+  <Card title="Pause" icon="pause">
+    Stop scheduled runs temporarily (e.g., during maintenance or holidays)
+  </Card>
+  <Card title="Resume" icon="play">
+    Restart scheduled runs when ready
+  </Card>
+</CardGroup>
+
+To pause or resume, either:
+- Click the pause/play button in the Playbooks list
+- Tell Nira: "Pause my morning report playbook"
+
+### Modifying Schedules
+
+Update a schedule anytime:
+
+<Card>
+**You:** "Change my sales report to run at 7am instead of 8am"
+
+**Nira:** "Done! Your sales report playbook will now run at 7:00 AM Eastern on weekdays."
+</Card>
+
+## Timezone Handling
+
+All schedules run in the timezone you specify. If no timezone is set, your workspace's default timezone is used.
+
+<Tip>
+**Tip:** When creating playbooks with Nira, include the timezone in your request: "Run this at 9am Pacific" or "8am Eastern time"
+</Tip>
+
+Supported timezone formats:
+- `America/New_York`
+- `America/Los_Angeles`
+- `Europe/London`
+- `Asia/Tokyo`
+- And all standard IANA timezone names
+
+## Error Handling
+
+When a scheduled playbook fails:
+
+1. **Automatic Retry** - Failed runs retry up to 3 times with exponential backoff
+2. **Error Notification** - You're notified via your configured channels
+3. **Execution Log** - Full details available in Activity Logs
+4. **Schedule Continues** - Future scheduled runs are not affected
+
+### Configuring Retries
+
+```json
+{
+  "errorHandling": {
+    "retry": true,
+    "maxRetries": 3,
+    "retryDelay": "5m",
+    "onError": "continue"
+  }
+}
+```
+
+Options:
+- `continue` - Keep running future scheduled executions
+- `pause` - Pause the schedule after repeated failures
+- `notify` - Send additional alerts on failure
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Choose the Right Schedule Type">
+    - **Time-based** for reports, summaries, and scheduled communications
+    - **Interval-based** for monitoring, syncing, and polling
+    - **Event-triggered** for real-time responses to external actions
+  </Accordion>
+
+  <Accordion title="Consider Timezone Impact">
+    If your playbook affects users in multiple timezones, consider:
+    - Running at a time that works across regions
+    - Creating separate playbooks for different regions
+    - Using UTC for internal processes
+  </Accordion>
+
+  <Accordion title="Avoid Peak Times">
+    For non-urgent playbooks, avoid running during peak hours:
+    - Spread out batch processing throughout the day
+    - Run heavy reports during off-hours
+    - Stagger similar playbooks to avoid conflicts
+  </Accordion>
+
+  <Accordion title="Test Before Scheduling">
+    Always run a playbook manually first:
+    1. Verify it produces expected output
+    2. Check that notifications reach the right destinations
+    3. Confirm API connections are working
+    4. Then enable the schedule
+  </Accordion>
+
+  <Accordion title="Monitor Initially">
+    For new scheduled playbooks:
+    - Watch the first few runs closely
+    - Check Activity Logs for any issues
+    - Adjust timing or configuration as needed
+  </Accordion>
+</AccordionGroup>
+
+## Common Patterns
+
+### Morning Briefing
+
+<Card>
+**Schedule:** Weekdays at 7:00 AM
+
+**Playbook:** Fetch weather, calendar events, and top news headlines. Compile into a summary and send to Slack.
+
+**Tell Nira:** "Create a morning briefing that sends me weather, my calendar, and top tech news every weekday at 7am"
+</Card>
+
+### Hourly System Health Check
+
+<Card>
+**Schedule:** Every hour
+
+**Playbook:** Check API endpoints, database performance, and error logs. Alert if issues detected.
+
+**Tell Nira:** "Monitor our production API every hour and alert #engineering if response times exceed 1 second"
+</Card>
+
+### Weekly Report
+
+<Card>
+**Schedule:** Every Monday at 9:00 AM
+
+**Playbook:** Aggregate last week's metrics from CRM, support tickets, and usage data. Generate PDF report and email to leadership.
+
+**Tell Nira:** "Create a weekly report every Monday that summarizes our sales pipeline and support metrics from HubSpot and Zendesk"
+</Card>
+
+### Real-Time Customer Onboarding
+
+<Card>
+**Schedule:** Webhook trigger from Stripe
+
+**Playbook:** When new subscription is created, send welcome email, create CRM record, and notify success team.
+
+**Tell Nira:** "When a new customer signs up in Stripe, send them a welcome email and add them to HubSpot"
+</Card>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Playbook didn't run on schedule">
+    **Check:**
+    - Playbook is not paused
+    - Schedule timezone is correct
+    - Look for errors in Activity Logs
+    - Verify API credentials haven't expired
+  </Accordion>
+
+  <Accordion title="Playbook runs at wrong time">
+    **Solution:**
+    - Verify timezone setting
+    - Check if daylight saving time affected the schedule
+    - Update the schedule with explicit timezone
+  </Accordion>
+
+  <Accordion title="Too many executions">
+    **Solution:**
+    - Review interval settings (15m vs 1h)
+    - Add conditions to skip unnecessary runs
+    - Consider time-based instead of interval scheduling
+  </Accordion>
+
+  <Accordion title="Missed runs during outage">
+    **Note:**
+    - NimbleBrain does not backfill missed runs
+    - Schedule resumes normally after service restoration
+    - Check Activity Logs for execution history
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Playbooks" icon="book" href="/studio/playbooks">
+    Learn about creating playbooks
+  </Card>
+  <Card title="Activity Logs" icon="list" href="/studio/activity-logs">
+    Monitor execution history
+  </Card>
+  <Card title="Nira" icon="robot" href="/studio/nira">
+    Set up schedules conversationally
+  </Card>
+  <Card title="Connections" icon="plug" href="/studio/connections">
+    Browse available integrations
+  </Card>
+</CardGroup>

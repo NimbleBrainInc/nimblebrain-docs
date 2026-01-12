@@ -1,33 +1,37 @@
 ---
 title: 'Nira'
-description: 'Build complex automations through conversation with Nira, your intelligent copilot for NimbleBrain Studio'
+description: 'Your AI-powered interface for building and managing automations in NimbleBrain Studio'
 ---
 
 <div align="center">
   <img
-    src="/images/studio/Nira-intro.png"
+    src="/images/studio/NIRA-intro.png"
     alt="Nira AI Research Assistant"
   />
 </div>
 
-**Nira** (NimbleBrain Research Assistant) is your AI copilot that transforms how you build automations. Simply describe what you want to accomplish in plain English, and Nira handles the complexity of configuring tools, orchestrating workflows, and deploying playbooks.
+**Nira** is your primary interface to NimbleBrain Studio. Press **⌘K** (Mac) or **Ctrl+K** (Windows) anywhere to open Nira and accomplish tasks through natural conversation. Describe what you want in plain English, and Nira handles the complexity of configuring tools, orchestrating workflows, and deploying playbooks.
+
+<Tip>
+**Pro Tip:** You don't need to navigate menus or learn complex interfaces. Just press **⌘K** and tell Nira what you want to do.
+</Tip>
 
 ## What is Nira?
 
-Nira is an intelligent assistant built into NimbleBrain Studio that understands your business requirements and automatically builds working automations. Instead of manually configuring playbooks, selecting the right tools, and writing instructions, you have a conversation with Nira about what you need—and it does the rest.
+Nira is an intelligent assistant that understands your business requirements and automatically builds working automations. Instead of manually configuring playbooks, selecting the right tools, and writing instructions, you have a conversation with Nira about what you need, and she does the rest.
 
 <CardGroup cols={2}>
+  <Card title="Primary Interface" icon="command">
+    Press **⌘K** anywhere in Studio to open Nira. She's always available to help.
+  </Card>
   <Card title="Conversational" icon="comments">
-    Describe your automation needs in natural language—no technical expertise required
+    Describe your automation needs in natural language. No technical expertise required.
   </Card>
   <Card title="Intelligent" icon="brain">
-    Understands context, selects the right tools, and structures complex multi-step workflows
+    Understands context, selects the right tools, and structures complex multi-step workflows.
   </Card>
   <Card title="Fast" icon="bolt">
-    Build automations in minutes that would take hours to configure manually
-  </Card>
-  <Card title="Iterative" icon="arrows-rotate">
-    Refine and adjust automations through continued conversation
+    Build automations in minutes that would take hours to configure manually.
   </Card>
 </CardGroup>
 
@@ -41,32 +45,33 @@ Nira is an intelligent assistant built into NimbleBrain Studio that understands 
 | **Tool Selection** | Browse catalog, research capabilities | Nira auto-selects optimal tools |
 | **Configuration** | Write instructions, set parameters | Nira generates configuration |
 | **Integration** | Connect multiple tools manually | Nira orchestrates multi-tool workflows |
+| **Scheduling** | Configure cron expressions | "Run this every morning at 9am" |
 | **Time to Deploy** | Hours or days | Minutes |
 
 <Tip>
   **Perfect for non-technical users!** Nira makes automation accessible to everyone on your team, not just developers.
 </Tip>
 
-## Key Features
+## Key Capabilities
 
 <CardGroup cols={2}>
-  <Card title="Conversational Automation Building" icon="message-bot">
-    Chat naturally with Nira about what you want to automate. No need to understand technical details—just explain your business process.
+  <Card title="Build Automations" icon="wand-magic-sparkles">
+    Describe what you want and Nira creates complete playbooks with proper tool selection and workflow logic.
   </Card>
-  <Card title="Intelligent Playbook Generation" icon="wand-magic-sparkles">
-    Nira analyzes your requirements and automatically generates complete playbooks with proper tool selection and workflow logic.
+  <Card title="Search & Navigate" icon="magnifying-glass">
+    Find playbooks, connections, and executions instantly. "Show me all playbooks that use Slack"
   </Card>
-  <Card title="Automatic Configuration" icon="gears">
-    Nira handles the technical details: selecting the right tools, structuring instructions, and setting optimal parameters.
+  <Card title="Troubleshoot Issues" icon="wrench">
+    When something fails, Nira can diagnose problems and suggest fixes.
   </Card>
-  <Card title="Multi-Tool Orchestration" icon="diagram-project">
-    Nira seamlessly coordinates multiple integrations to accomplish complex, multi-step automations.
+  <Card title="Schedule Automations" icon="clock">
+    Set up recurring playbooks with natural language. "Run this every weekday at 8am"
   </Card>
-  <Card title="Natural Language Understanding" icon="brain-circuit">
-    Understands context, business terminology, and implicit requirements to build automations that truly match your needs.
+  <Card title="Manage Connections" icon="plug">
+    Nira identifies required integrations and guides you through adding API keys.
   </Card>
-  <Card title="Guided API Setup" icon="key">
-    Nira identifies required credentials and walks you through adding API keys for each tool.
+  <Card title="Learn the Platform" icon="graduation-cap">
+    Ask Nira any question about NimbleBrain Studio and get instant answers.
   </Card>
 </CardGroup>
 
@@ -75,8 +80,12 @@ Nira is an intelligent assistant built into NimbleBrain Studio that understands 
 Building an automation with Nira is simple:
 
 <Steps>
+  <Step title="Open Nira">
+    Press **⌘K** (Mac) or **Ctrl+K** (Windows) anywhere in Studio.
+  </Step>
+
   <Step title="Describe Your Automation">
-    Tell Nira what you want to accomplish in plain English. Be as detailed or high-level as you like—Nira will ask clarifying questions if needed.
+    Tell Nira what you want to accomplish in plain English. Be as detailed or high-level as you like. Nira will ask clarifying questions if needed.
 
     **Example:** "I need a daily report that shows all new support tickets from Zendesk, categorizes them by priority, and posts a summary to our #support Slack channel every morning."
   </Step>
@@ -90,7 +99,7 @@ Building an automation with Nira is simple:
   </Step>
 
   <Step title="Add Your API Keys">
-    Nira prompts you for the necessary API keys and credentials. Simply add them when requested—Nira knows exactly what's needed.
+    Nira prompts you for the necessary API keys and credentials. Simply add them when requested. Nira knows exactly what's needed.
 
     <Note>
       Your API keys are encrypted and stored securely. They're never visible to Nira or logged anywhere.
@@ -107,8 +116,8 @@ Building an automation with Nira is simple:
     You can ask Nira to make adjustments before deploying.
   </Step>
 
-  <Step title="Click GO to Deploy">
-    Once you're satisfied, click the **GO** button and Nira deploys your automation immediately. Your playbook is ready to run!
+  <Step title="Deploy">
+    Once you're satisfied, click **GO** and Nira deploys your automation immediately. Your playbook is ready to run!
   </Step>
 </Steps>
 
@@ -120,9 +129,7 @@ Building an automation with Nira is simple:
 
 ### Accessing Nira
 
-1. Navigate to your NimbleBrain Studio workspace
-2. Look for the **Nira** button in the main navigation or dashboard
-3. Click to open the Nira chat interface
+Nira is always available. Just press **⌘K** (Mac) or **Ctrl+K** (Windows) from anywhere in Studio.
 
 <Frame>
   <img src="/images/studio/nirachatinterface.png" alt="Nira chat interface" />
@@ -134,7 +141,7 @@ Try this simple automation to get familiar with Nira:
 
 <Steps>
   <Step title="Open Nira">
-    Click the Nira button in Studio
+    Press **⌘K** to open the Nira interface
   </Step>
 
   <Step title="Say Hello">
@@ -303,33 +310,6 @@ I'll need:
 Shall we configure these settings?"
 ```
 
-```plaintext Database Monitoring
-You: "Set up monitoring that checks our PostgreSQL database performance every 5 minutes and alerts us if queries are taking longer than normal"
-
-Nira: "I'll build a database performance monitor that:
-
-1. Connects to your PostgreSQL database
-2. Runs every 5 minutes to check:
-   - Average query execution time
-   - Slow query count (queries > 2 seconds)
-   - Active connection count
-   - Database size and growth
-3. Compares against baseline performance
-4. Sends alerts if:
-   - Average query time increases by 50%
-   - More than 10 slow queries detected
-   - Connection count exceeds 90% of max
-
-Alerts will include diagnostic information and slow query details.
-
-Required:
-- PostgreSQL connection details (host, port, database name)
-- Database credentials (read-only access is sufficient)
-- Alert destination (Slack, email, or PagerDuty)
-
-Ready to configure?"
-```
-
 </CodeGroup>
 
 ## Writing Effective Automation Requests
@@ -442,16 +422,14 @@ Ready to configure?"
   </Accordion>
 
   <Accordion title="Can Nira access my data?">
-    No. Nira only has access to:
+    Your API keys and secrets are encrypted and never visible to Nira. When Nira executes tools on your behalf, the results are processed to generate responses but are not permanently stored or logged. Nira has access to:
     - Your workspace configuration
     - Available integrations in the catalog
-    - Playbook templates and examples
-
-    Nira never sees your actual data, API responses, or execution results.
+    - Tool results during conversation (to formulate responses)
   </Accordion>
 
   <Accordion title="What if Nira doesn't understand my request?">
-    Nira will ask clarifying questions to better understand your needs. If it still can't help, it will suggest breaking down the request or provide guidance on how to rephrase.
+    Nira will ask clarifying questions to better understand your needs. If she still can't help, she will suggest breaking down the request or provide guidance on how to rephrase.
   </Accordion>
 
   <Accordion title="Can I edit playbooks that Nira creates?">
@@ -463,7 +441,7 @@ Ready to configure?"
   </Accordion>
 
   <Accordion title="Can Nira help me troubleshoot playbooks?">
-    Absolutely! If a playbook isn't working as expected, describe the issue to Nira and it will help diagnose and fix problems.
+    Absolutely! If a playbook isn't working as expected, describe the issue to Nira and she will help diagnose and fix problems.
   </Accordion>
 
   <Accordion title="How does Nira learn my preferences?">
@@ -493,34 +471,30 @@ Nira will analyze the playbook and suggest optimizations like:
 - Caching strategies
 - Simplified logic
 
-### Building Agents with Nira
+### Multi-Step Workflows
 
-When your automation requires multiple steps or data sources, Nira will suggest creating an Agent:
+For complex automations that need multiple data sources or sequential steps, Nira creates sophisticated playbooks:
 
 <Card>
 **Example:**
 
 **You:** "I need to pull sales data from Salesforce, get market trends from Finnhub, analyze both with AI, and send a report to Slack every Monday morning"
 
-**Nira:** "This requires multiple data sources working together. I recommend creating an Agent with 4 playbooks:
+**Nira:** "I'll create a playbook that:
 
-1. **Salesforce Data** - Pull weekly sales data
-2. **Market Trends** - Fetch relevant market data
-3. **AI Analysis** - Analyze combined data and generate insights
-4. **Slack Report** - Format and send to your team
+1. Fetches weekly sales data from Salesforce
+2. Pulls relevant market trends from Finnhub
+3. Analyzes combined data and generates insights
+4. Formats and sends report to your Slack channel
 
-These will run sequentially on Mondays at 9 AM. Would you like me to set that up?"
+This will run every Monday at 9 AM. Would you like me to set that up?"
 </Card>
 
 Nira handles the complexity of:
-- Determining which playbooks are needed
-- Setting up the execution order (sequential or parallel)
-- Configuring data passing between playbooks
-- Scheduling the agent to run automatically
-
-<Tip>
-**Ready for multi-step workflows?** Learn how Agents coordinate multiple playbooks → [Learn more about Agents](/studio/agents)
-</Tip>
+- Coordinating multiple data sources
+- Sequencing operations correctly
+- Managing data flow between steps
+- Configuring the schedule
 
 ## Limitations
 
@@ -559,11 +533,11 @@ Nira handles the complexity of:
     Browse available integrations
   </Card>
   <Card
-    title="Quickstart Guide"
-    icon="rocket"
-    href="/studio/quickstart"
+    title="Scheduling"
+    icon="clock"
+    href="/studio/scheduling"
   >
-    Get started with NimbleBrain Studio
+    Set up recurring automations
   </Card>
   <Card
     title="Best Practices"
@@ -576,7 +550,7 @@ Nira handles the complexity of:
 
 ## Get Started with Nira Today
 
-Ready to build your first automation? Click the **Nira** button in your Studio workspace and start a conversation!
+Ready to build your first automation? Press **⌘K** and start a conversation!
 
 <Callout type="success">
   **Pro Tip:** Start with "Hi Nira, show me what you can do" to see example automations and get inspired!

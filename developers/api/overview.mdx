@@ -3,7 +3,7 @@ title: 'API Reference'
 description: 'REST API documentation for NimbleBrain Studio'
 ---
 
-The NimbleBrain API provides programmatic access to all Studio features. Use it to manage agents, execute playbooks, and build custom integrations.
+The NimbleBrain API provides programmatic access to all Studio features. Use it to chat with Nira, execute playbooks, and build custom integrations.
 
 ## Base URL
 
@@ -17,7 +17,7 @@ All API requests require authentication using a Bearer token. Get your API key f
 
 ```bash
 curl -H "Authorization: Bearer nb_live_xxxxx" \
-  https://studio-api.nimblebrain.ai/v1/agents
+  https://studio-api.nimblebrain.ai/v1/nira/conversations
 ```
 
 ### API Key Formats
@@ -37,26 +37,19 @@ For the full interactive API reference with request/response examples, visit:
 
 ## Available Endpoints
 
-### Agents
+### Nira Conversations
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/v1/agents` | List all agents |
-| `GET` | `/v1/agents/:id` | Get agent details |
+| `POST` | `/v1/nira/conversations` | Create conversation with Nira |
+| `GET` | `/v1/nira/conversations/:id` | Get conversation details |
 
-### Conversations
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/v1/agents/:agentId/conversations` | Create conversation |
-| `GET` | `/v1/agents/:agentId/conversations/:id` | Get conversation |
-
-### Messages
+### Nira Messages
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/v1/agents/:agentId/conversations/:convId/messages` | List messages |
-| `POST` | `/v1/agents/:agentId/conversations/:convId/messages` | Send message |
+| `GET` | `/v1/nira/conversations/:convId/messages` | List messages |
+| `POST` | `/v1/nira/conversations/:convId/messages` | Send message to Nira |
 
 <Tip>
 Add `stream: true` to the message body and set `Accept: text/event-stream` header to receive streaming responses via SSE.
@@ -83,7 +76,7 @@ All responses are JSON with consistent structure:
 **Success:**
 ```json
 {
-  "agents": [...],
+  "conversations": [...],
   "meta": {
     "total": 5,
     "page": 1
@@ -96,7 +89,7 @@ All responses are JSON with consistent structure:
 {
   "error": {
     "code": "NOT_FOUND",
-    "message": "Agent not found"
+    "message": "Conversation not found"
   }
 }
 ```

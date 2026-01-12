@@ -3,7 +3,7 @@ title: 'Streaming'
 description: 'Build real-time chat interfaces with Server-Sent Events streaming'
 ---
 
-The NimbleBrain SDK supports real-time streaming of agent responses via Server-Sent Events (SSE). This enables you to display responses character-by-character as they're generated, creating a smooth typewriter effect for your users.
+The NimbleBrain SDK supports real-time streaming of Nira's responses via Server-Sent Events (SSE). This enables you to display responses character-by-character as they're generated, creating a smooth typewriter effect for your users.
 
 ## Why Streaming?
 
@@ -12,22 +12,22 @@ The NimbleBrain SDK supports real-time streaming of agent responses via Server-S
     Users see responses appear in real-time instead of waiting for the full response
   </Card>
   <Card title="Tool Visibility" icon="wrench">
-    Show when the agent is using tools (checking weather, searching, etc.)
+    Show when Nira is using tools (checking weather, searching, etc.)
   </Card>
   <Card title="Lower Perceived Latency" icon="gauge-high">
     First token appears quickly, even for long responses
   </Card>
   <Card title="Progressive Rendering" icon="spinner">
-    Display partial results while the agent continues working
+    Display partial results while Nira continues working
   </Card>
 </CardGroup>
 
 ## Basic Streaming
 
-The `messages.stream()` method returns an async generator that yields events:
+The `nira.messages.stream()` method returns an async generator that yields events:
 
 ```typescript
-for await (const event of nb.messages.stream(agentId, conversationId, 'Hello!')) {
+for await (const event of nb.nira.messages.stream(conversationId, 'Hello!')) {
   if (event.type === 'content') {
     process.stdout.write(event.data.text as string);
   }
@@ -40,9 +40,9 @@ The stream yields different event types as the response progresses:
 
 | Event Type | Description | Data Fields |
 |------------|-------------|-------------|
-| `message.start` | Agent began generating a response | - |
+| `message.start` | Nira began generating a response | - |
 | `content` | A chunk of text content | `text` |
-| `tool.start` | Agent started using a tool | `name`, `display` |
+| `tool.start` | Nira started using a tool | `name`, `display` |
 | `tool.complete` | Tool finished executing | `name`, `result` |
 | `message.complete` | Full response is ready | `messageId` |
 | `error` | An error occurred | `error` |
@@ -53,11 +53,11 @@ The stream yields different event types as the response progresses:
 Here's how to handle all event types:
 
 ```typescript
-for await (const event of nb.messages.stream(agentId, conversationId, userMessage)) {
+for await (const event of nb.nira.messages.stream(conversationId, userMessage)) {
   switch (event.type) {
     case 'message.start':
       // Response is beginning
-      console.log('[Agent is thinking...]');
+      console.log('[Nira is thinking...]');
       break;
 
     case 'content':
@@ -67,7 +67,7 @@ for await (const event of nb.messages.stream(agentId, conversationId, userMessag
       break;
 
     case 'tool.start':
-      // Agent is using a tool
+      // Nira is using a tool
       const toolName = event.data.display as string;
       console.log(`\n[Using: ${toolName}]`);
       break;
@@ -112,7 +112,7 @@ interface Message {
   content: string;
 }
 
-function Chat({ agentId, conversationId }: { agentId: string; conversationId: string }) {
+function Chat({ conversationId }: { conversationId: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
@@ -132,7 +132,7 @@ function Chat({ agentId, conversationId }: { agentId: string; conversationId: st
     setMessages((prev) => [...prev, { role: 'assistant', content: '' }]);
 
     try {
-      for await (const event of nb.messages.stream(agentId, conversationId, userMessage)) {
+      for await (const event of nb.nira.messages.stream(conversationId, userMessage)) {
         switch (event.type) {
           case 'content':
             // Append text to the last message
@@ -163,7 +163,7 @@ function Chat({ agentId, conversationId }: { agentId: string; conversationId: st
       setIsStreaming(false);
       setCurrentTool(null);
     }
-  }, [input, isStreaming, agentId, conversationId]);
+  }, [input, isStreaming, conversationId]);
 
   return (
     <div className="chat-container">
@@ -209,12 +209,10 @@ import * as readline from 'readline';
 async function main() {
   const nb = new NimbleBrain({ apiKey: process.env.NIMBLEBRAIN_API_KEY! });
 
-  // Get agents and create conversation
-  const agents = await nb.agents.list();
-  const agent = agents[0];
-  const conversation = await nb.conversations.create(agent.id);
+  // Create a conversation with Nira
+  const conversation = await nb.nira.conversations.create('CLI Chat');
 
-  console.log(`Chatting with ${agent.name}`);
+  console.log('Chatting with Nira');
   console.log('Type "quit" to exit\n');
 
   const rl = readline.createInterface({
@@ -229,9 +227,9 @@ async function main() {
         return;
       }
 
-      process.stdout.write('Agent: ');
+      process.stdout.write('Nira: ');
 
-      for await (const event of nb.messages.stream(agent.id, conversation.id, input)) {
+      for await (const event of nb.nira.messages.stream(conversation.id, input)) {
         switch (event.type) {
           case 'content':
             process.stdout.write(event.data.text as string);
@@ -262,7 +260,7 @@ Always wrap streaming in try-catch:
 
 ```typescript
 try {
-  for await (const event of nb.messages.stream(agentId, conversationId, message)) {
+  for await (const event of nb.nira.messages.stream(conversationId, message)) {
     if (event.type === 'error') {
       // Handle error event from the stream
       throw new Error(event.data.error as string);
@@ -289,7 +287,7 @@ let cancelled = false;
 // Somewhere else in your code
 cancelButton.onclick = () => { cancelled = true; };
 
-for await (const event of nb.messages.stream(agentId, conversationId, message)) {
+for await (const event of nb.nira.messages.stream(conversationId, message)) {
   if (cancelled) {
     console.log('Stream cancelled by user');
     break;
@@ -308,7 +306,7 @@ for await (const event of nb.messages.stream(agentId, conversationId, message)) 
     Display an indicator when waiting for `message.start`
   </Card>
   <Card title="Handle Tool Events" icon="wrench">
-    Show users when the agent is using tools for transparency
+    Show users when Nira is using tools for transparency
   </Card>
   <Card title="Buffer Content" icon="database">
     For smooth rendering, consider buffering small chunks
@@ -337,10 +335,10 @@ interface StreamEvent {
 ## Related
 
 <CardGroup cols={2}>
-  <Card title="Agents API" icon="robot" href="/sdk/agents">
-    Full agents and conversations API reference
+  <Card title="Nira API" icon="robot" href="/developers/sdk/nira">
+    Full Nira conversations API reference
   </Card>
-  <Card title="Quickstart" icon="rocket" href="/sdk/quickstart">
+  <Card title="Quickstart" icon="rocket" href="/developers/sdk/quickstart">
     Get started with the SDK
   </Card>
 </CardGroup>
