@@ -35,7 +35,8 @@
       "Bash(curl:*)",
       "Bash(find:*)",
       "WebFetch(domain:mintlify.com)",
-      "WebFetch(domain:www.mintlify.com)"
+      "WebFetch(domain:www.mintlify.com)",
+      "Skill(strategic-thought-partner)"
     ],
     "deny": [],
     "ask": []
