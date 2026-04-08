@@ -1,22 +1,71 @@
 /*
  * NimbleBrain docs theme for Starlight
  *
- * Blue accent (#0070ff) for NimbleBrain brand.
+ * Colors, fonts, and spacing aligned with www.nimblebrain.ai design system.
  * Literata headings, IBM Plex Sans body, DM Mono labels, JetBrains Mono code.
  */
 
+/* ── Dark mode (Starlight default) ── */
 :root {
-  /* Blue accent for dark mode */
-  --sl-color-accent-low: hsl(213, 100%, 16%);
-  --sl-color-accent: hsl(213, 100%, 50%);
-  --sl-color-accent-high: hsl(213, 100%, 75%);
+  /* Accent: #0055FF blue */
+  --sl-color-accent-low:  #001A66;
+  --sl-color-accent:      #0055FF;
+  --sl-color-accent-high: #5B8DEF;
+
+  /* Backgrounds */
+  --sl-color-bg:          #0A0A0F;
+  --sl-color-bg-nav:      #0A0A0F;
+  --sl-color-bg-sidebar:  #0F0F18;
+
+  /* Text */
+  --sl-color-text:        #E8E8ED;
+  --sl-color-text-accent: #5B8DEF;
+  --sl-color-white:       #E8E8ED;
+
+  /* Borders / hairlines */
+  --sl-color-hairline:      rgba(255, 255, 255, 0.08);
+  --sl-color-hairline-light: rgba(255, 255, 255, 0.05);
+
+  /* Gray scale (dark: 1=light, 7=dark) */
+  --sl-color-gray-1: #E8E8ED;
+  --sl-color-gray-2: #B0B0BC;
+  --sl-color-gray-3: #737380;
+  --sl-color-gray-4: #3D3D4A;
+  --sl-color-gray-5: #22222C;
+  --sl-color-gray-6: #14141C;
+  --sl-color-gray-7: #0A0A0F;
 }
 
+/* ── Light mode ── */
 :root[data-theme='light'] {
-  /* Blue accent for light mode - darker for readability on white */
-  --sl-color-accent-high: hsl(213, 100%, 28%);
-  --sl-color-accent: hsl(213, 100%, 40%);
-  --sl-color-accent-low: hsl(213, 100%, 92%);
+  /* Accent: deeper for readability on light bg */
+  --sl-color-accent-low:  #EEF2FF;
+  --sl-color-accent:      #0044CC;
+  --sl-color-accent-high: #002B99;
+
+  /* Backgrounds — warm off-white matching website */
+  --sl-color-bg:          #FAFAF8;
+  --sl-color-bg-nav:      #FAFAF8;
+  --sl-color-bg-sidebar:  #F5F5F0;
+
+  /* Text */
+  --sl-color-text:        #1A1A1A;
+  --sl-color-text-accent: #0044CC;
+  --sl-color-white:       #FAFAF8;
+  --sl-color-black:       #1A1A1A;
+
+  /* Borders */
+  --sl-color-hairline:       #E8E8E4;
+  --sl-color-hairline-light: #F0EDE6;
+
+  /* Gray scale (light: 1=dark, 7=light) */
+  --sl-color-gray-1: #1A1A1A;
+  --sl-color-gray-2: #3D3D3D;
+  --sl-color-gray-3: #595959;
+  --sl-color-gray-4: #8C8C8C;
+  --sl-color-gray-5: #E8E8E4;
+  --sl-color-gray-6: #F5F5F0;
+  --sl-color-gray-7: #FAFAF8;
 }
 
 /* Fonts */
