@@ -17,7 +17,7 @@ nb serve [flags]
 
 | Flag | Description | Default |
 |------|-------------|---------|
-| `--port <number>` | Server port | `3000` |
+| `--port <number>` | Server port | `27247` |
 | `--config <path>` | Config file path | Auto-resolved (see [config resolution](/cli/overview/#config-resolution)) |
 | `--workdir <dir>` | Working directory | `~/.nimblebrain` |
 | `--model <name>` | Override default model | From config |
@@ -34,7 +34,7 @@ nb serve
 [nimblebrain] Runtime ready.
 ```
 
-The server listens on port 3000 by default. Override with `--port`:
+The server listens on port 27247 by default. Override with `--port`:
 
 ```bash
 nb serve --port 8080
@@ -66,7 +66,7 @@ export ANTHROPIC_API_KEY=sk-ant-api03-...
 export NB_API_KEY=your-secret-api-key-here
 export ALLOWED_ORIGINS=https://app.example.com
 
-nb serve --port 3000
+nb serve --port 27247
 ```
 
 The `NB_API_KEY` protects the API with Bearer token authentication. The `ALLOWED_ORIGINS` controls CORS. See the [Authentication](/api/authentication/) and [Security](/deploy/security/) docs for details.

@@ -22,33 +22,31 @@ Sub-slots are matched hierarchically. A query for `"sidebar"` returns all entrie
 
 ## Declaring placements
 
-Add a `placements` array to your manifest's `_meta["ai.nimblebrain/platform"].ui`:
+Add a `placements` array to your manifest's `_meta["ai.nimblebrain/synapse"]`:
 
 ```json title="manifest.json"
 {
   "_meta": {
-    "ai.nimblebrain/platform": {
-      "ui": {
-        "name": "Tasks",
-        "icon": "check-square",
-        "placements": [
-          {
-            "slot": "sidebar",
-            "resourceUri": "ui://sidebar-widget",
-            "priority": 30,
-            "label": "Tasks",
-            "icon": "check-square",
-            "route": "tasks"
-          },
-          {
-            "slot": "main",
-            "resourceUri": "ui://dashboard",
-            "route": "tasks",
-            "label": "Tasks",
-            "icon": "check-square"
-          }
-        ]
-      }
+    "ai.nimblebrain/synapse": {
+      "name": "Tasks",
+      "icon": "check-square",
+      "placements": [
+        {
+          "slot": "sidebar",
+          "resourceUri": "ui://sidebar-widget",
+          "priority": 30,
+          "label": "Tasks",
+          "icon": "check-square",
+          "route": "tasks"
+        },
+        {
+          "slot": "main",
+          "resourceUri": "ui://dashboard",
+          "route": "tasks",
+          "label": "Tasks",
+          "icon": "check-square"
+        }
+      ]
     }
   }
 }
@@ -161,21 +159,19 @@ A common pattern is one sidebar item that links to a main view:
 ```json title="manifest.json"
 {
   "_meta": {
-    "ai.nimblebrain/platform": {
-      "ui": {
-        "name": "CRM",
-        "icon": "users",
-        "placements": [
-          {
-            "slot": "main",
-            "resourceUri": "ui://dashboard",
-            "route": "crm",
-            "label": "CRM",
-            "icon": "users",
-            "priority": 50
-          }
-        ]
-      }
+    "ai.nimblebrain/synapse": {
+      "name": "CRM",
+      "icon": "users",
+      "placements": [
+        {
+          "slot": "main",
+          "resourceUri": "ui://dashboard",
+          "route": "crm",
+          "label": "CRM",
+          "icon": "users",
+          "priority": 50
+        }
+      ]
     }
   }
 }

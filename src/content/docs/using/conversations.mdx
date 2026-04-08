@@ -100,7 +100,7 @@ Assistant messages include additional metadata:
 <Tabs>
   <TabItem label="API">
     ```bash
-    curl http://localhost:3000/v1/conversations
+    curl http://localhost:27247/v1/conversations
     ```
     ```json
     {
@@ -125,13 +125,13 @@ Assistant messages include additional metadata:
     Pagination is cursor-based. Pass `cursor` from `nextCursor` to get the next page:
 
     ```bash
-    curl "http://localhost:3000/v1/conversations?limit=20&cursor=abc123"
+    curl "http://localhost:27247/v1/conversations?limit=20&cursor=abc123"
     ```
 
     Sort by creation or last update:
 
     ```bash
-    curl "http://localhost:3000/v1/conversations?sortBy=updatedAt"
+    curl "http://localhost:27247/v1/conversations?sortBy=updatedAt"
     ```
   </TabItem>
   <TabItem label="Web UI">
@@ -144,7 +144,7 @@ Assistant messages include additional metadata:
 Retrieve all messages for a conversation:
 
 ```bash
-curl http://localhost:3000/v1/conversations/conv_a1b2c3d4e5f67890/history
+curl http://localhost:27247/v1/conversations/conv_a1b2c3d4e5f67890/history
 ```
 ```json
 {
@@ -161,13 +161,13 @@ curl http://localhost:3000/v1/conversations/conv_a1b2c3d4e5f67890/history
 Fork creates a new conversation from an existing one, optionally truncated at a specific message index:
 
 ```bash
-curl -X POST http://localhost:3000/v1/conversations/conv_a1b2c3d4e5f67890/fork
+curl -X POST http://localhost:27247/v1/conversations/conv_a1b2c3d4e5f67890/fork
 ```
 
 Fork at a specific point (copies only the first 4 messages):
 
 ```bash
-curl -X POST "http://localhost:3000/v1/conversations/conv_a1b2c3d4e5f67890/fork?atMessage=4"
+curl -X POST "http://localhost:27247/v1/conversations/conv_a1b2c3d4e5f67890/fork?atMessage=4"
 ```
 
 The forked conversation gets a new ID and re-accumulates token counts from the copied messages. The original conversation is unchanged.
@@ -177,7 +177,7 @@ The forked conversation gets a new ID and re-accumulates token counts from the c
 Update the title:
 
 ```bash
-curl -X PATCH http://localhost:3000/v1/conversations/conv_a1b2c3d4e5f67890 \
+curl -X PATCH http://localhost:27247/v1/conversations/conv_a1b2c3d4e5f67890 \
   -H "Content-Type: application/json" \
   -d '{"title": "Q1 sprint meetings"}'
 ```
@@ -185,7 +185,7 @@ curl -X PATCH http://localhost:3000/v1/conversations/conv_a1b2c3d4e5f67890 \
 ## Deleting a conversation
 
 ```bash
-curl -X DELETE http://localhost:3000/v1/conversations/conv_a1b2c3d4e5f67890
+curl -X DELETE http://localhost:27247/v1/conversations/conv_a1b2c3d4e5f67890
 ```
 
 This deletes the JSONL file from disk. The operation is irreversible.
@@ -195,7 +195,7 @@ This deletes the JSONL file from disk. The operation is irreversible.
 Search across conversation titles and content:
 
 ```bash
-curl "http://localhost:3000/v1/conversations?search=meeting+notes"
+curl "http://localhost:27247/v1/conversations?search=meeting+notes"
 ```
 
 Search is performed at the API level against the conversation index.

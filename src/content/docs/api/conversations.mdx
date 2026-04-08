@@ -87,7 +87,7 @@ List conversations with optional pagination, search, and sorting.
 <Tabs>
 <TabItem label="curl">
 ```bash
-curl "http://localhost:3000/v1/conversations?limit=10&sortBy=updatedAt" \
+curl "http://localhost:27247/v1/conversations?limit=10&sortBy=updatedAt" \
   -H "Authorization: Bearer your-secret-key"
 ```
 </TabItem>
@@ -171,7 +171,7 @@ Retrieve the full message history for a conversation.
 <Tabs>
 <TabItem label="curl">
 ```bash
-curl http://localhost:3000/v1/conversations/conv_a1b2c3d4/history \
+curl http://localhost:27247/v1/conversations/conv_a1b2c3d4/history \
   -H "Authorization: Bearer your-secret-key"
 ```
 </TabItem>
@@ -241,7 +241,7 @@ Returns the updated conversation object.
 <Tabs>
 <TabItem label="curl">
 ```bash
-curl -X PATCH http://localhost:3000/v1/conversations/conv_a1b2c3d4 \
+curl -X PATCH http://localhost:27247/v1/conversations/conv_a1b2c3d4 \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer your-secret-key" \
   -d '{"title": "Weather Analysis"}'
@@ -308,7 +308,7 @@ Returns the newly created conversation.
 <Tabs>
 <TabItem label="Fork all messages">
 ```bash
-curl -X POST http://localhost:3000/v1/conversations/conv_a1b2c3d4/fork \
+curl -X POST http://localhost:27247/v1/conversations/conv_a1b2c3d4/fork \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer your-secret-key" \
   -d '{}'
@@ -316,7 +316,7 @@ curl -X POST http://localhost:3000/v1/conversations/conv_a1b2c3d4/fork \
 </TabItem>
 <TabItem label="Fork at message 4">
 ```bash
-curl -X POST http://localhost:3000/v1/conversations/conv_a1b2c3d4/fork \
+curl -X POST http://localhost:27247/v1/conversations/conv_a1b2c3d4/fork \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer your-secret-key" \
   -d '{"atMessage": 4}'
@@ -368,7 +368,7 @@ Permanently delete a conversation and its message history.
 <Tabs>
 <TabItem label="curl">
 ```bash
-curl -X DELETE http://localhost:3000/v1/conversations/conv_a1b2c3d4 \
+curl -X DELETE http://localhost:27247/v1/conversations/conv_a1b2c3d4 \
   -H "Authorization: Bearer your-secret-key"
 ```
 </TabItem>

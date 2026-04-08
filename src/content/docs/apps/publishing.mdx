@@ -59,7 +59,7 @@ Key requirements:
 - **`server.type`** must be `"python"`, `"node"`, `"binary"`, or `"uv"`.
 - **`server.mcp_config`** must include a `command` and optionally `args` and `env`.
 
-Add NimbleBrain UI metadata in `_meta["ai.nimblebrain/platform"]` if your app has a UI. See [Manifest Reference](/apps/manifest) for the full schema.
+Add NimbleBrain UI metadata in `_meta["ai.nimblebrain/synapse"]` if your app has a UI. See [Manifest Reference](/apps/manifest) for the full schema.
 
 ## Building with mcpb-pack
 
@@ -132,7 +132,7 @@ nb bundle add @myorg/my-app
 Or via the API:
 
 ```bash
-curl -X POST http://localhost:3000/v1/apps/install \
+curl -X POST http://localhost:27247/v1/apps/install \
   -H "Content-Type: application/json" \
   -d '{"name": "@myorg/my-app"}'
 ```
@@ -182,11 +182,11 @@ Test your bundle against a local NimbleBrain instance before publishing:
    nb status
    ```
 
-4. **Test the UI** by navigating to your app in the web client at `http://localhost:5173`.
+4. **Test the UI** by navigating to your app in the web client at `http://localhost:27246`.
 
 5. **Check the resource proxy** directly:
    ```bash
-   curl http://localhost:3000/v1/apps/my-app/resources/primary
+   curl http://localhost:27247/v1/apps/my-app/resources/primary
    ```
 </Steps>
 

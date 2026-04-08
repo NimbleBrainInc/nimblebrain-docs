@@ -59,7 +59,7 @@ If no config file exists at the resolved path, NimbleBrain auto-creates a defaul
     "disabled": false
   },
   "http": {
-    "port": 3000,
+    "port": 27247,
     "host": "127.0.0.1"
   },
   "agents": {
@@ -102,7 +102,7 @@ If no config file exists at the resolved path, NimbleBrain auto-creates a defaul
 | `skills` | `array` | `[]` | Inline skill definitions. |
 | `store` | `object` | `{ "type": "memory" }` | Conversation storage backend. See [store](#store). |
 | `logging` | `object` | `{ "disabled": false }` | Structured logging config. See [Logging](/config/logging). |
-| `http` | `object` | `{ "port": 3000, "host": "127.0.0.1" }` | HTTP server config. Omit for programmatic-only use. |
+| `http` | `object` | `{ "port": 27247, "host": "127.0.0.1" }` | HTTP server config. Omit for programmatic-only use. |
 | `agents` | `object` | `{}` | Named agent profiles for delegation. See [Agent Profiles](/config/agents). |
 | `workDir` | `string` | `"~/.nimblebrain"` | Working directory for runtime state (conversations, logs, cache). |
 | `telemetry` | `object` | `{ "enabled": true }` | Anonymous usage telemetry. See [telemetry](#telemetry). |

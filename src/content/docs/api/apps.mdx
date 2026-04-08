@@ -62,7 +62,7 @@ List all installed apps with their status, tool count, trust score, and UI metad
 <Tabs>
 <TabItem label="curl">
 ```bash
-curl http://localhost:3000/v1/apps \
+curl http://localhost:27247/v1/apps \
   -H "Authorization: Bearer your-secret-key"
 ```
 </TabItem>
@@ -140,7 +140,7 @@ The `transport` object (for `url` installs):
 <Tabs>
 <TabItem label="By name">
 ```bash
-curl -X POST http://localhost:3000/v1/apps/install \
+curl -X POST http://localhost:27247/v1/apps/install \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer your-secret-key" \
   -d '{"name": "@nimblebraininc/weather"}'
@@ -148,7 +148,7 @@ curl -X POST http://localhost:3000/v1/apps/install \
 </TabItem>
 <TabItem label="By path">
 ```bash
-curl -X POST http://localhost:3000/v1/apps/install \
+curl -X POST http://localhost:27247/v1/apps/install \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer your-secret-key" \
   -d '{"path": "../mcp-servers/weather"}'
@@ -156,7 +156,7 @@ curl -X POST http://localhost:3000/v1/apps/install \
 </TabItem>
 <TabItem label="By URL">
 ```bash
-curl -X POST http://localhost:3000/v1/apps/install \
+curl -X POST http://localhost:27247/v1/apps/install \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer your-secret-key" \
   -d '{
@@ -171,7 +171,7 @@ curl -X POST http://localhost:3000/v1/apps/install \
 </TabItem>
 <TabItem label="With env">
 ```bash
-curl -X POST http://localhost:3000/v1/apps/install \
+curl -X POST http://localhost:27247/v1/apps/install \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer your-secret-key" \
   -d '{
@@ -235,7 +235,7 @@ Bundles marked as `protected` in the configuration cannot be uninstalled. The se
 <Tabs>
 <TabItem label="curl">
 ```bash
-curl -X DELETE http://localhost:3000/v1/apps/weather \
+curl -X DELETE http://localhost:27247/v1/apps/weather \
   -H "Authorization: Bearer your-secret-key"
 ```
 </TabItem>
@@ -282,7 +282,7 @@ Start a stopped app. If the app is already running, this is a no-op that returns
 <Tabs>
 <TabItem label="curl">
 ```bash
-curl -X POST http://localhost:3000/v1/apps/weather/start \
+curl -X POST http://localhost:27247/v1/apps/weather/start \
   -H "Authorization: Bearer your-secret-key"
 ```
 </TabItem>
@@ -327,7 +327,7 @@ Stop a running app. The MCP server process is terminated but the app remains in 
 <Tabs>
 <TabItem label="curl">
 ```bash
-curl -X POST http://localhost:3000/v1/apps/weather/stop \
+curl -X POST http://localhost:27247/v1/apps/weather/stop \
   -H "Authorization: Bearer your-secret-key"
 ```
 </TabItem>
@@ -370,7 +370,7 @@ Returns `text/html` content on success.
 <Tabs>
 <TabItem label="curl">
 ```bash
-curl http://localhost:3000/v1/apps/tasks/resources/primary \
+curl http://localhost:27247/v1/apps/tasks/resources/primary \
   -H "Authorization: Bearer your-secret-key"
 ```
 </TabItem>

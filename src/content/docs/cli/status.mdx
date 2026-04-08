@@ -36,7 +36,7 @@ Skills: 4 loaded
 
 ## Status with a running server
 
-When a NimbleBrain server is running on the default port (3000), `nb status` also queries the `/v1/bundles/health` endpoint and shows live bundle health:
+When a NimbleBrain server is running on the default port (27247), `nb status` also queries the `/v1/bundles/health` endpoint and shows live bundle health:
 
 ```bash
 nb status
@@ -58,7 +58,7 @@ Bundle health:
 Each bundle shows its state (`running`, `crashed`, `dead`, `starting`, `stopped`), uptime in seconds, and restart count.
 
 <Aside type="note">
-  If no server is running, the health section is omitted. The command checks `http://localhost:3000/v1/bundles/health` with a 2-second timeout.
+  If no server is running, the health section is omitted. The command checks `http://localhost:27247/v1/bundles/health` with a 2-second timeout.
 </Aside>
 
 ## JSON output

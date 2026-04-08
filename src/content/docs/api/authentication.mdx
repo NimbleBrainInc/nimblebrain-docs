@@ -16,7 +16,7 @@ When `NB_API_KEY` is not set, the API runs in dev mode with no authentication. A
 Include the API key in the `Authorization` header:
 
 ```bash
-curl http://localhost:3000/v1/workspace \
+curl http://localhost:27247/v1/workspace \
   -H "Authorization: Bearer your-secret-key"
 ```
 
@@ -72,7 +72,7 @@ Cookie properties:
 <Tabs>
 <TabItem label="curl">
 ```bash
-curl -X POST http://localhost:3000/v1/auth/login \
+curl -X POST http://localhost:27247/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"key": "your-secret-key"}' \
   -c cookies.txt
@@ -106,7 +106,7 @@ The response sets the cookie's `Max-Age` to `0`, which instructs the browser to 
 <Tabs>
 <TabItem label="curl">
 ```bash
-curl -X POST http://localhost:3000/v1/auth/logout \
+curl -X POST http://localhost:27247/v1/auth/logout \
   -H "Authorization: Bearer your-secret-key"
 ```
 </TabItem>
@@ -136,7 +136,7 @@ Check whether the current session is valid. Requires authentication. Returns `20
 <Tabs>
 <TabItem label="curl">
 ```bash
-curl http://localhost:3000/v1/auth/session \
+curl http://localhost:27247/v1/auth/session \
   -b cookies.txt
 ```
 </TabItem>

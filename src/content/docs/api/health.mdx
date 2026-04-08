@@ -47,7 +47,7 @@ Each bundle entry:
 <Tabs>
 <TabItem label="curl">
 ```bash
-curl http://localhost:3000/v1/health
+curl http://localhost:27247/v1/health
 ```
 </TabItem>
 <TabItem label="Response">
@@ -107,7 +107,7 @@ Each entry:
 <Tabs>
 <TabItem label="curl">
 ```bash
-curl http://localhost:3000/v1/bundles/health
+curl http://localhost:27247/v1/bundles/health
 ```
 </TabItem>
 <TabItem label="Response">
@@ -132,7 +132,7 @@ Use `GET /v1/health` as a lightweight liveness probe:
 
 ```bash
 # Returns 200 if the server is running
-curl -f http://localhost:3000/v1/health
+curl -f http://localhost:27247/v1/health
 ```
 
 ### Kubernetes
@@ -143,13 +143,13 @@ Configure liveness and readiness probes:
 livenessProbe:
   httpGet:
     path: /v1/health
-    port: 3000
+    port: 27247
   initialDelaySeconds: 5
   periodSeconds: 30
 readinessProbe:
   httpGet:
     path: /v1/health
-    port: 3000
+    port: 27247
   initialDelaySeconds: 3
   periodSeconds: 10
 ```

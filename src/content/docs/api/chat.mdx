@@ -86,7 +86,7 @@ The `appContext` object:
 <Tabs>
 <TabItem label="curl">
 ```bash
-curl -X POST http://localhost:3000/v1/chat \
+curl -X POST http://localhost:27247/v1/chat \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer your-secret-key" \
   -d '{
@@ -218,7 +218,7 @@ data: {"error":"Model returned an empty response"}
 <Tabs>
 <TabItem label="curl">
 ```bash
-curl -X POST http://localhost:3000/v1/chat/stream \
+curl -X POST http://localhost:27247/v1/chat/stream \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer your-secret-key" \
   -d '{"message": "What is 2 + 2?"}' \

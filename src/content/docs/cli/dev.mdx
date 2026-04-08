@@ -17,7 +17,7 @@ nb dev [flags]
 
 | Flag | Description | Default |
 |------|-------------|---------|
-| `--port <number>` | API server port | `3000` |
+| `--port <number>` | API server port | `27247` |
 | `--no-web` | Skip the web dev server (API only) | Off |
 | `--workdir <dir>` | Working directory | `.nimblebrain` (project-local) |
 | `--debug` | Verbose logging | Off |
@@ -35,7 +35,7 @@ nb dev
 [api] [nimblebrain] Runtime ready.
 [web]   VITE v6.0.0  ready in 340 ms
 [web]
-[web]   ➜  Local:   http://localhost:5173/
+[web]   ➜  Local:   http://localhost:27246/
 ```
 
 Both processes share the terminal. Output is prefixed with `[api]` or `[web]` so you can tell which process logged each line. Press Ctrl+C to stop both.
@@ -78,7 +78,13 @@ Override the API server port:
 nb dev --port 8080
 ```
 
-The web dev server always runs on Vite's default port (typically 5173), independent of the API port.
+The web dev server port is controlled by `NB_WEB_PORT`. The standard npm scripts pre-configure all ports:
+
+| Script | API | Web |
+|--------|-----|-----|
+| `bun run dev` | :27247 | :27246 |
+| `bun run dev:empty` | :27249 | :27248 |
+| `bun run dev:minimal` | :27251 | :27250 |
 
 ## Working directory
 

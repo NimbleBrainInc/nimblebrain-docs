@@ -57,7 +57,7 @@ starting ──→ running ──→ crashed ──→ dead
   </TabItem>
   <TabItem label="API">
     ```bash
-    curl http://localhost:3000/v1/apps
+    curl http://localhost:27247/v1/apps
     ```
     ```json
     {
@@ -102,7 +102,7 @@ Bundle health:
 The health endpoint is also available unauthenticated:
 
 ```bash
-curl http://localhost:3000/v1/bundles/health
+curl http://localhost:27247/v1/bundles/health
 ```
 ```json
 [
@@ -119,13 +119,13 @@ curl http://localhost:3000/v1/bundles/health
     Stop a running bundle:
 
     ```bash
-    curl -X POST http://localhost:3000/v1/apps/granola/stop
+    curl -X POST http://localhost:27247/v1/apps/granola/stop
     ```
 
     Start a stopped or dead bundle:
 
     ```bash
-    curl -X POST http://localhost:3000/v1/apps/granola/start
+    curl -X POST http://localhost:27247/v1/apps/granola/start
     ```
   </TabItem>
   <TabItem label="Web UI">
@@ -156,7 +156,7 @@ curl http://localhost:3000/v1/bundles/health
   </TabItem>
   <TabItem label="API">
     ```bash
-    curl -X DELETE http://localhost:3000/v1/apps/granola
+    curl -X DELETE http://localhost:27247/v1/apps/granola
     ```
   </TabItem>
 </Tabs>

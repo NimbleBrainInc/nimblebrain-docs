@@ -17,7 +17,7 @@ NimbleBrain reads several environment variables for authentication, server bindi
 | `ALLOWED_ORIGINS` | No | — | Comma-separated list of allowed CORS origins (e.g., `https://app.example.com,https://admin.example.com`). Only relevant when `NB_API_KEY` is set. |
 | `NB_TELEMETRY_DISABLED` | No | — | Set to `1` to disable anonymous usage telemetry. |
 | `DO_NOT_TRACK` | No | — | Standard opt-out signal. Set to `1` to disable telemetry. Equivalent to `NB_TELEMETRY_DISABLED=1`. |
-| `PORT` | No | `3000` | HTTP server port. Overridden by `--port` CLI flag. |
+| `PORT` | No | `27247` | HTTP server port. Overridden by `--port` CLI flag. |
 
 ## ANTHROPIC_API_KEY
 
@@ -108,7 +108,7 @@ When the same setting can be configured in multiple places, this is the resoluti
 |---------|----------|---------|-------------|---------|
 | Working directory | `--workdir` | `NB_WORK_DIR` | `workDir` | `~/.nimblebrain` |
 | Model | `--model` | — | `defaultModel` | `claude-sonnet-4-5-20250929` |
-| Port | `--port` | `PORT` | `http.port` | `3000` |
+| Port | `--port` | `PORT` | `http.port` | `27247` |
 | API key | — | `NB_API_KEY` | — | None (no auth) |
 | Anthropic key | — | `ANTHROPIC_API_KEY` | `model.apiKey` | — |
 | Telemetry | `nb telemetry off` | `NB_TELEMETRY_DISABLED` / `DO_NOT_TRACK` | `telemetry.enabled` | Enabled |

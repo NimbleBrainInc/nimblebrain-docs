@@ -1,11 +1,11 @@
 ---
 title: Manifest Reference
-description: Complete reference for the _meta["ai.nimblebrain/platform"] manifest extension.
+description: Complete reference for the _meta["ai.nimblebrain/synapse"] manifest extension.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-NimbleBrain reads platform-specific metadata from the `_meta["ai.nimblebrain/platform"]` key in your MCPB `manifest.json`. This is where you declare your app's name, icon, primary view, sidebar placements, and settings section.
+NimbleBrain reads Synapse metadata from the `_meta["ai.nimblebrain/synapse"]` key in your MCPB `manifest.json`. This is where you declare your app's name, icon, primary view, sidebar placements, and settings section.
 
 ## Full manifest structure
 
@@ -28,25 +28,23 @@ NimbleBrain reads platform-specific metadata from the `_meta["ai.nimblebrain/pla
     }
   },
   "_meta": {
-    "ai.nimblebrain/platform": {
-      "ui": {
-        "name": "My App",
-        "icon": "database",
-        "primaryView": {
-          "resourceUri": "ui://dashboard"
-        },
-        "placements": [
-          {
-            "slot": "sidebar",
-            "resourceUri": "ui://nav",
-            "priority": 50,
-            "label": "My App",
-            "icon": "database",
-            "route": "my-app",
-            "size": "compact"
-          }
-        ]
+    "ai.nimblebrain/synapse": {
+      "name": "My App",
+      "icon": "database",
+      "primaryView": {
+        "resourceUri": "ui://dashboard"
       },
+      "placements": [
+        {
+          "slot": "sidebar",
+          "resourceUri": "ui://nav",
+          "priority": 50,
+          "label": "My App",
+          "icon": "database",
+          "route": "my-app",
+          "size": "compact"
+        }
+      ],
       "settings": {
         "id": "my-app",
         "label": "My App",
@@ -72,7 +70,7 @@ These fields are defined by the [MCPB specification](https://github.com/modelcon
 | `server.type` | `string` | Yes | Runtime type: `"python"`, `"node"`, `"binary"`, or `"uv"`. |
 | `server.entry_point` | `string` | No | Entry point file path. |
 | `server.mcp_config` | `McpConfig` | Yes | Spawn configuration (see below). |
-| `_meta` | `object` | No | Extension metadata. NimbleBrain reads `_meta["ai.nimblebrain/platform"]`. |
+| `_meta` | `object` | No | Extension metadata. NimbleBrain reads `_meta["ai.nimblebrain/synapse"]`. |
 
 ### McpConfig
 
@@ -82,17 +80,15 @@ These fields are defined by the [MCPB specification](https://github.com/modelcon
 | `args` | `string[]` | No | Command-line arguments. Use `${__dirname}` for the bundle directory. |
 | `env` | `Record<string, string>` | No | Environment variables passed to the process. |
 
-## Platform metadata: `_meta["ai.nimblebrain/platform"]`
-
-### `ui` object
+## Synapse metadata: `_meta["ai.nimblebrain/synapse"]`
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `ui.name` | `string` | Yes | Display name shown in the sidebar and app list. |
-| `ui.icon` | `string` | Yes | [Lucide icon](https://lucide.dev/icons) name in kebab-case (e.g., `"database"`, `"message-square"`, `"hand"`). |
-| `ui.primaryView` | `object` | No | The main view loaded when a user navigates to your app. |
-| `ui.primaryView.resourceUri` | `string` | Yes (if `primaryView` set) | `ui://` URI for the main view (e.g., `"ui://dashboard"`). |
-| `ui.placements` | `PlacementDeclaration[]` | No | Explicit shell layout placement declarations. See [Placements](/apps/placements). |
+| `name` | `string` | Yes | Display name shown in the sidebar and app list. |
+| `icon` | `string` | Yes | [Lucide icon](https://lucide.dev/icons) name in kebab-case (e.g., `"database"`, `"message-square"`, `"hand"`). |
+| `primaryView` | `object` | No | The main view loaded when a user navigates to your app. |
+| `primaryView.resourceUri` | `string` | Yes (if `primaryView` set) | `ui://` URI for the main view (e.g., `"ui://dashboard"`). |
+| `placements` | `PlacementDeclaration[]` | No | Explicit shell layout placement declarations. See [Placements](/apps/placements). |
 
 ### `settings` object
 
@@ -105,7 +101,7 @@ These fields are defined by the [MCPB specification](https://github.com/modelcon
 
 ### `PlacementDeclaration`
 
-Each entry in the `ui.placements` array:
+Each entry in the `placements` array:
 
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
@@ -119,7 +115,7 @@ Each entry in the `ui.placements` array:
 
 ## How `primaryView` and `placements` interact
 
-If your manifest has `ui.placements`, those are used directly. If it only has `ui.primaryView` (no `placements` array), NimbleBrain converts it to a single `"main"` slot placement automatically:
+If your manifest has `placements`, those are used directly. If it only has `primaryView` (no `placements` array), NimbleBrain converts it to a single `"main"` slot placement automatically:
 
 ```typescript
 // Legacy conversion (from PlacementRegistry.registerLegacy)
@@ -164,13 +160,11 @@ The smallest manifest that registers a UI view:
     }
   },
   "_meta": {
-    "ai.nimblebrain/platform": {
-      "ui": {
-        "name": "Hello",
-        "icon": "hand",
-        "primaryView": {
-          "resourceUri": "ui://index"
-        }
+    "ai.nimblebrain/synapse": {
+      "name": "Hello",
+      "icon": "hand",
+      "primaryView": {
+        "resourceUri": "ui://index"
       }
     }
   }
