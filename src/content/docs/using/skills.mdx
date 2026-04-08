@@ -12,6 +12,7 @@ Skills are markdown files with YAML frontmatter that control how the agent respo
 When you send a message, the skill matcher runs against it:
 
 <Steps>
+
 1. **Phase 1: Triggers** — substring match against trigger phrases. First hit wins.
 2. **Phase 2: Keywords** — count keyword hits in your message. Minimum 2 hits to qualify. Highest count wins.
 3. The matched skill's markdown body is injected into the system prompt.
@@ -162,6 +163,7 @@ summarize meeting transcripts.
 ## Creating a custom skill
 
 <Steps>
+
 1. Create a `.md` file in your skills directory:
 
    ```bash

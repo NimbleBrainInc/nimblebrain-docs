@@ -102,6 +102,7 @@ bun run dev
 The platform loads your bundle from the `path` in the config. UI changes require:
 
 <Steps>
+
 1. Rebuild the UI: `cd ui && npm run build`
 2. Reload the bundle: `nb reload`
 3. Hard-refresh the browser (`Cmd+Shift+R`)
@@ -153,6 +154,7 @@ curl -X POST http://localhost:8001/mcp \
 ## Setting up a new app with UI
 
 <Steps>
+
 1. **Create the MCP server** (Python or TypeScript) with tools and a `ui://` resource:
    ```python
    @mcp.resource("ui://myapp/main")
