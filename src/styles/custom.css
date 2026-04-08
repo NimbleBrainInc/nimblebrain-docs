@@ -2,7 +2,7 @@
  * NimbleBrain docs theme for Starlight
  *
  * Blue accent (#0070ff) for NimbleBrain brand.
- * Space Grotesk + JetBrains Mono fonts.
+ * Literata headings, IBM Plex Sans body, DM Mono labels, JetBrains Mono code.
  */
 
 :root {
@@ -21,6 +21,19 @@
 
 /* Fonts */
 :root {
-  --sl-font: 'Space Grotesk', var(--sl-font-system);
+  --sl-font: 'IBM Plex Sans', var(--sl-font-system);
   --sl-font-mono: 'JetBrains Mono', var(--sl-font-system-mono);
+}
+
+/* Literata for headings */
+.sl-markdown-content h1,
+.sl-markdown-content h2,
+.sl-markdown-content h3,
+.sl-markdown-content h4,
+.sl-markdown-content h5,
+.sl-markdown-content h6,
+h1, h2, h3 {
+  font-family: 'Literata', Georgia, serif;
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
 }
