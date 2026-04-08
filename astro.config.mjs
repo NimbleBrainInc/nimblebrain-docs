@@ -9,7 +9,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'NimbleBrain',
-      favicon: { href: '/favicon.ico', type: 'image/x-icon' },
+      favicon: '/favicon.ico',
       logo: {
         light: './src/assets/logo-light.png',
         dark: './src/assets/logo-dark.png',
