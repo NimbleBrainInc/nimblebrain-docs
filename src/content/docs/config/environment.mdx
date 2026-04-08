@@ -1,0 +1,126 @@
+---
+title: Environment Variables
+description: All environment variables that configure NimbleBrain behavior.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+NimbleBrain reads several environment variables for authentication, server binding, and runtime behavior. This page lists every supported variable with its purpose, default, and precedence.
+
+## Variable reference
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `ANTHROPIC_API_KEY` | Yes (unless set in config) | — | Anthropic API key for LLM calls. Can also be set via `model.apiKey` in `nimblebrain.json`. |
+| `NB_API_KEY` | No | — | API authentication key. When set, all HTTP endpoints (except health and login) require a valid Bearer token or session cookie. Minimum 8 characters. |
+| `NB_WORK_DIR` | No | `~/.nimblebrain` | Working directory for runtime state (conversations, logs, cache, skills). Overridden by `--workdir` CLI flag. |
+| `ALLOWED_ORIGINS` | No | — | Comma-separated list of allowed CORS origins (e.g., `https://app.example.com,https://admin.example.com`). Only relevant when `NB_API_KEY` is set. |
+| `NB_TELEMETRY_DISABLED` | No | — | Set to `1` to disable anonymous usage telemetry. |
+| `DO_NOT_TRACK` | No | — | Standard opt-out signal. Set to `1` to disable telemetry. Equivalent to `NB_TELEMETRY_DISABLED=1`. |
+| `PORT` | No | `3000` | HTTP server port. Overridden by `--port` CLI flag. |
+
+## ANTHROPIC_API_KEY
+
+The Anthropic API key used for all LLM calls. You can set it in the environment or in the `model.apiKey` field of `nimblebrain.json`. The environment variable is the recommended approach for production.
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-api03-...
+```
+
+If both the environment variable and the config field are set, the config field takes precedence.
+
+## NB_API_KEY
+
+When set, NimbleBrain requires authentication on all API endpoints except `/v1/health`, `/v1/bundles/health`, and `POST /v1/auth/login`.
+
+```bash
+export NB_API_KEY=your-secret-key-here
+```
+
+Requirements:
+- Minimum 8 characters. The server throws an error at startup if the key is shorter.
+- Keys shorter than 16 characters produce a warning recommending a longer key for production use.
+
+Authentication uses constant-time comparison to prevent timing attacks. Clients authenticate with either:
+- A `Bearer` token in the `Authorization` header
+- An `nb_session` HttpOnly cookie set by `POST /v1/auth/login`
+
+When `NB_API_KEY` is not set, the server runs in dev mode with no authentication and `Access-Control-Allow-Origin: *`.
+
+## NB_WORK_DIR
+
+Sets the working directory where NimbleBrain stores all runtime state.
+
+```bash
+export NB_WORK_DIR=/data/nimblebrain
+```
+
+The working directory contains:
+- `nimblebrain.json` — Config file (if no `--config` flag is set)
+- `conversations/` — JSONL conversation files (when using JSONL store)
+- `logs/` — Structured JSONL logs
+- `skills/` — Global skill files
+- `cache/` — Bundle cache
+
+**Precedence:** `--workdir` flag > `NB_WORK_DIR` env var > `workDir` in config file > command default (`~/.nimblebrain` for `nb serve`, `./.nimblebrain` for `nb dev`)
+
+## ALLOWED_ORIGINS
+
+Controls which origins can make cross-origin requests when `NB_API_KEY` is set.
+
+```bash
+export ALLOWED_ORIGINS=https://app.example.com,https://admin.example.com
+```
+
+Behavior depends on the combination of `NB_API_KEY` and `ALLOWED_ORIGINS`:
+
+| NB_API_KEY | ALLOWED_ORIGINS | CORS behavior |
+|------------|-----------------|---------------|
+| Not set | — | `Access-Control-Allow-Origin: *` (dev mode) |
+| Set | Not set | Same-origin only (no CORS header sent) |
+| Set | Set | Only listed origins get `Access-Control-Allow-Origin` with `Access-Control-Allow-Credentials: true` |
+
+Separate multiple origins with commas. Whitespace around origins is trimmed.
+
+## Telemetry variables
+
+Two environment variables disable anonymous telemetry. Either one is sufficient.
+
+```bash
+# Either of these disables telemetry
+export NB_TELEMETRY_DISABLED=1
+export DO_NOT_TRACK=1
+```
+
+`DO_NOT_TRACK` follows the [Console Do Not Track](https://consoledonottrack.com/) standard. You can also disable telemetry via:
+- `telemetry.enabled: false` in `nimblebrain.json`
+- `nb telemetry off` CLI command
+
+<Aside type="tip">
+  Use `nb telemetry status` to check whether telemetry is currently active and which method disabled it.
+</Aside>
+
+## Precedence summary
+
+When the same setting can be configured in multiple places, this is the resolution order (highest priority first):
+
+| Setting | CLI flag | Env var | Config file | Default |
+|---------|----------|---------|-------------|---------|
+| Working directory | `--workdir` | `NB_WORK_DIR` | `workDir` | `~/.nimblebrain` |
+| Model | `--model` | — | `defaultModel` | `claude-sonnet-4-5-20250929` |
+| Port | `--port` | `PORT` | `http.port` | `3000` |
+| API key | — | `NB_API_KEY` | — | None (no auth) |
+| Anthropic key | — | `ANTHROPIC_API_KEY` | `model.apiKey` | — |
+| Telemetry | `nb telemetry off` | `NB_TELEMETRY_DISABLED` / `DO_NOT_TRACK` | `telemetry.enabled` | Enabled |
+
+## Example: production environment
+
+A typical production setup with all relevant variables:
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-api03-...
+export NB_API_KEY=$(openssl rand -hex 32)
+export NB_WORK_DIR=/data/nimblebrain
+export ALLOWED_ORIGINS=https://app.example.com
+export NB_TELEMETRY_DISABLED=1
+```

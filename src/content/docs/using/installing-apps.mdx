@@ -1,0 +1,194 @@
+---
+title: Installing Apps
+description: Add MCP bundles to NimbleBrain from the mpak registry, a URL, or a local path.
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+Apps in NimbleBrain are MCP server bundles. Each bundle provides tools that the agent can use. You can install bundles from the [mpak registry](https://mpak.dev), from a remote URL, or from a local directory.
+
+## Three ways to install
+
+<Tabs>
+  <TabItem label="CLI">
+    ### From the mpak registry
+
+    <Steps>
+    1. Search for a bundle:
+
+       ```bash
+       nb bundle search granola
+       ```
+       ```
+       Searching mpak registry for "granola"...
+       Run: mpak search "granola"
+       ```
+
+    2. Add it to your config:
+
+       ```bash
+       nb bundle add @nimblebraininc/granola
+       ```
+       ```
+       Added "@nimblebraininc/granola" to config. Run nb reload to activate.
+       ```
+
+    3. Reload to activate:
+
+       ```bash
+       nb reload
+       ```
+       ```
+       Reload signal sent. Running runtime will pick up changes.
+       ```
+    </Steps>
+
+    ### From a remote URL
+
+    ```bash
+    nb bundle add --url https://mcp.example.com/mcp --name my-server
+    ```
+    ```
+    Added remote "my-server" (https://mcp.example.com/mcp) to config. Run nb reload to activate.
+    ```
+
+    For authenticated remote servers:
+
+    ```bash
+    nb bundle add --url https://mcp.example.com/mcp --name my-server --auth bearer --token sk-abc123
+    ```
+  </TabItem>
+  <TabItem label="Web UI">
+    In the web UI, the agent can install bundles for you. Ask it directly:
+
+    > "Install the Granola bundle from mpak"
+
+    The agent uses `nb__manage_bundle` to install the bundle, which:
+    1. Downloads it from mpak
+    2. Reads the manifest
+    3. Starts the MCP server process
+    4. Records the trust score
+    5. Writes the config entry atomically
+  </TabItem>
+  <TabItem label="Config file">
+    Edit `nimblebrain.json` directly. Each entry needs one of `name`, `path`, or `url`:
+
+    ```json
+    {
+      "bundles": [
+        { "name": "@nimblebraininc/granola" },
+        { "path": "../mcp-servers/hello" },
+        {
+          "url": "https://mcp.example.com/mcp",
+          "serverName": "my-server",
+          "transport": {
+            "auth": { "type": "bearer", "token": "sk-abc123" }
+          }
+        }
+      ]
+    }
+    ```
+
+    After editing, run `nb reload` or restart the server.
+  </TabItem>
+</Tabs>
+
+## Bundle types
+
+| Type | Config field | How it resolves |
+|------|-------------|-----------------|
+| Named (mpak) | `name` | Downloads via `mpak install`, cached at `~/.mpak/cache/` |
+| Local | `path` | Reads `manifest.json` from the directory. Path resolved relative to the config file. |
+| Remote | `url` | Connects directly via HTTP transport (streamable-http or SSE). No download. |
+
+## The agent can self-install
+
+The agent has access to `nb__discover_bundles` and `nb__manage_bundle`. This means you can ask it to find and install what it needs:
+
+> "I need to search through meeting notes. Find a bundle for that and install it."
+
+The agent will:
+1. Call `nb__discover_bundles` to search mpak
+2. Present options to you
+3. Call `nb__manage_bundle` with `action: "install"` to install your choice
+
+<Aside type="caution">
+  Bundles marked as `protected: true` in the config cannot be uninstalled via `nb__manage_bundle`. Use this for bundles that should always be available.
+</Aside>
+
+## Setting bundle credentials
+
+Many bundles need API keys or other credentials. Use `nb config set`:
+
+```bash
+nb config set @nimblebraininc/granola api_key=grn_abc123
+```
+```
+Saved api_key for @nimblebraininc/granola
+```
+
+View configured values (masked):
+
+```bash
+nb config get @nimblebraininc/granola
+```
+```
+api_key: gr****
+```
+
+Remove a value:
+
+```bash
+nb config clear @nimblebraininc/granola api_key
+```
+```
+Cleared api_key for @nimblebraininc/granola
+```
+
+Credentials are stored in `~/.mpak/config.json` with `0600` permissions (owner read/write only). They are mapped to environment variables via the bundle manifest's `${user_config.<field>}` references and passed to the bundle process at startup.
+
+## Passing environment variables
+
+You can also pass environment variables directly in the config:
+
+```json
+{
+  "bundles": [
+    {
+      "name": "@nimblebraininc/postgres",
+      "env": {
+        "DATABASE_URL": "postgres://localhost:5432/mydb"
+      }
+    }
+  ]
+}
+```
+
+Environment variables in `env` are merged with the bundle's own `mcp_config.env` and the process environment. The `env` field takes precedence.
+
+## Verify the install
+
+After installing, check that the bundle is running:
+
+```bash
+nb status
+```
+```
+Bundles: 3 configured
+  @nimblebraininc/bash
+  @nimblebraininc/granola
+  @nimblebraininc/postgres
+
+Skills: 2 loaded
+
+Bundle health:
+  bash: running (uptime: 3600s, restarts: 0)
+  granola: running (uptime: 120s, restarts: 0)
+  postgres: running (uptime: 120s, restarts: 0)
+```
+
+## What's next
+
+- [Managing Apps](/using/managing-apps) — start, stop, and monitor installed bundles
+- [Chat](/using/chat) — start using your newly installed apps
+- [Configuration: Bundles](/config/bundles) — full config reference for bundle entries

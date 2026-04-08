@@ -1,0 +1,285 @@
+---
+title: Security
+description: Harden your NimbleBrain deployment with proper auth, CORS, and network configuration.
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+NimbleBrain exposes an HTTP API that controls an agent with tool execution capabilities. A misconfigured deployment can give unauthorized users shell access to your server. This page covers every security surface you should address before exposing NimbleBrain to a network.
+
+## Authentication
+
+### API key (`NB_API_KEY`)
+
+Set the `NB_API_KEY` environment variable to enable authentication. Every request (except `/v1/health`, `/v1/bundles/health`, and the login endpoint) must include this key as a Bearer token or session cookie.
+
+```bash
+export NB_API_KEY=change-me-to-a-strong-secret-at-least-32-chars
+```
+
+<Aside type="danger">
+Running without `NB_API_KEY` disables all authentication. The CORS policy falls back to `Access-Control-Allow-Origin: *`. Anyone who can reach the server has full access to the agent, including shell execution via the bash bundle.
+</Aside>
+
+**Key requirements:**
+
+| Constraint | Behavior |
+|---|---|
+| Fewer than 8 characters | Server refuses to start with `NB_API_KEY is too short (minimum 8 characters)` |
+| 8--15 characters | Server starts but logs a warning: `WARNING: NB_API_KEY is short (<16 chars)` |
+| 16+ characters | No warnings. Use at least 32 characters for production |
+
+Generate a strong key:
+
+```bash
+openssl rand -base64 32
+```
+
+### How authentication works
+
+The server accepts the API key in two ways, checked in this order:
+
+1. **Bearer token** in the `Authorization` header: `Authorization: Bearer <key>`
+2. **Session cookie** named `nb_session`, set by the login endpoint
+
+The comparison uses a constant-time XOR loop to prevent timing attacks. Both the token length and content must match exactly.
+
+### Failed authentication logging
+
+Every failed authentication attempt is logged to stderr with the client IP and timestamp:
+
+```
+[nimblebrain] AUTH FAIL ip=203.0.113.42 timestamp=2026-03-25T22:00:00.000Z
+```
+
+The IP comes from the `X-Forwarded-For` header (set by your reverse proxy) or `"direct"` for direct connections. Monitor these logs for brute-force attempts.
+
+### Key rotation
+
+To rotate the API key:
+
+<Steps>
+
+1. Generate a new key:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+2. Update the `NB_API_KEY` environment variable in your deployment (`.env` file, Helm values, or Kubernetes Secret).
+
+3. Restart the platform container. All existing sessions become invalid — users must log in again with the new key.
+
+</Steps>
+
+## Session cookies
+
+The `/v1/auth/login` endpoint validates the API key and sets a session cookie for browser-based access. The web UI uses this cookie for all subsequent requests.
+
+### Cookie attributes
+
+| Attribute | Value | Purpose |
+|---|---|---|
+| Name | `nb_session` | Identifies the session |
+| `HttpOnly` | Always set | Prevents JavaScript access — mitigates XSS token theft |
+| `SameSite` | `Strict` | Cookie only sent on same-site requests — mitigates CSRF |
+| `Secure` | Set when not localhost | Cookie only sent over HTTPS |
+| `Path` | `/` | Available to all routes |
+| `Max-Age` | `604800` (7 days) | Session expires after 7 days |
+
+The `Secure` flag is automatically omitted for localhost connections (where `http://` is expected) and added for all other hosts.
+
+### Logout
+
+`POST /v1/auth/logout` clears the cookie by setting `Max-Age=0`. The client should discard any cached auth state.
+
+## CORS
+
+Cross-Origin Resource Sharing controls which domains can make API requests from a browser. NimbleBrain has three CORS modes depending on your configuration:
+
+### Mode 1: No API key (development)
+
+When `NB_API_KEY` is not set:
+- `Access-Control-Allow-Origin: *`
+- No credentials support
+- Any origin can make requests
+
+### Mode 2: API key set, no `ALLOWED_ORIGINS`
+
+When `NB_API_KEY` is set but `ALLOWED_ORIGINS` is not:
+- No `Access-Control-Allow-Origin` header is sent
+- Only same-origin requests work (browser enforces this)
+- Cross-origin requests from any domain are blocked
+
+### Mode 3: API key + `ALLOWED_ORIGINS` (production)
+
+When both are set:
+- `Access-Control-Allow-Origin` is set to the requesting origin only if it appears in the allow list
+- `Access-Control-Allow-Credentials: true` enables cookie-based auth
+- `Vary: Origin` ensures caches differentiate by origin
+
+```bash
+export ALLOWED_ORIGINS=https://nb.example.com,https://admin.example.com
+```
+
+<Aside type="caution">
+If you use a custom domain with the web UI, that domain must be in `ALLOWED_ORIGINS` for cookie-based login to work. Without it, the browser blocks the `Set-Cookie` response from the login endpoint.
+</Aside>
+
+### Allowed headers
+
+These headers are always permitted in CORS requests:
+
+```
+Content-Type, Authorization, Mcp-Session-Id, Last-Event-ID, Mcp-Protocol-Version
+```
+
+These headers are exposed to client JavaScript:
+
+```
+Mcp-Session-Id, Mcp-Protocol-Version
+```
+
+## Network architecture
+
+### Keep the platform internal
+
+The platform service (port 3000) should never be directly exposed to the internet. In both Docker Compose and Kubernetes deployments, the platform runs on an internal network:
+
+- **Docker Compose**: The platform has no `ports` mapping. Only the `web` container (Caddy) is exposed on port 8080. Caddy proxies `/v1/*` to the platform.
+- **Kubernetes**: Both services are `ClusterIP`. The Ingress routes `/v1/*` to the platform and `/` to the web pod.
+
+```
+Internet → Reverse Proxy (TLS) → Web (8080) → Platform (3000, internal)
+                                       ↑
+                                  Serves UI + proxies /v1/*
+```
+
+<Aside type="danger">
+Do not add `ports: - "3000:3000"` to the platform service in `docker-compose.yml`. This would expose the API directly, bypassing the web container's reverse proxy.
+</Aside>
+
+### Firewall rules
+
+If your host is directly on the internet, restrict inbound traffic:
+
+```bash
+# Allow only HTTPS (443) and SSH (22)
+ufw allow 22/tcp
+ufw allow 443/tcp
+ufw deny 8080/tcp   # Block direct access if behind a reverse proxy
+ufw enable
+```
+
+## TLS
+
+NimbleBrain does not terminate TLS itself. Use a reverse proxy for HTTPS:
+
+<Tabs>
+<TabItem label="nginx">
+
+```nginx title="nginx.conf"
+server {
+    listen 443 ssl http2;
+    server_name nb.example.com;
+
+    ssl_certificate /etc/ssl/certs/nb.example.com.pem;
+    ssl_certificate_key /etc/ssl/private/nb.example.com-key.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    # HSTS — only enable once you confirm TLS works
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Required for SSE streaming
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_buffering off;
+    }
+}
+```
+
+</TabItem>
+<TabItem label="Caddy">
+
+```txt title="Caddyfile"
+nb.example.com {
+    reverse_proxy 127.0.0.1:8080
+}
+```
+
+Caddy handles TLS automatically via Let's Encrypt.
+
+</TabItem>
+<TabItem label="Kubernetes Ingress">
+
+With cert-manager installed:
+
+```bash
+helm install nimblebrain ./helm \
+  --set ingress.tls=true \
+  --set ingress.hostname=nb.example.com \
+  --set ingress.annotations."cert-manager\.io/cluster-issuer"=letsencrypt-prod
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="caution">
+The `Secure` flag on the `nb_session` cookie is only set when the server detects a non-localhost hostname. Behind a reverse proxy that terminates TLS, this works correctly because the platform binds to `0.0.0.0`. If you test over plain HTTP on a non-localhost address, the cookie will be set with `Secure` but your browser will reject it.
+</Aside>
+
+## Bundle trust
+
+MCP bundles run as subprocesses with access to the filesystem and network inside the container. Evaluate bundles before installing them.
+
+### Trust score
+
+Each bundle in the mpak registry has an MTF (mpak Trust Framework) trust score from 0 to 100. The score is stored in `nimblebrain.json` alongside the bundle entry and displayed in the web UI's app list.
+
+### Protected bundles
+
+Mark bundles as `protected` in your configuration to prevent the agent from uninstalling them:
+
+```json title="nimblebrain.json"
+{
+  "bundles": [
+    {
+      "name": "@nimblebraininc/bash",
+      "protected": true
+    }
+  ]
+}
+```
+
+A protected bundle cannot be removed via `nb__manage_bundle`. You must edit the configuration file and restart to remove it.
+
+### Bundle isolation
+
+Bundles run as child processes inside the platform container. They share the container's filesystem, network namespace, and user. To limit blast radius:
+
+- Use read-only bind mounts for configuration files (the default `docker-compose.yml` already does this with `:ro`)
+- Set specific environment variables per bundle in `nimblebrain.json` rather than passing broad credentials to the platform container
+- Review a bundle's manifest before installing it — check what tools it exposes and whether it requires network access
+
+## Production checklist
+
+Use this checklist before exposing NimbleBrain to any network:
+
+| Item | How to verify |
+|---|---|
+| `NB_API_KEY` set to 32+ characters | Check your `.env` or Helm values |
+| `ALLOWED_ORIGINS` set to your domain(s) | `curl -v` with an `Origin` header and confirm the response includes `Access-Control-Allow-Origin` |
+| Platform port (3000) not exposed | `docker compose ps` shows no host port mapping for platform |
+| TLS enabled | `curl -I https://nb.example.com` returns a valid certificate |
+| `X-Forwarded-For` header set by proxy | Check auth failure logs for real IPs, not `"direct"` |
+| Bundle list reviewed | `cat nimblebrain.json` — only bundles you trust are listed |
+| Critical bundles marked `protected` | Check for `"protected": true` on bundles you don't want the agent to remove |
+| Firewall restricts inbound ports | Only 443 (HTTPS) and 22 (SSH) reachable from the internet |
+| Backups configured | Test your volume backup and restore procedure |

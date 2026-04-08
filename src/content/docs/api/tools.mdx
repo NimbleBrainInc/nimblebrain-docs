@@ -1,0 +1,104 @@
+---
+title: Tools API
+description: Invoke MCP tools directly via the HTTP API.
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The Tools API lets you call any MCP tool directly, bypassing the agent loop. This is the same mechanism the MCP App Bridge uses to proxy tool calls from app iframes.
+
+## POST /v1/tools/call
+
+Invoke a tool on a specific MCP server. The tool executes immediately and returns the result.
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `server` | `string` | Yes | MCP server name (e.g., `weather`) |
+| `tool` | `string` | Yes | Tool name on that server (e.g., `get_forecast`) |
+| `arguments` | `object` | No | Input arguments for the tool. Defaults to `{}`. |
+
+<Aside type="note">
+Use the short tool name (e.g., `get_forecast`), not the fully qualified name (`weather__get_forecast`). The server name is provided separately.
+</Aside>
+
+**Response:**
+
+```json
+{
+  "result": {
+    "temp": 62,
+    "condition": "partly cloudy",
+    "humidity": 78
+  },
+  "isError": false
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `result` | `unknown` | Tool output. Parsed as JSON if the output is valid JSON, otherwise returned as a string. |
+| `isError` | `boolean` | `true` if the tool reported an error |
+
+**Error responses:**
+
+| Status | `error` | Condition |
+|---|---|---|
+| 400 | `bad_request` | Missing `server` or `tool` field |
+| 404 | `tool_not_found` | Server does not exist, or tool not found on the server |
+
+**Examples:**
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl -X POST http://localhost:3000/v1/tools/call \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your-secret-key" \
+  -d '{
+    "server": "weather",
+    "tool": "get_forecast",
+    "arguments": { "city": "San Francisco" }
+  }'
+```
+</TabItem>
+<TabItem label="Success response">
+```json
+{
+  "result": {
+    "temp": 62,
+    "condition": "partly cloudy",
+    "humidity": 78
+  },
+  "isError": false
+}
+```
+</TabItem>
+<TabItem label="Error response">
+```json
+{
+  "result": "API rate limit exceeded. Try again in 30 seconds.",
+  "isError": true
+}
+```
+</TabItem>
+</Tabs>
+
+## Tool Name Resolution
+
+The API constructs the fully qualified tool name by joining the server and tool with a double underscore: `{server}__{tool}`. For example, server `weather` and tool `get_forecast` resolves to `weather__get_forecast` internally.
+
+## MCP App Bridge
+
+The web client uses this endpoint as the backend for the MCP App Bridge. When an app iframe calls a tool via `postMessage`, the bridge proxies the request to `POST /v1/tools/call`.
+
+<Aside type="caution">
+Tool calls made through this endpoint do not emit `data.changed` SSE events. This is intentional — iframe-initiated tool calls already know their own results. Emitting `data.changed` would cause an infinite refresh loop: tool call, then SSE event, then iframe refresh, then another tool call.
+</Aside>
+
+The audit log records every tool call made through this endpoint:
+
+```
+[api] tools/call server=weather tool=get_forecast
+```

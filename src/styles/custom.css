@@ -1,0 +1,26 @@
+/*
+ * NimbleBrain docs theme for Starlight
+ *
+ * Blue accent (#0070ff) for NimbleBrain brand.
+ * Space Grotesk + JetBrains Mono fonts.
+ */
+
+:root {
+  /* Blue accent for dark mode */
+  --sl-color-accent-low: hsl(213, 100%, 16%);
+  --sl-color-accent: hsl(213, 100%, 50%);
+  --sl-color-accent-high: hsl(213, 100%, 75%);
+}
+
+:root[data-theme='light'] {
+  /* Blue accent for light mode - darker for readability on white */
+  --sl-color-accent-high: hsl(213, 100%, 28%);
+  --sl-color-accent: hsl(213, 100%, 40%);
+  --sl-color-accent-low: hsl(213, 100%, 92%);
+}
+
+/* Fonts */
+:root {
+  --sl-font: 'Space Grotesk', var(--sl-font-system);
+  --sl-font-mono: 'JetBrains Mono', var(--sl-font-system-mono);
+}

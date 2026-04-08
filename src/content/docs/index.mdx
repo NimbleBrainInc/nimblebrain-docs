@@ -1,0 +1,62 @@
+---
+title: What is NimbleBrain?
+description: NimbleBrain is a self-hosted AI assistant runtime that you extend by installing MCP server bundles as apps.
+---
+
+NimbleBrain is an agent-native application runtime built on [Bun](https://bun.sh). It runs an agentic loop powered by Claude, manages MCP bundles as installable apps, composes prompts from markdown skills, and serves a web UI for chatting with an AI agent that has access to all your installed apps' tools.
+
+**A self-hosted AI assistant you extend by installing MCP server bundles as apps.**
+
+## How it works
+
+```
+You ──→ Web UI / CLI ──→ API Server ──→ Agent Engine
+                                           │
+                                    ┌──────┴──────┐
+                                    │   Claude     │
+                                    │   LLM Call   │
+                                    └──────┬──────┘
+                                           │
+                                    Tool Execution
+                                           │
+                              ┌────────────┼────────────┐
+                              │            │            │
+                         MCP Bundle   MCP Bundle   System Tools
+                         (App 1)     (App 2)      (nb__*)
+```
+
+1. You send a message through the web UI, CLI, or API
+2. The engine matches a **skill** to compose the system prompt
+3. Claude processes your message with access to all installed tools
+4. The agent calls tools from your MCP bundles as needed
+5. Results stream back to you in real time
+
+Each iteration of the loop — LLM call, tool extraction, tool execution, feed results back — repeats until the model is done or hits the iteration limit (default 10, hard cap 25).
+
+## Key components
+
+| Component | What it does |
+|-----------|-------------|
+| **Agent Engine** | Agentic loop: call Claude, extract tool uses, execute tools in parallel, repeat |
+| **Bundles (Apps)** | MCP server bundles installed from the [mpak](https://mpak.dev) registry, local paths, or remote URLs |
+| **Skills** | Markdown files with YAML frontmatter that compose the system prompt and filter tools |
+| **System Tools** | Built-in `nb__*` tools for discovering tools, managing bundles, and delegating to child agents |
+| **Web UI** | React SPA with chat, streaming, conversation history, and embedded app UIs |
+| **CLI** | Interactive TUI, headless pipe mode, and subcommands for bundle/skill/config management |
+
+## Who is it for?
+
+- **End users** — Install it, add apps, and chat with an AI agent that can use all your tools
+- **App developers** — Build MCP bundles that run inside NimbleBrain with optional embedded UI
+- **Self-hosters** — Deploy on your own infrastructure with Docker Compose or Kubernetes
+
+## Get started
+
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <LinkCard title="Quickstart" description="Zero to chatting in 5 minutes with Docker Compose" href="/quickstart" />
+  <LinkCard title="Installation" description="All install methods: Docker, Helm, Bun" href="/installation" />
+  <LinkCard title="Core Concepts" description="Agent loop, bundles, skills, tools, conversations" href="/concepts" />
+  <LinkCard title="Building Apps" description="Create MCP bundles that run inside NimbleBrain" href="/apps/overview" />
+</CardGrid>

@@ -1,0 +1,159 @@
+---
+title: Health API
+description: Check server and bundle health status.
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The Health API provides unauthenticated endpoints for monitoring server status and bundle health. Use these endpoints in load balancer health checks, monitoring dashboards, and alerting systems.
+
+<Aside type="note">
+Both health endpoints are unauthenticated. They work regardless of whether `NB_API_KEY` is set.
+</Aside>
+
+## GET /v1/health
+
+Check overall server health and get a summary of bundle states.
+
+**Response:**
+
+```json
+{
+  "status": "ok",
+  "uptime": 3600,
+  "bundles": [
+    { "name": "bash", "state": "running" },
+    { "name": "weather", "state": "running" },
+    { "name": "postgres", "state": "crashed" }
+  ]
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `status` | `string` | Always `"ok"` if the server is responding |
+| `uptime` | `number` | Server uptime in seconds |
+| `bundles` | `array` | Summary of each bundle's name and state |
+
+Each bundle entry:
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Short server name |
+| `state` | `string` | Lifecycle state: `starting`, `running`, `crashed`, `dead`, `stopped` |
+
+**Example:**
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl http://localhost:3000/v1/health
+```
+</TabItem>
+<TabItem label="Response">
+```json
+{
+  "status": "ok",
+  "uptime": 3600,
+  "bundles": [
+    { "name": "bash", "state": "running" },
+    { "name": "weather", "state": "running" }
+  ]
+}
+```
+</TabItem>
+</Tabs>
+
+## GET /v1/bundles/health
+
+Get detailed health information for each installed bundle, including uptime and restart count. Use this endpoint when you need more detail than `GET /v1/health` provides.
+
+**Response:**
+
+```json
+[
+  {
+    "name": "bash",
+    "state": "running",
+    "uptime": 3600,
+    "restartCount": 0
+  },
+  {
+    "name": "weather",
+    "state": "running",
+    "uptime": 3580,
+    "restartCount": 0
+  },
+  {
+    "name": "postgres",
+    "state": "crashed",
+    "uptime": 0,
+    "restartCount": 3
+  }
+]
+```
+
+Each entry:
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Short server name |
+| `state` | `string` | Lifecycle state: `starting`, `running`, `crashed`, `dead`, `stopped` |
+| `uptime` | `number` | Seconds since the bundle last started (0 if not running) |
+| `restartCount` | `number` | Number of times the bundle has been restarted due to crashes |
+
+**Example:**
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl http://localhost:3000/v1/bundles/health
+```
+</TabItem>
+<TabItem label="Response">
+```json
+[
+  {
+    "name": "bash",
+    "state": "running",
+    "uptime": 3600,
+    "restartCount": 0
+  }
+]
+```
+</TabItem>
+</Tabs>
+
+## Health Check Patterns
+
+### Load Balancer
+
+Use `GET /v1/health` as a lightweight liveness probe:
+
+```bash
+# Returns 200 if the server is running
+curl -f http://localhost:3000/v1/health
+```
+
+### Kubernetes
+
+Configure liveness and readiness probes:
+
+```yaml
+livenessProbe:
+  httpGet:
+    path: /v1/health
+    port: 3000
+  initialDelaySeconds: 5
+  periodSeconds: 30
+readinessProbe:
+  httpGet:
+    path: /v1/health
+    port: 3000
+  initialDelaySeconds: 3
+  periodSeconds: 10
+```
+
+### Monitoring
+
+Poll `GET /v1/bundles/health` to track bundle stability over time. A high `restartCount` or persistent `crashed`/`dead` states indicate bundles that need attention.

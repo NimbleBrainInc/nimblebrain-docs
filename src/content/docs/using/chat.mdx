@@ -1,0 +1,111 @@
+---
+title: Chat
+description: Talk to the NimbleBrain agent through the web UI or CLI.
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+You interact with NimbleBrain by chatting with an agent that has access to all the tools provided by your installed apps. The agent processes your message, decides which tools to call, executes them, and streams the response back to you.
+
+## Two interfaces
+
+NimbleBrain offers two ways to chat: a web UI for browser-based interaction and a terminal TUI for command-line workflows.
+
+<Tabs>
+  <TabItem label="Web UI">
+    The web UI is available at `http://localhost:3000` when the server is running. Type your message in the input field and press Enter to send.
+
+    During a response, you see three streaming states:
+
+    - **Thinking** — the agent is processing your message and deciding what to do
+    - **Streaming** — text is arriving from the model
+    - **Working** — a tool call is in progress
+
+    Tool calls appear inline as they execute. Each shows the tool name, which app it belongs to, and whether it succeeded or failed.
+  </TabItem>
+  <TabItem label="CLI TUI">
+    Start the interactive TUI:
+
+    ```bash
+    nb
+    ```
+
+    Or with a specific config:
+
+    ```bash
+    nb --config ./nimblebrain.json
+    ```
+
+    The TUI renders in your terminal using Ink (React for terminals). Streaming text and tool call status update in real time.
+  </TabItem>
+</Tabs>
+
+## Headless mode
+
+When stdin is piped, NimbleBrain automatically enters headless mode. It reads one message per line from stdin and writes responses to stdout:
+
+```bash
+echo "What bundles are installed?" | nb
+```
+
+For structured output, use `--json`:
+
+```bash
+echo "List my apps" | nb --json
+```
+
+This returns a `ChatResult` JSON object with `response`, `conversationId`, `toolCalls`, token counts, and `stopReason`.
+
+The conversation ID carries across lines, so multi-turn conversations work:
+
+```bash
+printf "What is 2+2?\nNow multiply that by 10\n" | nb
+```
+
+## What the agent can do
+
+The agent has access to:
+
+- **App tools** — every tool from every installed MCP bundle (e.g., `granola__list_meetings`, `bash__execute`)
+- **System tools** — built-in tools prefixed with `nb__`:
+
+| Tool | Purpose |
+|------|---------|
+| `nb__discover_tools` | Search available tools by keyword across all installed apps |
+| `nb__discover_bundles` | Search the mpak registry for new bundles to install |
+| `nb__manage_bundle` | Install, uninstall, or configure a bundle at runtime |
+| `nb__bundle_status` | Check version, health, and tool count for installed bundles |
+| `nb__delegate` | Spawn a child agent for a sub-task |
+
+<Aside type="tip">
+  When more than 30 tools are installed, NimbleBrain uses tiered tool surfacing. Only system tools and matched skill tools are surfaced directly. The agent uses `nb__discover_tools` to find and call other tools as needed.
+</Aside>
+
+## App context
+
+When you open an app in the web UI sidebar and chat from within that app's view, the chat is scoped to that app. The agent receives an `appContext` that tells it which app you are focused on, so it can prioritize that app's tools and provide more relevant responses.
+
+## Tips for effective prompting
+
+- **Be specific about what you want.** "Search for MCP servers related to Slack" works better than "find me something."
+- **Name the app when relevant.** If you have multiple apps installed, say "Use Granola to list my meetings" rather than just "list my meetings."
+- **Ask the agent to install what it needs.** The agent can search mpak and install bundles on its own via `nb__manage_bundle`.
+- **Use delegation for parallel work.** For tasks that split naturally, ask the agent to delegate sub-tasks. See [Multi-Agent Delegation](/using/delegation).
+
+## Resume a conversation
+
+You can resume a previous conversation in the CLI:
+
+```bash
+nb --resume conv_a1b2c3d4e5f67890
+```
+
+In the web UI, open a past conversation from the Conversations app and click "Resume in Chat" to reopen it in the chat panel.
+
+See [Conversations](/using/conversations) for details on history, forking, and search.
+
+## What's next
+
+- [Installing Apps](/using/installing-apps) — add new capabilities to your agent
+- [Skills](/using/skills) — customize how the agent responds with prompt composition
+- [Conversations](/using/conversations) — history, resume, fork, and search

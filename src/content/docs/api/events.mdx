@@ -1,0 +1,166 @@
+---
+title: Events API
+description: Subscribe to real-time workspace events via Server-Sent Events.
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The Events API provides a persistent SSE connection for workspace-level events. Use it to react to bundle lifecycle changes, data mutations, and connection health in real time.
+
+<Aside type="tip">
+This is the **workspace** event stream. For per-request chat events (`text.delta`, `tool.start`, `tool.done`), see the [Chat API streaming endpoint](/api/chat/#post-v1chatstream).
+</Aside>
+
+## GET /v1/events
+
+Open a persistent SSE connection. The server sends events as they occur and a heartbeat every 30 seconds to keep the connection alive.
+
+**Response headers:**
+
+```
+Content-Type: text/event-stream
+Cache-Control: no-cache
+Connection: keep-alive
+```
+
+**Example:**
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl http://localhost:3000/v1/events \
+  -H "Authorization: Bearer your-secret-key" \
+  --no-buffer
+```
+</TabItem>
+<TabItem label="Event stream">
+```
+event: heartbeat
+data: {"timestamp":"2025-10-15T10:30:00.000Z"}
+
+event: bundle.installed
+data: {"name":"weather","bundleName":"@nimblebraininc/weather","status":"running","ui":null}
+
+event: data.changed
+data: {"server":"weather","tool":"get_forecast","timestamp":"2025-10-15T10:31:15.000Z"}
+
+event: heartbeat
+data: {"timestamp":"2025-10-15T10:30:30.000Z"}
+```
+</TabItem>
+</Tabs>
+
+## Event Types
+
+### bundle.installed
+
+A new bundle was installed and started.
+
+```
+event: bundle.installed
+data: {"name":"weather","bundleName":"@nimblebraininc/weather","status":"running","ui":null}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Short server name |
+| `bundleName` | `string` | Scoped manifest name |
+| `status` | `string` | Lifecycle state after installation |
+| `ui` | `object \| null` | UI metadata, or `null` |
+
+### bundle.uninstalled
+
+A bundle was removed.
+
+```
+event: bundle.uninstalled
+data: {"name":"weather"}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Short server name of the removed bundle |
+
+### bundle.crashed
+
+A bundle's MCP server process crashed. The runtime will attempt to restart it.
+
+```
+event: bundle.crashed
+data: {"name":"weather","restartAttempt":1}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Short server name |
+| `restartAttempt` | `number` | Which restart attempt this is (1-based) |
+
+### bundle.recovered
+
+A previously crashed bundle was successfully restarted.
+
+```
+event: bundle.recovered
+data: {"name":"weather"}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Short server name |
+
+### bundle.dead
+
+A bundle exhausted all restart attempts and is permanently stopped. Manual intervention is needed to restart it.
+
+```
+event: bundle.dead
+data: {"name":"weather","message":"Exceeded maximum restart attempts (3)"}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Short server name |
+| `message` | `string` | Reason the bundle was marked dead |
+
+### data.changed
+
+An agent-initiated tool call completed successfully, which may have mutated data in the tool's backing service. Use this event to refresh UI components that display data from the affected server.
+
+```
+event: data.changed
+data: {"server":"tasks","tool":"create_task","timestamp":"2025-10-15T10:31:15.000Z"}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `server` | `string` | MCP server that owns the tool |
+| `tool` | `string` | Tool name that was called |
+| `timestamp` | `string` | ISO 8601 timestamp |
+
+<Aside type="note">
+Only agent-initiated tool calls emit `data.changed`. Tool calls made through `POST /v1/tools/call` (the MCP App Bridge proxy) do not emit this event to prevent infinite loops.
+</Aside>
+
+### heartbeat
+
+Sent every 30 seconds to keep the connection alive and allow clients to detect stale connections.
+
+```
+event: heartbeat
+data: {"timestamp":"2025-10-15T10:30:30.000Z"}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `timestamp` | `string` | ISO 8601 timestamp |
+
+## Connection Management
+
+- The server supports multiple concurrent SSE clients. Each client receives all events.
+- If a client disconnects, the server cleans up the connection automatically on the next broadcast.
+- There is no reconnection protocol built into the stream. If the connection drops, open a new `GET /v1/events` request.
+- The server sets `idleTimeout` to 255 seconds (the maximum Bun allows) to prevent premature connection closures.
+
+## Event Buffer
+
+The server maintains an in-memory buffer of the 500 most recent events. This buffer is used internally by components like the Home dashboard. It is not exposed through the HTTP API.

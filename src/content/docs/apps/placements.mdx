@@ -1,0 +1,188 @@
+---
+title: Placements & Navigation
+description: Control where your app appears in the NimbleBrain sidebar and how users navigate to it.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Placements control where your app's UI appears in the NimbleBrain shell layout. Each placement maps a `ui://` resource to a **slot** in the shell and optionally registers a route for navigation.
+
+## Slots
+
+The shell layout has the following slots:
+
+| Slot | Location | Description |
+|------|----------|-------------|
+| `sidebar` | Left sidebar, top zone | Scrollable navigation items. Sub-slots like `sidebar.conversations` are grouped under a label. |
+| `sidebar.bottom` | Left sidebar, bottom zone | Pinned items below the scrollable area (e.g., settings). |
+| `main` | Central content area | Full-page views rendered in iframes. Requires a `route`. |
+| `toolbar.right` | Top toolbar, right side | Compact toolbar widgets. |
+
+Sub-slots are matched hierarchically. A query for `"sidebar"` returns all entries whose slot is `"sidebar"` or starts with `"sidebar."` (e.g., `"sidebar.conversations"`, `"sidebar.apps"`).
+
+## Declaring placements
+
+Add a `placements` array to your manifest's `_meta["ai.nimblebrain/platform"].ui`:
+
+```json title="manifest.json"
+{
+  "_meta": {
+    "ai.nimblebrain/platform": {
+      "ui": {
+        "name": "Tasks",
+        "icon": "check-square",
+        "placements": [
+          {
+            "slot": "sidebar",
+            "resourceUri": "ui://sidebar-widget",
+            "priority": 30,
+            "label": "Tasks",
+            "icon": "check-square",
+            "route": "tasks"
+          },
+          {
+            "slot": "main",
+            "resourceUri": "ui://dashboard",
+            "route": "tasks",
+            "label": "Tasks",
+            "icon": "check-square"
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+## Priority sorting
+
+Within each slot, placements are sorted by `priority` (ascending). Lower values appear first.
+
+```
+priority: 10  → appears first
+priority: 50  → appears second
+priority: 100 → appears third (default)
+```
+
+The default priority is `100`. NimbleBrain's built-in items use low priorities to appear at the top. Set a priority below 50 to appear near the top, or leave it at the default to appear after core items.
+
+## Route-based navigation
+
+Placements with a `route` field register a URL path in the shell. The route is prefixed with `/app/`:
+
+| `route` value | URL |
+|---------------|-----|
+| `"tasks"` | `/app/tasks` |
+| `"my-app/settings"` | `/app/my-app/settings` |
+
+When a user clicks a sidebar item with a route, the shell navigates to `/app/<route>` and loads the placement's `resourceUri` in the main content iframe.
+
+### Legacy route resolution
+
+If your manifest uses `primaryView` without explicit placements, the route is derived from the bundle name:
+
+- Scoped names use the full scope: `@myorg/hello` becomes route `@myorg/hello`, URL `/app/@myorg/hello`
+- Unscoped names use the server name: `hello` becomes route `hello`, URL `/app/hello`
+
+## Sidebar rendering
+
+The shell layout renders sidebar items in two zones:
+
+### Top zone (scrollable)
+
+1. **Home** — Built-in, always first if a sidebar placement has `route: "/"`.
+2. **Chat** — Built-in, always after Home.
+3. **Grouped sidebar placements** — Sub-slots like `sidebar.conversations` or `sidebar.apps` are grouped under a heading. Items within each group are sorted by priority.
+4. **Third-party app routes** — `"main"` slot placements with routes (from non-core servers) appear under an "Apps" heading.
+
+### Bottom zone (pinned)
+
+Items with `slot: "sidebar.bottom"` are pinned below the scrollable area, separated by a border. Use this for settings or admin panels.
+
+```json
+{
+  "slot": "sidebar.bottom",
+  "resourceUri": "ui://settings",
+  "label": "Settings",
+  "icon": "settings",
+  "route": "settings"
+}
+```
+
+## Icons
+
+Specify icons using [Lucide](https://lucide.dev/icons) names in kebab-case:
+
+```json
+{ "icon": "check-square" }
+{ "icon": "message-square" }
+{ "icon": "database" }
+{ "icon": "settings" }
+```
+
+The resolver converts kebab-case to PascalCase for Lucide component lookup. If the name is not found, `CircleDot` is used as the fallback.
+
+## Size hints
+
+The `size` field provides a hint to the slot renderer:
+
+| Value | Description |
+|-------|-------------|
+| `"compact"` | Minimal height, suitable for sidebar widgets. |
+| `"full"` | Fills available space (default behavior for main views). |
+| `"auto"` | Let the content determine the size. Pair with `ui/notifications/size-changed` bridge messages. |
+
+## Placement registry internals
+
+The `PlacementRegistry` is an in-memory store that tracks all active placements. It is updated when bundles are installed or uninstalled.
+
+**Registration** — When a bundle starts, its placements are registered. If the bundle has explicit `placements`, they are used directly. If it only has `primaryView`, `registerLegacy()` converts it to a single `"main"` placement.
+
+**Querying** — `forSlot(slot)` returns all entries matching the slot (including sub-slots), sorted by priority ascending.
+
+**Unregistration** — When a bundle is uninstalled, all its placements are removed.
+
+```typescript
+// Register explicit placements
+registry.register("my-app", [
+  { slot: "sidebar", resourceUri: "ui://nav", priority: 50, label: "My App" },
+  { slot: "main", resourceUri: "ui://dashboard", route: "my-app" },
+]);
+
+// Query sidebar items (includes sidebar.* sub-slots)
+const items = registry.forSlot("sidebar");
+// → sorted by priority, includes sidebar, sidebar.conversations, etc.
+```
+
+## Example: sidebar + main view
+
+A common pattern is one sidebar item that links to a main view:
+
+```json title="manifest.json"
+{
+  "_meta": {
+    "ai.nimblebrain/platform": {
+      "ui": {
+        "name": "CRM",
+        "icon": "users",
+        "placements": [
+          {
+            "slot": "main",
+            "resourceUri": "ui://dashboard",
+            "route": "crm",
+            "label": "CRM",
+            "icon": "users",
+            "priority": 50
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+This creates a sidebar entry under "Apps" (because the `"main"` slot with a route automatically appears in the sidebar) and loads `ui://dashboard` when clicked.
+
+<Aside type="tip">
+You don't need both a `"sidebar"` and a `"main"` placement for the same view. A `"main"` placement with a `route` automatically appears in the sidebar under the "Apps" group.
+</Aside>

@@ -1,0 +1,175 @@
+---
+title: nb bundle
+description: List, add, remove, and search for MCP bundle apps.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+`nb bundle` manages the MCP bundles configured in your `nimblebrain.json`. You can list what is installed, add bundles from the mpak registry or a remote URL, remove bundles, and search for new ones.
+
+## Usage
+
+```
+nb bundle <action> [args] [flags]
+```
+
+## Actions
+
+| Action | Description |
+|--------|-------------|
+| `list` | List configured bundles |
+| `add <name>` | Install a bundle from the mpak registry |
+| `add --url <url> --name <n>` | Install a bundle from a remote URL |
+| `remove <name>` | Remove a bundle from your config |
+| `search <query>` | Search the mpak registry |
+
+## Flags
+
+| Flag | Description |
+|------|-------------|
+| `--config <path>` | Config file path |
+| `--json` | Output as JSON (with `list`) |
+| `--url <url>` | Remote bundle URL (with `add`) |
+| `--name <name>` | Server name for remote bundles (with `add --url`) |
+| `--auth bearer` | Auth type for remote install |
+| `--token <token>` | Auth token for remote install |
+
+## Listing bundles
+
+Show all bundles configured in your `nimblebrain.json`:
+
+```bash
+nb bundle list
+```
+
+```
+Configured bundles:
+
+  @nimblebraininc/bash (named)
+  @nimblebraininc/granola (named)
+  ../mcp-servers/hello (local)
+```
+
+Each bundle shows its name and source type: `named` (from mpak registry), `remote` (from URL), or `local` (filesystem path).
+
+When no bundles are configured:
+
+```bash
+nb bundle list
+```
+
+```
+No bundles configured.
+```
+
+### JSON output
+
+```bash
+nb bundle list --json
+```
+
+```json
+[{"name":"@nimblebraininc/bash"},{"name":"@nimblebraininc/granola"},{"path":"../mcp-servers/hello"}]
+```
+
+## Adding a bundle
+
+### From the mpak registry
+
+Add a bundle by name. The name is recorded in your config file:
+
+```bash
+nb bundle add @nimblebraininc/postgres
+```
+
+```
+Added "@nimblebraininc/postgres" to config. Run nb reload to activate.
+```
+
+If the bundle is already configured:
+
+```bash
+nb bundle add @nimblebraininc/postgres
+```
+
+```
+Bundle "@nimblebraininc/postgres" already configured.
+```
+
+### From a remote URL
+
+Install a bundle hosted at a URL. Both `--url` and `--name` are required:
+
+```bash
+nb bundle add --url https://mcp.example.com/sse --name my-server
+```
+
+```
+Added remote "my-server" (https://mcp.example.com/sse) to config. Run nb reload to activate.
+```
+
+### With authentication
+
+For remote bundles that require authentication, pass `--auth` and `--token`:
+
+```bash
+nb bundle add \
+  --url https://mcp.example.com/sse \
+  --name my-server \
+  --auth bearer \
+  --token sk-abc123
+```
+
+```
+Added remote "my-server" (https://mcp.example.com/sse) to config. Run nb reload to activate.
+```
+
+<Aside type="note">
+  After adding a bundle, run `nb reload` to activate it on a running server, or restart the server.
+</Aside>
+
+## Removing a bundle
+
+Remove a bundle by name, path, or server name:
+
+```bash
+nb bundle remove @nimblebraininc/granola
+```
+
+```
+Removed "@nimblebraininc/granola" from config. Run nb reload to apply.
+```
+
+If the bundle is not found:
+
+```bash
+nb bundle remove @nimblebraininc/unknown
+```
+
+```
+Bundle "@nimblebraininc/unknown" not found in config.
+```
+
+## Searching the registry
+
+Search the mpak registry for available bundles:
+
+```bash
+nb bundle search postgres
+```
+
+```
+Searching mpak registry for "postgres"...
+Run: mpak search "postgres"
+```
+
+<Aside type="tip">
+  For a richer search experience, use the `mpak` CLI directly: `mpak search postgres`.
+</Aside>
+
+## Related commands
+
+- [nb reload](/cli/reload/) -- activate bundle changes on a running server
+- [nb config](/cli/config/) -- set API keys and config values for bundles
+- [nb status](/cli/status/) -- check workspace health and bundle status
+- [nb skill](/cli/skill/) -- inspect skills loaded from bundles

@@ -1,0 +1,245 @@
+---
+title: Managing Apps
+description: Start, stop, and monitor the lifecycle of installed MCP bundles.
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+Once a bundle is installed, NimbleBrain tracks its lifecycle from startup through crashes and recovery. You can start, stop, and inspect bundles through the CLI, API, or web UI.
+
+## Bundle states
+
+Every installed bundle is in one of five states:
+
+```
+starting ──→ running ──→ crashed ──→ dead
+                │                     │
+                └──→ stopped ←────────┘
+                        │
+                        └──→ starting (explicit restart)
+```
+
+| State | Meaning |
+|-------|---------|
+| `starting` | MCP server process is being spawned |
+| `running` | Process is alive and responding to tool calls |
+| `crashed` | Process exited unexpectedly. The health monitor will attempt automatic restart. |
+| `dead` | Restart attempts exhausted. Must be explicitly restarted. |
+| `stopped` | Manually stopped by you. Will not auto-restart. |
+
+<Aside type="note">
+  A `crashed` bundle transitions to `dead` after the health monitor exhausts its restart attempts. A `dead` bundle must be explicitly restarted — it will not recover on its own.
+</Aside>
+
+## Listing bundles
+
+<Tabs>
+  <TabItem label="CLI">
+    ```bash
+    nb bundle list
+    ```
+    ```
+    Configured bundles:
+
+      @nimblebraininc/bash (named)
+      @nimblebraininc/granola (named)
+      ../mcp-servers/hello (local)
+    ```
+
+    For JSON output:
+
+    ```bash
+    nb bundle list --json
+    ```
+    ```json
+    [{"name":"@nimblebraininc/bash"},{"name":"@nimblebraininc/granola"},{"path":"../mcp-servers/hello"}]
+    ```
+  </TabItem>
+  <TabItem label="API">
+    ```bash
+    curl http://localhost:3000/v1/apps
+    ```
+    ```json
+    {
+      "apps": [
+        {
+          "name": "bash",
+          "bundleName": "@nimblebraininc/bash",
+          "version": "0.3.0",
+          "status": "running",
+          "type": "plain",
+          "toolCount": 1,
+          "trustScore": 95,
+          "ui": null
+        }
+      ]
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Checking health
+
+The `nb status` command shows live health data when the server is running:
+
+```bash
+nb status
+```
+```
+Bundles: 3 configured
+  @nimblebraininc/bash
+  @nimblebraininc/granola
+  @nimblebraininc/postgres
+
+Skills: 2 loaded
+
+Bundle health:
+  bash: running (uptime: 7200s, restarts: 0)
+  granola: running (uptime: 7200s, restarts: 0)
+  postgres: crashed (uptime: n/a, restarts: 3)
+```
+
+The health endpoint is also available unauthenticated:
+
+```bash
+curl http://localhost:3000/v1/bundles/health
+```
+```json
+[
+  {"name": "bash", "state": "running", "uptime": 7200000, "restartCount": 0},
+  {"name": "granola", "state": "running", "uptime": 7200000, "restartCount": 0},
+  {"name": "postgres", "state": "crashed", "uptime": null, "restartCount": 3}
+]
+```
+
+## Starting and stopping bundles
+
+<Tabs>
+  <TabItem label="API">
+    Stop a running bundle:
+
+    ```bash
+    curl -X POST http://localhost:3000/v1/apps/granola/stop
+    ```
+
+    Start a stopped or dead bundle:
+
+    ```bash
+    curl -X POST http://localhost:3000/v1/apps/granola/start
+    ```
+  </TabItem>
+  <TabItem label="Web UI">
+    Ask the agent:
+
+    > "Stop the Granola app"
+
+    > "Restart the Postgres app"
+
+    The agent uses `nb__manage_bundle` to control bundle lifecycle.
+  </TabItem>
+</Tabs>
+
+<Aside type="tip">
+  Stopping a bundle kills its MCP server process but keeps it registered. Its tools become unavailable until you start it again. The bundle's data is not deleted.
+</Aside>
+
+## Removing bundles
+
+<Tabs>
+  <TabItem label="CLI">
+    ```bash
+    nb bundle remove @nimblebraininc/granola
+    ```
+    ```
+    Removed "@nimblebraininc/granola" from config. Run nb reload to apply.
+    ```
+  </TabItem>
+  <TabItem label="API">
+    ```bash
+    curl -X DELETE http://localhost:3000/v1/apps/granola
+    ```
+  </TabItem>
+</Tabs>
+
+Uninstalling a bundle:
+1. Checks the `protected` flag — rejects if protected
+2. Stops the MCP server process
+3. Removes the source from the tool registry
+4. Removes the entry from `nimblebrain.json` atomically
+5. Emits a `bundle.uninstalled` event
+
+Data is **not** deleted during uninstall.
+
+## Protected bundles
+
+Mark a bundle as protected in `nimblebrain.json` to prevent removal via `nb__manage_bundle` or the API:
+
+```json
+{
+  "bundles": [
+    {
+      "name": "@nimblebraininc/bash",
+      "protected": true
+    }
+  ]
+}
+```
+
+Attempting to uninstall a protected bundle produces an error:
+
+```
+Cannot uninstall "bash": bundle is protected
+```
+
+## Trust scores
+
+When a bundle is installed from mpak, NimbleBrain records its MTF (mpak Trust Framework) trust score. The score is a number from 0 to 100, stored in the config and available in the `GET /v1/apps` response.
+
+Trust scores are fetched via `mpak info <name> --json` at install time and stored in the bundle's config entry:
+
+```json
+{
+  "name": "@nimblebraininc/granola",
+  "trustScore": 85
+}
+```
+
+Local and remote bundles do not have trust scores (they report `null`).
+
+## Configuration
+
+Set per-bundle config values (typically API keys):
+
+```bash
+nb config set @nimblebraininc/granola api_key=grn_abc123
+```
+
+View current config:
+
+```bash
+nb config get @nimblebraininc/granola
+```
+```
+api_key: gr****
+```
+
+Values are stored in `~/.mpak/config.json` with `0600` permissions. See [Installing Apps](/using/installing-apps#setting-bundle-credentials) for details.
+
+## Hot-reloading
+
+After changing `nimblebrain.json` (adding, removing, or modifying bundle entries), signal the running server to reload:
+
+```bash
+nb reload
+```
+```
+Reload signal sent. Running runtime will pick up changes.
+```
+
+This writes a timestamp to `~/.nimblebrain/.reload`. The running runtime watches for this sentinel and reloads bundles and skills without restarting the process.
+
+## What's next
+
+- [Installing Apps](/using/installing-apps) — add new bundles
+- [Skills](/using/skills) — control which tools the agent uses per-request
+- [Configuration: Bundles](/config/bundles) — full config reference

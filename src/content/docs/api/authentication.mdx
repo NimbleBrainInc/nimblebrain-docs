@@ -1,0 +1,192 @@
+---
+title: Authentication
+description: Bearer token and session cookie authentication for the NimbleBrain API.
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The NimbleBrain API authenticates requests using a shared secret set in the `NB_API_KEY` environment variable. You can pass this key as a Bearer token or exchange it for an HttpOnly session cookie.
+
+<Aside type="tip">
+When `NB_API_KEY` is not set, the API runs in dev mode with no authentication. All endpoints are open.
+</Aside>
+
+## Bearer Token
+
+Include the API key in the `Authorization` header:
+
+```bash
+curl http://localhost:3000/v1/workspace \
+  -H "Authorization: Bearer your-secret-key"
+```
+
+The server performs a constant-time comparison against `NB_API_KEY`. If the key does not match, the server returns `401` with an empty body.
+
+## Session Cookie
+
+For browser-based clients, exchange the API key for an HttpOnly cookie using the login endpoint. The cookie is automatically sent on subsequent requests.
+
+### POST /v1/auth/login
+
+<Aside type="note">
+This endpoint does not require authentication. It validates the key you provide in the request body.
+</Aside>
+
+Validate the API key and receive a session cookie.
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `key` | `string` | Yes | The API key to validate |
+
+**Response:**
+
+```json
+{
+  "ok": true
+}
+```
+
+On success, the response includes a `Set-Cookie` header:
+
+```
+Set-Cookie: nb_session=<key>; HttpOnly; SameSite=Strict; Path=/; Max-Age=604800
+```
+
+Cookie properties:
+- **HttpOnly** — not accessible from JavaScript
+- **SameSite=Strict** — only sent on same-site requests
+- **Secure** — set when the server is not running on localhost
+- **Max-Age=604800** — 7-day expiry
+
+**Error responses:**
+
+| Status | Condition |
+|---|---|
+| 400 | Missing or non-string `key` field |
+| 401 | Key does not match `NB_API_KEY` |
+
+**Example:**
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl -X POST http://localhost:3000/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"key": "your-secret-key"}' \
+  -c cookies.txt
+```
+</TabItem>
+<TabItem label="Response">
+```json
+{
+  "ok": true
+}
+```
+</TabItem>
+</Tabs>
+
+### POST /v1/auth/logout
+
+Clear the session cookie. Requires authentication.
+
+**Response:**
+
+```json
+{
+  "ok": true
+}
+```
+
+The response sets the cookie's `Max-Age` to `0`, which instructs the browser to delete it.
+
+**Example:**
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl -X POST http://localhost:3000/v1/auth/logout \
+  -H "Authorization: Bearer your-secret-key"
+```
+</TabItem>
+<TabItem label="Response">
+```json
+{
+  "ok": true
+}
+```
+</TabItem>
+</Tabs>
+
+### GET /v1/auth/session
+
+Check whether the current session is valid. Requires authentication. Returns `200` if authenticated, `401` otherwise.
+
+**Response:**
+
+```json
+{
+  "authenticated": true
+}
+```
+
+**Example:**
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl http://localhost:3000/v1/auth/session \
+  -b cookies.txt
+```
+</TabItem>
+<TabItem label="Response">
+```json
+{
+  "authenticated": true
+}
+```
+</TabItem>
+</Tabs>
+
+## Auth Precedence
+
+When both a Bearer token and a session cookie are present, the Bearer token takes precedence. The server checks the `Authorization` header first, then falls back to the `nb_session` cookie.
+
+## API Key Requirements
+
+- Minimum length: **8 characters**
+- Keys shorter than 16 characters produce a startup warning
+- The server refuses to start if the key is shorter than 8 characters
+
+## CORS Configuration
+
+CORS behavior is determined by `NB_API_KEY` and `ALLOWED_ORIGINS`:
+
+| `NB_API_KEY` | `ALLOWED_ORIGINS` | Behavior |
+|---|---|---|
+| Not set | N/A | `Access-Control-Allow-Origin: *` (dev mode) |
+| Set | Set (comma-separated) | Only matching origins get CORS headers with `credentials: true` |
+| Set | Not set | Same-origin only (no CORS headers) |
+
+Set `ALLOWED_ORIGINS` as a comma-separated list of origins:
+
+```bash
+export ALLOWED_ORIGINS="https://app.example.com,https://staging.example.com"
+```
+
+The server always responds to `OPTIONS` preflight requests with:
+
+```
+Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS
+Access-Control-Allow-Headers: Content-Type, Authorization, Mcp-Session-Id, Last-Event-ID, Mcp-Protocol-Version
+Access-Control-Expose-Headers: Mcp-Session-Id, Mcp-Protocol-Version
+```
+
+## Failed Auth Logging
+
+Every failed authentication attempt is logged to stderr with the client IP and timestamp:
+
+```
+[nimblebrain] AUTH FAIL ip=203.0.113.42 timestamp=2025-10-15T14:30:00.000Z
+```

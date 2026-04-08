@@ -1,0 +1,221 @@
+---
+title: Installation
+description: Install NimbleBrain via Docker Compose, Kubernetes Helm chart, or from source with Bun.
+---
+
+import { Tabs, TabItem, Aside, Steps } from '@astrojs/starlight/components';
+
+<Tabs>
+  <TabItem label="Docker Compose">
+
+Docker Compose runs the platform and web UI as two containers. This is the recommended method for single-machine deployments.
+
+<Steps>
+
+1. **Create a project directory**
+
+   ```bash
+   mkdir nimblebrain && cd nimblebrain
+   ```
+
+2. **Create `nimblebrain.json`**
+
+   ```json title="nimblebrain.json"
+   {
+     "$schema": "https://schemas.nimblebrain.ai/nimblebrain.json",
+     "bundles": [
+       { "name": "@nimblebraininc/bash" }
+     ]
+   }
+   ```
+
+3. **Create `docker-compose.yml`**
+
+   ```yaml title="docker-compose.yml"
+   services:
+     platform:
+       image: nimblebrain/platform:latest
+       restart: unless-stopped
+       volumes:
+         - workspace:/data
+         - ./nimblebrain.json:/app/nimblebrain.json:ro
+         - ./skills:/app/skills:ro
+       environment:
+         - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+         - NB_API_KEY=${NB_API_KEY}
+
+     web:
+       image: nimblebrain/web:latest
+       restart: unless-stopped
+       ports:
+         - "8080:8080"
+       environment:
+         - PLATFORM_URL=http://platform:3000
+       depends_on:
+         platform:
+           condition: service_healthy
+
+   volumes:
+     workspace:
+   ```
+
+   The platform image is based on `oven/bun:1.1` and includes Python 3.13, Node.js, and the mpak CLI for running MCP server bundles.
+
+4. **Start the services**
+
+   ```bash
+   export ANTHROPIC_API_KEY=sk-ant-api03-...
+   export NB_API_KEY=my-secret-key-at-least-8-chars
+   docker compose up
+   ```
+
+   The platform API runs on port 3000 (internal). The web UI is exposed on port 8080.
+
+</Steps>
+
+  </TabItem>
+  <TabItem label="Kubernetes (Helm)">
+
+The Helm chart deploys the platform and web containers with an optional Ingress.
+
+<Steps>
+
+1. **Install the chart**
+
+   ```bash
+   helm install nimblebrain ./helm \
+     --set secrets.anthropicApiKey=sk-ant-api03-... \
+     --set secrets.nbApiKey=my-secret-key-at-least-8-chars \
+     --set ingress.enabled=true \
+     --set ingress.hostname=nb.example.com
+   ```
+
+2. **Verify the deployment**
+
+   ```bash
+   kubectl get pods -l app.kubernetes.io/name=nimblebrain
+   ```
+
+   ```
+   NAME                                    READY   STATUS    RESTARTS   AGE
+   nimblebrain-platform-7d8f9c6b4-x2k9m   1/1     Running   0          45s
+   nimblebrain-web-5c4d8e7f1-p3n7q         1/1     Running   0          45s
+   ```
+
+</Steps>
+
+Default resource requests: platform gets 500m CPU / 512Mi memory, web gets 100m CPU / 64Mi memory. A 10Gi PersistentVolumeClaim stores workspace data.
+
+You can provide a custom `nimblebrain.json` via the `config.nimblebrainJson` value:
+
+```bash
+helm install nimblebrain ./helm \
+  --set secrets.anthropicApiKey=sk-ant-... \
+  --set secrets.nbApiKey=my-secret \
+  --set-json 'config.nimblebrainJson={"bundles":[{"name":"@nimblebraininc/bash"}],"skillDirs":["/data/skills"]}'
+```
+
+See the [Kubernetes deployment guide](/deploy/kubernetes) for full configuration.
+
+  </TabItem>
+  <TabItem label="Development (Bun)">
+
+Run from source for development. Requires [Bun](https://bun.sh) 1.1+.
+
+<Steps>
+
+1. **Clone and install**
+
+   ```bash
+   git clone https://github.com/NimbleBrainInc/nimblebrain.git
+   cd nimblebrain
+   bun install
+   ```
+
+2. **Install web dependencies**
+
+   ```bash
+   cd web && bun install && cd ..
+   ```
+
+3. **Set your API key**
+
+   ```bash
+   export ANTHROPIC_API_KEY=sk-ant-api03-...
+   ```
+
+4. **Start development mode**
+
+   ```bash
+   bun run dev
+   ```
+
+   ```
+   [api] NimbleBrain API listening on http://127.0.0.1:3000
+   [web] VITE v6.x  ready in 200ms
+   [web]   ➜  Local:   http://localhost:5173/
+   ```
+
+   This starts both the API server (with file watching and auto-restart) and the web client (with Vite HMR) in a single terminal. Output is prefixed `[api]` / `[web]`.
+
+   The development workdir is `.nimblebrain/` (project-local). No `NB_API_KEY` is required in dev mode — CORS is open.
+
+</Steps>
+
+**Other dev commands:**
+
+```bash
+bun run dev:api    # API server only (watched, port 3000)
+bun run dev:web    # Web client only (Vite HMR, port 5173)
+bun run dev:tui    # Interactive TUI with project-local workdir
+bun run test       # Run unit tests
+bun run verify     # Full CI: lint → typecheck → test → smoke
+```
+
+  </TabItem>
+</Tabs>
+
+## Environment variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `ANTHROPIC_API_KEY` | Yes | Your Anthropic API key for Claude |
+| `NB_API_KEY` | Production | API authentication key (min 8 characters). When unset, CORS allows all origins (dev mode) |
+| `NB_WORK_DIR` | No | Working directory for runtime state. Default: `~/.nimblebrain` |
+| `NB_HOST` | No | Host to bind the API server. Default: `127.0.0.1` (`0.0.0.0` in Docker) |
+| `ALLOWED_ORIGINS` | No | Comma-separated allowed CORS origins for cookie-based auth |
+| `NB_TELEMETRY_DISABLED` | No | Set to `1` to disable anonymous telemetry |
+| `DO_NOT_TRACK` | No | Set to `1` to disable anonymous telemetry |
+
+## Minimal config file
+
+NimbleBrain reads `nimblebrain.json` at startup. Config resolution order:
+
+1. `--config <path>` flag (explicit path)
+2. `--workdir <dir>` flag resolves to `<dir>/nimblebrain.json`
+3. `./nimblebrain.json` (current working directory)
+4. `~/.nimblebrain/nimblebrain.json` (global fallback)
+
+A minimal config:
+
+```json title="nimblebrain.json"
+{
+  "$schema": "https://schemas.nimblebrain.ai/nimblebrain.json",
+  "bundles": [
+    { "name": "@nimblebraininc/bash" }
+  ]
+}
+```
+
+See the [configuration reference](/config/nimblebrain-json) for all options.
+
+## What's next
+
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <LinkCard title="Core Concepts" description="Agent loop, bundles, skills, tools, conversations" href="/concepts" />
+  <LinkCard title="nimblebrain.json Reference" description="Full configuration file reference" href="/config/nimblebrain-json" />
+  <LinkCard title="Docker Deployment" description="Production Docker Compose configuration" href="/deploy/docker" />
+  <LinkCard title="Kubernetes Deployment" description="Helm chart values and ingress setup" href="/deploy/kubernetes" />
+</CardGrid>

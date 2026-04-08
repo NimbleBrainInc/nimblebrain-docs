@@ -1,0 +1,283 @@
+---
+title: Core Concepts
+description: Understand the agent loop, bundles, skills, tools, and conversations that make up NimbleBrain.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## Agent loop
+
+Every chat message triggers an agentic loop in the `AgentEngine`. The loop repeats until the model produces a response with no tool calls, or a limit is reached.
+
+```
+User message
+     │
+     ▼
+┌─────────────────┐
+│  Call Claude     │◄─────────────────┐
+│  (with tools)   │                   │
+└────────┬────────┘                   │
+         │                            │
+    ┌────┴────┐                       │
+    │ Tool    │  Yes                  │
+    │ calls?  │──────► Execute tools  │
+    │         │        in parallel ───┘
+    └────┬────┘
+         │ No
+         ▼
+   Return response
+```
+
+Each pass through the loop is one **iteration**. Defaults:
+
+| Setting | Default | Hard cap |
+|---------|---------|----------|
+| Max iterations | 10 | 25 |
+| Max input tokens | 500,000 | — |
+| Max output tokens | 16,384 | — |
+| Model | `claude-sonnet-4-5-20250929` | — |
+
+The engine stops for one of three reasons:
+
+- **`complete`** — the model responded without requesting any tool calls
+- **`max_iterations`** — the iteration limit was reached
+- **`token_budget`** — cumulative input tokens exceeded `maxInputTokens`. When this happens, tool calls from the current LLM response are dropped (not executed) to avoid running tools whose results can't be processed.
+
+All tool calls within a single iteration run in parallel via `Promise.all()`.
+
+### Orchestration flow
+
+Before the engine loop starts, the `Runtime` orchestrates several steps:
+
+1. Resolve or create a conversation
+2. Match the user message to a skill (triggers, then keywords)
+3. Compose the system prompt (identity + core skills + installed apps + matched skill)
+4. Filter available tools based on the matched skill's `allowed-tools` globs
+5. Run the `AgentEngine` loop
+6. Persist the conversation (JSONL or in-memory)
+
+## Bundles (apps)
+
+A **bundle** is an MCP server package installed into NimbleBrain. Bundles follow the [MCPB](https://github.com/modelcontextprotocol/mcpb) format — each has a `manifest.json` declaring how to start the server, what tools it provides, and optional UI metadata.
+
+### Three sources
+
+Configure bundles in `nimblebrain.json`:
+
+```json
+{
+  "bundles": [
+    { "name": "@nimblebraininc/ipinfo" },
+    { "path": "../my-local-server" },
+    { "url": "https://mcp.example.com/mcp", "serverName": "remote" }
+  ]
+}
+```
+
+| Source | How it works |
+|--------|-------------|
+| `name` | Downloaded from the [mpak](https://mpak.dev) registry. The agent can install these at runtime via `nb__manage_bundle`. |
+| `path` | Local filesystem path to a bundle directory. Resolved relative to the config file. |
+| `url` | Remote MCP server over Streamable HTTP or SSE transport. |
+
+### Lifecycle states
+
+Each bundle process goes through these states:
+
+```
+starting ──► running ──► crashed ──► dead
+                │                     ▲
+                └──► stopped ─────────┘
+```
+
+| State | Meaning |
+|-------|---------|
+| `starting` | Process is spawning |
+| `running` | Healthy and serving tools |
+| `crashed` | Process exited unexpectedly (will attempt recovery) |
+| `dead` | Repeated crashes, not restarting |
+| `stopped` | Manually stopped via API or CLI |
+
+### Default bundle
+
+NimbleBrain ships with `@nimblebraininc/bash` installed by default. This gives the agent basic shell access. Disable it with `"noDefaultBundles": true` in your config.
+
+### Bundle options
+
+```json
+{
+  "name": "@nimblebraininc/postgres",
+  "env": { "DATABASE_URL": "postgres://localhost/mydb" },
+  "protected": true
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `env` | Environment variables passed to the bundle process |
+| `protected` | Prevents uninstall via the `nb__manage_bundle` system tool |
+| `trustScore` | MTF trust score (0–100) from the mpak registry |
+| `ui` | UI metadata: name, icon, and optional `primaryView` resource URI |
+
+## Skills
+
+Skills are Markdown files with YAML frontmatter. They control what the agent knows and what tools it can use for a given message.
+
+### Skill file format
+
+```markdown title="research.md"
+---
+name: research
+description: Deep research on a topic
+version: "1.0"
+type: skill
+priority: 5
+allowed-tools:
+  - "websearch__*"
+  - "nb__discover_tools"
+metadata:
+  triggers:
+    - "research this"
+    - "deep dive"
+  keywords:
+    - research
+    - investigate
+    - analyze
+    - sources
+    - findings
+---
+
+You are a research agent. Search the web, gather multiple sources,
+and synthesize findings into a structured report.
+```
+
+### Two types
+
+| Type | Priority | Behavior |
+|------|----------|----------|
+| `context` | ≤ 10 | Always included in the system prompt, regardless of what the user says |
+| `skill` | Any | Matched against each user message. Only the best match is used. |
+
+### Two-phase matching
+
+When a user sends a message, skills of type `skill` are matched in two phases:
+
+**Phase 1 — Triggers.** Each skill's `triggers` list is checked for a substring match against the message. First hit wins. Triggers are high-confidence explicit patterns.
+
+**Phase 2 — Keywords.** If no trigger matched, each skill's `keywords` are counted against the message. A skill needs at least 2 keyword hits to qualify. The skill with the most hits wins.
+
+```
+User: "research this topic and analyze the sources"
+                    │
+        Phase 1: triggers
+        "research this" ── match! ──► research skill selected
+```
+
+A matched skill:
+- Injects its markdown body into the system prompt
+- Filters available tools to those matching its `allowed-tools` globs
+
+### Skill directories
+
+Skills are loaded from three locations (in order):
+
+1. **Built-in** — `src/skills/builtin/` (shipped with the package)
+2. **Global** — `~/.nimblebrain/skills/`
+3. **Config** — directories listed in the `skillDirs` config option
+
+## Tools
+
+Tools come from two places: MCP bundles and built-in system tools.
+
+### System tools
+
+Every NimbleBrain instance has these `nb__*` tools available:
+
+| Tool | Description |
+|------|-------------|
+| `nb__discover_tools` | Search available tools by keyword across all installed bundles |
+| `nb__discover_bundles` | Search the mpak registry for bundles to install |
+| `nb__manage_bundle` | Install, uninstall, or configure a bundle |
+| `nb__bundle_status` | Get version, health, tool count for installed bundles |
+| `nb__delegate` | Spawn a child agent for sub-tasks (multi-agent delegation) |
+| `nb__manage_skill` | Create, update, or delete skill files at runtime |
+
+### Tool surfacing strategy
+
+NimbleBrain uses tiered tool surfacing to keep the LLM's tool list manageable:
+
+| Condition | What the LLM sees |
+|-----------|-------------------|
+| Total tools ≤ 30 | All tools surfaced directly |
+| Total tools > 30, no skill matched | Only `nb__*` system tools. Others available via `nb__discover_tools`. |
+| Skill matched with `allowed-tools` | Tools matching the globs + system tools. Others via `nb__discover_tools`. |
+
+The threshold is configurable via `maxDirectTools` (default: 30).
+
+<Aside type="tip">
+When you have many bundles installed, the agent uses `nb__discover_tools` to find the right tool before calling it. You don't need to manage this — the bootstrap skill teaches the agent how to use meta-tools automatically.
+</Aside>
+
+### Multi-agent delegation
+
+The `nb__delegate` tool spawns a child `AgentEngine` run with a scoped system prompt and filtered tool set. Named agent profiles are configured in `nimblebrain.json`:
+
+```json
+{
+  "agents": {
+    "researcher": {
+      "description": "Deep research agent",
+      "systemPrompt": "You are a research agent...",
+      "tools": ["websearch__*"],
+      "maxIterations": 8,
+      "model": "claude-sonnet-4-5-20250929"
+    }
+  }
+}
+```
+
+The child agent's iteration budget is capped at `min(child.maxIterations, parent.remaining - 1)`. Multiple delegations in the same turn run concurrently.
+
+## Conversations
+
+Conversations persist across messages so the agent remembers context.
+
+### Storage backends
+
+| Backend | Default for | Location |
+|---------|------------|----------|
+| **JSONL** | CLI, HTTP server | `~/.nimblebrain/conversations/` |
+| **In-memory** | Programmatic/SDK use | — |
+
+### JSONL format
+
+Each conversation is a single `.jsonl` file:
+
+```
+{"id":"conv_abc123","createdAt":"2025-03-15T10:30:00Z"}
+{"role":"user","content":"What files are in my home directory?","ts":"..."}
+{"role":"assistant","content":"Let me check...","ts":"...","toolCalls":[...]}
+```
+
+Line 1 is metadata (ID, creation timestamp). Lines 2+ are `StoredMessage` objects with role, content, timestamp, and optional tool call records.
+
+### Resuming conversations
+
+Use `--resume <id>` in the CLI to continue an existing conversation:
+
+```bash
+nb --resume conv_abc123
+```
+
+Through the API, pass `conversationId` in the chat request body to continue an existing conversation.
+
+## What's next
+
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <LinkCard title="Chat" description="Send messages and work with the agent" href="/using/chat" />
+  <LinkCard title="Installing Apps" description="Browse and install MCP bundles" href="/using/installing-apps" />
+  <LinkCard title="Skills" description="Write custom skills to specialize the agent" href="/using/skills" />
+  <LinkCard title="nimblebrain.json" description="Full configuration reference" href="/config/nimblebrain-json" />
+</CardGrid>

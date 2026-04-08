@@ -1,0 +1,184 @@
+---
+title: Theming
+description: Match the platform's look and feel using injected CSS variables.
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The NimbleBrain platform injects CSS custom properties into every app iframe so your UI can match the host shell — including dark mode — without shipping your own color palette.
+
+## How it works
+
+When your app's HTML loads in an iframe, the platform:
+
+1. **Injects a `<style>` block** into your `<head>` with `--nb-*` CSS variables set to the current theme values. This happens before your HTML renders — no flash of wrong colors.
+2. **Sends `ui/initialize`** via postMessage with the same tokens in `params.theme.tokens`.
+3. **Sends `ui/notifications/host-context-changed`** when the user toggles dark mode, with updated token values under `styles.variables`.
+
+Your CSS references these variables with `var(--nb-token, fallback)`. The fallback ensures your app still looks correct when running outside the platform (Claude Desktop, standalone, etc).
+
+## Using tokens in CSS
+
+```css
+body {
+  font-family: var(--nb-font-sans, system-ui, sans-serif);
+  background: var(--nb-background, #ffffff);
+  color: var(--nb-foreground, #1a1a1a);
+}
+
+button {
+  background: var(--nb-primary, #2563eb);
+  color: var(--nb-primary-foreground, #ffffff);
+  border-radius: var(--nb-radius, 0.375rem);
+}
+
+input {
+  border: 1px solid var(--nb-border, #e5e7eb);
+  background: var(--nb-card, #f9fafb);
+  color: var(--nb-foreground, #1a1a1a);
+}
+
+.muted-text {
+  color: var(--nb-muted-foreground, #6b7280);
+}
+```
+
+<Aside type="tip">
+Always include a fallback value after the comma. This is your standalone appearance — what users see when the app runs outside NimbleBrain.
+</Aside>
+
+## Handling dark mode
+
+The injected `<style>` block gives you the right tokens at load time. But when the user toggles dark mode mid-session, you need a JavaScript handler to apply the updated values:
+
+```javascript
+function applyTokens(tokens) {
+  if (!tokens || typeof tokens !== 'object') return;
+  for (const [key, value] of Object.entries(tokens)) {
+    document.documentElement.style.setProperty(key, value);
+  }
+}
+
+window.addEventListener('message', (event) => {
+  const msg = event.data;
+  if (!msg || typeof msg !== 'object' || msg.jsonrpc !== '2.0') return;
+
+  // Apply tokens on initial load (legacy notification path)
+  if (msg.method === 'ui/initialize' && msg.params?.theme?.tokens) {
+    applyTokens(msg.params.theme.tokens);
+  }
+
+  // Apply tokens when host context changes (ext-apps spec)
+  if (msg.method === 'ui/notifications/host-context-changed') {
+    const vars = msg.params?.styles?.variables;
+    if (vars) applyTokens(vars);
+  }
+});
+```
+
+`applyTokens` sets CSS variables on `document.documentElement`, which overrides the injected `<style>` values. Because your CSS uses `var(--nb-*)` references, the UI updates instantly.
+
+## Token reference
+
+### Core surfaces
+
+| Token | Light | Dark | Use for |
+|-------|-------|------|---------|
+| `--nb-background` | `#faf9f7` | `#0a0a09` | Page background |
+| `--nb-foreground` | `#171717` | `#e5e5e5` | Body text |
+| `--nb-card` | `#ffffff` | `#141413` | Card / panel backgrounds |
+| `--nb-card-foreground` | `#171717` | `#e5e5e5` | Text on cards |
+| `--nb-popover` | `#ffffff` | `#141413` | Dropdown / popover backgrounds |
+| `--nb-popover-foreground` | `#171717` | `#e5e5e5` | Text in popovers |
+
+### Interactive
+
+| Token | Light | Dark | Use for |
+|-------|-------|------|---------|
+| `--nb-primary` | `#0055FF` | `#3b8eff` | Primary buttons, links, AI indicators |
+| `--nb-primary-foreground` | `#ffffff` | `#0a0a09` | Text on primary backgrounds |
+
+### Secondary / muted / accent
+
+| Token | Light | Dark | Use for |
+|-------|-------|------|---------|
+| `--nb-secondary` | `#f8f7f5` | `#1c1c1b` | Secondary button backgrounds |
+| `--nb-secondary-foreground` | `#171717` | `#e5e5e5` | Text on secondary |
+| `--nb-muted` | `#f8f7f5` | `#1c1c1b` | Subtle backgrounds |
+| `--nb-muted-foreground` | `#737373` | `#a3a3a3` | Captions, metadata, placeholder text |
+| `--nb-accent` | `#f8f7f5` | `#1c1c1b` | Hover / focus backgrounds |
+| `--nb-accent-foreground` | `#171717` | `#e5e5e5` | Text on accent |
+
+### Borders and input
+
+| Token | Light | Dark | Use for |
+|-------|-------|------|---------|
+| `--nb-border` | `#e5e5e5` | `#262626` | Borders, dividers |
+| `--nb-input` | `#e5e5e5` | `#262626` | Input field borders |
+| `--nb-ring` | `#0055FF` | `#3b8eff` | Focus rings |
+
+### Status
+
+| Token | Light | Dark | Use for |
+|-------|-------|------|---------|
+| `--nb-destructive` | `#dc2626` | `#f87171` | Errors, delete actions |
+| `--nb-success` | `#059669` | `#34d399` | Success indicators |
+| `--nb-success-foreground` | `#ffffff` | `#0a0a09` | Text on success |
+| `--nb-warning` | `#f59e0b` | `#fbbf24` | Warning indicators |
+| `--nb-warning-foreground` | `#ffffff` | `#0a0a09` | Text on warning |
+
+### Layout and typography
+
+| Token | Light | Dark | Use for |
+|-------|-------|------|---------|
+| `--nb-radius` | `0.5rem` | `0.5rem` | Border radius base |
+| `--nb-font-sans` | `'Inter', system-ui, sans-serif` | same | Body font |
+| `--nb-font-heading` | `'Inter', Georgia, serif` | same | Heading font |
+| `--nb-font-mono` | `'JetBrains Mono Variable', monospace` | same | Code / monospace font |
+
+<Aside type="note">
+Custom fonts (Satoshi, Erode) are not yet available inside iframes due to sandboxing constraints. The token values include fallback font stacks that approximate the platform's typography.
+</Aside>
+
+## Opt-in, not opt-out
+
+Theme injection is non-breaking. The platform injects `--nb-*` variables into every iframe, but they have zero effect unless your CSS references them:
+
+| Your CSS | What happens |
+|----------|-------------|
+| `background: white` | Stays white. Injected tokens are ignored. |
+| `background: var(--my-bg)` | Uses your `--my-bg` variable. No collision with `--nb-*`. |
+| `background: var(--nb-background, white)` | Picks up the platform theme. Falls back to white outside the platform. |
+
+Existing apps require zero changes — theming is entirely opt-in.
+
+## Injected style cascade
+
+The platform injects a `<style>` block as the **first child of `<head>`**, before your app's own `<style>` tags. This means:
+
+- Platform tokens are declared on `:root` and are available to your CSS.
+- The injected block includes a minimal body reset (`margin: 0`, `font-family`, `background`, `color`).
+- Your app's `<style>` comes after and wins the CSS cascade for any conflicting declarations.
+
+If you define your own `body { background: ... }`, it overrides the injected reset. This is by design — your app's styles always win.
+
+## Debugging
+
+If your tokens aren't applying, open DevTools and inspect the iframe:
+
+1. In Chrome DevTools, open the **Elements** panel.
+2. Expand the iframe's document (click the `#document` node inside the `<iframe>`).
+3. Select `<html>` and check the **Computed** tab for `--nb-background`.
+
+Common issues:
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| Background is white, not warm paper | Your CSS uses `background: #fff` instead of `var(--nb-background, #fff)` | Replace hardcoded colors with `var()` references |
+| Tokens exist but aren't applied | CSS specificity — a more specific selector overrides the token | Check that your selector isn't more specific than the `:root` declaration |
+| Dark mode doesn't toggle | Missing `ui/notifications/host-context-changed` handler | Add the `applyTokens` message listener (see code above) |
+| Tokens are stale after restart | `deps/` directory contains an old bundled copy | Delete `deps/<your-package>` during local development (see [Local Development](/apps/local-dev)) |
+
+## Full example
+
+See the [Hello World walkthrough](/apps/hello-world) for a complete app with theme integration, including both Python and TypeScript implementations.

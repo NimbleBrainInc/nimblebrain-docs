@@ -1,0 +1,383 @@
+---
+title: Conversations API
+description: List, view, fork, rename, and delete conversations.
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The Conversations API provides access to conversation history and metadata. You can list conversations with pagination, view message history, rename, fork, and delete conversations.
+
+## GET /v1/conversations
+
+List conversations with optional pagination, search, and sorting.
+
+**Query parameters:**
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `limit` | `number` | `20` | Maximum number of conversations to return. Must be a positive integer. |
+| `cursor` | `string` | — | Cursor for pagination. Use the `nextCursor` value from a previous response. |
+| `search` | `string` | — | Filter conversations by text search on title and content. |
+| `sortBy` | `string` | — | Sort field: `"createdAt"` or `"updatedAt"`. |
+
+**Response:**
+
+```json
+{
+  "conversations": [
+    {
+      "id": "conv_a1b2c3d4",
+      "createdAt": "2025-10-15T10:30:00.000Z",
+      "updatedAt": "2025-10-15T11:45:00.000Z",
+      "title": "Weather analysis for Q4",
+      "messageCount": 12,
+      "preview": "Can you analyze the weather patterns for...",
+      "totalInputTokens": 15420,
+      "totalOutputTokens": 3200,
+      "totalCostUsd": 0.058
+    },
+    {
+      "id": "conv_e5f6g7h8",
+      "createdAt": "2025-10-14T09:15:00.000Z",
+      "updatedAt": "2025-10-14T09:20:00.000Z",
+      "title": null,
+      "messageCount": 2,
+      "preview": "What is 2 + 2?",
+      "totalInputTokens": 640,
+      "totalOutputTokens": 24,
+      "totalCostUsd": 0.002
+    }
+  ],
+  "nextCursor": "conv_e5f6g7h8",
+  "totalCount": 47
+}
+```
+
+**Response fields:**
+
+| Field | Type | Description |
+|---|---|---|
+| `conversations` | `array` | List of conversation summaries |
+| `nextCursor` | `string \| null` | Cursor for the next page, or `null` if no more results |
+| `totalCount` | `number` | Total number of conversations matching the query |
+
+**Conversation summary fields:**
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | `string` | Conversation ID |
+| `createdAt` | `string` | ISO 8601 creation timestamp |
+| `updatedAt` | `string` | ISO 8601 last update timestamp |
+| `title` | `string \| null` | User-assigned title, or `null` |
+| `messageCount` | `number` | Total messages in the conversation |
+| `preview` | `string` | Truncated first user message |
+| `totalInputTokens` | `number` | Cumulative input tokens |
+| `totalOutputTokens` | `number` | Cumulative output tokens |
+| `totalCostUsd` | `number` | Cumulative estimated cost in USD |
+
+**Error responses:**
+
+| Status | Condition |
+|---|---|
+| 400 | `limit` is not a positive integer |
+| 400 | `sortBy` is not `"createdAt"` or `"updatedAt"` |
+
+**Example:**
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl "http://localhost:3000/v1/conversations?limit=10&sortBy=updatedAt" \
+  -H "Authorization: Bearer your-secret-key"
+```
+</TabItem>
+<TabItem label="Response">
+```json
+{
+  "conversations": [
+    {
+      "id": "conv_a1b2c3d4",
+      "createdAt": "2025-10-15T10:30:00.000Z",
+      "updatedAt": "2025-10-15T11:45:00.000Z",
+      "title": "Weather analysis for Q4",
+      "messageCount": 12,
+      "preview": "Can you analyze the weather patterns for...",
+      "totalInputTokens": 15420,
+      "totalOutputTokens": 3200,
+      "totalCostUsd": 0.058
+    }
+  ],
+  "nextCursor": null,
+  "totalCount": 1
+}
+```
+</TabItem>
+</Tabs>
+
+## GET /v1/conversations/:id/history
+
+Retrieve the full message history for a conversation.
+
+**Path parameters:**
+
+| Parameter | Description |
+|---|---|
+| `:id` | Conversation ID |
+
+**Response:**
+
+```json
+{
+  "conversationId": "conv_a1b2c3d4",
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the weather in San Francisco?",
+      "timestamp": "2025-10-15T10:30:00.000Z"
+    },
+    {
+      "role": "assistant",
+      "content": "The current weather in San Francisco is 62°F with partly cloudy skies.",
+      "timestamp": "2025-10-15T10:30:05.000Z",
+      "metadata": {
+        "skill": null,
+        "toolCalls": [
+          {
+            "id": "tc_x7y8z9",
+            "name": "weather__get_forecast",
+            "input": { "city": "San Francisco" },
+            "output": "{\"temp\":62,\"condition\":\"partly cloudy\"}",
+            "ok": true,
+            "ms": 340
+          }
+        ],
+        "inputTokens": 1250,
+        "outputTokens": 45,
+        "model": "claude-sonnet-4-5-20250929"
+      }
+    }
+  ]
+}
+```
+
+**Error responses:**
+
+| Status | Condition |
+|---|---|
+| 404 | Conversation not found |
+
+**Example:**
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl http://localhost:3000/v1/conversations/conv_a1b2c3d4/history \
+  -H "Authorization: Bearer your-secret-key"
+```
+</TabItem>
+<TabItem label="Response">
+```json
+{
+  "conversationId": "conv_a1b2c3d4",
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the weather in San Francisco?",
+      "timestamp": "2025-10-15T10:30:00.000Z"
+    },
+    {
+      "role": "assistant",
+      "content": "The current weather in San Francisco is 62°F with partly cloudy skies.",
+      "timestamp": "2025-10-15T10:30:05.000Z"
+    }
+  ]
+}
+```
+</TabItem>
+</Tabs>
+
+## PATCH /v1/conversations/:id
+
+Update conversation metadata. Currently supports updating the title.
+
+**Path parameters:**
+
+| Parameter | Description |
+|---|---|
+| `:id` | Conversation ID |
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `title` | `string` | Yes | New title for the conversation |
+
+**Response:**
+
+Returns the updated conversation object.
+
+```json
+{
+  "id": "conv_a1b2c3d4",
+  "createdAt": "2025-10-15T10:30:00.000Z",
+  "updatedAt": "2025-10-15T12:00:00.000Z",
+  "title": "Weather Analysis",
+  "totalInputTokens": 15420,
+  "totalOutputTokens": 3200,
+  "totalCostUsd": 0.058,
+  "lastModel": "claude-sonnet-4-5-20250929"
+}
+```
+
+**Error responses:**
+
+| Status | Condition |
+|---|---|
+| 400 | `title` field is missing or not a string |
+| 404 | Conversation not found |
+
+**Example:**
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl -X PATCH http://localhost:3000/v1/conversations/conv_a1b2c3d4 \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your-secret-key" \
+  -d '{"title": "Weather Analysis"}'
+```
+</TabItem>
+<TabItem label="Response">
+```json
+{
+  "id": "conv_a1b2c3d4",
+  "createdAt": "2025-10-15T10:30:00.000Z",
+  "updatedAt": "2025-10-15T12:00:00.000Z",
+  "title": "Weather Analysis",
+  "totalInputTokens": 15420,
+  "totalOutputTokens": 3200,
+  "totalCostUsd": 0.058,
+  "lastModel": "claude-sonnet-4-5-20250929"
+}
+```
+</TabItem>
+</Tabs>
+
+## POST /v1/conversations/:id/fork
+
+Create a copy of a conversation. You can optionally truncate the fork at a specific message index to create a branch point.
+
+**Path parameters:**
+
+| Parameter | Description |
+|---|---|
+| `:id` | Conversation ID to fork from |
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `atMessage` | `number` | No | Message index to fork at (0-based). Omit to copy all messages. |
+
+**Response:**
+
+Returns the newly created conversation.
+
+```json
+{
+  "id": "conv_f9g0h1i2",
+  "createdAt": "2025-10-15T12:05:00.000Z",
+  "updatedAt": "2025-10-15T12:05:00.000Z",
+  "title": null,
+  "totalInputTokens": 1250,
+  "totalOutputTokens": 45,
+  "totalCostUsd": 0.004,
+  "lastModel": "claude-sonnet-4-5-20250929"
+}
+```
+
+**Error responses:**
+
+| Status | Condition |
+|---|---|
+| 400 | `atMessage` is not a non-negative integer |
+| 404 | Source conversation not found |
+
+**Example:**
+
+<Tabs>
+<TabItem label="Fork all messages">
+```bash
+curl -X POST http://localhost:3000/v1/conversations/conv_a1b2c3d4/fork \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your-secret-key" \
+  -d '{}'
+```
+</TabItem>
+<TabItem label="Fork at message 4">
+```bash
+curl -X POST http://localhost:3000/v1/conversations/conv_a1b2c3d4/fork \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your-secret-key" \
+  -d '{"atMessage": 4}'
+```
+</TabItem>
+<TabItem label="Response">
+```json
+{
+  "id": "conv_f9g0h1i2",
+  "createdAt": "2025-10-15T12:05:00.000Z",
+  "updatedAt": "2025-10-15T12:05:00.000Z",
+  "title": null,
+  "totalInputTokens": 1250,
+  "totalOutputTokens": 45,
+  "totalCostUsd": 0.004,
+  "lastModel": "claude-sonnet-4-5-20250929"
+}
+```
+</TabItem>
+</Tabs>
+
+## DELETE /v1/conversations/:id
+
+Permanently delete a conversation and its message history.
+
+**Path parameters:**
+
+| Parameter | Description |
+|---|---|
+| `:id` | Conversation ID |
+
+**Response:**
+
+```json
+{
+  "id": "conv_a1b2c3d4",
+  "deleted": true
+}
+```
+
+**Error responses:**
+
+| Status | Condition |
+|---|---|
+| 404 | Conversation not found |
+
+**Example:**
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl -X DELETE http://localhost:3000/v1/conversations/conv_a1b2c3d4 \
+  -H "Authorization: Bearer your-secret-key"
+```
+</TabItem>
+<TabItem label="Response">
+```json
+{
+  "id": "conv_a1b2c3d4",
+  "deleted": true
+}
+```
+</TabItem>
+</Tabs>

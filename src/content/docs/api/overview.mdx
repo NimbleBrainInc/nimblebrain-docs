@@ -1,0 +1,113 @@
+---
+title: API Overview
+description: Base URL, content type, error format, and authentication overview for the NimbleBrain HTTP API.
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The NimbleBrain HTTP API gives you programmatic access to chat, apps, conversations, tools, and real-time events. Every endpoint uses JSON over HTTP and follows consistent conventions.
+
+## Base URL
+
+```
+http://localhost:3000
+```
+
+The default port is `3000`. Override it with the `--port` flag or the `http.port` field in `nimblebrain.json`.
+
+## Content Type
+
+All request and response bodies use `application/json`. Set the `Content-Type` header on every request that includes a body:
+
+```
+Content-Type: application/json
+```
+
+SSE endpoints (`/v1/chat/stream` and `/v1/events`) return `text/event-stream`.
+
+## Authentication
+
+The API supports two authentication methods:
+
+- **Bearer token** — pass `NB_API_KEY` in the `Authorization` header
+- **Session cookie** — call `POST /v1/auth/login` to receive an `nb_session` HttpOnly cookie
+
+When `NB_API_KEY` is not set, the API runs in dev mode with no authentication required. See [Authentication](/api/authentication/) for full details.
+
+## Error Format
+
+All errors return a JSON object with an `error` field and an optional `message` field:
+
+```json
+{
+  "error": "not_found",
+  "message": "App \"weather\" not found"
+}
+```
+
+Common error codes:
+
+| `error` Value | HTTP Status | Meaning |
+|---|---|---|
+| `"bad_request"` | 400 | Invalid request body or parameters |
+| (empty body) | 401 | Authentication failed |
+| `"protected"` | 403 | Bundle is protected from uninstall |
+| `"not_found"` | 404 | Resource does not exist |
+| `"already_installed"` | 409 | Bundle is already installed |
+| `"install_failed"` | 500 | Bundle installation failed |
+| `"credentials_required"` | 400 | Bundle needs API keys in the `env` field |
+
+Validation errors on request bodies return a 400 with a descriptive `error` or `message` string:
+
+```json
+{
+  "error": "message is required and must be a string"
+}
+```
+
+## Endpoint Reference
+
+Every endpoint requires authentication unless noted otherwise.
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| `POST` | `/v1/auth/login` | No | Validate API key, set session cookie |
+| `POST` | `/v1/auth/logout` | Yes | Clear session cookie |
+| `GET` | `/v1/auth/session` | Yes | Check session validity |
+| `POST` | `/v1/chat` | Yes | Synchronous chat |
+| `POST` | `/v1/chat/stream` | Yes | Streaming chat (SSE) |
+| `GET` | `/v1/apps` | Yes | List installed apps |
+| `POST` | `/v1/apps/install` | Yes | Install a bundle |
+| `DELETE` | `/v1/apps/:name` | Yes | Uninstall an app |
+| `POST` | `/v1/apps/:name/start` | Yes | Start a stopped app |
+| `POST` | `/v1/apps/:name/stop` | Yes | Stop a running app |
+| `GET` | `/v1/apps/:name/resources/:path` | Yes | Fetch a UI resource |
+| `POST` | `/v1/tools/call` | Yes | Direct tool invocation |
+| `GET` | `/v1/conversations` | Yes | List conversations |
+| `GET` | `/v1/conversations/:id/history` | Yes | Get conversation messages |
+| `DELETE` | `/v1/conversations/:id` | Yes | Delete a conversation |
+| `PATCH` | `/v1/conversations/:id` | Yes | Update conversation metadata |
+| `POST` | `/v1/conversations/:id/fork` | Yes | Fork a conversation |
+| `GET` | `/v1/events` | Yes | Workspace SSE event stream |
+| `GET` | `/v1/workspace` | Yes | Bootstrap data |
+| `GET` | `/v1/usage` | Yes | Usage statistics |
+| `GET` | `/v1/skills` | Yes | List loaded skills |
+| `GET` | `/v1/health` | No | Health check |
+| `GET` | `/v1/bundles/health` | No | Per-bundle health |
+
+## CORS
+
+CORS behavior depends on your configuration:
+
+- **Dev mode** (no `NB_API_KEY` set) — `Access-Control-Allow-Origin: *`
+- **Production with `ALLOWED_ORIGINS`** — only listed origins get CORS headers, with `Access-Control-Allow-Credentials: true` for cookie support
+- **Production without `ALLOWED_ORIGINS`** — same-origin only (no CORS headers)
+
+The server handles `OPTIONS` preflight requests automatically with a `204 No Content` response.
+
+## SSE Streams
+
+The API exposes two Server-Sent Events streams:
+
+1. **Chat stream** (`POST /v1/chat/stream`) — per-request stream of chat events. Events: `text.delta`, `tool.start`, `tool.done`, `done`, `error`. See [Chat](/api/chat/).
+2. **Workspace stream** (`GET /v1/events`) — persistent connection for workspace-level events. Events: `bundle.installed`, `bundle.uninstalled`, `bundle.crashed`, `bundle.recovered`, `bundle.dead`, `data.changed`, `heartbeat`. See [Events](/api/events/).

@@ -1,0 +1,86 @@
+---
+title: nb status
+description: Check workspace health including bundles, skills, and live bundle health.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+`nb status` displays a summary of your NimbleBrain workspace: configured bundles, loaded skills, and -- if a server is running -- live health information for each bundle process.
+
+## Usage
+
+```
+nb status [flags]
+```
+
+## Flags
+
+| Flag | Description |
+|------|-------------|
+| `--config <path>` | Config file path |
+| `--json` | Output as JSON |
+
+## Checking status
+
+```bash
+nb status
+```
+
+```
+Bundles: 3 configured
+  @nimblebraininc/bash
+  @nimblebraininc/granola
+  @nimblebraininc/postgres
+Skills: 4 loaded
+```
+
+## Status with a running server
+
+When a NimbleBrain server is running on the default port (3000), `nb status` also queries the `/v1/bundles/health` endpoint and shows live bundle health:
+
+```bash
+nb status
+```
+
+```
+Bundles: 3 configured
+  @nimblebraininc/bash
+  @nimblebraininc/granola
+  @nimblebraininc/postgres
+Skills: 4 loaded
+
+Bundle health:
+  @nimblebraininc/bash: running (uptime: 3842s, restarts: 0)
+  @nimblebraininc/granola: running (uptime: 3842s, restarts: 0)
+  @nimblebraininc/postgres: crashed (uptime: n/a, restarts: 3)
+```
+
+Each bundle shows its state (`running`, `crashed`, `dead`, `starting`, `stopped`), uptime in seconds, and restart count.
+
+<Aside type="note">
+  If no server is running, the health section is omitted. The command checks `http://localhost:3000/v1/bundles/health` with a 2-second timeout.
+</Aside>
+
+## JSON output
+
+Get machine-readable output with `--json`:
+
+```bash
+nb status --json
+```
+
+```json
+{"bundles":[{"name":"@nimblebraininc/bash"},{"name":"@nimblebraininc/granola"},{"name":"@nimblebraininc/postgres"}],"skills":[{"name":"bootstrap","type":"context","priority":100,"source":"src/skills/core/bootstrap.md","description":"Teaches the agent about meta-tools and mpak"}],"health":[{"name":"@nimblebraininc/bash","state":"running","uptime":3842000,"restartCount":0},{"name":"@nimblebraininc/granola","state":"running","uptime":3842000,"restartCount":0},{"name":"@nimblebraininc/postgres","state":"crashed","uptime":null,"restartCount":3}]}
+```
+
+The JSON output includes three keys:
+- `bundles` -- the bundle entries from your config
+- `skills` -- all loaded skills with metadata
+- `health` -- live state from the running server (empty array if no server is running)
+
+## Related commands
+
+- [nb bundle](/cli/bundle/) -- add or remove bundles
+- [nb skill](/cli/skill/) -- inspect individual skills
+- [nb reload](/cli/reload/) -- apply config changes to a running server
+- [nb serve](/cli/serve/) -- start the server

@@ -1,0 +1,111 @@
+---
+title: nb config
+description: Get, set, and clear per-bundle configuration values.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+`nb config` manages per-bundle settings like API keys and secrets. These values are stored in `~/.mpak/config.json` and injected into bundle processes as environment variables at startup.
+
+## Usage
+
+```
+nb config <action> <bundle> [key=value|key]
+```
+
+## Actions
+
+| Action | Description |
+|--------|-------------|
+| `set <bundle> <key>=<value>` | Set a config value for a bundle |
+| `get <bundle> [key]` | Get config values for a bundle |
+| `clear <bundle> <key>` | Remove a config value |
+
+## Setting a value
+
+Store a configuration value for a bundle. The bundle is identified by its scoped name:
+
+```bash
+nb config set @nimblebraininc/granola api_key=grn_abc123def456
+```
+
+```
+Saved api_key for @nimblebraininc/granola
+```
+
+The value is written to `~/.mpak/config.json` with restricted permissions (mode `0600`). Bundles that declare `user_config` fields in their manifest pick up these values as environment variables via `${user_config.<field>}` references.
+
+## Getting values
+
+View the configured values for a bundle. Values are masked for security:
+
+```bash
+nb config get @nimblebraininc/granola
+```
+
+```
+api_key: gr****
+```
+
+Values longer than 4 characters show the first 2 characters followed by `****`. Shorter values show only `****`.
+
+If no config exists for the bundle:
+
+```bash
+nb config get @nimblebraininc/unknown
+```
+
+```
+No config for @nimblebraininc/unknown
+```
+
+If no config file exists at all:
+
+```bash
+nb config get @nimblebraininc/granola
+```
+
+```
+No config found.
+```
+
+## Clearing a value
+
+Remove a specific key from a bundle's config:
+
+```bash
+nb config clear @nimblebraininc/granola api_key
+```
+
+```
+Cleared api_key for @nimblebraininc/granola
+```
+
+If the bundle has no remaining keys after clearing, its entry is removed from the config entirely.
+
+## Where config is stored
+
+Bundle configuration lives at `~/.mpak/config.json`, separate from your `nimblebrain.json`. This file is shared with the mpak CLI and has this structure:
+
+```json title="~/.mpak/config.json"
+{
+  "packages": {
+    "@nimblebraininc/granola": {
+      "api_key": "grn_abc123def456"
+    },
+    "@nimblebraininc/postgres": {
+      "connection_string": "postgres://user:pass@localhost/mydb"
+    }
+  }
+}
+```
+
+<Aside type="caution">
+  This file contains secrets. It is created with mode `0600` (owner read/write only). Do not commit it to version control.
+</Aside>
+
+## Related commands
+
+- [nb bundle](/cli/bundle/) -- manage which bundles are installed
+- [nb reload](/cli/reload/) -- reload config on a running server after changing values
+- [nb status](/cli/status/) -- check workspace health

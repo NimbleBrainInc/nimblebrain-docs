@@ -1,0 +1,112 @@
+---
+title: nb dev
+description: Run NimbleBrain in development mode with file watching and HMR.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+`nb dev` starts a supervised dual-process development environment. It runs the API server with automatic restart on source changes and the Vite web dev server with hot module replacement -- all in a single terminal.
+
+## Usage
+
+```
+nb dev [flags]
+```
+
+## Flags
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--port <number>` | API server port | `3000` |
+| `--no-web` | Skip the web dev server (API only) | Off |
+| `--workdir <dir>` | Working directory | `.nimblebrain` (project-local) |
+| `--debug` | Verbose logging | Off |
+
+## Starting dev mode
+
+```bash
+nb dev
+```
+
+```
+[dev] Starting API server with file watching...
+[dev] Starting web dev server...
+[api] [nimblebrain] Starting runtime...
+[api] [nimblebrain] Runtime ready.
+[web]   VITE v6.0.0  ready in 340 ms
+[web]
+[web]   ➜  Local:   http://localhost:5173/
+```
+
+Both processes share the terminal. Output is prefixed with `[api]` or `[web]` so you can tell which process logged each line. Press Ctrl+C to stop both.
+
+## Dual-process architecture
+
+`nb dev` runs two child processes:
+
+1. **API server** (`bun --watch`) -- runs `nb serve` with Bun's file watcher. When you change any source file, Bun automatically restarts the server.
+2. **Web dev server** (`bun run dev` in `web/`) -- runs the Vite development server with HMR. Changes to web client files are applied instantly in the browser without a full reload.
+
+Both processes are supervised. When you press Ctrl+C:
+- A `SIGTERM` is sent to both processes
+- If they don't exit within 5 seconds, they receive `SIGKILL`
+- A second Ctrl+C forces an immediate exit
+
+## API-only mode
+
+If you only need the API server (no web client), skip the Vite process:
+
+```bash
+nb dev --no-web
+```
+
+```
+[dev] Starting API server with file watching...
+[api] [nimblebrain] Starting runtime...
+[api] [nimblebrain] Runtime ready.
+```
+
+<Aside type="tip">
+  Use `--no-web` when you are developing against the API directly or when the `web/` directory does not exist in your project.
+</Aside>
+
+## Custom port
+
+Override the API server port:
+
+```bash
+nb dev --port 8080
+```
+
+The web dev server always runs on Vite's default port (typically 5173), independent of the API port.
+
+## Working directory
+
+By default, `nb dev` uses `.nimblebrain` in the current directory as the working directory. This keeps development data (config, conversations, logs) local to your project instead of the global `~/.nimblebrain`.
+
+Override with `--workdir`:
+
+```bash
+nb dev --workdir ./my-project/.nimblebrain
+```
+
+<Aside type="note">
+  This is different from `nb serve` and `nb` (interactive), which default to `~/.nimblebrain` (global). The project-local default in dev mode keeps development and production data separate.
+</Aside>
+
+## What happens when the web directory is missing
+
+If `web/package.json` does not exist, `nb dev` logs a warning and runs in API-only mode:
+
+```
+[dev] Starting API server with file watching...
+[dev] Warning: web/package.json not found. Skipping web dev server.
+[api] [nimblebrain] Starting runtime...
+[api] [nimblebrain] Runtime ready.
+```
+
+## Related commands
+
+- [nb serve](/cli/serve/) -- production server (no file watching)
+- [nb reload](/cli/reload/) -- hot-reload config on a running server
+- [CLI Overview](/cli/overview/) -- global flags and config resolution
