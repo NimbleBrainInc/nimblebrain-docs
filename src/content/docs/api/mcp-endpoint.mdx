@@ -1,0 +1,112 @@
+---
+title: MCP Endpoint
+description: NimbleBrain exposes itself as a Streamable HTTP MCP server via the /mcp endpoint, allowing external MCP clients to access all installed tools.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The `/mcp` endpoint turns NimbleBrain into a **Streamable HTTP MCP server**. External MCP clients — Claude Code, Open WebUI, another NimbleBrain instance, or any MCP-compatible host — can connect and access all installed tools through a single endpoint.
+
+This makes NimbleBrain both an MCP **client** (connecting to installed bundles) and an MCP **server** (exposing composed tools to external hosts). The composition layer in between — tool aggregation, skill filtering, trust scoring — is what external clients benefit from without needing to know about individual bundles.
+
+## Endpoint
+
+| | |
+|---|---|
+| **Path** | `/mcp` |
+| **Protocol** | [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) (MCP transport) |
+| **Auth** | Bearer token (`NB_API_KEY`) |
+
+## Connecting from Claude Code
+
+Add NimbleBrain as an MCP server in your Claude Code config:
+
+```json title=".claude/mcp.json"
+{
+  "mcpServers": {
+    "nimblebrain": {
+      "type": "url",
+      "url": "https://your-nimblebrain-instance.com/mcp",
+      "headers": {
+        "Authorization": "Bearer your-nb-api-key"
+      }
+    }
+  }
+}
+```
+
+Claude Code can now discover and call all tools from your NimbleBrain workspace — every installed bundle's tools are available through the single `/mcp` endpoint.
+
+## Connecting from other MCP clients
+
+Any MCP client that supports Streamable HTTP transport can connect:
+
+```bash
+# Test with curl (list tools)
+curl -X POST https://your-instance.com/mcp \
+  -H "Authorization: Bearer $NB_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"tools/list","id":1}'
+```
+
+## What's exposed
+
+The MCP endpoint exposes:
+
+- **All tools** from installed and running bundles — aggregated into the unified tool namespace
+- **Tool discovery** — `tools/list` returns every tool across all bundles
+- **Tool execution** — `tools/call` routes to the correct bundle transparently
+
+Feature-gated tools (e.g., `nb__manage_bundle` when `bundleManagement` is `false`) are excluded from both `tools/list` and `tools/call`.
+
+## Configuration
+
+The MCP endpoint is controlled by the `mcpServer` feature flag and two environment variables:
+
+```json title="nimblebrain.json"
+{
+  "features": {
+    "mcpServer": true
+  }
+}
+```
+
+| Setting | Env var | Default | Description |
+|---------|---------|---------|-------------|
+| Enable/disable | — | `true` | Set `features.mcpServer: false` to disable |
+| Max sessions | `MCP_MAX_SESSIONS` | 100 | Maximum concurrent MCP client sessions |
+| Session TTL | `MCP_SESSION_TTL_MS` | 1,800,000 (30 min) | Inactivity timeout before a session is cleaned up |
+
+<Aside type="caution">
+When `features.mcpServer` is `false`, the `/mcp` endpoint returns 403 for all requests. This is the recommended setting if you don't need external MCP access.
+</Aside>
+
+## Architecture
+
+```
+External MCP Client          NimbleBrain
+─────────────────          ─────────────
+                           ┌──────────────────────┐
+tools/list  ──────────────►│  /mcp endpoint        │
+                           │  (Streamable HTTP)    │
+tools/call  ──────────────►│         │              │
+                           │         ▼              │
+                           │  ┌──────────────┐     │
+                           │  │ ToolRegistry  │     │
+                           │  │              │     │
+                           │  │ App 1 tools  │     │
+                           │  │ App 2 tools  │     │
+                           │  │ App 3 tools  │     │
+                           │  │ System tools │     │
+                           │  └──────────────┘     │
+                           └──────────────────────┘
+```
+
+The external client sees a flat list of tools. NimbleBrain handles routing each `tools/call` to the correct bundle process internally.
+
+## Security
+
+- Authentication is required — the same `NB_API_KEY` used for the HTTP API
+- Session limits prevent resource exhaustion from runaway clients
+- Feature-gated tools are never exposed, even via MCP
+- Bundle env isolation still applies — the MCP endpoint doesn't bypass any security boundaries

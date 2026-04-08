@@ -66,7 +66,7 @@ To rotate the API key:
    openssl rand -base64 32
    ```
 
-2. Update the `NB_API_KEY` environment variable in your deployment (`.env` file, Helm values, or Kubernetes Secret).
+2. Update the `NB_API_KEY` environment variable in your deployment (`.env` file or Docker Compose config).
 
 3. Restart the platform container. All existing sessions become invalid — users must log in again with the new key.
 
@@ -144,19 +144,18 @@ Mcp-Session-Id, Mcp-Protocol-Version
 
 ### Keep the platform internal
 
-The platform service (port 3000) should never be directly exposed to the internet. In both Docker Compose and Kubernetes deployments, the platform runs on an internal network:
+The platform service (port 27247) should never be directly exposed to the internet. The platform runs on an internal Docker network:
 
-- **Docker Compose**: The platform has no `ports` mapping. Only the `web` container (Caddy) is exposed on port 8080. Caddy proxies `/v1/*` to the platform.
-- **Kubernetes**: Both services are `ClusterIP`. The Ingress routes `/v1/*` to the platform and `/` to the web pod.
+- The platform has no `ports` mapping. Only the `web` container (Caddy) is exposed on port 27246. Caddy proxies `/v1/*` to the platform.
 
 ```
-Internet → Reverse Proxy (TLS) → Web (8080) → Platform (3000, internal)
+Internet → Reverse Proxy (TLS) → Web (27246) → Platform (27247, internal)
                                        ↑
                                   Serves UI + proxies /v1/*
 ```
 
 <Aside type="danger">
-Do not add `ports: - "3000:3000"` to the platform service in `docker-compose.yml`. This would expose the API directly, bypassing the web container's reverse proxy.
+Do not add `ports: - "27247:27247"` to the platform service in `docker-compose.yml`. This would expose the API directly, bypassing the web container's reverse proxy.
 </Aside>
 
 ### Firewall rules
@@ -167,7 +166,7 @@ If your host is directly on the internet, restrict inbound traffic:
 # Allow only HTTPS (443) and SSH (22)
 ufw allow 22/tcp
 ufw allow 443/tcp
-ufw deny 8080/tcp   # Block direct access if behind a reverse proxy
+ufw deny 27246/tcp  # Block direct access if behind a reverse proxy
 ufw enable
 ```
 
@@ -192,7 +191,7 @@ server {
     add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;
 
     location / {
-        proxy_pass http://127.0.0.1:8080;
+        proxy_pass http://127.0.0.1:27246;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-For $remote_addr;
         proxy_set_header X-Forwarded-Proto $scheme;
@@ -210,23 +209,11 @@ server {
 
 ```txt title="Caddyfile"
 nb.example.com {
-    reverse_proxy 127.0.0.1:8080
+    reverse_proxy 127.0.0.1:27246
 }
 ```
 
 Caddy handles TLS automatically via Let's Encrypt.
-
-</TabItem>
-<TabItem label="Kubernetes Ingress">
-
-With cert-manager installed:
-
-```bash
-helm install nimblebrain ./helm \
-  --set ingress.tls=true \
-  --set ingress.hostname=nb.example.com \
-  --set ingress.annotations."cert-manager\.io/cluster-issuer"=letsencrypt-prod
-```
 
 </TabItem>
 </Tabs>
@@ -274,9 +261,9 @@ Use this checklist before exposing NimbleBrain to any network:
 
 | Item | How to verify |
 |---|---|
-| `NB_API_KEY` set to 32+ characters | Check your `.env` or Helm values |
+| `NB_API_KEY` set to 32+ characters | Check your `.env` file |
 | `ALLOWED_ORIGINS` set to your domain(s) | `curl -v` with an `Origin` header and confirm the response includes `Access-Control-Allow-Origin` |
-| Platform port (3000) not exposed | `docker compose ps` shows no host port mapping for platform |
+| Platform port (27247) not exposed | `docker compose ps` shows no host port mapping for platform service |
 | TLS enabled | `curl -I https://nb.example.com` returns a valid certificate |
 | `X-Forwarded-For` header set by proxy | Check auth failure logs for real IPs, not `"direct"` |
 | Bundle list reviewed | `cat nimblebrain.json` — only bundles you trust are listed |

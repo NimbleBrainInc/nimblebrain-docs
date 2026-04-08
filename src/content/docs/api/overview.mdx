@@ -10,10 +10,10 @@ The NimbleBrain HTTP API gives you programmatic access to chat, apps, conversati
 ## Base URL
 
 ```
-http://localhost:3000
+http://localhost:27247
 ```
 
-The default port is `3000`. Override it with the `--port` flag or the `http.port` field in `nimblebrain.json`.
+The default port is `27247`. Override it with the `--port` flag or the `http.port` field in `nimblebrain.json`.
 
 ## Content Type
 
@@ -94,6 +94,7 @@ Every endpoint requires authentication unless noted otherwise.
 | `GET` | `/v1/skills` | Yes | List loaded skills |
 | `GET` | `/v1/health` | No | Health check |
 | `GET` | `/v1/bundles/health` | No | Per-bundle health |
+| `POST` | `/mcp` | Yes | [MCP server endpoint](/api/mcp-endpoint) (Streamable HTTP) |
 
 ## CORS
 

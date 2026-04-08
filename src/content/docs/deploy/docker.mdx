@@ -5,7 +5,7 @@ description: Deploy NimbleBrain on a single machine with Docker Compose.
 
 import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
-NimbleBrain ships two container images: **platform** (agent engine + API on port 3000) and **web** (React UI served by Caddy on port 8080). Docker Compose runs both on a single machine with a shared internal network.
+NimbleBrain ships two container images: **platform** (agent engine + API on port 27247, internal) and **web** (React UI served by Caddy, exposed on port 27246). Docker Compose runs both on a single machine with a shared internal network.
 
 ## Prerequisites
 
@@ -37,6 +37,8 @@ services:
       - ./skills:/app/skills:ro
     environment:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - GOOGLE_GENERATIVE_AI_API_KEY=${GOOGLE_GENERATIVE_AI_API_KEY:-}
       - NB_API_KEY=${NB_API_KEY}
     networks:
       - internal
@@ -46,9 +48,9 @@ services:
     build: web/
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "27246:8080"
     environment:
-      - PLATFORM_URL=http://platform:3000
+      - PLATFORM_URL=http://platform:27247
     depends_on:
       platform:
         condition: service_healthy
@@ -67,7 +69,7 @@ networks:
 | Service | Image | Port | Purpose |
 |---------|-------|------|---------|
 | `platform` | `nimblebrain/platform` | 3000 (internal) | Agent engine, HTTP API, MCP bundle manager |
-| `web` | `nimblebrain/web` | 8080 (exposed) | React SPA served by Caddy, proxies `/v1/*` to platform |
+| `web` | `nimblebrain/web` | 27246 (host) → 8080 (container) | React SPA served by Caddy, proxies `/v1/*` to platform |
 
 The `web` container runs Caddy, which serves the static UI files and reverse-proxies all `/v1/*` API requests to the platform container. The platform container is **not** exposed to the host — all traffic flows through the web container.
 
@@ -84,6 +86,8 @@ The `web` container runs Caddy, which serves the static UI files and reverse-pro
 | Variable | Required | Description |
 |---|---|---|
 | `ANTHROPIC_API_KEY` | Yes | Your Anthropic API key for Claude |
+| `OPENAI_API_KEY` | No | OpenAI API key (for OpenAI model provider) |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | No | Google Gemini API key (for Google model provider) |
 | `NB_API_KEY` | Recommended | API authentication key. Minimum 8 characters. Protects all endpoints except `/v1/health` |
 | `ALLOWED_ORIGINS` | Production | Comma-separated list of allowed CORS origins (e.g., `https://nb.example.com`). Required for cross-origin cookie auth |
 
@@ -97,7 +101,7 @@ The platform image has a built-in health check:
 
 ```dockerfile
 HEALTHCHECK --interval=30s --timeout=5s \
-  CMD curl -f http://localhost:3000/v1/health || exit 1
+  CMD curl -f http://localhost:27247/v1/health || exit 1
 ```
 
 The `web` service uses `depends_on` with `condition: service_healthy`, so it only starts after the platform passes its first health check.
@@ -143,14 +147,14 @@ The `web` service uses `depends_on` with `condition: service_healthy`, so it onl
 
    ```
    NAME                   STATUS                 PORTS
-   project-platform-1     running (healthy)      3000/tcp
-   project-web-1          running                0.0.0.0:8080->8080/tcp
+   project-platform-1     running (healthy)      27247/tcp
+   project-web-1          running                0.0.0.0:27246->8080/tcp
    ```
 
    Check the health endpoint directly:
 
    ```bash
-   curl http://localhost:8080/v1/health
+   curl http://localhost:27246/v1/health
    ```
 
    ```json
@@ -159,7 +163,7 @@ The `web` service uses `depends_on` with `condition: service_healthy`, so it onl
 
 4. **Open the UI**
 
-   Go to [http://localhost:8080](http://localhost:8080). Enter your `NB_API_KEY` value to log in.
+   Go to [http://localhost:27246](http://localhost:27246). Enter your `NB_API_KEY` value to log in.
 
 </Steps>
 
@@ -228,21 +232,21 @@ docker compose up -d
 
 ## Platform image details
 
-The `nimblebrain/platform` image is built from `oven/bun:1.1` and includes:
+The `nimblebrain/platform` image is built from `oven/bun:1.3-alpine` and includes:
 
 | Component | Version | Purpose |
 |-----------|---------|---------|
-| Bun | 1.1 | JavaScript/TypeScript runtime |
+| Bun | 1.3 | JavaScript/TypeScript runtime |
 | Python | 3.13 | Runs Python-based MCP bundles |
 | Node.js + npm | System | Runs Node-based MCP bundles |
 | mpak CLI | Latest | Downloads and manages bundles from the mpak registry |
 | curl | System | Used by the built-in health check |
 
-The entrypoint is `bun run src/cli/index.ts serve`, which starts the HTTP API server on port 3000 with `NB_WORK_DIR=/data` and `NB_HOST=0.0.0.0`.
+The entrypoint is `bun run src/cli/index.ts serve`, which starts the HTTP API server on port 27247 with `NB_WORK_DIR=/data` and `NB_HOST=0.0.0.0`.
 
 ## Reverse proxy
 
-The web container's Caddy server already handles reverse proxying for the default setup. If you want to place your own reverse proxy in front of the stack (for TLS termination, custom domain, etc.), point it at port 8080:
+The web container's Caddy server already handles reverse proxying for the default setup. If you want to place your own reverse proxy in front of the stack (for TLS termination, custom domain, etc.), point it at port 27246:
 
 ```nginx title="nginx.conf"
 server {
@@ -253,7 +257,7 @@ server {
     ssl_certificate_key /etc/ssl/private/nb.example.com-key.pem;
 
     location / {
-        proxy_pass http://127.0.0.1:8080;
+        proxy_pass http://127.0.0.1:27246;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-For $remote_addr;
         proxy_set_header X-Forwarded-Proto $scheme;
@@ -287,7 +291,7 @@ Common causes:
 
 The web container waits for the platform health check to pass. If the platform is unhealthy, the web container stays in a "waiting" state. Fix the platform first.
 
-### Port 8080 already in use
+### Port 27246 already in use
 
 Change the host port mapping in `docker-compose.yml`:
 

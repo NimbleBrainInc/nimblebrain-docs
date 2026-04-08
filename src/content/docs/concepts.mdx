@@ -1,9 +1,43 @@
 ---
 title: Core Concepts
-description: Understand the agent loop, bundles, skills, tools, and conversations that make up NimbleBrain.
+description: Understand orchestration, the agent loop, bundles, skills, tools, and conversations that make up NimbleBrain.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
+
+## Composable orchestration
+
+NimbleBrain's core value is **composing multiple MCP servers into a single, orchestrated workspace**. Rather than connecting to one MCP server at a time, NimbleBrain aggregates tools from every installed app into a unified namespace, layers prompts to give the agent awareness of all available capabilities, and filters tool access per-task through skills.
+
+```
+┌──────────────────────────────────────────────────┐
+│                  ToolRegistry                     │
+│                                                   │
+│  ┌─────────┐  ┌─────────┐  ┌──────────────────┐ │
+│  │ App 1   │  │ App 2   │  │ App 3 (remote)   │ │
+│  │ (stdio) │  │ (stdio) │  │ (HTTP/SSE)       │ │
+│  │ 3 tools │  │ 5 tools │  │ 2 tools          │ │
+│  └─────────┘  └─────────┘  └──────────────────┘ │
+│                                                   │
+│  Unified namespace: 10 app tools + system tools   │
+└──────────────────────────────────────────────────┘
+          │                        │
+          ▼                        ▼
+   Skill filtering          Agent Engine
+   (allowed-tools)          (agentic loop)
+```
+
+Three mechanisms make this composable:
+
+| Mechanism | What it does |
+|-----------|-------------|
+| **Tool aggregation** | The `ToolRegistry` collects tools from every MCP source (local stdio, remote HTTP/SSE) and presents them as a flat namespace. The agent doesn't know or care which server owns a tool. |
+| **Skill-scoped filtering** | Each skill declares `allowed-tools` glob patterns. When a skill matches, only tools matching those patterns (plus system tools) are visible to the agent. This scopes the agent's capabilities per task. |
+| **4-layer prompt composition** | System prompts are assembled from: (1) identity, (2) core context, (3) installed app metadata with trust scores, and (4) the matched skill's prompt. Every layer adds awareness without the agent needing to discover it. |
+
+<Aside type="tip">
+This composition is what distinguishes NimbleBrain from a single-server MCP client. You can install a Postgres app, a web search app, and a CRM app — then write a skill that gives the agent access to all three for a "lead enrichment" task, while a different skill restricts it to just Postgres for "database admin" tasks.
+</Aside>
 
 ## Agent loop
 
@@ -47,13 +81,13 @@ All tool calls within a single iteration run in parallel via `Promise.all()`.
 
 ### Orchestration flow
 
-Before the engine loop starts, the `Runtime` orchestrates several steps:
+Before the engine loop starts, the `Runtime` orchestrates the composition described above:
 
 1. Resolve or create a conversation
 2. Match the user message to a skill (triggers, then keywords)
-3. Compose the system prompt (identity + core skills + installed apps + matched skill)
-4. Filter available tools based on the matched skill's `allowed-tools` globs
-5. Run the `AgentEngine` loop
+3. Compose the system prompt — 4-layer: identity + core skills + installed apps + matched skill
+4. Filter the unified tool namespace based on the matched skill's `allowed-tools` globs
+5. Run the `AgentEngine` loop against the composed tool set
 6. Persist the conversation (JSONL or in-memory)
 
 ## Bundles (apps)
@@ -271,13 +305,32 @@ nb --resume conv_abc123
 
 Through the API, pass `conversationId` in the chat request body to continue an existing conversation.
 
+## MCP Apps
+
+NimbleBrain is a full [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) host, implementing the [ext-apps specification](https://apps.extensions.modelcontextprotocol.io/api/). MCP Apps are interactive UI applications — built with HTML/JavaScript — that render directly inside the host as sandboxed iframes.
+
+Unlike traditional web apps, MCP Apps:
+
+- **Live inside the conversation** — no tab-switching, context stays together
+- **Call tools bidirectionally** — apps invoke MCP tools and receive pushed results from the agent
+- **Inherit the host's theme** — CSS variables are injected automatically
+- **Run in a security sandbox** — no access to the parent page, cookies, or other apps
+
+Any MCP bundle that declares UI resources and placements becomes an MCP App. See [MCP Apps](/concepts/mcp-apps) for the full concept and [MCP App Bridge](/apps/bridge) for the implementation protocol.
+
+## Platform as MCP server
+
+NimbleBrain exposes a `/mcp` endpoint that turns the entire platform into a Streamable HTTP MCP server. External MCP clients — Claude Code, Open WebUI, or another NimbleBrain instance — can connect and access all installed tools through a single endpoint.
+
+This means NimbleBrain is both an MCP **client** (connecting to installed bundles) and an MCP **server** (exposing composed tools to external hosts). See [MCP Endpoint](/api/mcp-endpoint) for configuration and usage.
+
 ## What's next
 
 import { CardGrid, LinkCard } from '@astrojs/starlight/components';
 
 <CardGrid>
+  <LinkCard title="MCP Apps" description="Interactive UIs inside the host via the ext-apps spec" href="/concepts/mcp-apps" />
   <LinkCard title="Chat" description="Send messages and work with the agent" href="/using/chat" />
   <LinkCard title="Installing Apps" description="Browse and install MCP bundles" href="/using/installing-apps" />
-  <LinkCard title="Skills" description="Write custom skills to specialize the agent" href="/using/skills" />
   <LinkCard title="nimblebrain.json" description="Full configuration reference" href="/config/nimblebrain-json" />
 </CardGrid>

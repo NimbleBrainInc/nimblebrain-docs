@@ -42,6 +42,7 @@ export default defineConfig({
               { label: 'Quickstart', slug: 'quickstart' },
               { label: 'Installation', slug: 'installation' },
               { label: 'Core Concepts', slug: 'concepts' },
+              { label: 'MCP Apps', slug: 'concepts/mcp-apps' },
             ],
           },
           {
@@ -105,6 +106,7 @@ export default defineConfig({
               { label: 'Tools', slug: 'api/tools' },
               { label: 'Events', slug: 'api/events' },
               { label: 'Workspace', slug: 'api/workspace' },
+              { label: 'MCP Endpoint', slug: 'api/mcp-endpoint' },
               { label: 'Health', slug: 'api/health' },
             ],
           },
@@ -126,7 +128,6 @@ export default defineConfig({
             icon: 'cloud-download',
             items: [
               { label: 'Docker Compose', slug: 'deploy/docker' },
-              { label: 'Kubernetes (Helm)', slug: 'deploy/kubernetes' },
               { label: 'Security', slug: 'deploy/security' },
             ],
           },

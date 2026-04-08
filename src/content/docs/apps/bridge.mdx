@@ -1,11 +1,11 @@
 ---
 title: MCP App Bridge
-description: The postMessage protocol between app iframes and the NimbleBrain host.
+description: NimbleBrain's ext-apps host implementation — the JSON-RPC protocol connecting MCP App iframes to the platform's tools, theme, and conversation.
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-The MCP App Bridge is the communication layer between your app's iframe and the NimbleBrain web client. It implements the [ext-apps specification (2026-01-26)](https://apps.extensions.modelcontextprotocol.io/api/) plus NimbleBrain-specific extensions under the `synapse/` namespace.
+The MCP App Bridge is NimbleBrain's implementation of the [ext-apps specification (2026-01-26)](https://apps.extensions.modelcontextprotocol.io/api/) — the standard protocol that enables [MCP Apps](/concepts/mcp-apps) to render inside host applications with bidirectional tool access. NimbleBrain extends the spec with `synapse/` namespace methods for data-change notifications, semantic actions, and state persistence.
 
 All messages use `window.postMessage` with JSON-RPC 2.0 envelopes:
 
@@ -30,7 +30,7 @@ All messages use `window.postMessage` with JSON-RPC 2.0 envelopes:
 |--------|------|-------------|
 | `ui/initialize` | Response | Host responds to the app's init request with capabilities, theme, and context. |
 | `ui/notifications/tool-result` | Notification | Forwarded tool result from the agent. |
-| `ui/notifications/tool-input` | Notification | Tool arguments sent to the app. |
+| `ui/notifications/tool-input` | Notification | Tool arguments being sent to a tool on the app's server. |
 | `ui/notifications/host-context-changed` | Notification | Host context changed (theme toggle, locale, etc.). |
 
 #### App to Host
@@ -40,10 +40,11 @@ All messages use `window.postMessage` with JSON-RPC 2.0 envelopes:
 | `ui/initialize` | Request | App initiates the handshake. Host responds with capabilities and context. |
 | `ui/notifications/initialized` | Notification | App confirms handshake complete. Host must not send tool data before this. |
 | `ui/notifications/size-changed` | Notification | Report content dimensions for auto-sizing inline views. |
+| `ui/notifications/request-teardown` | Notification | App requests the host to tear down the iframe. Currently a no-op. |
 | `tools/call` | Request | Call a tool on the app's MCP server. Returns `CallToolResult`. |
 | `ui/message` | Request | Send a message to the conversation. |
 | `ui/open-link` | Request | Open a URL in a new browser tab. |
-| `ui/update-model-context` | Request | Push structured state visible to the LLM. |
+| `ui/update-model-context` | Request | Push structured state visible to the LLM. See [below](#uiupdate-model-context). |
 
 ### NimbleBrain extensions (`synapse/`)
 
@@ -146,6 +147,20 @@ Sent when the user toggles themes, changes locale, or other host context changes
         "--color-text-primary": "#e2e8f0"
       }
     }
+  }
+}
+```
+
+### `ui/notifications/tool-input`
+
+Sent when the agent is calling a tool on your app's server. The params contain the tool arguments. Use this to show a loading state or preview the incoming action.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "ui/notifications/tool-input",
+  "params": {
+    "arguments": { "city": "Honolulu", "days": 5 }
   }
 }
 ```
@@ -292,6 +307,32 @@ Report content dimensions so the host can auto-size inline views.
 }
 ```
 
+### `ui/update-model-context`
+
+Push structured state into the agent's context so the LLM knows what the user is viewing. This is an ext-apps spec method — when the user sends a chat message, this state is included in the system prompt.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "ui/update-model-context",
+  "id": "ctx-1",
+  "params": {
+    "structuredContent": {
+      "view": "board",
+      "filter": "overdue",
+      "selectedTasks": ["tsk_01", "tsk_02"]
+    },
+    "summary": "User is viewing the board with overdue filter, 2 tasks selected"
+  }
+}
+```
+
+The `summary` field is optional but recommended — it's used as a fallback when the full state exceeds the token budget. If the message includes an `id`, the host responds with an empty result.
+
+<Aside type="note">
+State injection is trust-gated. Only apps with an MTF trust score of 50 or higher have their state included in the LLM context. If you're using the Synapse SDK, `app.updateModelContext()` handles this automatically.
+</Aside>
+
 ### `synapse/download-file`
 
 Trigger a file download. The `data` field is the file content as a string.
@@ -325,7 +366,13 @@ Request a semantic action from the shell. Your app declares *intent* and the she
 
 The `action` field is required. All other fields in `params` are action-specific.
 
-**Supported actions:**
+**Built-in actions (handled by the bridge):**
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `navigate` | `{ route: string }` | Navigate to a route in the shell (e.g., `/app/tasks`). Invokes the `onNavigate` callback. |
+
+**Consumer-level actions (handled by shell callbacks):**
 
 | Action | Params | Description |
 |--------|--------|-------------|
@@ -333,7 +380,7 @@ The `action` field is required. All other fields in `params` are action-specific
 | `startChat` | `{ prompt?: string }` | Open the chat panel. Optionally pre-fill a prompt. |
 | `openApp` | `{ name: string }` | Navigate to an installed app by server name. |
 
-If no `onAction` callback is registered, the bridge dispatches a `nb:action` custom event on `window`.
+The bridge handles `navigate` directly. All other actions are dispatched to the registered `onAction` callback, or as an `nb:action` custom event on `window` if no callback is registered.
 
 <Aside type="note">
 `synapse/action` is a NimbleBrain platform extension — it is not part of the ext-apps specification.
