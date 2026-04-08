@@ -8,8 +8,14 @@ export default defineConfig({
   site: 'https://docs.nimblebrain.ai',
   integrations: [
     starlight({
-      title: 'NimbleBrain Docs',
-      favicon: '/favicon.ico',
+      title: 'NimbleBrain',
+      favicon: { href: '/favicon.ico', type: 'image/x-icon' },
+      logo: {
+        light: './src/assets/logo-light.png',
+        dark: './src/assets/logo-dark.png',
+        alt: 'NimbleBrain',
+        replacesTitle: true,
+      },
       customCss: ['./src/styles/custom.css'],
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/NimbleBrainInc/nimblebrain' },
