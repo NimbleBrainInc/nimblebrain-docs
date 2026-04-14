@@ -12,8 +12,9 @@ NimbleBrain reads its configuration from a single `nimblebrain.json` file. This 
 NimbleBrain looks for the config file in this order, stopping at the first match:
 
 1. **`--config <path>`** — Explicit path passed as a CLI flag
-2. **`--workdir <dir>/nimblebrain.json`** — Inside the working directory (flag or `NB_WORK_DIR` env var)
-3. **`./nimblebrain.json`** — Current working directory
+2. **`.nimblebrain/nimblebrain.json`** — Project-local config directory in the current working directory
+3. **`--workdir <dir>/nimblebrain.json`** — Inside the working directory (flag or `NB_WORK_DIR` env var)
+4. **`./nimblebrain.json`** — Current working directory (bare file)
 
 If no config file exists at the resolved path, NimbleBrain auto-creates a default one (empty bundles and skills) as long as the parent directory exists.
 
@@ -35,6 +36,7 @@ If no config file exists at the resolved path, NimbleBrain auto-creates a defaul
   "maxIterations": 10,
   "maxInputTokens": 500000,
   "maxOutputTokens": 16384,
+  "maxHistoryMessages": 40,
   "bundles": [
     { "name": "@nimblebraininc/tasks" },
     { "path": "../mcp-servers/hello" },
@@ -96,6 +98,7 @@ If no config file exists at the resolved path, NimbleBrain auto-creates a defaul
 | `maxIterations` | `integer` | `10` | Max agentic iterations per request. Range: 1--25. |
 | `maxInputTokens` | `integer` | `500000` | Max input tokens per request. The engine stops when this budget is exceeded. |
 | `maxOutputTokens` | `integer` | `16384` | Max output tokens per LLM call. |
+| `maxHistoryMessages` | `integer` | `40` | Max conversation message groups to include in context. Keeps the first message plus the most recent N groups. Tool call/result pairs count as one group. |
 | `bundles` | `array` | `[]` | MCP bundles to spawn. See [Bundle Configuration](/config/bundles). |
 | `noDefaultBundles` | `boolean` | `false` | Skip default bundles (e.g., `@nimblebraininc/bash`). |
 | `skillDirs` | `string[]` | `[]` | Directories to scan for skill markdown files. |
@@ -105,6 +108,7 @@ If no config file exists at the resolved path, NimbleBrain auto-creates a defaul
 | `http` | `object` | `{ "port": 27247, "host": "127.0.0.1" }` | HTTP server config. Omit for programmatic-only use. |
 | `agents` | `object` | `{}` | Named agent profiles for delegation. See [Agent Profiles](/config/agents). |
 | `workDir` | `string` | `"~/.nimblebrain"` | Working directory for runtime state (conversations, logs, cache). |
+| `features` | `object` | All `true` | Feature flags to enable/disable system capabilities. See [Feature Flags](/config/features). |
 | `telemetry` | `object` | `{ "enabled": true }` | Anonymous usage telemetry. See [telemetry](#telemetry). |
 | `home` | `object` | `{ "enabled": true }` | Home dashboard configuration. See [home](#home). |
 

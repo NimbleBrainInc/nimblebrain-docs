@@ -27,7 +27,8 @@ The `primaryView` is the main HTML page for your app. Declare it in your manifes
 ```json
 {
   "_meta": {
-    "ai.nimblebrain/synapse": {
+    "ai.nimblebrain/host": {
+      "host_version": "1.0",
       "name": "My App",
       "icon": "database",
       "primaryView": {
@@ -104,60 +105,59 @@ GET /v1/apps/:name/resources/:path
 | Parameter | Description |
 |-----------|-------------|
 | `:name` | The server name (derived from the bundle name). |
-| `:path` | The resource path, matching the part after `ui://` in your resource URI. |
+| `:path` | The full path after `ui://` in your resource URI. |
 
-For example, if your app's server name is `my-app` and it serves `ui://dashboard`:
+Resource URIs are independent of your app's package name. You can name them whatever makes sense for your domain:
+
+```python
+# Package: @nimblebraininc/synapse-crm
+# Resource URI doesn't need to include "synapse-crm"
+@mcp.resource("ui://crm/main")
+def crm_ui() -> str:
+    return "<html>...</html>"
+```
 
 ```
-GET /v1/apps/my-app/resources/dashboard
+GET /v1/apps/synapse-crm/resources/crm/main
 ```
 
 Returns the HTML with `Content-Type: text/html`.
 
 ## The virtual `primary` path
 
-The path `primary` is special. It resolves to whatever URI is set in `primaryView.resourceUri`:
+The path `primary` is special. It resolves to the `resourceUri` from the first placement in your manifest:
 
 ```
-GET /v1/apps/my-app/resources/primary
-→ reads ui://dashboard (from primaryView.resourceUri)
+GET /v1/apps/synapse-crm/resources/primary
+→ reads ui://crm/main (from placement resourceUri)
 ```
 
-This means apps don't need to know their own resource URI at runtime. The web client always requests `primary` when loading the main view.
-
-The resolution logic strips the `ui://` prefix from the `primaryView.resourceUri` and uses the remainder as the actual resource path:
-
-```typescript
-// From handleResourceProxy in routes.ts
-if (resourcePath === "primary" && instance.ui?.primaryView?.resourceUri) {
-  resolvedPath = instance.ui.primaryView.resourceUri.replace(/^ui:\/\//, "");
-}
-```
+This means apps don't need to know their own resource URI at runtime. The web client uses `primary` when loading the main view from a placement.
 
 ## Serving multiple resources
 
 Your app can serve multiple HTML pages. Register each as a separate `ui://` resource:
 
 ```python
-@mcp.resource("ui://dashboard")
-def dashboard() -> str:
+@mcp.resource("ui://crm/main")
+def main_view() -> str:
     return "<html>...</html>"
 
-@mcp.resource("ui://settings")
+@mcp.resource("ui://crm/settings")
 def settings() -> str:
     return "<html>...</html>"
 
-@mcp.resource("ui://detail")
-def detail() -> str:
+@mcp.resource("ui://crm/contact-detail")
+def contact_detail() -> str:
     return "<html>...</html>"
 ```
 
 Access them through the proxy:
 
 ```
-GET /v1/apps/my-app/resources/dashboard
-GET /v1/apps/my-app/resources/settings
-GET /v1/apps/my-app/resources/detail
+GET /v1/apps/synapse-crm/resources/crm/main
+GET /v1/apps/synapse-crm/resources/crm/settings
+GET /v1/apps/synapse-crm/resources/crm/contact-detail
 ```
 
 Use multiple resources when you need separate views for different [placements](/apps/placements) (e.g., a sidebar widget and a main view).

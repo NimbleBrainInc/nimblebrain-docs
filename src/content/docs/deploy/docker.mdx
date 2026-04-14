@@ -88,11 +88,11 @@ The `web` container runs Caddy, which serves the static UI files and reverse-pro
 | `ANTHROPIC_API_KEY` | Yes | Your Anthropic API key for Claude |
 | `OPENAI_API_KEY` | No | OpenAI API key (for OpenAI model provider) |
 | `GOOGLE_GENERATIVE_AI_API_KEY` | No | Google Gemini API key (for Google model provider) |
-| `NB_API_KEY` | Recommended | API authentication key. Minimum 8 characters. Protects all endpoints except `/v1/health` |
+| `NB_API_KEY` | Legacy | API authentication key (used with legacy single-key auth). For multi-user auth, configure `instance.json` with a local or OIDC adapter instead |
 | `ALLOWED_ORIGINS` | Production | Comma-separated list of allowed CORS origins (e.g., `https://nb.example.com`). Required for cross-origin cookie auth |
 
 <Aside type="caution">
-Running without `NB_API_KEY` disables authentication entirely. CORS falls back to `Access-Control-Allow-Origin: *`. This is acceptable for local development but never for production.
+Running without authentication (no `instance.json` and no `NB_API_KEY`) disables auth entirely. CORS falls back to `Access-Control-Allow-Origin: *`. This is acceptable for local development but never for production. See [Security](/deploy/security) for auth adapter setup.
 </Aside>
 
 ### Health check

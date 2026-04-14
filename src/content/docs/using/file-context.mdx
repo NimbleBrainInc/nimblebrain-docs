@@ -1,0 +1,68 @@
+---
+title: File Context
+description: Upload files to give the agent additional context for your conversations.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+You can attach files to your messages to give the agent additional context. NimbleBrain extracts text content from common file formats and includes it in the conversation.
+
+## Supported formats
+
+| Format | Extensions | Extraction |
+|--------|-----------|------------|
+| PDF | `.pdf` | Text extraction from pages |
+| Word | `.docx` | Text and structure extraction |
+| Excel | `.xlsx` | Tabular data extraction |
+| Images | `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` | Passed as image content to vision-capable models |
+| Plain text | `.txt`, `.md`, `.csv`, `.json`, `.xml` | Read as-is |
+
+## How it works
+
+When you attach a file to a message:
+
+1. The file is uploaded and stored in the workspace
+2. Content is extracted based on the file type
+3. The extracted text is included as context in the conversation
+4. The agent can reference the file content when responding
+
+Files are scoped to the workspace and accessible via `GET /v1/files/:fileId`.
+
+## Using file context
+
+### Web UI
+
+Drag and drop files into the chat input, or use the attachment button. The file appears as a chip below the input. Send your message and the agent sees the file content alongside your text.
+
+### API
+
+Include file references in the `ChatRequest`:
+
+```json
+{
+  "message": "Summarize this document",
+  "fileRefs": [
+    {
+      "id": "file_abc123",
+      "name": "report.pdf",
+      "mimeType": "application/pdf"
+    }
+  ]
+}
+```
+
+## Feature flag
+
+File context is controlled by the `fileContext` feature flag, which defaults to `true`. To disable:
+
+```json title="nimblebrain.json"
+{
+  "features": {
+    "fileContext": false
+  }
+}
+```
+
+<Aside type="note">
+Image files are passed directly to the model as image content parts, which requires a vision-capable model (e.g., Claude). Text-based formats are extracted and included as text content.
+</Aside>

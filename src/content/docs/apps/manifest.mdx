@@ -1,11 +1,11 @@
 ---
 title: Manifest Reference
-description: Complete reference for the _meta["ai.nimblebrain/synapse"] manifest extension.
+description: Complete reference for the _meta["ai.nimblebrain/host"] manifest extension.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-NimbleBrain reads Synapse metadata from the `_meta["ai.nimblebrain/synapse"]` key in your MCPB `manifest.json`. This is where you declare your app's name, icon, primary view, sidebar placements, and settings section.
+NimbleBrain reads host metadata from the `_meta["ai.nimblebrain/host"]` key in your MCPB `manifest.json`. This is where you declare your app's name, icon, category, sidebar placements, briefing facets, and settings section.
 
 ## Full manifest structure
 
@@ -28,9 +28,11 @@ NimbleBrain reads Synapse metadata from the `_meta["ai.nimblebrain/synapse"]` ke
     }
   },
   "_meta": {
-    "ai.nimblebrain/synapse": {
+    "ai.nimblebrain/host": {
+      "host_version": "1.0",
       "name": "My App",
       "icon": "database",
+      "category": "custom",
       "primaryView": {
         "resourceUri": "ui://dashboard"
       },
@@ -70,7 +72,7 @@ These fields are defined by the [MCPB specification](https://github.com/modelcon
 | `server.type` | `string` | Yes | Runtime type: `"python"`, `"node"`, `"binary"`, or `"uv"`. |
 | `server.entry_point` | `string` | No | Entry point file path. |
 | `server.mcp_config` | `McpConfig` | Yes | Spawn configuration (see below). |
-| `_meta` | `object` | No | Extension metadata. NimbleBrain reads `_meta["ai.nimblebrain/synapse"]`. |
+| `_meta` | `object` | No | Extension metadata. NimbleBrain reads `_meta["ai.nimblebrain/host"]`. |
 
 ### McpConfig
 
@@ -80,15 +82,18 @@ These fields are defined by the [MCPB specification](https://github.com/modelcon
 | `args` | `string[]` | No | Command-line arguments. Use `${__dirname}` for the bundle directory. |
 | `env` | `Record<string, string>` | No | Environment variables passed to the process. |
 
-## Synapse metadata: `_meta["ai.nimblebrain/synapse"]`
+## Host metadata: `_meta["ai.nimblebrain/host"]`
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
+| `host_version` | `string` | Yes | Schema version. Currently `"1.0"`. |
 | `name` | `string` | Yes | Display name shown in the sidebar and app list. |
 | `icon` | `string` | Yes | [Lucide icon](https://lucide.dev/icons) name in kebab-case (e.g., `"database"`, `"message-square"`, `"hand"`). |
+| `category` | `string` | No | App category: `"sales"`, `"marketing"`, `"operations"`, `"research"`, `"finance"`, `"hr"`, `"engineering"`, `"support"`, or `"custom"`. |
 | `primaryView` | `object` | No | The main view loaded when a user navigates to your app. |
 | `primaryView.resourceUri` | `string` | Yes (if `primaryView` set) | `ui://` URI for the main view (e.g., `"ui://dashboard"`). |
 | `placements` | `PlacementDeclaration[]` | No | Explicit shell layout placement declarations. See [Placements](/apps/placements). |
+| `briefing` | `object` | No | Daily briefing contribution. See [briefing](#briefing-object) below. |
 
 ### `settings` object
 
@@ -98,6 +103,70 @@ These fields are defined by the [MCPB specification](https://github.com/modelcon
 | `settings.label` | `string` | Yes | Tab label in the settings UI. |
 | `settings.icon` | `string` | Yes | Lucide icon name for the settings tab. |
 | `settings.resourceUri` | `string` | Yes | `ui://` URI that renders the settings section HTML. |
+
+### `briefing` object
+
+Apps can contribute to the daily briefing on the Home dashboard by declaring a `briefing` block. The platform reads entity data from disk and presents a business-language summary.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `briefing.priority` | `"high" \| "medium" \| "low"` | No | Relative ordering in the briefing. High-priority apps appear first. Default: `"medium"`. |
+| `briefing.facets` | `BriefingFacet[]` | Yes | Summary dimensions this app contributes. |
+
+### `BriefingFacet`
+
+Each facet describes one piece of data to surface in the briefing:
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | `string` | Yes | Unique identifier (kebab-case). |
+| `label` | `string` | Yes | Human-readable label (e.g., "Pipeline", "Blocked tasks"). |
+| `type` | `string` | Yes | How this facet is treated: `"attention"` (needs action now), `"upcoming"` (coming soon), `"activity"` (something happened), `"delta"` (state changed), `"kpi"` (headline number). |
+| `entity` | `string` | No | Upjack entity to query. Reads JSON files from the entity data directory. |
+| `query` | `object` | No | MongoDB-style filter (powered by [sift.js](https://github.com/crcn/sift.js)). Supports `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, `$exists`. String values like `"${today}"` are resolved at runtime. |
+| `tool` | `string` | No | MCP tool to call at briefing time (e.g., `"newsapi__search_news"`). |
+| `tool_input` | `object` | No | Arguments passed to the tool. |
+| `resource` | `string` | No | `briefing://` URI — the app computes its own summary via MCP resource. |
+| `metric` | `"count" \| "sum" \| "list"` | No | Aggregation hint. |
+| `description` | `string` | No | Fallback description if data can't be resolved. |
+
+Each facet resolves via **one** of `entity`, `tool`, or `resource`.
+
+**Query variables** resolved at runtime:
+
+| Variable | Value |
+|----------|-------|
+| `${today}` | Current date as `YYYY-MM-DD` |
+| `${now}` | Current ISO timestamp |
+| `${period.since}` | Start of the briefing period (24 hours ago) |
+
+**Example:**
+
+```json
+"briefing": {
+  "priority": "medium",
+  "facets": [
+    {
+      "name": "due_today",
+      "label": "Due today",
+      "type": "upcoming",
+      "entity": "task",
+      "query": { "due_date": "${today}", "completed_at": null },
+      "metric": "count",
+      "description": "Tasks due today that aren't done"
+    },
+    {
+      "name": "blocked_tasks",
+      "label": "Blocked",
+      "type": "attention",
+      "entity": "task",
+      "query": { "column": "blocked", "status": "active" },
+      "metric": "count",
+      "description": "Tasks stuck in blocked column"
+    }
+  ]
+}
+```
 
 ### `PlacementDeclaration`
 
@@ -160,7 +229,8 @@ The smallest manifest that registers a UI view:
     }
   },
   "_meta": {
-    "ai.nimblebrain/synapse": {
+    "ai.nimblebrain/host": {
+      "host_version": "1.0",
       "name": "Hello",
       "icon": "hand",
       "primaryView": {

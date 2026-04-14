@@ -141,6 +141,64 @@ data: {"server":"tasks","tool":"create_task","timestamp":"2025-10-15T10:31:15.00
 Only agent-initiated tool calls emit `data.changed`. Tool calls made through `POST /v1/tools/call` (the MCP App Bridge proxy) do not emit this event to prevent infinite loops.
 </Aside>
 
+### config.changed
+
+A runtime configuration change occurred (e.g., model update, preferences change).
+
+```
+event: config.changed
+data: {"key":"defaultModel","timestamp":"2026-04-13T10:30:00.000Z"}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `key` | `string` | Configuration key that changed |
+| `timestamp` | `string` | ISO 8601 timestamp |
+
+### skill.created / skill.updated / skill.deleted
+
+A user skill was created, modified, or removed.
+
+```
+event: skill.created
+data: {"name":"my-skill","timestamp":"2026-04-13T10:30:00.000Z"}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Skill name |
+| `timestamp` | `string` | ISO 8601 timestamp |
+
+### file.created / file.deleted
+
+A file was uploaded or removed from the workspace.
+
+```
+event: file.created
+data: {"fileId":"file_abc123","name":"report.pdf","timestamp":"2026-04-13T10:30:00.000Z"}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `fileId` | `string` | File identifier |
+| `name` | `string` | Original filename |
+| `timestamp` | `string` | ISO 8601 timestamp |
+
+### bridge.tool.call / bridge.tool.done
+
+An MCP App Bridge tool call started or completed. Used by the web client to show tool call activity from app iframes.
+
+```
+event: bridge.tool.call
+data: {"server":"tasks","tool":"create_task","timestamp":"2026-04-13T10:30:00.000Z"}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `server` | `string` | MCP server name |
+| `tool` | `string` | Tool name |
+| `timestamp` | `string` | ISO 8601 timestamp |
+
 ### heartbeat
 
 Sent every 30 seconds to keep the connection alive and allow clients to detect stale connections.
@@ -153,6 +211,77 @@ data: {"timestamp":"2025-10-15T10:30:30.000Z"}
 | Field | Type | Description |
 |---|---|---|
 | `timestamp` | `string` | ISO 8601 timestamp |
+
+## GET /v1/conversations/:id/events
+
+Open a persistent SSE connection for a specific conversation. Only authorized participants receive events. Use this to build multi-participant chat — when one user sends a message, other participants watching the same conversation receive the assistant's response in real time.
+
+**Authentication:** Required. The server validates workspace membership and conversation access (`canAccess()`) on every connection. Unauthorized requests receive `404` (to avoid leaking conversation existence).
+
+**Response headers:**
+
+```
+Content-Type: text/event-stream
+Cache-Control: no-cache
+Connection: keep-alive
+```
+
+**Example:**
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl http://localhost:27247/v1/conversations/conv_a1b2c3d4e5f67890/events \
+  -H "Authorization: Bearer your-secret-key" \
+  -H "X-Workspace-Id: ws_engineering" \
+  --no-buffer
+```
+</TabItem>
+<TabItem label="Event stream">
+```
+event: user.message
+data: {"userId":"user_xyz","displayName":"Sarah","content":"What's the status?","timestamp":"2026-04-13T14:30:00.000Z"}
+
+event: text.delta
+data: {"runId":"abc123","text":"Based on the latest"}
+
+event: tool.start
+data: {"runId":"abc123","name":"tasks__list","id":"tc_001"}
+
+event: tool.done
+data: {"runId":"abc123","name":"tasks__list","id":"tc_001","ok":true,"ms":120}
+
+event: text.delta
+data: {"runId":"abc123","text":" data, here's the current status..."}
+
+event: done
+data: {"response":"Based on the latest data, here's the current status...","conversationId":"conv_a1b2c3d4e5f67890","stopReason":"complete"}
+
+event: heartbeat
+data: {"timestamp":"2026-04-13T14:30:30.000Z"}
+```
+</TabItem>
+</Tabs>
+
+### Conversation event types
+
+| Event | Description |
+|-------|-------------|
+| `user.message` | Another participant sent a message. Contains `userId`, `displayName`, `content`, `timestamp`. |
+| `text.delta` | Streaming text chunk from the assistant response. |
+| `tool.start` | A tool call began. |
+| `tool.done` | A tool call completed. |
+| `llm.done` | LLM response finished (contains token counts). |
+| `done` | Full assistant response complete. Contains `response`, `conversationId`, `stopReason`, `usage`. |
+| `heartbeat` | Keep-alive, sent every 30 seconds. |
+
+<Aside type="note">
+The sender of a message does **not** receive their own events on the conversation stream — they already receive them from their `POST /v1/chat/stream` response. This prevents duplicate rendering.
+</Aside>
+
+### Participant eviction
+
+When a participant is removed from a conversation (via `manage_conversation` tool) or a conversation is unshared, their SSE connection is closed immediately server-side. On reconnect, they receive `404` and should stop retrying.
 
 ## Connection Management
 

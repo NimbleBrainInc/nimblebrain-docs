@@ -1,0 +1,54 @@
+---
+title: nb user
+description: Manage user accounts for the local auth adapter.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+`nb user` provides user account management commands. Currently supports API key rotation for the local authentication adapter.
+
+## Usage
+
+```
+nb user <action> [args]
+```
+
+## Actions
+
+| Action | Description |
+|--------|-------------|
+| `rotate-key <email>` | Rotate the API key for a user, revoking all existing keys |
+
+## Rotating an API key
+
+Generate a new API key for a user and revoke all previous keys:
+
+```bash
+nb user rotate-key alice@example.com
+```
+
+```
+Key rotated for alice@example.com (user_abc123).
+
+New API key: nb_sk_a1b2c3d4e5f6...
+
+Warning: all previous keys for this user are now invalid.
+```
+
+<Aside type="caution">
+  The new API key is shown only once. Copy it immediately -- there is no way to retrieve it later.
+</Aside>
+
+<Aside type="note">
+  This command only works with the **local** auth adapter. If your instance uses OIDC authentication, API keys are managed by your identity provider.
+</Aside>
+
+## Requirements
+
+- The instance must be configured with the `local` auth adapter (see [Authentication](/api/authentication/))
+- The user must exist (identified by email address)
+
+## Related commands
+
+- [nb config](/cli/config/) -- manage bundle configuration
+- [nb status](/cli/status/) -- check workspace health

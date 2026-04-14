@@ -27,12 +27,13 @@ SSE endpoints (`/v1/chat/stream` and `/v1/events`) return `text/event-stream`.
 
 ## Authentication
 
-The API supports two authentication methods:
+NimbleBrain uses pluggable auth adapters configured via `instance.json`. Three modes:
 
-- **Bearer token** — pass `NB_API_KEY` in the `Authorization` header
-- **Session cookie** — call `POST /v1/auth/login` to receive an `nb_session` HttpOnly cookie
+- **Dev** (default) — no authentication when no `instance.json` exists
+- **Local** — per-user API keys with Bearer token or session cookie
+- **OIDC** — JWT verification via WorkOS or any OIDC provider
 
-When `NB_API_KEY` is not set, the API runs in dev mode with no authentication required. See [Authentication](/api/authentication/) for full details.
+See [Authentication](/api/authentication/) for full details.
 
 ## Error Format
 
@@ -71,38 +72,31 @@ Every endpoint requires authentication unless noted otherwise.
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| `POST` | `/v1/auth/login` | No | Validate API key, set session cookie |
-| `POST` | `/v1/auth/logout` | Yes | Clear session cookie |
-| `GET` | `/v1/auth/session` | Yes | Check session validity |
+| `GET` | `/v1/health` | No | Health check |
+| `GET` | `/v1/bootstrap` | Yes | [Bootstrap](/api/bootstrap) — user, workspaces, shell config |
 | `POST` | `/v1/chat` | Yes | Synchronous chat |
 | `POST` | `/v1/chat/stream` | Yes | Streaming chat (SSE) |
-| `GET` | `/v1/apps` | Yes | List installed apps |
-| `POST` | `/v1/apps/install` | Yes | Install a bundle |
-| `DELETE` | `/v1/apps/:name` | Yes | Uninstall an app |
-| `POST` | `/v1/apps/:name/start` | Yes | Start a stopped app |
-| `POST` | `/v1/apps/:name/stop` | Yes | Stop a running app |
 | `GET` | `/v1/apps/:name/resources/:path` | Yes | Fetch a UI resource |
 | `POST` | `/v1/tools/call` | Yes | Direct tool invocation |
-| `GET` | `/v1/conversations` | Yes | List conversations |
-| `GET` | `/v1/conversations/:id/history` | Yes | Get conversation messages |
-| `DELETE` | `/v1/conversations/:id` | Yes | Delete a conversation |
-| `PATCH` | `/v1/conversations/:id` | Yes | Update conversation metadata |
-| `POST` | `/v1/conversations/:id/fork` | Yes | Fork a conversation |
+| `GET` | `/v1/shell` | Yes | Shell configuration (placements, endpoints) |
+| `GET` | `/v1/files/:fileId` | Yes | Serve an uploaded file |
 | `GET` | `/v1/events` | Yes | Workspace SSE event stream |
-| `GET` | `/v1/workspace` | Yes | Bootstrap data |
-| `GET` | `/v1/usage` | Yes | Usage statistics |
-| `GET` | `/v1/skills` | Yes | List loaded skills |
-| `GET` | `/v1/health` | No | Health check |
-| `GET` | `/v1/bundles/health` | No | Per-bundle health |
+| `GET` | `/v1/auth/provider` | No | Auth adapter info (local, oidc, or dev) |
+| `GET` | `/v1/auth/authorize` | No | OIDC authorization redirect |
+| `GET` | `/v1/auth/callback` | No | OIDC callback handler |
+| `POST` | `/v1/auth/login` | No | Validate credentials, set session cookie |
+| `POST` | `/v1/auth/logout` | Yes | Clear session cookie |
+| `GET` | `/v1/auth/session` | Yes | Check session validity |
+| `POST` | `/v1/auth/refresh` | Yes | Refresh session token |
 | `POST` | `/mcp` | Yes | [MCP server endpoint](/api/mcp-endpoint) (Streamable HTTP) |
 
 ## CORS
 
 CORS behavior depends on your configuration:
 
-- **Dev mode** (no `NB_API_KEY` set) — `Access-Control-Allow-Origin: *`
-- **Production with `ALLOWED_ORIGINS`** — only listed origins get CORS headers, with `Access-Control-Allow-Credentials: true` for cookie support
-- **Production without `ALLOWED_ORIGINS`** — same-origin only (no CORS headers)
+- **Dev mode** (no auth configured) — `Access-Control-Allow-Origin: *`
+- **Auth configured with `ALLOWED_ORIGINS`** — only listed origins get CORS headers, with `Access-Control-Allow-Credentials: true` for cookie support
+- **Auth configured without `ALLOWED_ORIGINS`** — same-origin only (no CORS headers)
 
 The server handles `OPTIONS` preflight requests automatically with a `204 No Content` response.
 
@@ -111,4 +105,4 @@ The server handles `OPTIONS` preflight requests automatically with a `204 No Con
 The API exposes two Server-Sent Events streams:
 
 1. **Chat stream** (`POST /v1/chat/stream`) — per-request stream of chat events. Events: `text.delta`, `tool.start`, `tool.done`, `done`, `error`. See [Chat](/api/chat/).
-2. **Workspace stream** (`GET /v1/events`) — persistent connection for workspace-level events. Events: `bundle.installed`, `bundle.uninstalled`, `bundle.crashed`, `bundle.recovered`, `bundle.dead`, `data.changed`, `heartbeat`. See [Events](/api/events/).
+2. **Workspace stream** (`GET /v1/events`) — persistent connection for workspace-level events. Events: `bundle.installed`, `bundle.uninstalled`, `bundle.crashed`, `bundle.recovered`, `bundle.dead`, `data.changed`, `config.changed`, `skill.created`, `skill.updated`, `skill.deleted`, `file.created`, `file.deleted`, `bridge.tool.call`, `bridge.tool.done`, `heartbeat`. See [Events](/api/events/).

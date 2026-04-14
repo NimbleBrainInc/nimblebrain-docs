@@ -13,7 +13,7 @@ When you install a bundle, NimbleBrain:
 
 1. Spawns the MCP server as a subprocess (stdio transport) or connects via HTTP (streamable-http/SSE).
 2. Discovers the server's tools and registers them in the tool registry.
-3. Reads `_meta["ai.nimblebrain/synapse"]` from `manifest.json` for UI metadata.
+3. Reads `_meta["ai.nimblebrain/host"]` from `manifest.json` for UI metadata.
 4. Registers any UI placements in the shell layout (sidebar items, main views).
 
 The agent accesses tools through the [tiered tool surfacing](/using/managing-apps) system. If the app declares UI metadata, users see the app in the sidebar and can interact with its views directly.
@@ -24,7 +24,7 @@ NimbleBrain recognizes two app types:
 
 | Type | Detection | Description |
 |------|-----------|-------------|
-| `plain` | Default | Standard MCP server. Tools only, or tools + optional UI via `_meta["ai.nimblebrain/synapse"]`. |
+| `plain` | Default | Standard MCP server. Tools only, or tools + optional UI via `_meta["ai.nimblebrain/host"]`. |
 | `upjack` | `_meta["ai.nimblebrain/upjack"]` present | An [Upjack](https://upjack.dev) declarative app. Automatically gets UI rendering and skill-based behavior. |
 
 The type is stored on the `BundleInstance` and returned in the `GET /v1/apps` response as the `type` field.
@@ -35,7 +35,7 @@ The type is stored on the `BundleInstance` and returned in the `GET /v1/apps` re
 ┌──────────────────────────────────────────────────────┐
 │  manifest.json                                       │
 │  ├─ server.mcp_config     → how to spawn the server  │
-│  └─ _meta["ai.nimblebrain/synapse"]                 │
+│  └─ _meta["ai.nimblebrain/host"]                 │
 │       └─ placements[]     → where UI appears         │
 └──────────────┬───────────────────────────────────────┘
                │
@@ -47,7 +47,7 @@ The type is stored on the `BundleInstance` and returned in the `GET /v1/apps` re
 └──────────────────────────┘     └──────────────────────┘
 ```
 
-- **Tools** are available to the agent via the meta-tool pattern (`nb__discover_tools` / `nb__execute_tool`) or surfaced directly when tool count is low.
+- **Tools** are available to the agent via the meta-tool pattern (`nb__search_tools` / `nb__execute_tool`) or surfaced directly when tool count is low.
 - **UI resources** are HTML pages served by the MCP server via the `ui://` protocol and proxied through `GET /v1/apps/:name/resources/:path`.
 - **The MCP App Bridge** provides a `postMessage` channel between iframes and the host for tool calls, navigation, and data sync.
 
@@ -71,7 +71,7 @@ The simplest app is a standard MCP bundle with no UI metadata. It exposes tools 
 
 ## MCP bundle with UI
 
-Add `_meta["ai.nimblebrain/synapse"]` to give your app a presence in the shell:
+Add `_meta["ai.nimblebrain/host"]` to give your app a presence in the shell:
 
 ```json title="manifest.json"
 {
@@ -85,7 +85,8 @@ Add `_meta["ai.nimblebrain/synapse"]` to give your app a presence in the shell:
     }
   },
   "_meta": {
-    "ai.nimblebrain/synapse": {
+    "ai.nimblebrain/host": {
+      "host_version": "1.0",
       "name": "Weather",
       "icon": "cloud-sun",
       "primaryView": {
@@ -104,7 +105,7 @@ You don't need UI to build a useful app. Many powerful apps are tools-only — t
 
 ## What's next
 
-- [Manifest Reference](/apps/manifest) — every field in `_meta["ai.nimblebrain/synapse"]`
+- [Manifest Reference](/apps/manifest) — every field in `_meta["ai.nimblebrain/host"]`
 - [MCP App Bridge](/apps/bridge) — the postMessage protocol between iframes and the host
 - [UI Resources](/apps/ui-resources) — how `ui://` resources are served
 - [Placements & Navigation](/apps/placements) — sidebar slots, routes, and priority

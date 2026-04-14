@@ -1,26 +1,65 @@
 ---
 title: Authentication
-description: Bearer token and session cookie authentication for the NimbleBrain API.
+description: Pluggable authentication adapters for the NimbleBrain API.
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-The NimbleBrain API authenticates requests using a shared secret set in the `NB_API_KEY` environment variable. You can pass this key as a Bearer token or exchange it for an HttpOnly session cookie.
+NimbleBrain uses pluggable authentication adapters configured via `instance.json` in the work directory. Three adapters are available: **dev** (no auth), **local** (API keys + session cookies), and **oidc** (JWT via WorkOS or any OIDC provider).
 
 <Aside type="tip">
-When `NB_API_KEY` is not set, the API runs in dev mode with no authentication. All endpoints are open.
+When no `instance.json` exists, NimbleBrain runs in **dev mode** with no authentication. All endpoints are open. This is the default for local development.
 </Aside>
+
+## Auth adapters
+
+### Dev (default)
+
+No authentication. All requests get a default identity. Active when there is no `instance.json`.
+
+### Local
+
+Per-user API keys stored locally with bcrypt hashing. Users authenticate via Bearer token or session cookie.
+
+```json title="instance.json"
+{
+  "auth": {
+    "adapter": "local"
+  }
+}
+```
+
+### OIDC
+
+JWT verification via WorkOS or any OIDC-compliant provider. Users authenticate through an OAuth flow.
+
+```json title="instance.json"
+{
+  "auth": {
+    "adapter": "oidc",
+    "issuer": "https://api.workos.com",
+    "clientId": "client_...",
+    "clientSecret": "sk_..."
+  }
+}
+```
+
+OIDC endpoints:
+- `GET /v1/auth/provider` — returns the auth adapter type and configuration
+- `GET /v1/auth/authorize` — redirects to the OIDC provider's authorization page
+- `GET /v1/auth/callback` — handles the OIDC callback and sets a session cookie
+- `POST /v1/auth/refresh` — refreshes the session token
 
 ## Bearer Token
 
-Include the API key in the `Authorization` header:
+Include your API key in the `Authorization` header:
 
 ```bash
-curl http://localhost:27247/v1/workspace \
-  -H "Authorization: Bearer your-secret-key"
+curl http://localhost:27247/v1/bootstrap \
+  -H "Authorization: Bearer your-api-key"
 ```
 
-The server performs a constant-time comparison against `NB_API_KEY`. If the key does not match, the server returns `401` with an empty body.
+The server performs a constant-time comparison to prevent timing attacks. If the key does not match, the server returns `401` with an empty body.
 
 ## Session Cookie
 
@@ -153,7 +192,7 @@ curl http://localhost:27247/v1/auth/session \
 
 When both a Bearer token and a session cookie are present, the Bearer token takes precedence. The server checks the `Authorization` header first, then falls back to the `nb_session` cookie.
 
-## API Key Requirements
+## API Key Requirements (local adapter)
 
 - Minimum length: **8 characters**
 - Keys shorter than 16 characters produce a startup warning
@@ -161,13 +200,13 @@ When both a Bearer token and a session cookie are present, the Bearer token take
 
 ## CORS Configuration
 
-CORS behavior is determined by `NB_API_KEY` and `ALLOWED_ORIGINS`:
+CORS behavior depends on the auth configuration and `ALLOWED_ORIGINS`:
 
-| `NB_API_KEY` | `ALLOWED_ORIGINS` | Behavior |
+| Auth mode | `ALLOWED_ORIGINS` | Behavior |
 |---|---|---|
-| Not set | N/A | `Access-Control-Allow-Origin: *` (dev mode) |
-| Set | Set (comma-separated) | Only matching origins get CORS headers with `credentials: true` |
-| Set | Not set | Same-origin only (no CORS headers) |
+| Dev (no auth) | N/A | `Access-Control-Allow-Origin: *` |
+| Auth configured | Set (comma-separated) | Only matching origins get CORS headers with `credentials: true` |
+| Auth configured | Not set | Same-origin only (no CORS headers) |
 
 Set `ALLOWED_ORIGINS` as a comma-separated list of origins:
 

@@ -9,16 +9,16 @@ NimbleBrain automatically persists every conversation. Each conversation is stor
 
 ## Storage format
 
-Conversations are stored as append-only JSONL (JSON Lines) files in `~/.nimblebrain/conversations/`. Each file is named by its conversation ID:
+Conversations are stored as append-only JSONL (JSON Lines) files. In workspace mode, files live under the workspace directory:
 
 ```
-~/.nimblebrain/conversations/conv_a1b2c3d4e5f67890.jsonl
+~/.nimblebrain/workspaces/ws_engineering/conversations/conv_a1b2c3d4e5f67890.jsonl
 ```
 
-The file format:
+The file format uses event sourcing:
 
-- **Line 1** — conversation metadata
-- **Lines 2+** — one `StoredMessage` per line
+- **Line 1** — immutable conversation metadata (created once, never rewritten)
+- **Lines 2+** — append-only conversation events
 
 ### Metadata (line 1)
 
@@ -26,59 +26,78 @@ The file format:
 {
   "id": "conv_a1b2c3d4e5f67890",
   "createdAt": "2026-03-25T10:30:00.000Z",
-  "updatedAt": "2026-03-25T10:35:42.000Z",
-  "title": "Meeting notes summary",
-  "totalInputTokens": 24500,
-  "totalOutputTokens": 1800,
-  "totalCostUsd": 0.042,
-  "lastModel": "claude-sonnet-4-5-20250929"
+  "format": "events",
+  "workspaceId": "ws_engineering",
+  "ownerId": "user_abc123",
+  "visibility": "private",
+  "participants": ["user_abc123"]
 }
 ```
 
-The metadata line is updated in place on each append — the file is rewritten atomically (write to temp file, then rename) to prevent corruption.
+Token totals, cost, and last model are not stored in line 1 — they are derived at read time by scanning `llm.response` events in the file.
 
-### Messages (lines 2+)
+### Events (lines 2+)
 
-Each message contains the role, content, timestamp, and optional metadata:
+Events are appended chronologically. Key event types:
+
+| Event | Description |
+|-------|-------------|
+| `user.message` | A user sent a message (includes `userId` for multi-participant conversations) |
+| `run.start` | Agent engine started processing |
+| `llm.response` | LLM returned a response (contains token counts, model, content) |
+| `tool.start` | A tool call began |
+| `tool.done` | A tool call completed (contains result, latency) |
+| `run.done` | Agent engine finished processing |
+| `run.error` | Agent engine encountered an error |
+
+Example user message event:
 
 ```json
 {
-  "role": "user",
-  "content": "Summarize my meetings from this week",
-  "timestamp": "2026-03-25T10:30:00.000Z"
+  "ts": "2026-03-25T10:30:00.000Z",
+  "type": "user.message",
+  "content": [{"type": "text", "text": "Summarize my meetings from this week"}],
+  "userId": "user_abc123"
 }
 ```
 
-Assistant messages include additional metadata:
+## Shared conversations
 
-```json
-{
-  "role": "assistant",
-  "content": "Here are your meetings from this week...",
-  "timestamp": "2026-03-25T10:30:15.000Z",
-  "metadata": {
-    "skill": "meeting-notes",
-    "toolCalls": [
-      {
-        "id": "tc_001",
-        "name": "granola__search_meetings",
-        "input": {"query": "this week"},
-        "output": "[{\"title\": \"Sprint Planning\", ...}]",
-        "ok": true,
-        "ms": 340
-      }
-    ],
-    "inputTokens": 12000,
-    "outputTokens": 800,
-    "cacheCreationTokens": 0,
-    "cacheReadTokens": 8000,
-    "costUsd": 0.021,
-    "model": "claude-sonnet-4-5-20250929",
-    "llmMs": 2400,
-    "iterations": 2
-  }
-}
-```
+Conversations can be shared with other workspace members for multi-participant chat. When a conversation is shared, all participants can send messages and see each other's messages and assistant responses in real time.
+
+### Sharing a conversation
+
+The agent can share a conversation and manage participants through the `manage_conversation` tool:
+
+- **Share** — changes visibility from `private` to `shared`
+- **Add participant** — adds a workspace member to the conversation
+- **Remove participant** — removes a participant (cannot remove the owner)
+- **Unshare** — reverts to private, removing all participants except the owner
+
+Only the conversation owner or a workspace admin can manage sharing.
+
+### Access control
+
+| Role | Private conversations | Shared conversations |
+|------|---------------------|---------------------|
+| Owner | Full access | Full access |
+| Workspace admin | Can view all | Can view all |
+| Participant | No access | Can view and send messages |
+| Other members | No access | No access |
+
+### Multi-participant chat UI
+
+When multiple participants are in a conversation, the chat UI shows who sent each message:
+
+- **Your messages** appear as normal (right-aligned, italic, no label)
+- **Other participants' messages** get a colored dot and display name above the message, shown only when the speaker changes — keeping the interface clean
+- Each participant gets a unique accent color on their message border
+
+### Real-time streaming
+
+When you're viewing a shared conversation and another participant sends a message, you see the assistant's response stream in real time — the same way you'd see your own messages stream. If your connection drops, the conversation reloads automatically on reconnect to catch anything you missed.
+
+Participants who are removed from a conversation or whose conversation is unshared have their streaming connection closed immediately.
 
 ## Resuming a conversation
 
@@ -97,108 +116,9 @@ Assistant messages include additional metadata:
 
 ## Listing conversations
 
-<Tabs>
-  <TabItem label="API">
-    ```bash
-    curl http://localhost:27247/v1/conversations
-    ```
-    ```json
-    {
-      "conversations": [
-        {
-          "id": "conv_a1b2c3d4e5f67890",
-          "createdAt": "2026-03-25T10:30:00.000Z",
-          "updatedAt": "2026-03-25T10:35:42.000Z",
-          "title": "Meeting notes summary",
-          "messageCount": 6,
-          "preview": "Summarize my meetings from this week",
-          "totalInputTokens": 24500,
-          "totalOutputTokens": 1800,
-          "totalCostUsd": 0.042
-        }
-      ],
-      "nextCursor": null,
-      "totalCount": 1
-    }
-    ```
+The sidebar in the web UI shows recent conversations with titles and timestamps. Click any conversation to load it.
 
-    Pagination is cursor-based. Pass `cursor` from `nextCursor` to get the next page:
-
-    ```bash
-    curl "http://localhost:27247/v1/conversations?limit=20&cursor=abc123"
-    ```
-
-    Sort by creation or last update:
-
-    ```bash
-    curl "http://localhost:27247/v1/conversations?sortBy=updatedAt"
-    ```
-  </TabItem>
-  <TabItem label="Web UI">
-    The sidebar shows recent conversations with titles and timestamps. Click any conversation to load it.
-  </TabItem>
-</Tabs>
-
-## Viewing history
-
-Retrieve all messages for a conversation:
-
-```bash
-curl http://localhost:27247/v1/conversations/conv_a1b2c3d4e5f67890/history
-```
-```json
-{
-  "conversationId": "conv_a1b2c3d4e5f67890",
-  "messages": [
-    {"role": "user", "content": "Summarize my meetings", "timestamp": "2026-03-25T10:30:00.000Z"},
-    {"role": "assistant", "content": "Here are your meetings...", "timestamp": "2026-03-25T10:30:15.000Z"}
-  ]
-}
-```
-
-## Forking a conversation
-
-Fork creates a new conversation from an existing one, optionally truncated at a specific message index:
-
-```bash
-curl -X POST http://localhost:27247/v1/conversations/conv_a1b2c3d4e5f67890/fork
-```
-
-Fork at a specific point (copies only the first 4 messages):
-
-```bash
-curl -X POST "http://localhost:27247/v1/conversations/conv_a1b2c3d4e5f67890/fork?atMessage=4"
-```
-
-The forked conversation gets a new ID and re-accumulates token counts from the copied messages. The original conversation is unchanged.
-
-## Renaming a conversation
-
-Update the title:
-
-```bash
-curl -X PATCH http://localhost:27247/v1/conversations/conv_a1b2c3d4e5f67890 \
-  -H "Content-Type: application/json" \
-  -d '{"title": "Q1 sprint meetings"}'
-```
-
-## Deleting a conversation
-
-```bash
-curl -X DELETE http://localhost:27247/v1/conversations/conv_a1b2c3d4e5f67890
-```
-
-This deletes the JSONL file from disk. The operation is irreversible.
-
-## Searching conversations
-
-Search across conversation titles and content:
-
-```bash
-curl "http://localhost:27247/v1/conversations?search=meeting+notes"
-```
-
-Search is performed at the API level against the conversation index.
+Conversations can also be listed and managed programmatically through the `nb__status` system tool with `scope: "overview"`.
 
 ## Auto-titling
 
@@ -235,4 +155,4 @@ For in-memory storage (no persistence):
 
 - [Chat](/using/chat) — how conversations are created during chat
 - [Multi-Agent Delegation](/using/delegation) — child agents run in their own conversations
-- [API: Conversations](/api/conversations) — full API reference
+- [Events API](/api/events) — real-time event streaming (workspace and per-conversation)

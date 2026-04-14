@@ -168,7 +168,7 @@ type: skill
 priority: 5
 allowed-tools:
   - "websearch__*"
-  - "nb__discover_tools"
+  - "nb__search_tools"
 metadata:
   triggers:
     - "research this"
@@ -229,8 +229,8 @@ Every NimbleBrain instance has these `nb__*` tools available:
 
 | Tool | Description |
 |------|-------------|
-| `nb__discover_tools` | Search available tools by keyword across all installed bundles |
-| `nb__discover_bundles` | Search the mpak registry for bundles to install |
+| `nb__search_tools` | Search available tools by keyword across all installed bundles |
+| `nb__search_registry` | Search the mpak registry for bundles to install |
 | `nb__manage_bundle` | Install, uninstall, or configure a bundle |
 | `nb__bundle_status` | Get version, health, tool count for installed bundles |
 | `nb__delegate` | Spawn a child agent for sub-tasks (multi-agent delegation) |
@@ -243,13 +243,13 @@ NimbleBrain uses tiered tool surfacing to keep the LLM's tool list manageable:
 | Condition | What the LLM sees |
 |-----------|-------------------|
 | Total tools ≤ 30 | All tools surfaced directly |
-| Total tools > 30, no skill matched | Only `nb__*` system tools. Others available via `nb__discover_tools`. |
-| Skill matched with `allowed-tools` | Tools matching the globs + system tools. Others via `nb__discover_tools`. |
+| Total tools > 30, no skill matched | Only `nb__*` system tools. Others available via `nb__search_tools`. |
+| Skill matched with `allowed-tools` | Tools matching the globs + system tools. Others via `nb__search_tools`. |
 
 The threshold is configurable via `maxDirectTools` (default: 30).
 
 <Aside type="tip">
-When you have many bundles installed, the agent uses `nb__discover_tools` to find the right tool before calling it. You don't need to manage this — the bootstrap skill teaches the agent how to use meta-tools automatically.
+When you have many bundles installed, the agent uses `nb__search_tools` to find the right tool before calling it. You don't need to manage this — the bootstrap skill teaches the agent how to use meta-tools automatically.
 </Aside>
 
 ### Multi-agent delegation

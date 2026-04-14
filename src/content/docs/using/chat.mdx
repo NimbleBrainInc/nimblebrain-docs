@@ -71,14 +71,14 @@ The agent has access to:
 
 | Tool | Purpose |
 |------|---------|
-| `nb__discover_tools` | Search available tools by keyword across all installed apps |
-| `nb__discover_bundles` | Search the mpak registry for new bundles to install |
+| `nb__search_tools` | Search available tools by keyword across all installed apps |
+| `nb__search_registry` | Search the mpak registry for new bundles to install |
 | `nb__manage_bundle` | Install, uninstall, or configure a bundle at runtime |
 | `nb__bundle_status` | Check version, health, and tool count for installed bundles |
 | `nb__delegate` | Spawn a child agent for a sub-task |
 
 <Aside type="tip">
-  When more than 30 tools are installed, NimbleBrain uses tiered tool surfacing. Only system tools and matched skill tools are surfaced directly. The agent uses `nb__discover_tools` to find and call other tools as needed.
+  When more than 30 tools are installed, NimbleBrain uses tiered tool surfacing. Only system tools and matched skill tools are surfaced directly. The agent uses `nb__search_tools` to find and call other tools as needed.
 </Aside>
 
 ## App context

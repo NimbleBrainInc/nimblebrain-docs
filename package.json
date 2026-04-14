@@ -1,13 +1,21 @@
 {
   "name": "nimblebrain-docs",
+  "description": "Documentation site for NimbleBrain — the composable MCP orchestrator and app host",
   "type": "module",
   "version": "0.0.1",
   "license": "CC-BY-4.0",
   "author": "NimbleBrain Inc <engineering@nimblebrain.ai>",
+  "homepage": "https://docs.nimblebrain.ai",
   "repository": {
     "type": "git",
-    "url": "https://github.com/NimbleBrainInc/nimblebrain-docs2.git"
+    "url": "https://github.com/NimbleBrainInc/nimblebrain-docs.git"
   },
+  "keywords": [
+    "nimblebrain",
+    "mcp",
+    "documentation",
+    "model-context-protocol"
+  ],
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

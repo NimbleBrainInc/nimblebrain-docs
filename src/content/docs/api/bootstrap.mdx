@@ -1,0 +1,84 @@
+---
+title: Bootstrap API
+description: Initialize the client with user identity, workspaces, and shell configuration.
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The Bootstrap API returns everything a client needs to initialize: the authenticated user's identity, their workspaces, and the active workspace's shell configuration. The web UI calls this on page load.
+
+## GET /v1/bootstrap
+
+Returns the current user, their workspaces with roles, and the shell configuration for the active workspace.
+
+**Response:**
+
+```json
+{
+  "user": {
+    "id": "user_abc123",
+    "name": "Mat",
+    "email": "mat@example.com",
+    "role": "owner"
+  },
+  "workspaces": [
+    {
+      "id": "ws_engineering",
+      "name": "Engineering",
+      "role": "owner"
+    },
+    {
+      "id": "ws_research",
+      "name": "Research",
+      "role": "member"
+    }
+  ],
+  "activeWorkspace": "ws_engineering",
+  "shell": {
+    "placements": [...],
+    "endpoints": {...}
+  },
+  "config": {
+    "defaultModel": "claude-sonnet-4-5-20250929",
+    "maxIterations": 10,
+    "maxOutputTokens": 16384
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `user` | `object` | Authenticated user identity (id, name, email, role) |
+| `workspaces` | `array` | Workspaces the user belongs to, with their role in each |
+| `activeWorkspace` | `string` | ID of the currently active workspace |
+| `shell` | `object` | Shell configuration — sidebar placements, route endpoints |
+| `config` | `object` | Runtime configuration — model, iteration limits, token limits |
+
+**Error responses:**
+
+| Status | Condition |
+|--------|-----------|
+| 401 | Not authenticated |
+
+**Example:**
+
+<Tabs>
+<TabItem label="curl">
+```bash
+curl http://localhost:27247/v1/bootstrap \
+  -H "Authorization: Bearer your-token"
+```
+</TabItem>
+<TabItem label="JavaScript">
+```javascript
+const res = await fetch('/v1/bootstrap', {
+  credentials: 'include'
+});
+const { user, workspaces, shell, config } = await res.json();
+```
+</TabItem>
+</Tabs>
+
+<Aside type="tip">
+The web UI calls this once on page load. If the session is invalid, it redirects to the login screen. On success, it uses the response to render the sidebar, set the active workspace, and configure the chat interface.
+</Aside>

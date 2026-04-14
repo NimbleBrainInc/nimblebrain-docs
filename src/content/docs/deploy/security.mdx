@@ -9,24 +9,28 @@ NimbleBrain exposes an HTTP API that controls an agent with tool execution capab
 
 ## Authentication
 
-### API key (`NB_API_KEY`)
+### Auth adapters
 
-Set the `NB_API_KEY` environment variable to enable authentication. Every request (except `/v1/health`, `/v1/bundles/health`, and the login endpoint) must include this key as a Bearer token or session cookie.
+NimbleBrain uses pluggable authentication adapters configured via `instance.json` in the work directory. Three adapters are available:
 
-```bash
-export NB_API_KEY=change-me-to-a-strong-secret-at-least-32-chars
-```
+| Adapter | Use case | Configuration |
+|---------|----------|--------------|
+| **dev** | Local development | No `instance.json` needed (default) |
+| **local** | Single-server deployments | Per-user API keys with bcrypt hashing |
+| **oidc** | Enterprise / SSO | JWT verification via WorkOS or any OIDC provider |
 
 <Aside type="danger">
-Running without `NB_API_KEY` disables all authentication. The CORS policy falls back to `Access-Control-Allow-Origin: *`. Anyone who can reach the server has full access to the agent, including shell execution via the bash bundle.
+Running without an `instance.json` (dev mode) disables all authentication. The CORS policy falls back to `Access-Control-Allow-Origin: *`. Anyone who can reach the server has full access to the agent, including shell execution via the bash bundle.
 </Aside>
 
-**Key requirements:**
+### Local adapter key requirements
+
+When using the local auth adapter:
 
 | Constraint | Behavior |
 |---|---|
-| Fewer than 8 characters | Server refuses to start with `NB_API_KEY is too short (minimum 8 characters)` |
-| 8--15 characters | Server starts but logs a warning: `WARNING: NB_API_KEY is short (<16 chars)` |
+| Fewer than 8 characters | Server refuses to start |
+| 8--15 characters | Server starts but logs a warning |
 | 16+ characters | No warnings. Use at least 32 characters for production |
 
 Generate a strong key:
@@ -37,7 +41,7 @@ openssl rand -base64 32
 
 ### How authentication works
 
-The server accepts the API key in two ways, checked in this order:
+The server accepts credentials in two ways, checked in this order:
 
 1. **Bearer token** in the `Authorization` header: `Authorization: Bearer <key>`
 2. **Session cookie** named `nb_session`, set by the login endpoint
@@ -54,9 +58,9 @@ Every failed authentication attempt is logged to stderr with the client IP and t
 
 The IP comes from the `X-Forwarded-For` header (set by your reverse proxy) or `"direct"` for direct connections. Monitor these logs for brute-force attempts.
 
-### Key rotation
+### Key rotation (local adapter)
 
-To rotate the API key:
+To rotate an API key:
 
 <Steps>
 
@@ -66,9 +70,9 @@ To rotate the API key:
    openssl rand -base64 32
    ```
 
-2. Update the `NB_API_KEY` environment variable in your deployment (`.env` file or Docker Compose config).
+2. Update the user's key via `nb__manage_users` or directly in the local key store.
 
-3. Restart the platform container. All existing sessions become invalid — users must log in again with the new key.
+3. Restart the platform container. All existing sessions for that user become invalid — they must log in again with the new key.
 
 </Steps>
 
@@ -261,7 +265,7 @@ Use this checklist before exposing NimbleBrain to any network:
 
 | Item | How to verify |
 |---|---|
-| `NB_API_KEY` set to 32+ characters | Check your `.env` file |
+| Authentication configured | `instance.json` exists with `auth.adapter` set to `local` or `oidc` |
 | `ALLOWED_ORIGINS` set to your domain(s) | `curl -v` with an `Origin` header and confirm the response includes `Access-Control-Allow-Origin` |
 | Platform port (27247) not exposed | `docker compose ps` shows no host port mapping for platform service |
 | TLS enabled | `curl -I https://nb.example.com` returns a valid certificate |

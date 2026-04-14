@@ -1,0 +1,61 @@
+---
+title: User Management
+description: Create and manage users in your NimbleBrain instance.
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+NimbleBrain supports multi-user environments where each person has their own identity, conversations, and workspace memberships. User management is available when using the **local** or **oidc** auth adapters.
+
+## Auth adapters
+
+How users are managed depends on your authentication configuration in `instance.json`:
+
+| Adapter | User management | Description |
+|---------|----------------|-------------|
+| **dev** | None needed | No authentication. A default identity is used for all requests. |
+| **local** | Via `nb__manage_users` tool | Users are stored locally with API keys and bcrypt-hashed credentials. |
+| **oidc** | External provider | Users are managed in your OIDC provider (e.g., WorkOS). NimbleBrain creates local records on first login. |
+
+<Aside type="tip">
+In dev mode (no `instance.json`), authentication is disabled entirely. This is the default for local development.
+</Aside>
+
+## Creating users (local adapter)
+
+With the local auth adapter, ask the agent to create users:
+
+```
+Create a user for sarah@example.com with the name Sarah
+```
+
+The agent uses `nb__manage_users` with `action: "create"`. The new user receives an API key they can use to authenticate.
+
+## Deleting users
+
+```
+Delete the user sarah@example.com
+```
+
+<Aside type="caution">
+Deleting a user removes their API key and prevents login. Their existing conversations are not deleted but become inaccessible unless another admin accesses them.
+</Aside>
+
+## Feature flag
+
+User management is controlled by the `userManagement` feature flag, which defaults to `true`. To disable:
+
+```json title="nimblebrain.json"
+{
+  "features": {
+    "userManagement": false
+  }
+}
+```
+
+When disabled, the `nb__manage_users` tool is not registered and returns an error if called via the API.
+
+## What's next
+
+- [Authentication](/api/authentication) — how auth adapters work
+- [Workspaces](/using/workspaces) — assign users to workspaces with roles

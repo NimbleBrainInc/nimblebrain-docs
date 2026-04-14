@@ -1,0 +1,65 @@
+---
+title: Feature Flags
+description: Enable or disable system capabilities with feature flags.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Feature flags control which system capabilities are available. All flags default to `true`. Setting a flag to `false` removes the capability entirely — the tool is not registered, not visible to the LLM, and returns 403 via the HTTP API or an error via MCP.
+
+## Configuration
+
+Add a `features` object to your `nimblebrain.json`:
+
+```json title="nimblebrain.json"
+{
+  "features": {
+    "bundleManagement": true,
+    "skillManagement": true,
+    "delegation": true,
+    "toolDiscovery": true,
+    "bundleDiscovery": true,
+    "mcpServer": true,
+    "fileContext": true,
+    "userManagement": true,
+    "workspaceManagement": true
+  }
+}
+```
+
+Omitted flags default to `true`. You only need to include flags you want to disable.
+
+## Flag reference
+
+| Flag | Default | Controls | Tool(s) affected |
+|------|---------|----------|-----------------|
+| `bundleManagement` | `true` | Install, uninstall, and configure bundles | `nb__manage_bundle` |
+| `skillManagement` | `true` | Create, edit, and delete user skills | `nb__manage_skill` |
+| `delegation` | `true` | Multi-agent sub-task delegation | `nb__delegate` |
+| `toolDiscovery` | `true` | Search installed tools by keyword | `nb__search_tools` |
+| `bundleDiscovery` | `true` | Search the mpak registry for bundles | `nb__search_registry` |
+| `mcpServer` | `true` | Expose the platform as an MCP server | `/mcp` endpoint |
+| `fileContext` | `true` | File upload and context extraction | File processing pipeline |
+| `userManagement` | `true` | Create and delete users | `nb__manage_users` |
+| `workspaceManagement` | `true` | CRUD workspaces and manage members | `nb__manage_workspaces`, `nb__manage_members` |
+
+## Always-enabled tools
+
+Read-only tools are never gated by feature flags:
+
+- `nb__bundle_status` — version, health, and tool count for installed bundles
+- `nb__skill_status` — loaded skills with optional detail
+- `nb__list_apps` — list installed apps
+- `nb__get_config` — get runtime configuration
+
+## Enforcement
+
+Feature flags are enforced at three layers:
+
+1. **Tool registry** — disabled tools are excluded at startup and never visible to the LLM
+2. **HTTP API** — `POST /v1/tools/call` returns `403` for disabled tools
+3. **MCP server** — `ListTools` filters out disabled tools, `CallTool` rejects them
+
+<Aside type="tip">
+Use feature flags to lock down a production deployment. For example, disable `bundleManagement` to prevent the agent from installing new bundles, while still allowing it to use existing ones.
+</Aside>

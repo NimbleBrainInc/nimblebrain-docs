@@ -85,6 +85,98 @@ curl -X POST http://localhost:27247/v1/tools/call \
 </TabItem>
 </Tabs>
 
+## System Tools Reference
+
+NimbleBrain includes built-in system tools (prefixed with `nb__`) for platform management. These are always available and do not require any bundle to be installed.
+
+### nb__status
+
+Get platform status information. Use the `scope` parameter to control what's returned.
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `scope` | `string` | `"overview"` (default), `"bundles"`, `"skills"`, or `"config"` |
+
+### nb__search
+
+Unified search across installed tools and the mpak registry.
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `query` | `string` | Search query |
+| `scope` | `string` | `"tools"` (installed tools) or `"registry"` (mpak bundles) |
+
+### nb__set_model_config
+
+Update model selection and runtime limits. Writes atomically to `nimblebrain.json`. Admin only.
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `models` | `object` | Role-based model slots: `default`, `fast`, `reasoning`. Each maps to a `provider:model-id` string. |
+| `defaultModel` | `string` | Default model ID (deprecated -- use `models.default`). |
+| `maxIterations` | `number` | Max agentic iterations per request (1--25). |
+| `maxInputTokens` | `number` | Max input tokens per request. |
+| `maxOutputTokens` | `number` | Max output tokens per LLM call. |
+
+### nb__set_preferences
+
+Set user preferences. Triggered when the user says their name, asks to change timezone/language/theme, or says "call me X".
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `displayName` | `string` | User's display name (e.g., "Matt"). |
+| `timezone` | `string` | IANA timezone (e.g., "Pacific/Honolulu"). |
+| `locale` | `string` | BCP 47 locale (e.g., "en-US"). |
+| `theme` | `string` | Color theme: `"system"`, `"light"`, or `"dark"`. |
+
+Returns the updated preferences object on success.
+
+### nb__manage_app
+
+Install, uninstall, or configure an app. Gated by the `bundleManagement` feature flag.
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `action` | `string` | `"install"`, `"uninstall"`, or `"configure"` |
+| `name` | `string` | Bundle name (e.g., `@nimblebraininc/tasks`) |
+
+### nb__manage_skill
+
+Create, edit, or delete user skills. Gated by the `skillManagement` feature flag.
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `action` | `string` | `"create"`, `"edit"`, or `"delete"` |
+| `name` | `string` | Skill name |
+
+### nb__delegate
+
+Spawn a child agent for sub-tasks. Gated by the `delegation` feature flag. See [Multi-Agent Delegation](/using/delegation/) for details.
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `task` | `string` | Task description for the child agent |
+| `tools` | `string[]` | Tool glob patterns the child can access |
+| `agent` | `string` | Named agent profile from config (optional) |
+
+### nb__briefing
+
+Generate a personalized activity briefing for the workspace. Uses the `fast` model slot. Results are cached per the `home.cacheTtlMinutes` config value.
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `force_refresh` | `boolean` | Bypass cache and regenerate. Default: `false`. |
+
+Returns a briefing with greeting, lede, and sections categorized as `needs_attention`, `recent`, or `coming_up`. Used by the Home dashboard on the landing page.
+
+### nb__manage_users
+
+Create or delete workspace users. Admin only. Gated by the `userManagement` feature flag.
+
+### nb__manage_workspaces
+
+Workspace CRUD, member management, and conversation sharing. Admin only. Gated by the `workspaceManagement` feature flag.
+
 ## Tool Name Resolution
 
 The API constructs the fully qualified tool name by joining the server and tool with a double underscore: `{server}__{tool}`. For example, server `weather` and tool `get_forecast` resolves to `weather__get_forecast` internally.
@@ -102,3 +194,26 @@ The audit log records every tool call made through this endpoint:
 ```
 [api] tools/call server=weather tool=get_forecast
 ```
+
+## GET /v1/shell
+
+Returns the shell configuration for the current workspace, including sidebar placements and available endpoints. The web client uses this to render navigation.
+
+**Response:**
+
+```json
+{
+  "placements": [...],
+  "endpoints": {...}
+}
+```
+
+## GET /v1/files/:fileId
+
+Serve a previously uploaded file. Returns the file content with the appropriate `Content-Type` header.
+
+**Error responses:**
+
+| Status | Condition |
+|---|---|
+| 404 | File not found |

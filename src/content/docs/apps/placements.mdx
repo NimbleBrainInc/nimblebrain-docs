@@ -22,12 +22,13 @@ Sub-slots are matched hierarchically. A query for `"sidebar"` returns all entrie
 
 ## Declaring placements
 
-Add a `placements` array to your manifest's `_meta["ai.nimblebrain/synapse"]`:
+Add a `placements` array to your manifest's `_meta["ai.nimblebrain/host"]`:
 
 ```json title="manifest.json"
 {
   "_meta": {
-    "ai.nimblebrain/synapse": {
+    "ai.nimblebrain/host": {
+      "host_version": "1.0",
       "name": "Tasks",
       "icon": "check-square",
       "placements": [
@@ -159,7 +160,8 @@ A common pattern is one sidebar item that links to a main view:
 ```json title="manifest.json"
 {
   "_meta": {
-    "ai.nimblebrain/synapse": {
+    "ai.nimblebrain/host": {
+      "host_version": "1.0",
       "name": "CRM",
       "icon": "users",
       "placements": [

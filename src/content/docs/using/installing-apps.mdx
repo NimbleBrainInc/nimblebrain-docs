@@ -103,12 +103,12 @@ Apps in NimbleBrain are MCP server bundles. Each bundle provides tools that the 
 
 ## The agent can self-install
 
-The agent has access to `nb__discover_bundles` and `nb__manage_bundle`. This means you can ask it to find and install what it needs:
+The agent has access to `nb__search_registry` and `nb__manage_bundle`. This means you can ask it to find and install what it needs:
 
 > "I need to search through meeting notes. Find a bundle for that and install it."
 
 The agent will:
-1. Call `nb__discover_bundles` to search mpak
+1. Call `nb__search_registry` to search mpak
 2. Present options to you
 3. Call `nb__manage_bundle` with `action: "install"` to install your choice
 
