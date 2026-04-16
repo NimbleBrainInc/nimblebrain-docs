@@ -49,7 +49,6 @@ If no config file exists at the resolved path, NimbleBrain auto-creates a defaul
       }
     }
   ],
-  "noDefaultBundles": false,
   "skillDirs": ["./skills", "/opt/nimblebrain/skills"],
   "skills": [],
   "store": {
@@ -100,7 +99,6 @@ If no config file exists at the resolved path, NimbleBrain auto-creates a defaul
 | `maxOutputTokens` | `integer` | `16384` | Max output tokens per LLM call. |
 | `maxHistoryMessages` | `integer` | `40` | Max conversation message groups to include in context. Keeps the first message plus the most recent N groups. Tool call/result pairs count as one group. |
 | `bundles` | `array` | `[]` | MCP bundles to spawn. See [Bundle Configuration](/config/bundles). |
-| `noDefaultBundles` | `boolean` | `false` | Skip default bundles (e.g., `@nimblebraininc/bash`). |
 | `skillDirs` | `string[]` | `[]` | Directories to scan for skill markdown files. |
 | `skills` | `array` | `[]` | Inline skill definitions. |
 | `store` | `object` | `{ "type": "memory" }` | Conversation storage backend. See [store](#store). |
@@ -248,4 +246,4 @@ The smallest valid config file:
 }
 ```
 
-This uses all defaults: Anthropic provider (key from `ANTHROPIC_API_KEY`), default model, the `@nimblebraininc/bash` default bundle, in-memory conversation storage, and structured logging enabled.
+This uses all defaults: Anthropic provider (key from `ANTHROPIC_API_KEY`), default model, no MCP bundles installed (platform capabilities are built in), in-memory conversation storage, and structured logging enabled.

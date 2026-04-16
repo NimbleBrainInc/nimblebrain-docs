@@ -5,17 +5,25 @@ description: Pluggable authentication adapters for the NimbleBrain API.
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-NimbleBrain uses pluggable authentication adapters configured via `instance.json` in the work directory. Three adapters are available: **dev** (no auth), **local** (API keys + session cookies), and **oidc** (JWT via WorkOS or any OIDC provider).
+NimbleBrain uses pluggable authentication adapters configured via `instance.json` in the work directory. The adapter determines how users identify themselves — from simple API keys to full enterprise SSO.
 
-<Aside type="tip">
-When no `instance.json` exists, NimbleBrain runs in **dev mode** with no authentication. All endpoints are open. This is the default for local development.
-</Aside>
+## Dev mode (no auth)
+
+When no `instance.json` exists, NimbleBrain runs without authentication. All requests receive a default developer identity and a default workspace is created automatically. This is intended for local development only.
 
 ## Auth adapters
 
-### Dev (default)
+Configure authentication by setting the `adapter` field in `instance.json`:
 
-No authentication. All requests get a default identity. Active when there is no `instance.json`.
+| Adapter | Best for | Identity providers |
+|---|---|---|
+| `local` | Self-hosted, small teams | API keys + session cookies |
+| `oidc` | BYO identity provider | Any OIDC-compliant provider (Auth0, Keycloak, Okta, Google, Entra, etc.) |
+| `workos` | Managed enterprise SSO + directory sync | Google Workspace, Microsoft Entra, Okta, OneLogin, and more via [WorkOS](https://workos.com) |
+
+<Aside type="note">
+Need a provider that isn't listed here? NimbleBrain's adapter system is designed to be extensible. [Open an issue](https://github.com/NimbleBrainInc/nimblebrain/issues) with your use case and we'll evaluate adding support.
+</Aside>
 
 ### Local
 
@@ -31,23 +39,67 @@ Per-user API keys stored locally with bcrypt hashing. Users authenticate via Bea
 
 ### OIDC
 
-JWT verification via WorkOS or any OIDC-compliant provider. Users authenticate through an OAuth flow.
+Generic OIDC adapter that works with any provider supporting [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html). NimbleBrain verifies JWTs against the provider's JWKS endpoint and restricts access to allowed email domains.
 
 ```json title="instance.json"
 {
   "auth": {
     "adapter": "oidc",
-    "issuer": "https://api.workos.com",
-    "clientId": "client_...",
-    "clientSecret": "sk_..."
+    "issuer": "https://your-provider.example.com",
+    "clientId": "your-client-id",
+    "allowedDomains": ["yourcompany.com"]
   }
 }
 ```
 
-OIDC endpoints:
+| Field | Required | Description |
+|---|---|---|
+| `issuer` | Yes | OIDC issuer URL. Must serve a `/.well-known/openid-configuration` endpoint. |
+| `clientId` | Yes | OAuth client ID from your provider. |
+| `allowedDomains` | Yes | Email domains permitted to authenticate (e.g., `["yourcompany.com"]`). |
+| `jwksUri` | No | JWKS URI override. If omitted, discovered automatically via the issuer's `.well-known` metadata. |
+
+Use this adapter when you already have an OIDC-compliant identity provider and want direct integration without a middleman.
+
+### WorkOS
+
+Managed enterprise authentication via [WorkOS](https://workos.com). This adapter adds capabilities beyond raw OIDC:
+
+- **Enterprise SSO** — Google Workspace (SAML), Microsoft Entra, Okta, OneLogin, PingFederate, and any generic SAML/OIDC provider
+- **Directory Sync** — Automatic user provisioning and deprovisioning from your identity provider
+- **Admin Portal** — Self-serve SSO and directory configuration for your end users
+- **Organization scoping** — Restrict access to members of a specific WorkOS organization
+
+```json title="instance.json"
+{
+  "auth": {
+    "adapter": "workos",
+    "clientId": "client_...",
+    "redirectUri": "https://app.example.com/v1/auth/callback"
+  }
+}
+```
+
+| Field | Required | Description |
+|---|---|---|
+| `clientId` | Yes | WorkOS Client ID (`client_...`). |
+| `redirectUri` | Yes | OAuth callback URL (must match your WorkOS environment settings). |
+| `organizationId` | No | WorkOS Organization ID — scopes authentication to a specific organization. |
+| `apiKey` | No | WorkOS API key. Can also be set via the `WORKOS_API_KEY` environment variable. |
+
+On first login, NimbleBrain verifies the user's organization membership, syncs their profile, and provisions a private workspace automatically.
+
+<Aside type="tip">
+SSO connections (Google Workspace, Entra, etc.) are configured in the [WorkOS Dashboard](https://dashboard.workos.com), not in NimbleBrain. Refer to the [WorkOS SSO documentation](https://workos.com/docs/sso) for provider-specific setup guides.
+</Aside>
+
+### SSO/OIDC endpoints
+
+These endpoints are active when using the `oidc` or `workos` adapter:
+
 - `GET /v1/auth/provider` — returns the auth adapter type and configuration
-- `GET /v1/auth/authorize` — redirects to the OIDC provider's authorization page
-- `GET /v1/auth/callback` — handles the OIDC callback and sets a session cookie
+- `GET /v1/auth/authorize` — redirects to the provider's authorization page
+- `GET /v1/auth/callback` — handles the OAuth callback and sets a session cookie
 - `POST /v1/auth/refresh` — refreshes the session token
 
 ## Bearer Token

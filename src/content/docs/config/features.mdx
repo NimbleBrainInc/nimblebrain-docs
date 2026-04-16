@@ -33,11 +33,11 @@ Omitted flags default to `true`. You only need to include flags you want to disa
 
 | Flag | Default | Controls | Tool(s) affected |
 |------|---------|----------|-----------------|
-| `bundleManagement` | `true` | Install, uninstall, and configure bundles | `nb__manage_bundle` |
+| `bundleManagement` | `true` | Install, uninstall, and configure bundles | `nb__manage_app` |
 | `skillManagement` | `true` | Create, edit, and delete user skills | `nb__manage_skill` |
 | `delegation` | `true` | Multi-agent sub-task delegation | `nb__delegate` |
-| `toolDiscovery` | `true` | Search installed tools by keyword | `nb__search_tools` |
-| `bundleDiscovery` | `true` | Search the mpak registry for bundles | `nb__search_registry` |
+| `toolDiscovery` | `true` | Search installed tools by keyword | `nb__search` (`scope: "tools"`) |
+| `bundleDiscovery` | `true` | Search the mpak registry for bundles | `nb__search` (`scope: "registry"`) |
 | `mcpServer` | `true` | Expose the platform as an MCP server | `/mcp` endpoint |
 | `fileContext` | `true` | File upload and context extraction | File processing pipeline |
 | `userManagement` | `true` | Create and delete users | `nb__manage_users` |
@@ -47,8 +47,7 @@ Omitted flags default to `true`. You only need to include flags you want to disa
 
 Read-only tools are never gated by feature flags:
 
-- `nb__bundle_status` — version, health, and tool count for installed bundles
-- `nb__skill_status` — loaded skills with optional detail
+- `nb__status` — platform status; use `scope: "bundles"` for per-app health, `scope: "skills"` for loaded skills, `scope: "config"` for runtime configuration
 - `nb__list_apps` — list installed apps
 - `nb__get_config` — get runtime configuration
 

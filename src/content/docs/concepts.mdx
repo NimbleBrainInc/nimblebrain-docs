@@ -110,7 +110,7 @@ Configure bundles in `nimblebrain.json`:
 
 | Source | How it works |
 |--------|-------------|
-| `name` | Downloaded from the [mpak](https://mpak.dev) registry. The agent can install these at runtime via `nb__manage_bundle`. |
+| `name` | Downloaded from the [mpak](https://mpak.dev) registry. The agent can install these at runtime via `nb__manage_app`. |
 | `path` | Local filesystem path to a bundle directory. Resolved relative to the config file. |
 | `url` | Remote MCP server over Streamable HTTP or SSE transport. |
 
@@ -132,9 +132,9 @@ starting ──► running ──► crashed ──► dead
 | `dead` | Repeated crashes, not restarting |
 | `stopped` | Manually stopped via API or CLI |
 
-### Default bundle
+### No bundles by default
 
-NimbleBrain ships with `@nimblebraininc/bash` installed by default. This gives the agent basic shell access. Disable it with `"noDefaultBundles": true` in your config.
+NimbleBrain does not install any MCP bundles by default. Platform capabilities (home, conversations, files, settings, usage, automations) are built in as inline tool sources. Install bundles from the [mpak registry](https://mpak.dev), a local path, or a remote URL to give the agent domain-specific tools.
 
 ### Bundle options
 
@@ -149,7 +149,7 @@ NimbleBrain ships with `@nimblebraininc/bash` installed by default. This gives t
 | Field | Description |
 |-------|-------------|
 | `env` | Environment variables passed to the bundle process |
-| `protected` | Prevents uninstall via the `nb__manage_bundle` system tool |
+| `protected` | Prevents uninstall via the `nb__manage_app` system tool |
 | `trustScore` | MTF trust score (0–100) from the mpak registry |
 | `ui` | UI metadata: name, icon, and optional `primaryView` resource URI |
 
@@ -168,7 +168,7 @@ type: skill
 priority: 5
 allowed-tools:
   - "websearch__*"
-  - "nb__search_tools"
+  - "nb__search"
 metadata:
   triggers:
     - "research this"
@@ -229,10 +229,9 @@ Every NimbleBrain instance has these `nb__*` tools available:
 
 | Tool | Description |
 |------|-------------|
-| `nb__search_tools` | Search available tools by keyword across all installed bundles |
-| `nb__search_registry` | Search the mpak registry for bundles to install |
-| `nb__manage_bundle` | Install, uninstall, or configure a bundle |
-| `nb__bundle_status` | Get version, health, tool count for installed bundles |
+| `nb__search` | Search installed tools (`scope: "tools"`) or the mpak registry (`scope: "registry"`) |
+| `nb__manage_app` | Install, uninstall, or configure an app |
+| `nb__status` | Platform status; `scope: "bundles"` for per-app health, `scope: "skills"` for loaded skills, `scope: "config"` for model and limits |
 | `nb__delegate` | Spawn a child agent for sub-tasks (multi-agent delegation) |
 | `nb__manage_skill` | Create, update, or delete skill files at runtime |
 
@@ -243,13 +242,13 @@ NimbleBrain uses tiered tool surfacing to keep the LLM's tool list manageable:
 | Condition | What the LLM sees |
 |-----------|-------------------|
 | Total tools ≤ 30 | All tools surfaced directly |
-| Total tools > 30, no skill matched | Only `nb__*` system tools. Others available via `nb__search_tools`. |
-| Skill matched with `allowed-tools` | Tools matching the globs + system tools. Others via `nb__search_tools`. |
+| Total tools > 30, no skill matched | Only `nb__*` system tools. Others available via `nb__search` (`scope: "tools"`). |
+| Skill matched with `allowed-tools` | Tools matching the globs + system tools. Others via `nb__search`. |
 
 The threshold is configurable via `maxDirectTools` (default: 30).
 
 <Aside type="tip">
-When you have many bundles installed, the agent uses `nb__search_tools` to find the right tool before calling it. You don't need to manage this — the bootstrap skill teaches the agent how to use meta-tools automatically.
+When you have many bundles installed, the agent uses `nb__search` to find the right tool before calling it. You don't need to manage this — the bootstrap skill teaches the agent how to use meta-tools automatically.
 </Aside>
 
 ### Multi-agent delegation

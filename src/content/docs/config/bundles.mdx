@@ -7,7 +7,7 @@ import { Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
 The `bundles` array in `nimblebrain.json` declares which MCP server bundles to spawn at startup. Each entry can reference a bundle from the mpak registry by name, a local directory by path, or a remote MCP server by URL.
 
-Bundles declared in the config file are merged with the default bundles (`@nimblebraininc/bash`) unless you set `noDefaultBundles: true`.
+NimbleBrain ships with no MCP bundles by default. Platform capabilities (home, conversations, files, settings, usage, automations) are built in as inline tool sources — install bundles to give the agent domain-specific tools.
 
 ## Bundle types
 
@@ -71,7 +71,7 @@ These fields apply to all bundle types.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `env` | `object` | `{}` | Environment variables passed to the bundle process. Each key-value pair is a string. |
-| `protected` | `boolean` | `false` | When `true`, the bundle cannot be uninstalled via the `nb__manage_bundle` tool or the API. |
+| `protected` | `boolean` | `false` | When `true`, the bundle cannot be uninstalled via the `nb__manage_app` tool or the API. |
 | `trustScore` | `number \| null` | `null` | MTF trust score (0--100) recorded at install time. Set automatically by the install flow. |
 | `ui` | `object \| null` | `null` | UI metadata from the bundle manifest. Set automatically at install time. |
 
@@ -204,23 +204,6 @@ Control how NimbleBrain handles dropped connections to remote servers.
 | `maxRetries` | `number` | Maximum number of reconnection attempts before giving up. |
 | `initialReconnectionDelay` | `number` | Milliseconds to wait before the first retry. |
 | `maxReconnectionDelay` | `number` | Maximum milliseconds between retries (backs off exponentially up to this cap). |
-
-## Disabling default bundles
-
-By default, NimbleBrain spawns `@nimblebraininc/bash` alongside your configured bundles. To disable this:
-
-```json
-{
-  "noDefaultBundles": true,
-  "bundles": [
-    { "name": "@nimblebraininc/tasks" }
-  ]
-}
-```
-
-<Aside type="caution">
-  Disabling default bundles removes the shell tool that many skills rely on. Only use this if you have specific security or isolation requirements.
-</Aside>
 
 ## Complete example
 

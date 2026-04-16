@@ -24,7 +24,7 @@ Docker Compose runs the platform and web UI as two containers. This is the recom
    {
      "$schema": "https://schemas.nimblebrain.ai/nimblebrain.json",
      "bundles": [
-       { "name": "@nimblebraininc/bash" }
+       { "name": "@nimblebraininc/ipinfo" }
      ]
    }
    ```
@@ -125,8 +125,8 @@ Run from source for development. Requires [Bun](https://bun.sh) 1.1+.
 ```bash
 bun run dev:api    # API server only (watched, port 27247)
 bun run dev:web    # Web client only (Vite HMR, port 27246)
-bun run dev:empty  # Empty state — default bundles only, fresh workdir (:27249/:27248)
-bun run dev:minimal # Minimal — default bundles, no external MCPs (:27251/:27250)
+bun run dev:empty  # Empty state — no bundles, fresh workdir (:27249/:27248)
+bun run dev:minimal # Minimal — no bundles, preset model config (:27251/:27250)
 bun run dev:tui    # Interactive TUI with project-local workdir
 bun run test       # Run unit tests
 bun run eval       # LLM evals (requires ANTHROPIC_API_KEY)
@@ -163,7 +163,7 @@ A minimal config:
 {
   "$schema": "https://schemas.nimblebrain.ai/nimblebrain.json",
   "bundles": [
-    { "name": "@nimblebraininc/bash" }
+    { "name": "@nimblebraininc/ipinfo" }
   ]
 }
 ```

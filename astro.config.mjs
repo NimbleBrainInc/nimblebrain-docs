@@ -46,7 +46,25 @@ export default defineConfig({
             ],
           },
           {
-            label: 'Using NimbleBrain',
+            label: 'User Guide',
+            link: '/guide/welcome',
+            icon: 'star',
+            items: [
+              { label: 'Welcome', slug: 'guide/welcome' },
+              { label: 'The Interface', slug: 'guide/interface' },
+              { label: 'Chatting with the Agent', slug: 'guide/chat' },
+              { label: 'Your Conversations', slug: 'guide/conversations' },
+              { label: 'Apps & the Sidebar', slug: 'guide/apps' },
+              { label: 'Attaching Files', slug: 'guide/files' },
+              { label: 'Workspaces', slug: 'guide/workspaces' },
+              { label: 'Settings & Preferences', slug: 'guide/settings' },
+              { label: 'Keyboard Shortcuts', slug: 'guide/shortcuts' },
+              { label: 'Connecting External Clients', slug: 'guide/mcp-connect' },
+              { label: 'Team Management', slug: 'guide/team' },
+            ],
+          },
+          {
+            label: 'Platform Guide',
             link: '/using/chat',
             icon: 'laptop',
             items: [

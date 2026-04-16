@@ -28,7 +28,7 @@ nb status
 
 ```
 Bundles: 3 configured
-  @nimblebraininc/bash
+  @nimblebraininc/ipinfo
   @nimblebraininc/granola
   @nimblebraininc/postgres
 Skills: 4 loaded
@@ -44,13 +44,13 @@ nb status
 
 ```
 Bundles: 3 configured
-  @nimblebraininc/bash
+  @nimblebraininc/ipinfo
   @nimblebraininc/granola
   @nimblebraininc/postgres
 Skills: 4 loaded
 
 Bundle health:
-  @nimblebraininc/bash: running (uptime: 3842s, restarts: 0)
+  @nimblebraininc/ipinfo: running (uptime: 3842s, restarts: 0)
   @nimblebraininc/granola: running (uptime: 3842s, restarts: 0)
   @nimblebraininc/postgres: crashed (uptime: n/a, restarts: 3)
 ```
@@ -70,7 +70,7 @@ nb status --json
 ```
 
 ```json
-{"bundles":[{"name":"@nimblebraininc/bash"},{"name":"@nimblebraininc/granola"},{"name":"@nimblebraininc/postgres"}],"skills":[{"name":"bootstrap","type":"context","priority":100,"source":"src/skills/core/bootstrap.md","description":"Teaches the agent about meta-tools and mpak"}],"health":[{"name":"@nimblebraininc/bash","state":"running","uptime":3842000,"restartCount":0},{"name":"@nimblebraininc/granola","state":"running","uptime":3842000,"restartCount":0},{"name":"@nimblebraininc/postgres","state":"crashed","uptime":null,"restartCount":3}]}
+{"bundles":[{"name":"@nimblebraininc/ipinfo"},{"name":"@nimblebraininc/granola"},{"name":"@nimblebraininc/postgres"}],"skills":[{"name":"bootstrap","type":"context","priority":100,"source":"src/skills/core/bootstrap.md","description":"Teaches the agent about meta-tools and mpak"}],"health":[{"name":"@nimblebraininc/ipinfo","state":"running","uptime":3842000,"restartCount":0},{"name":"@nimblebraininc/granola","state":"running","uptime":3842000,"restartCount":0},{"name":"@nimblebraininc/postgres","state":"crashed","uptime":null,"restartCount":3}]}
 ```
 
 The JSON output includes three keys:

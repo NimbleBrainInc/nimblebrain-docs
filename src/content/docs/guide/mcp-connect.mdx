@@ -1,0 +1,67 @@
+---
+title: Connecting External Clients
+description: Use NimbleBrain's tools from Claude Desktop, VS Code, or other MCP-compatible clients.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+NimbleBrain can act as a tool server for external apps that support the MCP protocol — like Claude Desktop, VS Code with Copilot, or Claude Code. This means you can access all your NimbleBrain apps and tools from inside those clients without switching to the web UI.
+
+## What you need
+
+Your admin will provide two things:
+
+- **Instance URL** — The address of your NimbleBrain instance (e.g., `https://your-team.nimblebrain.ai`)
+- **API key** — Your personal authentication token
+
+You can find your workspace ID in **Settings > Profile** under the MCP Connection card.
+
+## Connecting from Claude Desktop
+
+Add NimbleBrain as an MCP server in your Claude Desktop settings:
+
+```json
+{
+  "mcpServers": {
+    "nimblebrain": {
+      "type": "url",
+      "url": "https://your-team.nimblebrain.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer your-api-key"
+      }
+    }
+  }
+}
+```
+
+Once connected, Claude Desktop can discover and use all the tools from your NimbleBrain workspace — every installed app's capabilities are available through a single connection.
+
+## Connecting from Claude Code
+
+Add to your `.claude/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "nimblebrain": {
+      "type": "url",
+      "url": "https://your-team.nimblebrain.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer your-api-key"
+      }
+    }
+  }
+}
+```
+
+## Connecting from VS Code
+
+In VS Code with GitHub Copilot, add a server through the MCP settings panel. Use the same URL and API key as above.
+
+<Aside type="tip">
+  The external client sees all your tools as a flat list — it doesn't need to know about individual apps or bundles. NimbleBrain handles routing each tool call to the right app internally.
+</Aside>
+
+## What's exposed
+
+When you connect an external client, it gets access to all tools from apps installed in your workspace — the same tools the agent uses when you chat in the web UI. If your admin installs or removes an app, the change is reflected automatically.

@@ -5,6 +5,10 @@ description: Add MCP bundles to NimbleBrain from the mpak registry, a URL, or a 
 
 import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
+<Aside type="tip">
+  Looking for a quick overview of apps in the web UI? See [Apps & the Sidebar](/guide/apps) in the User Guide.
+</Aside>
+
 Apps in NimbleBrain are MCP server bundles. Each bundle provides tools that the agent can use. You can install bundles from the [mpak registry](https://mpak.dev), from a remote URL, or from a local directory.
 
 ## Three ways to install
@@ -63,7 +67,7 @@ Apps in NimbleBrain are MCP server bundles. Each bundle provides tools that the 
 
     > "Install the Granola bundle from mpak"
 
-    The agent uses `nb__manage_bundle` to install the bundle, which:
+    The agent uses `nb__manage_app` to install the bundle, which:
     1. Downloads it from mpak
     2. Reads the manifest
     3. Starts the MCP server process
@@ -103,17 +107,17 @@ Apps in NimbleBrain are MCP server bundles. Each bundle provides tools that the 
 
 ## The agent can self-install
 
-The agent has access to `nb__search_registry` and `nb__manage_bundle`. This means you can ask it to find and install what it needs:
+The agent has access to `nb__search` (with `scope: "registry"`) and `nb__manage_app`. This means you can ask it to find and install what it needs:
 
 > "I need to search through meeting notes. Find a bundle for that and install it."
 
 The agent will:
-1. Call `nb__search_registry` to search mpak
+1. Call `nb__search` with `scope: "registry"` to search mpak
 2. Present options to you
-3. Call `nb__manage_bundle` with `action: "install"` to install your choice
+3. Call `nb__manage_app` with `action: "install"` to install your choice
 
 <Aside type="caution">
-  Bundles marked as `protected: true` in the config cannot be uninstalled via `nb__manage_bundle`. Use this for bundles that should always be available.
+  Bundles marked as `protected: true` in the config cannot be uninstalled via `nb__manage_app`. Use this for bundles that should always be available.
 </Aside>
 
 ## Setting bundle credentials
@@ -174,15 +178,13 @@ After installing, check that the bundle is running:
 nb status
 ```
 ```
-Bundles: 3 configured
-  @nimblebraininc/bash
+Bundles: 2 configured
   @nimblebraininc/granola
   @nimblebraininc/postgres
 
 Skills: 2 loaded
 
 Bundle health:
-  bash: running (uptime: 3600s, restarts: 0)
   granola: running (uptime: 120s, restarts: 0)
   postgres: running (uptime: 120s, restarts: 0)
 ```

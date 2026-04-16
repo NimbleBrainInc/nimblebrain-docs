@@ -47,7 +47,7 @@ The type is stored on the `BundleInstance` and returned in the `GET /v1/apps` re
 └──────────────────────────┘     └──────────────────────┘
 ```
 
-- **Tools** are available to the agent via the meta-tool pattern (`nb__search_tools` / `nb__execute_tool`) or surfaced directly when tool count is low.
+- **Tools** are available to the agent via tiered tool surfacing — directly when the tool count is low, otherwise discovered via `nb__search` (`scope: "tools"`) and invoked through the unified tool namespace.
 - **UI resources** are HTML pages served by the MCP server via the `ui://` protocol and proxied through `GET /v1/apps/:name/resources/:path`.
 - **The MCP App Bridge** provides a `postMessage` channel between iframes and the host for tool calls, navigation, and data sync.
 

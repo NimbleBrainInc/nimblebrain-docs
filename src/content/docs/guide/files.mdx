@@ -1,0 +1,38 @@
+---
+title: Attaching Files
+description: Share documents, images, and spreadsheets with the agent for analysis and context.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+You can attach files to your messages to give the agent additional context. Drag a document into the chat, and the agent can read, summarize, or analyze its contents.
+
+## How to attach files
+
+Three ways to add files to a message:
+
+- **Drag and drop** — Drag a file from your computer onto the chat input
+- **Paste an image** — Copy an image and paste it directly into the chat input (Cmd+V / Ctrl+V)
+- **Click the attachment icon** — Use the paperclip button next to the input field to browse for files
+
+Attached files appear as chips below the input. You can remove a file by clicking the X on its chip before sending.
+
+## Supported formats
+
+| Format | Extensions | What the agent sees |
+|--------|-----------|-------------------|
+| PDF | `.pdf` | Extracted text from all pages |
+| Word | `.docx` | Document text and structure |
+| Excel | `.xlsx` | Tabular data |
+| Images | `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` | The image itself (visual analysis) |
+| Plain text | `.txt`, `.md`, `.csv`, `.json`, `.xml` | File contents as-is |
+
+<Aside type="note">
+  Images are sent directly to the AI model for visual analysis — the agent can describe what it sees, read text in screenshots, interpret charts, and more. Text-based formats are extracted and included as context alongside your message.
+</Aside>
+
+## Tips
+
+- **Be specific about what you want.** Attaching a PDF and asking "Summarize this" works, but "Summarize the key financial metrics from Q3" gets you a more focused answer.
+- **One file at a time works best** for detailed analysis. You can attach multiple files, but the agent handles focused requests better.
+- **Screenshots work great** for asking about UI issues, error messages, or visual content.

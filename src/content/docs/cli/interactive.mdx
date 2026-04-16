@@ -17,14 +17,13 @@ nb
 
 ```
 [nimblebrain] Starting runtime...
-[nimblebrain] 12 tools available
 [nimblebrain] Ready.
 
 > What can you do?
 
-I can help you with tasks using the tools available from your installed apps.
-Currently, you have access to bash commands through the @nimblebraininc/bash
-bundle. I can also discover and install new apps from the mpak registry.
+I can help you with tasks using any tools from your installed apps, plus built-in
+platform capabilities (home, conversations, files, settings, usage, automations).
+I can also search the mpak registry and install new apps for you.
 
 What would you like to work on?
 ```
@@ -47,7 +46,7 @@ echo "How many tools are available?" | nb
 ```
 
 ```
-You currently have 12 tools available from the @nimblebraininc/bash bundle.
+You currently have 3 tools available from the @nimblebraininc/granola bundle, plus the built-in platform tools.
 ```
 
 ### Multi-turn conversations
@@ -59,8 +58,8 @@ printf "What bundles are installed?\nWhat tools does the first one provide?" | n
 ```
 
 ```
-You have one bundle installed: @nimblebraininc/bash.
-The @nimblebraininc/bash bundle provides 3 tools: bash_exec, bash_read, and bash_write.
+You have one bundle installed: @nimblebraininc/granola.
+The @nimblebraininc/granola bundle provides 3 tools: list_meetings, get_transcript, and search_meetings.
 ```
 
 ### JSON output
@@ -72,7 +71,7 @@ echo "What time is it?" | nb --json
 ```
 
 ```json
-{"response":"I don't have a clock tool, but I can run a bash command to check. Let me do that.\n\nThe current time is Wed Mar 25 14:00:00 HST 2026.","conversationId":"conv_a1b2c3","skillName":null,"toolCalls":[{"name":"bash_exec","input":{"command":"date"}}],"inputTokens":1247,"outputTokens":89,"stopReason":"end_turn"}
+{"response":"I don't have a clock tool available right now, so I can't give you the exact time. If you install a time or shell bundle I can run it for you.","conversationId":"conv_a1b2c3","skillName":null,"toolCalls":[],"inputTokens":1247,"outputTokens":42,"stopReason":"end_turn"}
 ```
 
 When an error occurs in JSON mode, you get an error object instead:

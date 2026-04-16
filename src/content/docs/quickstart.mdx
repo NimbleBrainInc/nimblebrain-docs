@@ -20,7 +20,7 @@ Get NimbleBrain running locally with Docker Compose. You need Docker and an [Ant
    }
    ```
 
-   This minimal config starts NimbleBrain with the default bundle (`@nimblebraininc/bash`), which gives the agent shell access.
+   This minimal config starts NimbleBrain with no MCP bundles installed. The agent still has built-in platform capabilities (home, conversations, files, settings, usage, automations). You'll install bundles in step 5 to give it domain-specific tools.
 
 2. **Create a Docker Compose file**
 
@@ -79,10 +79,10 @@ Get NimbleBrain running locally with Docker Compose. You need Docker and an [Ant
    Try sending a message:
 
    ```
-   What files are in my home directory?
+   What can you help me with?
    ```
 
-   The agent uses the `bash` bundle to run `ls ~` and returns the results. You'll see the tool call and its output inline in the chat.
+   The agent responds using its built-in platform capabilities. To give it domain-specific tools, install a bundle in the next step.
 
 5. **Install an app**
 
@@ -92,13 +92,13 @@ Get NimbleBrain running locally with Docker Compose. You need Docker and an [Ant
    Search mpak for available bundles
    ```
 
-   The agent uses `nb__search_registry` to search the registry. To install one:
+   The agent uses `nb__search` (with `scope: "registry"`) to search the registry. To install one:
 
    ```
    Install @nimblebraininc/ipinfo
    ```
 
-   The agent calls `nb__manage_bundle` to download and start the bundle. You can now ask things like "What's the IP info for 8.8.8.8?"
+   The agent calls `nb__manage_app` to download and start the bundle. You can now ask things like "What's the IP info for 8.8.8.8?"
 
 </Steps>
 

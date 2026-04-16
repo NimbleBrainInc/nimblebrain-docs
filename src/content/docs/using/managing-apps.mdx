@@ -41,7 +41,7 @@ starting ──→ running ──→ crashed ──→ dead
     ```
     Configured bundles:
 
-      @nimblebraininc/bash (named)
+      @nimblebraininc/ipinfo (named)
       @nimblebraininc/granola (named)
       ../mcp-servers/hello (local)
     ```
@@ -52,7 +52,7 @@ starting ──→ running ──→ crashed ──→ dead
     nb bundle list --json
     ```
     ```json
-    [{"name":"@nimblebraininc/bash"},{"name":"@nimblebraininc/granola"},{"path":"../mcp-servers/hello"}]
+    [{"name":"@nimblebraininc/ipinfo"},{"name":"@nimblebraininc/granola"},{"path":"../mcp-servers/hello"}]
     ```
   </TabItem>
   <TabItem label="API">
@@ -63,8 +63,8 @@ starting ──→ running ──→ crashed ──→ dead
     {
       "apps": [
         {
-          "name": "bash",
-          "bundleName": "@nimblebraininc/bash",
+          "name": "ipinfo",
+          "bundleName": "@nimblebraininc/ipinfo",
           "version": "0.3.0",
           "status": "running",
           "type": "plain",
@@ -87,14 +87,14 @@ nb status
 ```
 ```
 Bundles: 3 configured
-  @nimblebraininc/bash
+  @nimblebraininc/ipinfo
   @nimblebraininc/granola
   @nimblebraininc/postgres
 
 Skills: 2 loaded
 
 Bundle health:
-  bash: running (uptime: 7200s, restarts: 0)
+  ipinfo: running (uptime: 7200s, restarts: 0)
   granola: running (uptime: 7200s, restarts: 0)
   postgres: crashed (uptime: n/a, restarts: 3)
 ```
@@ -106,7 +106,7 @@ curl http://localhost:27247/v1/bundles/health
 ```
 ```json
 [
-  {"name": "bash", "state": "running", "uptime": 7200000, "restartCount": 0},
+  {"name": "ipinfo", "state": "running", "uptime": 7200000, "restartCount": 0},
   {"name": "granola", "state": "running", "uptime": 7200000, "restartCount": 0},
   {"name": "postgres", "state": "crashed", "uptime": null, "restartCount": 3}
 ]
@@ -135,7 +135,7 @@ curl http://localhost:27247/v1/bundles/health
 
     > "Restart the Postgres app"
 
-    The agent uses `nb__manage_bundle` to control bundle lifecycle.
+    The agent uses `nb__manage_app` to control bundle lifecycle.
   </TabItem>
 </Tabs>
 
@@ -172,13 +172,13 @@ Data is **not** deleted during uninstall.
 
 ## Protected bundles
 
-Mark a bundle as protected in `nimblebrain.json` to prevent removal via `nb__manage_bundle` or the API:
+Mark a bundle as protected in `nimblebrain.json` to prevent removal via `nb__manage_app` or the API:
 
 ```json
 {
   "bundles": [
     {
-      "name": "@nimblebraininc/bash",
+      "name": "@nimblebraininc/ipinfo",
       "protected": true
     }
   ]
@@ -188,7 +188,7 @@ Mark a bundle as protected in `nimblebrain.json` to prevent removal via `nb__man
 Attempting to uninstall a protected bundle produces an error:
 
 ```
-Cannot uninstall "bash": bundle is protected
+Cannot uninstall "ipinfo": bundle is protected
 ```
 
 ## Trust scores

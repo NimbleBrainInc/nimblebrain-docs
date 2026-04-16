@@ -1,0 +1,50 @@
+---
+title: The Interface
+description: A visual tour of the NimbleBrain web interface — sidebar, chat panel, workspace selector, and main content area.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+When you sign in to NimbleBrain, you land on the main workspace view. The interface has three main areas.
+
+## Layout overview
+
+![NimbleBrain interface showing the sidebar, main content area, and chat panel](../../../assets/guide/interface-layout.png)
+
+### Sidebar (left)
+
+The sidebar is your main navigation. From top to bottom:
+
+- **Workspace selector** — Shows your current workspace name and avatar. Click to switch workspaces or access settings.
+- **Home** — Returns to the workspace home screen.
+- **Conversations** — Opens your conversation history.
+- **Apps** — Each installed app appears as a sidebar item. Click one to open it in the main content area.
+- **Collapse toggle** — At the bottom, collapse the sidebar to icons only for more screen space.
+
+### Main content (center)
+
+This area shows whatever you've selected — an app's interface, the home screen, or settings pages. When you click an app in the sidebar, its UI loads here.
+
+### Chat panel (right)
+
+The chat panel is where you talk to the agent. It floats on the right side and can be:
+
+- **Closed** — A small button in the bottom-right corner. Click it to open chat.
+- **Sidebar mode** — A fixed panel alongside the main content. This is the default when you open chat.
+- **Fullscreen mode** — Chat takes over the entire content area for focused conversations.
+
+Toggle between these modes with keyboard shortcuts or by clicking the expand/collapse icons in the chat header.
+
+<Aside type="tip">
+  On mobile devices, the sidebar becomes a slide-out drawer and the chat panel takes the full screen when open.
+</Aside>
+
+## Responsive behavior
+
+NimbleBrain adapts to your screen size:
+
+| Screen | Sidebar | Chat |
+|--------|---------|------|
+| **Desktop** (1024px+) | Full sidebar with labels | Side panel or fullscreen |
+| **Tablet** (768–1023px) | Collapsed to icons | Side panel or fullscreen |
+| **Mobile** (< 768px) | Hidden, swipe to open | Fullscreen only |

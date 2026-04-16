@@ -5,6 +5,10 @@ description: Talk to the NimbleBrain agent through the web UI or CLI.
 
 import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
+<Aside type="tip">
+  Looking for a quick overview of chatting in the web UI? See [Chatting with the Agent](/guide/chat) in the User Guide.
+</Aside>
+
 You interact with NimbleBrain by chatting with an agent that has access to all the tools provided by your installed apps. The agent processes your message, decides which tools to call, executes them, and streams the response back to you.
 
 ## Two interfaces
@@ -71,14 +75,13 @@ The agent has access to:
 
 | Tool | Purpose |
 |------|---------|
-| `nb__search_tools` | Search available tools by keyword across all installed apps |
-| `nb__search_registry` | Search the mpak registry for new bundles to install |
-| `nb__manage_bundle` | Install, uninstall, or configure a bundle at runtime |
-| `nb__bundle_status` | Check version, health, and tool count for installed bundles |
+| `nb__search` | Search installed tools (`scope: "tools"`) or the mpak registry (`scope: "registry"`) |
+| `nb__manage_app` | Install, uninstall, or configure an app at runtime |
+| `nb__status` | Platform status; `scope: "bundles"` for per-app health, `scope: "skills"` for loaded skills |
 | `nb__delegate` | Spawn a child agent for a sub-task |
 
 <Aside type="tip">
-  When more than 30 tools are installed, NimbleBrain uses tiered tool surfacing. Only system tools and matched skill tools are surfaced directly. The agent uses `nb__search_tools` to find and call other tools as needed.
+  When more than 30 tools are installed, NimbleBrain uses tiered tool surfacing. Only system tools and matched skill tools are surfaced directly. The agent uses `nb__search` to find other tools as needed.
 </Aside>
 
 ## App context
@@ -89,7 +92,7 @@ When you open an app in the web UI sidebar and chat from within that app's view,
 
 - **Be specific about what you want.** "Search for MCP servers related to Slack" works better than "find me something."
 - **Name the app when relevant.** If you have multiple apps installed, say "Use Granola to list my meetings" rather than just "list my meetings."
-- **Ask the agent to install what it needs.** The agent can search mpak and install bundles on its own via `nb__manage_bundle`.
+- **Ask the agent to install what it needs.** The agent can search mpak and install bundles on its own via `nb__manage_app`.
 - **Use delegation for parallel work.** For tasks that split naturally, ask the agent to delegate sub-tasks. See [Multi-Agent Delegation](/using/delegation).
 
 ## Resume a conversation
