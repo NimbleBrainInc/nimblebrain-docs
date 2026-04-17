@@ -15,7 +15,9 @@ Control logging through the `logging` object in `nimblebrain.json`:
 {
   "logging": {
     "dir": "~/.nimblebrain/logs",
-    "disabled": false
+    "disabled": false,
+    "level": "normal",
+    "retentionDays": 30
   }
 }
 ```
@@ -24,6 +26,8 @@ Control logging through the `logging` object in `nimblebrain.json`:
 |-------|------|---------|-------------|
 | `dir` | `string` | `{workDir}/logs` | Directory where log files are written. Created automatically if it does not exist. |
 | `disabled` | `boolean` | `false` | Set to `true` to disable structured logging entirely. |
+| `level` | `"normal"` \| `"debug"` | `"normal"` | `"debug"` persists additional verbose fields (full tool inputs/outputs, raw provider responses). Larger files. |
+| `retentionDays` | `integer` | — | Auto-delete log files older than N days on startup. Omit for no cleanup. |
 
 Structured logging is enabled by default. To disable it:
 
@@ -55,7 +59,7 @@ A new file is created automatically each day. Examples:
 Every log line is a JSON object with at minimum a timestamp and event type:
 
 ```json
-{"ts":"2026-03-25T14:30:00.123Z","event":"run.start","runId":"abc123","model":"claude-sonnet-4-5-20250929"}
+{"ts":"2026-03-25T14:30:00.123Z","event":"run.start","runId":"abc123","model":"anthropic:claude-sonnet-4-6"}
 ```
 
 ### Common fields
@@ -74,7 +78,7 @@ The following events are logged. `text.delta` events are excluded to avoid log n
 **`run.start`** — An agent run begins.
 
 ```json
-{"ts":"2026-03-25T14:30:00.123Z","event":"run.start","runId":"abc123","model":"claude-sonnet-4-5-20250929","sid":"conv-456"}
+{"ts":"2026-03-25T14:30:00.123Z","event":"run.start","runId":"abc123","model":"anthropic:claude-sonnet-4-6","sid":"conv-456"}
 ```
 
 **`iteration.done`** — One LLM call + tool execution cycle completes.

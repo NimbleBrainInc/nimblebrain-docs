@@ -1,11 +1,16 @@
 ---
 title: nimblebrain.json
-description: Complete reference for the NimbleBrain configuration file.
+description: Complete reference for the NimbleBrain instance configuration file.
 ---
 
 import { Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
-NimbleBrain reads its configuration from a single `nimblebrain.json` file. This page documents every field, the resolution order, and validation behavior.
+NimbleBrain splits configuration into two files:
+
+- **`nimblebrain.json`** — instance-level settings (models, HTTP, logging, limits, feature flags). One file per deployment. **This page.**
+- **`workspace.json`** — per-workspace settings (bundles, skill directories, named agent profiles, optional model + identity overrides). See [`workspace.json`](/config/workspace-json).
+
+Top-level `bundles`, `skillDirs`, `agents`, `home`, and `preferences` entries in `nimblebrain.json` are silently stripped at load — they belong in `workspace.json` now. See [Workspace Isolation](/concepts#workspace-isolation) for the rationale.
 
 ## Config resolution
 
@@ -16,73 +21,64 @@ NimbleBrain looks for the config file in this order, stopping at the first match
 3. **`--workdir <dir>/nimblebrain.json`** — Inside the working directory (flag or `NB_WORK_DIR` env var)
 4. **`./nimblebrain.json`** — Current working directory (bare file)
 
-If no config file exists at the resolved path, NimbleBrain auto-creates a default one (empty bundles and skills) as long as the parent directory exists.
+If no config file exists at the resolved path, NimbleBrain auto-creates a minimal default file as long as the parent directory exists.
+
+`NB_WORK_DIR` takes precedence over both `workDir` in the file and `--workdir`.
 
 <Aside type="tip">
-  The `nb dev` command defaults its working directory to `./.nimblebrain` (project-local), while `nb serve` and `nb` default to `~/.nimblebrain` (global). You can override either with `--workdir`.
+  The `nb dev` command defaults its working directory to `./.nimblebrain` (project-local), while `nb serve` and `nb` default to `~/.nimblebrain` (global). Override either with `--workdir`.
 </Aside>
 
 ## Complete annotated example
 
 ```json
 {
-  "$schema": "https://schemas.nimblebrain.ai/nimblebrain.json",
+  "$schema": "https://schemas.nimblebrain.ai/v1/nimblebrain-config.schema.json",
   "version": "1",
-  "model": {
-    "provider": "anthropic",
-    "apiKey": "sk-ant-..."
+
+  "models": {
+    "default":   "anthropic:claude-sonnet-4-6",
+    "fast":      "anthropic:claude-haiku-4-5-20251001",
+    "reasoning": "anthropic:claude-opus-4-6"
   },
-  "defaultModel": "claude-sonnet-4-5-20250929",
-  "maxIterations": 10,
-  "maxInputTokens": 500000,
-  "maxOutputTokens": 16384,
+
+  "providers": {
+    "anthropic": { "apiKey": "sk-ant-..." },
+    "openai":    { "apiKey": "sk-..." }
+  },
+
+  "maxIterations":      25,
+  "maxInputTokens":     500000,
+  "maxOutputTokens":    16384,
   "maxHistoryMessages": 40,
-  "bundles": [
-    { "name": "@nimblebraininc/tasks" },
-    { "path": "../mcp-servers/hello" },
-    {
-      "url": "https://mcp.example.com/mcp",
-      "serverName": "example",
-      "transport": {
-        "type": "streamable-http",
-        "auth": { "type": "bearer", "token": "sk-..." }
-      }
-    }
-  ],
-  "skillDirs": ["./skills", "/opt/nimblebrain/skills"],
-  "skills": [],
-  "store": {
-    "type": "jsonl",
-    "dir": "~/.nimblebrain/conversations"
+  "maxToolResultSize":  1000000,
+
+  "store":   { "type": "jsonl", "dir": "~/.nimblebrain/conversations" },
+  "logging": { "dir": "~/.nimblebrain/logs", "disabled": false, "level": "normal", "retentionDays": 30 },
+  "http":    { "port": 27247, "host": "127.0.0.1" },
+
+  "features": {
+    "bundleManagement":    true,
+    "skillManagement":     true,
+    "delegation":          true,
+    "toolDiscovery":       true,
+    "bundleDiscovery":     true,
+    "mcpServer":           true,
+    "fileContext":         true,
+    "userManagement":      true,
+    "workspaceManagement": true
   },
-  "logging": {
-    "dir": "~/.nimblebrain/logs",
-    "disabled": false
+
+  "files": {
+    "maxFileSize":          26214400,
+    "maxTotalSize":         104857600,
+    "maxFilesPerMessage":   10,
+    "maxExtractedTextSize": 204800
   },
-  "http": {
-    "port": 27247,
-    "host": "127.0.0.1"
-  },
-  "agents": {
-    "researcher": {
-      "description": "Deep research agent with search tools",
-      "systemPrompt": "You are a research agent. Use search tools to find information.",
-      "tools": ["rfpsearch__*", "nb__*"],
-      "maxIterations": 8,
-      "model": "claude-sonnet-4-5-20250929"
-    }
-  },
-  "workDir": "~/.nimblebrain",
-  "telemetry": {
-    "enabled": true
-  },
-  "home": {
-    "enabled": true,
-    "userName": "Mat",
-    "timezone": "Pacific/Honolulu",
-    "cacheTtlMinutes": 30,
-    "model": null
-  }
+
+  "allowInsecureRemotes": false,
+  "telemetry":            { "enabled": true },
+  "workDir":              "~/.nimblebrain"
 }
 ```
 
@@ -90,46 +86,72 @@ If no config file exists at the resolved path, NimbleBrain auto-creates a defaul
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `$schema` | `string` | — | JSON Schema URI. Set to `"https://schemas.nimblebrain.ai/nimblebrain.json"` for editor autocompletion. |
+| `$schema` | `string` | — | JSON Schema URI. Set to `"https://schemas.nimblebrain.ai/v1/nimblebrain-config.schema.json"` for editor autocompletion. |
 | `version` | `string` | — | Config file version. Must be `"1"`. |
-| `model` | `object` | `{ "provider": "anthropic" }` | Model provider configuration. See [model](#model). |
-| `defaultModel` | `string` | `"claude-sonnet-4-5-20250929"` | Default model ID for agent requests. |
-| `maxIterations` | `integer` | `10` | Max agentic iterations per request. Range: 1--25. |
-| `maxInputTokens` | `integer` | `500000` | Max input tokens per request. The engine stops when this budget is exceeded. |
+| `models` | `object` | — | Role-based model slots. See [models](#models). |
+| `providers` | `object` | — | Per-provider API keys. See [providers](#providers). |
+| `model` | `object` | `{ "provider": "anthropic" }` | **Legacy** single-provider config. Use `providers` instead. |
+| `defaultModel` | `string` | — | **Deprecated.** Use `models.default` instead. |
+| `maxIterations` | `integer` | `25` | Max agentic iterations per request. Range: 1--50. |
+| `maxInputTokens` | `integer` | `500000` | Max input tokens per request. Engine stops when this budget is exceeded. |
 | `maxOutputTokens` | `integer` | `16384` | Max output tokens per LLM call. |
-| `maxHistoryMessages` | `integer` | `40` | Max conversation message groups to include in context. Keeps the first message plus the most recent N groups. Tool call/result pairs count as one group. |
-| `bundles` | `array` | `[]` | MCP bundles to spawn. See [Bundle Configuration](/config/bundles). |
-| `skillDirs` | `string[]` | `[]` | Directories to scan for skill markdown files. |
-| `skills` | `array` | `[]` | Inline skill definitions. |
+| `maxHistoryMessages` | `integer` | `40` | Max conversation message groups in context. Tool call/result pairs count as one group. |
+| `maxToolResultSize` | `integer` | `1000000` | Max characters for a single tool result. `0` disables the cap. |
 | `store` | `object` | `{ "type": "memory" }` | Conversation storage backend. See [store](#store). |
-| `logging` | `object` | `{ "disabled": false }` | Structured logging config. See [Logging](/config/logging). |
+| `logging` | `object` | — | Structured logging config. See [logging](#logging). |
 | `http` | `object` | `{ "port": 27247, "host": "127.0.0.1" }` | HTTP server config. Omit for programmatic-only use. |
-| `agents` | `object` | `{}` | Named agent profiles for delegation. See [Agent Profiles](/config/agents). |
-| `workDir` | `string` | `"~/.nimblebrain"` | Working directory for runtime state (conversations, logs, cache). |
-| `features` | `object` | All `true` | Feature flags to enable/disable system capabilities. See [Feature Flags](/config/features). |
+| `features` | `object` | all `true` | Feature flags. See [Feature Flags](/config/features). |
+| `files` | `object` | — | File upload limits. See [files](#files). |
+| `allowInsecureRemotes` | `boolean` | `false` | Allow HTTP (non-TLS) remote bundle connections. Dev only. |
 | `telemetry` | `object` | `{ "enabled": true }` | Anonymous usage telemetry. See [telemetry](#telemetry). |
-| `home` | `object` | `{ "enabled": true }` | Home dashboard configuration. See [home](#home). |
+| `workDir` | `string` | `"~/.nimblebrain"` | Working directory for runtime state (conversations, logs, workspaces). |
 
-## model
+<Aside type="note">
+  **Workspace-owned fields** — `bundles`, `skillDirs`, `agents`, `home`, `preferences`, `noDefaultBundles` — are silently stripped if placed at the top level. They live in [`workspace.json`](/config/workspace-json).
 
-Configure the LLM provider. Only `"anthropic"` is supported in the config file.
+  **Deprecated fields** — `identity` and `contextFile` are ignored with a warning. Use a skill with `type: "context"` instead.
+</Aside>
+
+## models
+
+The `models` object declares three role-based slots. Each value is a `provider:model-id` string (e.g. `"anthropic:claude-sonnet-4-6"`).
 
 ```json
 {
-  "model": {
-    "provider": "anthropic",
-    "apiKey": "sk-ant-..."
+  "models": {
+    "default":   "anthropic:claude-sonnet-4-6",
+    "fast":      "anthropic:claude-haiku-4-5-20251001",
+    "reasoning": "anthropic:claude-opus-4-6"
   }
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `provider` | `string` | Yes | Must be `"anthropic"`. |
-| `apiKey` | `string` | No | Anthropic API key. Falls back to the `ANTHROPIC_API_KEY` environment variable. |
+| Slot | Used for |
+|------|----------|
+| `default` | Chat, general requests, most tool-using turns |
+| `fast` | Title generation, briefing, skill matching — cheap/fast workloads |
+| `reasoning` | Complex analysis, planning, long-horizon tasks |
+
+A workspace can override individual slots via `workspace.json → models`. When a `nb__delegate` call or agent profile specifies a slot name (e.g. `"model": "fast"`), it's resolved against these slots.
+
+## providers
+
+Per-provider API keys. Takes precedence over the legacy `model` object when both are present.
+
+```json
+{
+  "providers": {
+    "anthropic": { "apiKey": "sk-ant-..." },
+    "openai":    { "apiKey": "sk-..." },
+    "google":    { "apiKey": "AIza..." }
+  }
+}
+```
+
+Each provider key is optional. If a provider's `apiKey` is omitted, the SDK falls back to the provider's standard env var (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GOOGLE_GENERATIVE_AI_API_KEY`).
 
 <Aside type="caution">
-  Avoid putting API keys directly in the config file. Use the `ANTHROPIC_API_KEY` environment variable instead, especially in production.
+  Prefer environment variables for API keys in production. Config files end up in version control and backup snapshots by accident.
 </Aside>
 
 ## store
@@ -152,13 +174,11 @@ Choose where conversations are persisted.
   <TabItem label="In-memory">
     ```json
     {
-      "store": {
-        "type": "memory"
-      }
+      "store": { "type": "memory" }
     }
     ```
 
-    Conversations are lost when the process exits. This is the default for programmatic use.
+    Conversations are lost when the process exits. Default for programmatic use.
   </TabItem>
 </Tabs>
 
@@ -167,50 +187,82 @@ Choose where conversations are persisted.
 | `type` | `"jsonl"` \| `"memory"` | Yes | Storage backend. |
 | `dir` | `string` | JSONL only | Directory for conversation JSONL files. |
 
-## telemetry
-
-Control anonymous usage telemetry. NimbleBrain collects anonymized, aggregate usage data with no PII — no bundle names, tool names, error messages, or file paths are sent.
+## logging
 
 ```json
 {
-  "telemetry": {
-    "enabled": false
-  }
-}
-```
-
-You can also disable telemetry with the `NB_TELEMETRY_DISABLED=1` or `DO_NOT_TRACK=1` environment variables, or with `nb telemetry off`. Any of these methods takes effect immediately.
-
-## home
-
-Configure the Home dashboard — a personalized activity briefing shown on the landing page.
-
-```json
-{
-  "home": {
-    "enabled": true,
-    "userName": "Mat",
-    "timezone": "Pacific/Honolulu",
-    "cacheTtlMinutes": 30,
-    "model": null
+  "logging": {
+    "dir": "~/.nimblebrain/logs",
+    "disabled": false,
+    "level": "normal",
+    "retentionDays": 30
   }
 }
 ```
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `enabled` | `boolean` | `true` | Enable the Home dashboard. When `false`, `/` redirects to `/chat`. |
-| `userName` | `string` | `"there"` | Your first name for the greeting (e.g., "Good morning, Mat"). |
-| `timezone` | `string` | `""` (system) | IANA timezone for time-aware greetings (e.g., `"Pacific/Honolulu"`). Empty string uses the system timezone. |
-| `cacheTtlMinutes` | `number` | `30` | How long to cache the briefing before regenerating. Minimum: 1. |
-| `model` | `string \| null` | `null` | Model override for briefing generation. `null` uses the workspace default. |
+| `dir` | `string` | `{workDir}/logs` | Log directory. |
+| `disabled` | `boolean` | `false` | Disable structured logging entirely. |
+| `level` | `"normal"` \| `"debug"` | `"normal"` | `"debug"` persists additional verbose fields. |
+| `retentionDays` | `integer` | — | Auto-delete log files older than N days on startup. Omit for no cleanup. |
+
+## files
+
+File upload limits applied when `features.fileContext` is enabled.
+
+```json
+{
+  "files": {
+    "maxFileSize":          26214400,
+    "maxTotalSize":         104857600,
+    "maxFilesPerMessage":   10,
+    "maxExtractedTextSize": 204800
+  }
+}
+```
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `maxFileSize` | `integer` (bytes) | 26 MB | Maximum size of a single uploaded file. |
+| `maxTotalSize` | `integer` (bytes) | 100 MB | Maximum total size of all files per message. |
+| `maxFilesPerMessage` | `integer` | 10 | Maximum number of files per chat message. |
+| `maxExtractedTextSize` | `integer` (bytes) | 200 KB | Maximum extracted text size per file. |
+
+## telemetry
+
+NimbleBrain collects anonymized, aggregate usage data with no PII — no bundle names, tool names, error messages, or file paths are sent.
+
+```json
+{ "telemetry": { "enabled": false } }
+```
+
+Disable with `NB_TELEMETRY_DISABLED=1` or `DO_NOT_TRACK=1` env vars, or run `nb telemetry off`.
+
+## Legacy `model` object
+
+The older single-provider `model` shape is still accepted for backward compatibility but deprecated. Prefer `providers` for mixing API keys and `models` for model selection.
+
+```json
+{
+  "model": { "provider": "anthropic", "apiKey": "sk-ant-..." },
+  "defaultModel": "claude-sonnet-4-6"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `provider` | `"anthropic"` \| `"openai"` \| `"google"` | Default provider when `providers` isn't set. |
+| `apiKey` | `string` | Falls back to the provider's env var when omitted. |
 
 ## Validation
 
-NimbleBrain validates `nimblebrain.json` at startup against a [JSON Schema (draft-07)](https://schemas.nimblebrain.ai/nimblebrain.json) using AJV.
+NimbleBrain validates `nimblebrain.json` at startup against the [JSON Schema (draft-07)](https://schemas.nimblebrain.ai/v1/nimblebrain-config.schema.json) using AJV.
 
-- **Unknown keys** produce a warning to stderr and are ignored.
+- **Unknown keys** produce a warning on stderr and are ignored.
 - **Structural errors** (wrong types, missing required fields) throw an error and prevent startup.
+- **Workspace-owned keys** (`bundles`, `skillDirs`, `agents`, `home`, `preferences`, `noDefaultBundles`) are silently stripped — no warning.
+- **Deprecated keys** (`identity`, `contextFile`) produce a warning pointing at context skills.
 
 ```
 [config] Warning: unknown key "foo" in /home/user/.nimblebrain/nimblebrain.json (ignored)
@@ -218,7 +270,7 @@ NimbleBrain validates `nimblebrain.json` at startup against a [JSON Schema (draf
 
 ```
 Error: Invalid config in /home/user/.nimblebrain/nimblebrain.json:
-  - /maxIterations: must be integer
+  - /maxIterations: must be <= 50
 ```
 
 ## CLI flag overrides
@@ -228,8 +280,8 @@ CLI flags take precedence over values in the config file:
 | Flag | Overrides |
 |------|-----------|
 | `--config <path>` | Config file location |
-| `--workdir <dir>` | `workDir` field and config file location |
-| `--model <id>` | `defaultModel` field |
+| `--workdir <dir>` | Default location of the config file and `workDir` fallback |
+| `--model <id>` | `defaultModel` field (legacy) |
 | `--port <n>` | `http.port` field |
 | `--debug` | Enables verbose debug event logging |
 
@@ -239,10 +291,8 @@ The smallest valid config file:
 
 ```json
 {
-  "$schema": "https://schemas.nimblebrain.ai/nimblebrain.json",
-  "version": "1",
-  "bundles": [],
-  "skills": []
+  "$schema": "https://schemas.nimblebrain.ai/v1/nimblebrain-config.schema.json",
+  "version": "1"
 }
 ```
 

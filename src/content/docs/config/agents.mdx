@@ -9,7 +9,7 @@ Agent profiles let you define specialized sub-agents that the primary agent can 
 
 ## Defining agents
 
-Add an `agents` object to your `nimblebrain.json`. Each key is the agent name, and the value is the profile configuration.
+Add an `agents` object to your [`workspace.json`](/config/workspace-json). Each key is the agent name, and the value is the profile configuration. Agent profiles are per-workspace — different workspaces can define different agents, and there's no global agent list.
 
 ```json
 {
@@ -19,7 +19,7 @@ Add an `agents` object to your `nimblebrain.json`. Each key is the agent name, a
       "systemPrompt": "You are a research agent. Search for relevant RFPs and summarize the key requirements, deadlines, and evaluation criteria.",
       "tools": ["rfpsearch__*", "nb__*"],
       "maxIterations": 8,
-      "model": "claude-sonnet-4-5-20250929"
+      "model": "reasoning"
     },
     "writer": {
       "description": "Drafts proposal sections from research notes",
@@ -31,11 +31,16 @@ Add an `agents` object to your `nimblebrain.json`. Each key is the agent name, a
       "description": "Analyzes data using SQL queries",
       "systemPrompt": "You are a data analyst. Write and run SQL queries to answer questions. Return results as markdown tables.",
       "tools": ["postgres__*", "nb__*"],
-      "maxIterations": 12
+      "maxIterations": 12,
+      "model": "fast"
     }
   }
 }
 ```
+
+<Aside type="note">
+  Agent profiles placed at the top level of `nimblebrain.json` are silently stripped at load. They belong in `workspace.json`.
+</Aside>
 
 ## Profile fields
 
@@ -44,8 +49,8 @@ Add an `agents` object to your `nimblebrain.json`. Each key is the agent name, a
 | `description` | `string` | Yes | — | Human-readable description of the agent's purpose. The primary agent sees this when deciding which agent to delegate to. |
 | `systemPrompt` | `string` | Yes | — | System prompt injected when this agent runs. Defines the agent's behavior and constraints. |
 | `tools` | `string[]` | Yes | — | Tool name glob patterns the agent can access. Only matching tools are available to the child agent. |
-| `maxIterations` | `integer` | No | `10` | Maximum iterations for this agent. Range: 1--25. Capped at the parent agent's remaining iteration budget minus 1. |
-| `model` | `string` | No | Workspace default | Model override for this agent. Use this to assign cheaper models to simpler tasks. |
+| `maxIterations` | `integer` | No | — | Maximum iterations for this agent. Falls through to the `nb__delegate` call's default (5) when omitted. Range: 1--50. Also capped at the parent's remaining budget minus 1 and the child-iteration ceiling of 10. |
+| `model` | `string` | No | Workspace default | Model override. Accepts a slot name (`"default"`, `"fast"`, `"reasoning"`) or an explicit `provider:model-id` string. |
 
 ## Tool glob patterns
 
@@ -77,8 +82,10 @@ Multiple delegations in the same turn run concurrently via `Promise.all()`. The 
 
 ## Iteration budget
 
-The child agent's iteration budget is the lesser of:
-- The `maxIterations` value in the agent profile (default 10)
+The child agent's iteration budget is the minimum of four values:
+- The `maxIterations` argument to the `nb__delegate` call (defaults to 5)
+- The `maxIterations` field on the agent profile, if set
+- `10` — the hard ceiling for child iterations
 - The parent agent's remaining iterations minus 1
 
 This prevents child agents from consuming the parent's entire budget. If the parent has 3 iterations remaining, the child gets at most 2, regardless of the profile's `maxIterations` setting.
@@ -101,7 +108,7 @@ This config defines a two-agent workflow where a researcher gathers information 
       "systemPrompt": "You are a writer. Transform research notes into clear, well-structured prose. Cite sources. Use active voice.",
       "tools": ["filesystem__write_file", "filesystem__read_file"],
       "maxIterations": 5,
-      "model": "claude-sonnet-4-5-20250929"
+      "model": "fast"
     }
   }
 }

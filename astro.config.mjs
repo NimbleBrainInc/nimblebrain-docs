@@ -138,6 +138,7 @@ export default defineConfig({
             icon: 'setting',
             items: [
               { label: 'nimblebrain.json', slug: 'config/nimblebrain-json' },
+              { label: 'workspace.json', slug: 'config/workspace-json' },
               { label: 'Bundle Configuration', slug: 'config/bundles' },
               { label: 'Agent Profiles', slug: 'config/agents' },
               { label: 'Logging', slug: 'config/logging' },
