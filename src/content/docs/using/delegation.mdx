@@ -41,7 +41,7 @@ The agent calls `nb__delegate` with these parameters:
 
 ## Agent profiles
 
-Define named agent profiles in `nimblebrain.json` under `agents`:
+Define named agent profiles in [`workspace.json`](/config/workspace-json) under `agents`:
 
 ```json
 {
@@ -51,7 +51,7 @@ Define named agent profiles in `nimblebrain.json` under `agents`:
       "systemPrompt": "You are a research agent. Gather comprehensive information on the given topic. Use search tools to find relevant data. Return a structured summary with sources.",
       "tools": ["rfpsearch__*", "bash__*"],
       "maxIterations": 8,
-      "model": "claude-sonnet-4-5-20250929"
+      "model": "reasoning"
     },
     "writer": {
       "description": "Content writer for drafting documents",
@@ -64,7 +64,7 @@ Define named agent profiles in `nimblebrain.json` under `agents`:
       "systemPrompt": "You are a data analyst. Analyze the provided data, identify patterns, and produce a summary with key insights.",
       "tools": ["postgres__*", "bash__*"],
       "maxIterations": 6,
-      "model": "claude-sonnet-4-5-20250929"
+      "model": "fast"
     }
   }
 }
@@ -77,8 +77,8 @@ Define named agent profiles in `nimblebrain.json` under `agents`:
 | `description` | string | Yes | What this agent does (shown when agent requests unknown profile) |
 | `systemPrompt` | string | Yes | System prompt injected when this agent runs |
 | `tools` | string[] | Yes | Tool name globs the agent can access |
-| `maxIterations` | integer | No | Max iterations. Default: 10. Capped at 25. |
-| `model` | string | No | Model override. Falls back to workspace `defaultModel`. |
+| `maxIterations` | integer | No | Max iterations. Falls through to the `nb__delegate` call's default (5) when omitted. Also capped at the child-iteration ceiling of 10. |
+| `model` | string | No | Model override. Accepts a slot name (`"default"`, `"fast"`, `"reasoning"`) or `provider:model-id`. |
 
 ## Iteration budgets
 

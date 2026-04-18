@@ -9,15 +9,44 @@ NimbleBrain reads several environment variables for authentication, server bindi
 
 ## Variable reference
 
+### Model providers
+
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `ANTHROPIC_API_KEY` | Yes (unless set in config) | — | Anthropic API key for LLM calls. Can also be set via `model.apiKey` in `nimblebrain.json`. |
+| `ANTHROPIC_API_KEY` | Yes (for Anthropic slots) | — | Anthropic API key. Can also be set via `providers.anthropic.apiKey` in `nimblebrain.json`. |
+| `OPENAI_API_KEY` | Yes (for OpenAI slots) | — | OpenAI API key. Can also be set via `providers.openai.apiKey`. |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | Yes (for Google slots) | — | Google Gemini API key. Can also be set via `providers.google.apiKey`. |
+
+### Runtime
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `NB_WORK_DIR` | No | `~/.nimblebrain` | Working directory for runtime state. Takes precedence over the config file and `--workdir`. |
+| `PORT` | No | `27247` | HTTP server port. Overridden by `--port` CLI flag. |
+| `ALLOWED_ORIGINS` | No | — | Comma-separated list of allowed CORS origins. Only relevant when auth is enabled. |
+| `NB_CHAT_RATE_LIMIT` | No | `20` | Chat requests per minute per user. |
+| `NB_TOOL_RATE_LIMIT` | No | `60` | Tool calls per minute per user. |
+| `NB_TIMEZONE` | No | — | Default IANA timezone (e.g. `America/Los_Angeles`) for time-aware features. |
+| `NB_HOST_URL` | No | `http://localhost:27247` | Public host URL, used to build OAuth redirects. |
+| `MCP_MAX_SESSIONS` | No | `100` | Max concurrent MCP sessions on `/mcp`. |
+| `MCP_SESSION_TTL_MS` | No | `1800000` (30 min) | MCP session inactivity TTL in milliseconds. |
+
+### Auth & identity
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
 | `NB_API_KEY` | No | — | API authentication key. When set, all HTTP endpoints (except health and login) require a valid Bearer token or session cookie. Minimum 8 characters. |
-| `NB_WORK_DIR` | No | `~/.nimblebrain` | Working directory for runtime state (conversations, logs, cache, skills). Overridden by `--workdir` CLI flag. |
-| `ALLOWED_ORIGINS` | No | — | Comma-separated list of allowed CORS origins (e.g., `https://app.example.com,https://admin.example.com`). Only relevant when `NB_API_KEY` is set. |
+| `WORKOS_API_KEY` | When `auth.adapter: "workos"` in `instance.json` | — | WorkOS API key. Can also be set via `instance.json → auth.apiKey`. |
+| `TURNSTILE_SECRET_KEY` | No | — | Cloudflare Turnstile secret for CAPTCHA on auth endpoints. |
+| `NB_INTERNAL_TOKEN` | No | — | Shared secret for service-to-service calls. Never forwarded to bundle subprocesses. |
+
+### Telemetry
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
 | `NB_TELEMETRY_DISABLED` | No | — | Set to `1` to disable anonymous usage telemetry. |
 | `DO_NOT_TRACK` | No | — | Standard opt-out signal. Set to `1` to disable telemetry. Equivalent to `NB_TELEMETRY_DISABLED=1`. |
-| `PORT` | No | `27247` | HTTP server port. Overridden by `--port` CLI flag. |
+| `POSTHOG_API_KEY` | No | — | Override the built-in PostHog key. Rarely needed. |
 
 ## ANTHROPIC_API_KEY
 
@@ -62,7 +91,7 @@ The working directory contains:
 - `skills/` — Global skill files
 - `cache/` — Bundle cache
 
-**Precedence:** `--workdir` flag > `NB_WORK_DIR` env var > `workDir` in config file > command default (`~/.nimblebrain` for `nb serve`, `./.nimblebrain` for `nb dev`)
+**Precedence:** `NB_WORK_DIR` env var > `workDir` in config file > `--workdir` flag > command default (`~/.nimblebrain` for `nb serve`, `./.nimblebrain` for `nb dev`)
 
 ## ALLOWED_ORIGINS
 
@@ -106,11 +135,11 @@ When the same setting can be configured in multiple places, this is the resoluti
 
 | Setting | CLI flag | Env var | Config file | Default |
 |---------|----------|---------|-------------|---------|
-| Working directory | `--workdir` | `NB_WORK_DIR` | `workDir` | `~/.nimblebrain` |
-| Model | `--model` | — | `defaultModel` | `claude-sonnet-4-5-20250929` |
+| Working directory | `--workdir` | `NB_WORK_DIR` (beats all) | `workDir` | `~/.nimblebrain` |
+| Model (legacy) | `--model` | — | `defaultModel` | — (use `models.default`) |
 | Port | `--port` | `PORT` | `http.port` | `27247` |
 | API key | — | `NB_API_KEY` | — | None (no auth) |
-| Anthropic key | — | `ANTHROPIC_API_KEY` | `model.apiKey` | — |
+| Anthropic key | — | `ANTHROPIC_API_KEY` | `providers.anthropic.apiKey` | — |
 | Telemetry | `nb telemetry off` | `NB_TELEMETRY_DISABLED` / `DO_NOT_TRACK` | `telemetry.enabled` | Enabled |
 
 ## Example: production environment

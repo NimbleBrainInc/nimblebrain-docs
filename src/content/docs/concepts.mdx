@@ -66,10 +66,10 @@ Each pass through the loop is one **iteration**. Defaults:
 
 | Setting | Default | Hard cap |
 |---------|---------|----------|
-| Max iterations | 10 | 25 |
+| Max iterations | 25 | 50 |
 | Max input tokens | 500,000 | — |
 | Max output tokens | 16,384 | — |
-| Model | `claude-sonnet-4-5-20250929` | — |
+| `models.default` | `anthropic:claude-sonnet-4-6` | — |
 
 The engine stops for one of three reasons:
 
@@ -253,7 +253,7 @@ When you have many bundles installed, the agent uses `nb__search` to find the ri
 
 ### Multi-agent delegation
 
-The `nb__delegate` tool spawns a child `AgentEngine` run with a scoped system prompt and filtered tool set. Named agent profiles are configured in `nimblebrain.json`:
+The `nb__delegate` tool spawns a child `AgentEngine` run with a scoped system prompt and filtered tool set. Named agent profiles are configured in [`workspace.json`](/config/workspace-json):
 
 ```json
 {
@@ -263,7 +263,7 @@ The `nb__delegate` tool spawns a child `AgentEngine` run with a scoped system pr
       "systemPrompt": "You are a research agent...",
       "tools": ["websearch__*"],
       "maxIterations": 8,
-      "model": "claude-sonnet-4-5-20250929"
+      "model": "reasoning"
     }
   }
 }
