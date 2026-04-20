@@ -122,38 +122,17 @@ The agent will:
 
 ## Setting bundle credentials
 
-Many bundles need API keys or other credentials. Use `nb config set`:
+Most bundles need API keys or tokens. In most cases, exporting the env var the bundle already looks for is enough:
 
 ```bash
-nb config set @nimblebraininc/granola api_key=grn_abc123
-```
-```
-Saved api_key for @nimblebraininc/granola
+export ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-View configured values (masked):
+For workspace-scoped values or when env vars aren't a good fit, use `nb config set -w <wsId>`. See [Credentials](/config/credentials/) for the full picture.
 
-```bash
-nb config get @nimblebraininc/granola
-```
-```
-api_key: gr****
-```
+## Passing non-credential environment variables
 
-Remove a value:
-
-```bash
-nb config clear @nimblebraininc/granola api_key
-```
-```
-Cleared api_key for @nimblebraininc/granola
-```
-
-Credentials are stored in `~/.mpak/config.json` with `0600` permissions (owner read/write only). They are mapped to environment variables via the bundle manifest's `${user_config.<field>}` references and passed to the bundle process at startup.
-
-## Passing environment variables
-
-You can also pass environment variables directly in the config:
+Sensitive values belong in [Credentials](/config/credentials/). For non-secret env vars (log level, region, connection tuning), use the `env` field on the bundle entry:
 
 ```json
 {
@@ -161,14 +140,15 @@ You can also pass environment variables directly in the config:
     {
       "name": "@nimblebraininc/postgres",
       "env": {
-        "DATABASE_URL": "postgres://localhost:5432/mydb"
+        "PG_MAX_CONNECTIONS": "10",
+        "PG_STATEMENT_TIMEOUT": "30000"
       }
     }
   ]
 }
 ```
 
-Environment variables in `env` are merged with the bundle's own `mcp_config.env` and the process environment. The `env` field takes precedence.
+Values in `env` merge with the bundle's own `mcp_config.env` and the filtered process environment; `env` takes precedence.
 
 ## Verify the install
 

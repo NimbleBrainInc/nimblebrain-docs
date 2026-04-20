@@ -166,9 +166,10 @@ Uninstalling a bundle:
 2. Stops the MCP server process
 3. Removes the source from the tool registry
 4. Removes the entry from `nimblebrain.json` atomically
-5. Emits a `bundle.uninstalled` event
+5. Clears the bundle's [credential file](/config/credentials/) for this workspace (best-effort; a failure logs a warning but doesn't block the uninstall)
+6. Emits a `bundle.uninstalled` event
 
-Data is **not** deleted during uninstall.
+Bundle **data** (Upjack entity state, bundle-owned files under `{workDir}/workspaces/{wsId}/data/{bundle}`) is preserved. Only credentials are cleared. Credentials in other workspaces are untouched.
 
 ## Protected bundles
 
@@ -206,24 +207,9 @@ Trust scores are fetched via `mpak info <name> --json` at install time and store
 
 Local and remote bundles do not have trust scores (they report `null`).
 
-## Configuration
+## Credentials
 
-Set per-bundle config values (typically API keys):
-
-```bash
-nb config set @nimblebraininc/granola api_key=grn_abc123
-```
-
-View current config:
-
-```bash
-nb config get @nimblebraininc/granola
-```
-```
-api_key: gr****
-```
-
-Values are stored in `~/.mpak/config.json` with `0600` permissions. See [Installing Apps](/using/installing-apps#setting-bundle-credentials) for details.
+See [Credentials](/config/credentials/) for setting API keys and secrets. Short version: export the env var the bundle declares, or run `nb config set <bundle> <key>=<value> -w <wsId>`.
 
 ## Hot-reloading
 

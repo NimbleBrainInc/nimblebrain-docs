@@ -1,111 +1,55 @@
 ---
 title: nb config
-description: Get, set, and clear per-bundle configuration values.
+description: Get, set, and clear per-bundle credentials in a workspace.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-`nb config` manages per-bundle settings like API keys and secrets. These values are stored in `~/.mpak/config.json` and injected into bundle processes as environment variables at startup.
+Workspace-scoped credential management. For when and why to use this versus a host env var, see [Credentials](/config/credentials/).
 
-## Usage
+## Synopsis
 
 ```
-nb config <action> <bundle> [key=value|key]
+nb config set   <bundle> <key>=<value>  -w <wsId>
+nb config get   <bundle>                -w <wsId>
+nb config clear <bundle> <key>          -w <wsId>
 ```
 
-## Actions
+The `-w`/`--workspace` flag is required on every action.
 
-| Action | Description |
-|--------|-------------|
-| `set <bundle> <key>=<value>` | Set a config value for a bundle |
-| `get <bundle> [key]` | Get config values for a bundle |
-| `clear <bundle> <key>` | Remove a config value |
+## Examples
 
-## Setting a value
-
-Store a configuration value for a bundle. The bundle is identified by its scoped name:
+Set a value:
 
 ```bash
-nb config set @nimblebraininc/granola api_key=grn_abc123def456
+nb config set @nimblebraininc/granola api_key=grn_abc123 -w ws_acme
 ```
 
-```
-Saved api_key for @nimblebraininc/granola
-```
-
-The value is written to `~/.mpak/config.json` with restricted permissions (mode `0600`). Bundles that declare `user_config` fields in their manifest pick up these values as environment variables via `${user_config.<field>}` references.
-
-## Getting values
-
-View the configured values for a bundle. Values are masked for security:
+Read current values (masked — first two characters, then `****`):
 
 ```bash
-nb config get @nimblebraininc/granola
+nb config get @nimblebraininc/granola -w ws_acme
 ```
-
 ```
 api_key: gr****
 ```
 
-Values longer than 4 characters show the first 2 characters followed by `****`. Shorter values show only `****`.
-
-If no config exists for the bundle:
+Remove a single key. If it was the last key, the file is deleted:
 
 ```bash
-nb config get @nimblebraininc/unknown
+nb config clear @nimblebraininc/granola api_key -w ws_acme
 ```
 
-```
-No config for @nimblebraininc/unknown
-```
+## Storage
 
-If no config file exists at all:
-
-```bash
-nb config get @nimblebraininc/granola
-```
-
-```
-No config found.
-```
-
-## Clearing a value
-
-Remove a specific key from a bundle's config:
-
-```bash
-nb config clear @nimblebraininc/granola api_key
-```
-
-```
-Cleared api_key for @nimblebraininc/granola
-```
-
-If the bundle has no remaining keys after clearing, its entry is removed from the config entirely.
-
-## Where config is stored
-
-Bundle configuration lives at `~/.mpak/config.json`, separate from your `nimblebrain.json`. This file is shared with the mpak CLI and has this structure:
-
-```json title="~/.mpak/config.json"
-{
-  "packages": {
-    "@nimblebraininc/granola": {
-      "api_key": "grn_abc123def456"
-    },
-    "@nimblebraininc/postgres": {
-      "connection_string": "postgres://user:pass@localhost/mydb"
-    }
-  }
-}
-```
+Values are written to `{workDir}/workspaces/{wsId}/credentials/{bundle-slug}.json` with mode `0o600`. See [Credentials → Store it per-workspace](/config/credentials/#store-it-per-workspace) for the slug rule and the surrounding directory layout.
 
 <Aside type="caution">
-  This file contains secrets. It is created with mode `0600` (owner read/write only). Do not commit it to version control.
+  Credential files contain secrets. Don't commit them; don't sync them to services that weaken the permission model.
 </Aside>
 
-## Related commands
+## Related
 
-- [nb bundle](/cli/bundle/) -- manage which bundles are installed
-- [nb reload](/cli/reload/) -- reload config on a running server after changing values
-- [nb status](/cli/status/) -- check workspace health
+- [Credentials](/config/credentials/) — when to use this vs. host env vars.
+- [`nb bundle`](/cli/bundle/) — install and remove bundles.
+- [`nb reload`](/cli/reload/) — pick up new values on a running server.
