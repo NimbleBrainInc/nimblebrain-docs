@@ -55,7 +55,7 @@ Add a `placements` array to your manifest's `_meta["ai.nimblebrain/host"]`:
 
 ## Priority sorting
 
-Within each slot, placements are sorted by `priority` (ascending). Lower values appear first.
+Within each slot, placements are sorted by `priority` (ascending). Lower values appear first. Placements with the same `priority` tie-break alphabetically by `label` (case-insensitive, falling back to `route`) — so two apps both at the default `100` render in a predictable order rather than whichever bundle happened to register first.
 
 ```
 priority: 10  → appears first
