@@ -1,67 +1,110 @@
 ---
 title: MCP Endpoint
-description: NimbleBrain exposes itself as a Streamable HTTP MCP server via the /mcp endpoint, allowing external MCP clients to access all installed tools.
+description: NimbleBrain exposes itself as a Streamable HTTP MCP server via /mcp with OAuth authentication, allowing external MCP clients to access all installed tools.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-The `/mcp` endpoint turns NimbleBrain into a **Streamable HTTP MCP server**. External MCP clients — Claude Code, Open WebUI, another NimbleBrain instance, or any MCP-compatible host — can connect and access all installed tools through a single endpoint.
+The `/mcp` endpoint turns NimbleBrain into a **Streamable HTTP MCP server**. External MCP clients — Claude Desktop, Claude Code, Cursor, Open WebUI, another NimbleBrain instance, or any MCP-compatible host — connect here and access every tool installed in the workspace.
 
-This makes NimbleBrain both an MCP **client** (connecting to installed bundles) and an MCP **server** (exposing composed tools to external hosts). The composition layer in between — tool aggregation, skill filtering, trust scoring — is what external clients benefit from without needing to know about individual bundles.
+This makes NimbleBrain both an MCP **client** (connecting to installed bundles) and an MCP **server** (exposing composed tools to external hosts). The composition layer in between — tool aggregation, feature gating, role filtering, workspace scoping — is what external clients benefit from without needing to know about individual bundles.
+
+For end-user client configuration walkthroughs, see [Connecting External Clients](/guide/mcp-connect).
 
 ## Endpoint
 
 | | |
 |---|---|
 | **Path** | `/mcp` |
+| **Methods** | `POST`, `GET`, `DELETE` |
 | **Protocol** | [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) (MCP transport) |
-| **Auth** | Bearer token (`NB_API_KEY`) |
+| **Auth** | OAuth 2.0 via WorkOS AuthKit (JWT bearer) — discovered via RFC 9728 |
+| **Scoping** | Every request is scoped to a workspace via the `X-Workspace-Id` header |
 
-## Connecting from Claude Code
+The three methods correspond to the Streamable HTTP session lifecycle:
 
-Add NimbleBrain as an MCP server in your Claude Code config:
+- **POST** — initialize a session or send subsequent JSON-RPC messages
+- **GET** — open the SSE stream for server-initiated messages (uses `mcp-session-id`)
+- **DELETE** — terminate a session
 
-```json title=".claude/mcp.json"
+## Quick connect (Claude Code)
+
+```bash
+claude mcp add --transport http nimblebrain https://your-instance/mcp \
+  --header "X-Workspace-Id: ws_your_workspace_id"
+```
+
+Or via `.mcp.json`:
+
+```json title=".mcp.json"
 {
   "mcpServers": {
     "nimblebrain": {
-      "type": "url",
-      "url": "https://your-nimblebrain-instance.com/mcp",
+      "type": "http",
+      "url": "https://your-instance/mcp",
       "headers": {
-        "Authorization": "Bearer your-nb-api-key"
+        "X-Workspace-Id": "ws_your_workspace_id"
       }
     }
   }
 }
 ```
 
-Claude Code can now discover and call all tools from your NimbleBrain workspace — every installed bundle's tools are available through the single `/mcp` endpoint.
+The first request triggers the OAuth flow — Claude Code opens a browser window for you to authenticate against AuthKit, then attaches the returned JWT on every subsequent request.
 
-## Connecting from other MCP clients
+## Authentication
 
-Any MCP client that supports Streamable HTTP transport can connect:
+Authentication is OAuth-based. There is no static API key to copy around.
 
-```bash
-# Test with curl (list tools)
-curl -X POST https://your-instance.com/mcp \
-  -H "Authorization: Bearer $NB_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","method":"tools/list","id":1}'
+The first time a client hits `/mcp` without a valid JWT, it receives a `401` with a `WWW-Authenticate` header:
+
 ```
+Bearer error="unauthorized",
+       error_description="Authorization required",
+       resource_metadata="https://your-instance/.well-known/oauth-protected-resource"
+```
+
+Clients that implement [RFC 9728](https://www.rfc-editor.org/rfc/rfc9728) (Protected Resource Metadata) and [RFC 8414](https://www.rfc-editor.org/rfc/rfc8414) (Authorization Server Metadata) — Claude Code, Claude Desktop, and Cursor all do — follow the discovery chain automatically, open a browser for user login against AuthKit, and attach the returned JWT on subsequent requests.
+
+<Aside type="note">
+When no `instance.json` is configured (dev mode), the `/mcp` endpoint accepts unauthenticated requests. This is intended for local development only.
+</Aside>
+
+## Workspace scoping
+
+Every MCP request is scoped to a workspace. External clients identify the workspace with the **`X-Workspace-Id`** request header.
+
+Workspace IDs have the form `ws_<alphanumeric>` and can be copied from **Settings → Profile → MCP Connection** in the web UI.
+
+If the user belongs to multiple workspaces and no header is set, the server returns `400` with the message "Multiple workspaces available. Set X-Workspace-Id header to specify which workspace to use." Set the header on every client config — it removes ambiguity if the user is later added to more workspaces.
 
 ## What's exposed
 
 The MCP endpoint exposes:
 
-- **All tools** from installed and running bundles — aggregated into the unified tool namespace
-- **Tool discovery** — `tools/list` returns every tool across all bundles
+- **All tools** from installed and running bundles in the workspace — aggregated into the unified tool namespace
+- **Tool discovery** — `tools/list` returns every tool visible to the caller
 - **Tool execution** — `tools/call` routes to the correct bundle transparently
 
-Feature-gated tools (e.g., `nb__manage_app` when `bundleManagement` is `false`) are excluded from both `tools/list` and `tools/call`.
+Two filters apply to both `tools/list` and `tools/call`:
 
-## Configuration
+- **Feature flags** — tools whose controlling flag is `false` are excluded (e.g., `nb__manage_app` when `bundleManagement: false`). See [Feature Flags](/config/features).
+- **Role** — admin-only tools (`nb__manage_users`, `nb__manage_workspaces`, `nb__set_model_config`) are excluded when the caller's org role is not `admin` or `owner`.
 
-The MCP endpoint is controlled by the `mcpServer` feature flag and two environment variables:
+## Sessions
+
+Each initialize creates a new MCP session tracked server-side.
+
+| Setting | Env var | Default | Description |
+|---------|---------|---------|-------------|
+| Max concurrent sessions | `MCP_MAX_SESSIONS` | `100` | New initialize returns `429` once this is reached |
+| Session TTL | `MCP_SESSION_TTL_MS` | `1800000` (30 min) | Idle timeout; sessions are swept every 60 s |
+
+Sessions are also closed on `DELETE /mcp` (with a valid `mcp-session-id`), transport close, or server shutdown.
+
+## Feature flag
+
+The endpoint is gated by the `mcpServer` feature flag:
 
 ```json title="nimblebrain.json"
 {
@@ -71,15 +114,42 @@ The MCP endpoint is controlled by the `mcpServer` feature flag and two environme
 }
 ```
 
-| Setting | Env var | Default | Description |
-|---------|---------|---------|-------------|
-| Enable/disable | — | `true` | Set `features.mcpServer: false` to disable |
-| Max sessions | `MCP_MAX_SESSIONS` | 100 | Maximum concurrent MCP client sessions |
-| Session TTL | `MCP_SESSION_TTL_MS` | 1,800,000 (30 min) | Inactivity timeout before a session is cleaned up |
+When `mcpServer` is `false`, all requests to `/mcp` return `404 Not found`. Set it to `false` if you don't need external MCP access.
 
-<Aside type="caution">
-When `features.mcpServer` is `false`, the `/mcp` endpoint returns 403 for all requests. This is the recommended setting if you don't need external MCP access.
-</Aside>
+## Testing manually
+
+In dev mode (no auth), you can hit the endpoint with curl:
+
+```bash
+# Initialize a session
+curl -i -X POST http://localhost:27247/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "X-Workspace-Id: ws_dev" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "initialize",
+    "params": {
+      "protocolVersion": "2025-03-26",
+      "capabilities": {},
+      "clientInfo": { "name": "curl", "version": "1.0" }
+    }
+  }'
+```
+
+Extract the `mcp-session-id` response header and use it on subsequent calls:
+
+```bash
+curl -X POST http://localhost:27247/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "X-Workspace-Id: ws_dev" \
+  -H "Mcp-Session-Id: <session-id>" \
+  -d '{"jsonrpc":"2.0","method":"tools/list","id":2}'
+```
+
+With auth enabled, include `Authorization: Bearer <jwt>` on every request.
 
 ## Architecture
 
@@ -87,26 +157,89 @@ When `features.mcpServer` is `false`, the `/mcp` endpoint returns 403 for all re
 External MCP Client          NimbleBrain
 ─────────────────          ─────────────
                            ┌──────────────────────┐
-tools/list  ──────────────►│  /mcp endpoint        │
+POST /mcp (initialize) ───►│  /mcp endpoint        │
                            │  (Streamable HTTP)    │
-tools/call  ──────────────►│         │              │
+GET  /mcp (SSE)       ────►│   session manager     │
+DELETE /mcp (close)   ────►│         │              │
                            │         ▼              │
                            │  ┌──────────────┐     │
                            │  │ ToolRegistry  │     │
+                           │  │ (workspace-   │     │
+                           │  │  scoped)      │     │
                            │  │              │     │
                            │  │ App 1 tools  │     │
                            │  │ App 2 tools  │     │
-                           │  │ App 3 tools  │     │
                            │  │ System tools │     │
                            │  └──────────────┘     │
                            └──────────────────────┘
 ```
 
-The external client sees a flat list of tools. NimbleBrain handles routing each `tools/call` to the correct bundle process internally.
+The external client sees a flat list of tools. NimbleBrain resolves the caller's identity, picks the right workspace registry, and routes each `tools/call` to the correct bundle process.
 
 ## Security
 
-- Authentication is required — the same `NB_API_KEY` used for the HTTP API
-- Session limits prevent resource exhaustion from runaway clients
-- Feature-gated tools are never exposed, even via MCP
-- Bundle env isolation still applies — the MCP endpoint doesn't bypass any security boundaries
+- **JWT verification** — access tokens are verified against AuthKit's JWKS endpoint; RS256-signed with issuer validation.
+- **Organization scoping** — when `organizationId` is set, only members of that WorkOS organization can authenticate.
+- **Workspace isolation** — every request is scoped to one workspace; tools cannot reach data in other workspaces.
+- **Feature and role filtering** — disabled and admin-only tools are never exposed.
+- **Session limits** — `MCP_MAX_SESSIONS` prevents resource exhaustion from runaway clients.
+- **Bundle env isolation** — bundle processes receive a filtered host environment; the MCP endpoint does not bypass that.
+
+## Setup (operators)
+
+The sections below are for operators deploying a NimbleBrain instance — not for client developers connecting to an existing one.
+
+### Configuring AuthKit
+
+To enable OAuth, set `authkitDomain` in `instance.json` under the WorkOS auth adapter:
+
+```json title="instance.json"
+{
+  "auth": {
+    "adapter": "workos",
+    "clientId": "client_...",
+    "redirectUri": "https://your-instance/v1/auth/callback",
+    "organizationId": "org_...",
+    "authkitDomain": "your-subdomain"
+  }
+}
+```
+
+`authkitDomain` is the subdomain part of your AuthKit URL (`your-subdomain.authkit.app` → `"your-subdomain"`). In the WorkOS Dashboard, enable **Client ID Metadata Document (CIMD)** under Connect → Configuration so MCP clients can self-identify without prior registration.
+
+### Discovery endpoints
+
+NimbleBrain serves two unauthenticated discovery endpoints that MCP clients fetch during the OAuth flow:
+
+**`GET /.well-known/oauth-protected-resource`** — [RFC 9728](https://www.rfc-editor.org/rfc/rfc9728) Protected Resource Metadata.
+
+```json
+{
+  "resource": "https://your-instance",
+  "authorization_servers": ["https://your-subdomain.authkit.app"],
+  "bearer_methods_supported": ["header"]
+}
+```
+
+**`GET /.well-known/oauth-authorization-server`** — [RFC 8414](https://www.rfc-editor.org/rfc/rfc8414) Authorization Server Metadata, proxied from AuthKit for backward compatibility with older MCP clients.
+
+### Standalone Connect (custom login UI)
+
+By default, AuthKit hosts the login page users see during the OAuth flow. If you want MCP clients to authenticate through your own login UI instead, configure [Standalone Connect](https://workos.com/docs/authkit/mcp/standalone-connect) in the WorkOS Dashboard:
+
+1. AuthKit redirects the user to your configured Login URI.
+2. Your application authenticates the user through its existing system.
+3. Your application calls AuthKit's completion API to finalize the OAuth flow.
+4. AuthKit issues tokens and returns control to the MCP client.
+
+NimbleBrain's side of the flow (JWKS verification, `/mcp` bearer handling, discovery endpoints) works identically — only the login UI changes.
+
+### Running behind a reverse proxy
+
+The OAuth `resource` URL advertised on `/.well-known/oauth-protected-resource` must match the scheme the client connected on. If you terminate TLS at an upstream proxy, see [Security → MCP OAuth behind a reverse proxy](/deploy/security/#mcp-oauth-behind-a-reverse-proxy) for the `X-Forwarded-Proto` configuration required per proxy (ALB, nginx, Caddy).
+
+## Related
+
+- [Connecting External Clients](/guide/mcp-connect) — end-user walkthroughs for Claude Code, Claude Desktop, Cursor
+- [Feature Flags](/config/features) — full list of flags and enforcement points
+- [Authentication](/api/authentication) — adapter configuration for the HTTP API

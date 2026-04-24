@@ -226,6 +226,76 @@ Caddy handles TLS automatically via Let's Encrypt.
 The `Secure` flag on the `nb_session` cookie is only set when the server detects a non-localhost hostname. Behind a reverse proxy that terminates TLS, this works correctly because the platform binds to `0.0.0.0`. If you test over plain HTTP on a non-localhost address, the cookie will be set with `Secure` but your browser will reject it.
 </Aside>
 
+## MCP OAuth behind a reverse proxy
+
+The `/mcp` endpoint and `/.well-known/oauth-*` endpoints advertise a `resource` URL in their OAuth metadata. Clients validate this value against the URL they connected to and **reject** responses whose scheme doesn't match (e.g. client connected via `https://…/mcp` but the server returned `resource: http://…`).
+
+NimbleBrain derives the scheme from the `X-Forwarded-Proto` header, falling back to the raw request scheme. When you terminate TLS at an upstream proxy, that proxy must set and preserve `X-Forwarded-Proto: https` end-to-end — otherwise OAuth discovery silently advertises `http://` and modern MCP clients fail with:
+
+```
+Protected resource http://your-host does not match expected https://your-host/mcp
+```
+
+<Tabs>
+<TabItem label="AWS ALB → web container">
+
+Works out of the box. The ALB sets `X-Forwarded-Proto` based on the actual client→ALB connection scheme, and the bundled `nimblebrain-web` Caddy container trusts forwarded headers from RFC 1918 sources:
+
+```txt title="web/Caddyfile (shipped)"
+{
+    servers {
+        trusted_proxies static private_ranges
+    }
+}
+```
+
+No additional config needed. Ensure the ALB targets `nimblebrain-web`, not the platform service directly.
+
+</TabItem>
+<TabItem label="nginx → platform (direct)">
+
+If you skip the bundled `web` container and front the platform yourself, propagate the header explicitly:
+
+```nginx
+location / {
+    proxy_pass http://nimblebrain-platform:27247;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+}
+```
+
+</TabItem>
+<TabItem label="Caddy → platform (direct)">
+
+```txt title="Caddyfile"
+{
+    servers {
+        trusted_proxies static private_ranges
+    }
+}
+
+your-host.example.com {
+    reverse_proxy nimblebrain-platform:27247
+}
+```
+
+`trusted_proxies` is only required if *another* proxy sits upstream of Caddy — otherwise Caddy sets `X-Forwarded-Proto` itself based on its listener scheme.
+
+</TabItem>
+</Tabs>
+
+### Verify
+
+After deploying, confirm the advertised scheme matches the client-facing URL:
+
+```bash
+curl -s https://your-host.example.com/.well-known/oauth-protected-resource | jq .resource
+# must be "https://your-host.example.com"
+```
+
+If it still returns `http://`, walk the proxy chain to find where `X-Forwarded-Proto` is being stripped or overwritten.
+
 ## Bundle trust
 
 MCP bundles run as subprocesses with access to the filesystem and network inside the container. Evaluate bundles before installing them.
