@@ -1,67 +1,96 @@
 ---
 title: Connecting External Clients
-description: Use NimbleBrain's tools from Claude Desktop, VS Code, or other MCP-compatible clients.
+description: Use NimbleBrain's tools from Claude Desktop, Claude Code, Cursor, or any other MCP-compatible client.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+import mcpConnectionCard from '../../../assets/guide/settings-mcp-connection.png';
 
-NimbleBrain can act as a tool server for external apps that support the MCP protocol — like Claude Desktop, VS Code with Copilot, or Claude Code. This means you can access all your NimbleBrain apps and tools from inside those clients without switching to the web UI.
+NimbleBrain can act as a tool server for external apps that support the MCP protocol — like Claude Desktop, Claude Code, Cursor, or VS Code. Connect once and every tool from every installed app in your workspace is available inside those clients, without switching to the web UI.
+
+## How it connects
+
+Authentication uses OAuth — there is no static API key to copy around. When you point a client at NimbleBrain:
+
+1. The client hits `/mcp` without credentials and gets a `401` with a `WWW-Authenticate` header pointing to NimbleBrain's discovery endpoint.
+2. The client follows [RFC 9728](https://www.rfc-editor.org/rfc/rfc9728) / [RFC 8414](https://www.rfc-editor.org/rfc/rfc8414) discovery to find the authorization server (AuthKit).
+3. A browser window opens for you to log in.
+4. The client receives a JWT and uses it on subsequent requests.
+
+Clients that support MCP OAuth discovery (Claude Code, Claude Desktop, Cursor) handle all of this automatically.
 
 ## What you need
 
-Your admin will provide two things:
+- **Instance URL** — the address of your NimbleBrain instance (e.g., `https://your-team.nimblebrain.ai`)
+- **Workspace ID** — found in **Settings → Profile** under the "MCP Connection" card. Always include it as the `X-Workspace-Id` header in your client config so connections keep working if you're later added to more workspaces.
 
-- **Instance URL** — The address of your NimbleBrain instance (e.g., `https://your-team.nimblebrain.ai`)
-- **API key** — Your personal authentication token
+<Image src={mcpConnectionCard} alt="MCP Connection card in Settings → Profile showing the workspace ID with a copy button." />
 
-You can find your workspace ID in **Settings > Profile** under the MCP Connection card.
-
-## Connecting from Claude Desktop
-
-Add NimbleBrain as an MCP server in your Claude Desktop settings:
-
-```json
-{
-  "mcpServers": {
-    "nimblebrain": {
-      "type": "url",
-      "url": "https://your-team.nimblebrain.ai/mcp",
-      "headers": {
-        "Authorization": "Bearer your-api-key"
-      }
-    }
-  }
-}
-```
-
-Once connected, Claude Desktop can discover and use all the tools from your NimbleBrain workspace — every installed app's capabilities are available through a single connection.
-
-## Connecting from Claude Code
-
-Add to your `.claude/mcp.json`:
-
-```json
-{
-  "mcpServers": {
-    "nimblebrain": {
-      "type": "url",
-      "url": "https://your-team.nimblebrain.ai/mcp",
-      "headers": {
-        "Authorization": "Bearer your-api-key"
-      }
-    }
-  }
-}
-```
-
-## Connecting from VS Code
-
-In VS Code with GitHub Copilot, add a server through the MCP settings panel. Use the same URL and API key as above.
-
-<Aside type="tip">
-  The external client sees all your tools as a flat list — it doesn't need to know about individual apps or bundles. NimbleBrain handles routing each tool call to the right app internally.
+<Aside type="note">
+  OAuth requires the `workos` auth adapter with an `authkitDomain` configured. On a dev-mode instance (no auth), the `/mcp` endpoint is open and you can skip the workspace header. See [MCP Endpoint](/api/mcp-endpoint) for the full setup.
 </Aside>
+
+## Claude Code
+
+Use the CLI:
+
+```bash
+claude mcp add --transport http nimblebrain https://your-team.nimblebrain.ai/mcp \
+  --header "X-Workspace-Id: ws_your_workspace_id"
+```
+
+Or add to your project's `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "nimblebrain": {
+      "type": "http",
+      "url": "https://your-team.nimblebrain.ai/mcp",
+      "headers": {
+        "X-Workspace-Id": "ws_your_workspace_id"
+      }
+    }
+  }
+}
+```
+
+## Claude Desktop
+
+Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
+
+```json
+{
+  "mcpServers": {
+    "nimblebrain": {
+      "type": "http",
+      "url": "https://your-team.nimblebrain.ai/mcp",
+      "headers": {
+        "X-Workspace-Id": "ws_your_workspace_id"
+      }
+    }
+  }
+}
+```
+
+The first time Claude Desktop uses the server, it will open a browser for OAuth login.
+
+## Cursor
+
+Open **Cursor Settings → MCP → Add Server**, choose the HTTP/URL-based server type, and set the URL to `https://your-team.nimblebrain.ai/mcp`. Cursor handles the OAuth flow automatically. See [Cursor's MCP documentation](https://docs.cursor.com/context/model-context-protocol) for the latest details.
+
+## Other MCP clients
+
+Any client that implements Streamable HTTP transport and either OAuth 2.0 (RFC 9728/8414 discovery) or a pre-issued bearer token can connect. See [MCP Endpoint](/api/mcp-endpoint) for the protocol-level reference, including the discovery endpoints and manual OAuth flow.
 
 ## What's exposed
 
-When you connect an external client, it gets access to all tools from apps installed in your workspace — the same tools the agent uses when you chat in the web UI. If your admin installs or removes an app, the change is reflected automatically.
+When an external client connects, it gets every tool installed in your workspace — the same tools the agent uses in the web UI. The client sees a flat tool list; NimbleBrain handles routing each call to the right app internally.
+
+Two filters apply:
+
+- **Feature flags** — tools gated by a disabled flag (e.g., `nb__manage_app` when `bundleManagement: false`) are hidden.
+- **Role** — admin-only tools (`nb__manage_users`, `nb__manage_workspaces`) are hidden from non-admin members.
+
+If your admin installs or removes an app, the change is reflected on the next `tools/list` call.
