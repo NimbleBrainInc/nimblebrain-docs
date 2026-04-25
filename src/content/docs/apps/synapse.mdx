@@ -255,6 +255,181 @@ Codegen sources:
 | `--from-server <url>` | Introspect a running MCP server via `tools/list` |
 | `--from-schema <dir>` | Generate CRUD types from Upjack entity schemas |
 
+## Long-running tools
+
+For tools whose work exceeds the stock MCP request timeout (~60s) — research runs, batch imports, multi-stage analyses — use `callToolAsTask` instead of `callTool`. The host returns a `CreateTaskResult` immediately with a `taskId`; the actual `CallToolResult` is fetched separately via `tasks/result` once the task reaches a terminal state.
+
+This implements the [MCP 2025-11-25 tasks utility](https://modelcontextprotocol.io/specification/2025-11-25) end-to-end across the iframe SDK, the platform bridge, and the bundled MCP server.
+
+<Aside type="caution">
+`callToolAsTask` is on `Synapse` (`createSynapse()`), not `App` (`connect()`). For task-aware apps, use `createSynapse()` and `<SynapseProvider>`. The `connect()` path is for short-running, request/response tools.
+</Aside>
+
+### When to reach for it
+
+| Tool shape | Use |
+|---|---|
+| Returns in `<30s`, simple result | `callTool` / `useCallTool` |
+| Returns in `<60s` but might pause for input/IO | `callTool` (acceptable) |
+| Long-running, multi-phase, or progress-emitting | `callToolAsTask` / `useCallToolAsTask` |
+| Returns in milliseconds (CRUD, lookups) | `callTool` |
+
+The agent itself uses task augmentation automatically when a tool declares `execution.taskSupport: "optional"` — see [Long-Running Tools (MCP Tasks)](/cli/long-running-tools) for the agent-side path. This page is about the **iframe-side** API for UIs that need to fire long-running tools from a button click and reflect lifecycle in the UI.
+
+### React hook (recommended)
+
+```tsx
+import { useCallToolAsTask } from '@nimblebrain/synapse/react';
+
+function ResearchPanel() {
+  const {
+    fire,         // Start (or restart) the task
+    task,         // Latest Task state, or null before fire()
+    result,       // ToolCallResult once terminal, otherwise null
+    error,        // Error on failure or rejection
+    isWorking,    // task.status ∈ {working, input_required}
+    isTerminal,   // task.status ∈ {completed, failed, cancelled}
+    cancel,       // Issue tasks/cancel for the active handle
+  } = useCallToolAsTask<{ query: string }, { report: string }>('start_research');
+
+  if (!task) {
+    return <button onClick={() => fire({ query: 'Q2 metrics' })}>Run research</button>;
+  }
+  if (isWorking) {
+    return <Spinner status={task.status} statusMessage={task.statusMessage} onCancel={cancel} />;
+  }
+  if (error) {
+    return <ErrorBox error={error} />;
+  }
+  return <Report data={result?.data} />;
+}
+```
+
+The hook subscribes to `notifications/tasks/status` for live updates and falls back to polling `tasks/get` if notifications don't arrive (the MCP spec marks status notifications as OPTIONAL — hosts MAY emit them but consumers MUST NOT depend on them).
+
+### Imperative API
+
+```typescript
+import { createSynapse } from '@nimblebrain/synapse';
+
+const synapse = createSynapse({ name: 'research-app', version: '1.0.0' });
+await synapse.ready;
+
+const handle = await synapse.callToolAsTask<{ query: string }, { report: string }>(
+  'start_research',
+  { query: 'Q2 metrics' },
+  { ttl: 3600_000 }, // optional — receiver may override
+);
+
+// `handle.task` has the initial CreateTaskResult.task: taskId, status="working", ttl, ...
+console.log('Started task', handle.task.taskId);
+
+// Subscribe to live status (optional notifications)
+const unsub = handle.onStatus((task) => {
+  console.log('status:', task.status, task.statusMessage);
+});
+
+// Block until terminal
+const result = await handle.result();
+unsub();
+
+// Or poll yourself
+const current = await handle.refresh();
+
+// Or cancel
+await handle.cancel();
+```
+
+### Authoring task-aware tools
+
+The server side declares `execution.taskSupport: "optional"` (or `"required"`) on the tool's `tools/list` entry. With FastMCP (Python), `TaskConfig` does this in one decorator:
+
+```python
+from fastmcp import FastMCP
+from fastmcp.server.tasks import TaskConfig
+
+mcp = FastMCP('research')
+
+@mcp.tool(task=TaskConfig(mode='optional'))
+async def start_research(query: str, ctx: Context) -> dict:
+    run = app.create_entity('research_run', { 'query': query, 'run_status': 'working' })
+    try:
+        for phase in phases:
+            await ctx.report_progress(phase.label)
+            app.update_entity('research_run', run['id'], { 'run_status': phase.label })
+            await phase.run()
+        app.update_entity('research_run', run['id'], { 'run_status': 'completed' })
+        return { 'run_id': run['id'], 'report': '...' }
+    except asyncio.CancelledError:
+        app.update_entity('research_run', run['id'], { 'run_status': 'cancelled' })
+        raise
+```
+
+- `mode="optional"` lets the same tool run inline (`callTool`) **or** as a task (`callToolAsTask`) — the client decides. Use this.
+- `mode="required"` rejects non-task calls with JSON-RPC `-32601`. Only use if you're certain every client supports tasks.
+- `mode="forbidden"` (the implicit default) never runs as a task.
+
+### Dual-channel pattern
+
+Tasks that create durable entities (a research run, an import job) should deliver the entity ID through the **entity channel** (`synapse/data-changed` / `useDataSync`), not the task result. The two channels carry different things:
+
+- **Task channel:** lifecycle (`working` → `completed`/`failed`/`cancelled`), progress messages, cancellation control.
+- **Entity channel:** the durable record — survives the LLM losing interest mid-run, the client disconnecting, or the agent process bouncing.
+
+UIs that need to navigate to the new entity should listen on `useDataSync` rather than awaiting `result()`:
+
+```tsx
+function ResearchPanel() {
+  const { fire, task, isWorking, cancel } = useCallToolAsTask('start_research');
+  const runs = useDataSync<ResearchRun>('research_run');
+
+  // Snapshot existing IDs at fire-time, navigate when a new one appears.
+  const knownIds = useRef(new Set<string>());
+  useEffect(() => {
+    if (task && isWorking) {
+      runs.forEach((r) => knownIds.current.add(r.id));
+    }
+  }, [task, isWorking]);
+
+  useEffect(() => {
+    const fresh = runs.find((r) => !knownIds.current.has(r.id));
+    if (fresh) navigate(`/runs/${fresh.id}`);
+  }, [runs]);
+
+  return isWorking
+    ? <Spinner onCancel={cancel} />
+    : <button onClick={() => fire({ query })}>Retry</button>;
+}
+```
+
+This pattern means the UI navigates within ~1s of the click — as soon as the bundle creates the entity — instead of blocking for minutes on the task result.
+
+### Capability detection and graceful fallback
+
+Hosts that don't support the tasks utility won't advertise the `tasks.requests.tools.call` capability. `callToolAsTask` throws when the host hasn't advertised it; wrap in a try/catch to fall back to `callTool` if you need to support legacy hosts:
+
+```typescript
+try {
+  const handle = await synapse.callToolAsTask('start_research', { query });
+  // ...task-aware UI path
+} catch (err) {
+  if (String(err).includes('tasks.requests.tools.call')) {
+    // Legacy host — fall back to a blocking call. Loses cancel/progress.
+    const result = await synapse.callTool('start_research', { query });
+  } else {
+    throw err;
+  }
+}
+```
+
+You can also feature-detect via `synapse._hostTasksCapability` (tri-state: `null` pre-handshake, `undefined` if absent, `TasksCapability` if present).
+
+### Polling and cancellation behavior
+
+- **Polling fallback.** `useCallToolAsTask` polls `tasks/get` every `pollInterval × 1.5` (default ~7.5s) when no `notifications/tasks/status` arrives. Polling stops automatically on terminal status, on `result()` settling, or after 5 consecutive refresh failures (host-side TTL eviction or bridge teardown).
+- **Cancel.** `handle.cancel()` issues `tasks/cancel`. Cancelling an already-terminal task surfaces a `-32602` error from the host.
+- **Unmount.** Unmounting a React component does **not** cancel the server-side task. The task continues; the user can re-fire to recover state. This is intentional — long-running work shouldn't disappear because someone navigated away briefly.
+
 ## Resize
 
 Control the iframe size reported to the host. Two modes:
