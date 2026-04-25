@@ -76,7 +76,7 @@ Every MCP request is scoped to a workspace. External clients identify the worksp
 
 Workspace IDs have the form `ws_<alphanumeric>` and can be copied from **Settings → Profile → MCP Connection** in the web UI.
 
-If the user belongs to multiple workspaces and no header is set, the server returns `400` with the message "Multiple workspaces available. Set X-Workspace-Id header to specify which workspace to use." Set the header on every client config — it removes ambiguity if the user is later added to more workspaces.
+If the header is missing, the server returns `400` with the message "Workspace required. Set the X-Workspace-Id header. The workspace ID is available from GET /v1/bootstrap or Settings → Profile → MCP Connection." — regardless of how many workspaces the user belongs to. The server does not pick a default on data endpoints.
 
 ## What's exposed
 

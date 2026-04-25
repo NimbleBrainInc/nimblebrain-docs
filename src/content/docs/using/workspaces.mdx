@@ -91,11 +91,15 @@ The agent installs the bundle and registers its tools in the workspace's tool re
 
 ## Switching workspaces
 
-In the web UI, switch workspaces from the workspace selector in the sidebar. The API uses the `X-Workspace-Id` header or the `workspaceId` field in chat requests to target a specific workspace.
+In the web UI, switch workspaces from the workspace selector in the sidebar. Every API request to a workspace-scoped endpoint (`/mcp`, `/v1/chat`, `/v1/tools/call`, `/v1/shell`, `/v1/events`) must include an `X-Workspace-Id` header. Chat requests continuing an existing conversation inherit the workspace from `conversationId` — no alternative addressing scheme.
+
+<Aside type="note">
+NimbleBrain guarantees every authenticated user has at least one workspace. One is provisioned on first login and re-created on the next login if manually deleted. Client code can rely on this invariant — `activeWorkspace` from `/v1/bootstrap` is always a valid workspace ID.
+</Aside>
 
 ## Bootstrap
 
-When the web UI loads, it calls `GET /v1/bootstrap` to get the current user's identity, workspace list with roles, and the active workspace's configuration. This single call provides everything needed to render the shell.
+Clients that don't yet know a workspace ID call `GET /v1/bootstrap` — the one endpoint where the server picks a default. It returns the authenticated user's identity, the full workspace list with roles, and the active workspace's shell configuration. Clients may send `X-Workspace-Id` on bootstrap as a soft hint (e.g., restoring a user's last selection from local storage); the server honors it when it matches a membership and falls back to the first workspace otherwise.
 
 ## What's next
 
