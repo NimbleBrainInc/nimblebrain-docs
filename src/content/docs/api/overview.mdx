@@ -78,7 +78,7 @@ Every endpoint requires authentication unless noted otherwise.
 | `POST` | `/v1/chat/stream` | Yes | Streaming chat (SSE) |
 | `GET` | `/v1/apps/:name/resources/:path` | Yes | Fetch a UI resource |
 | `POST` | `/v1/tools/call` | Yes | Direct tool invocation |
-| `GET` | `/v1/shell` | Yes | Shell configuration (placements, endpoints) |
+| `GET` | `/v1/shell` | Yes | Shell configuration (placements, endpoints) — requires `X-Workspace-Id` |
 | `GET` | `/v1/files/:fileId` | Yes | Serve an uploaded file |
 | `GET` | `/v1/events` | Yes | Workspace SSE event stream |
 | `GET` | `/v1/auth/provider` | No | Auth adapter info (local, oidc, or dev) |

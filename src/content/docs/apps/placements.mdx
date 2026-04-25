@@ -135,22 +135,28 @@ The `size` field provides a hint to the slot renderer:
 
 The `PlacementRegistry` is an in-memory store that tracks all active placements. It is updated when bundles are installed or uninstalled.
 
-**Registration** — When a bundle starts, its placements are registered. If the bundle has explicit `placements`, they are used directly. If it only has `primaryView`, `registerLegacy()` converts it to a single `"main"` placement.
+Every entry is either **ambient** (no `wsId` — platform-provided views like Home, Conversations, Files, Settings; always present inside any workspace) or **workspace-scoped** (installed bundles, visible only to members of that workspace). The registry exposes a single read method, `forWorkspace(wsId)`, which returns ambient + scoped entries merged and sorted. There is deliberately no "return everything" accessor — in a multi-tenant host, no legitimate caller wants placements unrelated to a workspace.
 
-**Querying** — `forSlot(slot)` returns all entries matching the slot (including sub-slots), sorted by priority ascending.
+**Registration** — When a bundle starts, its placements are registered against the installing workspace's `wsId`. If the bundle has explicit `placements`, they are used directly. If it only has `primaryView`, `registerLegacy()` converts it to a single `"main"` placement.
 
-**Unregistration** — When a bundle is uninstalled, all its placements are removed.
+**Querying** — `forWorkspace(wsId)` returns ambient entries plus entries scoped to `wsId`, sorted by slot then priority (lower first).
+
+**Unregistration** — When a bundle is uninstalled, its placements for that workspace are removed. Other workspaces' entries for the same bundle are untouched.
 
 ```typescript
-// Register explicit placements
-registry.register("my-app", [
-  { slot: "sidebar", resourceUri: "ui://nav", priority: 50, label: "My App" },
-  { slot: "main", resourceUri: "ui://dashboard", route: "my-app" },
-]);
+// Register explicit placements, scoped to a workspace
+registry.register(
+  "my-app",
+  [
+    { slot: "sidebar", resourceUri: "ui://nav", priority: 50, label: "My App" },
+    { slot: "main", resourceUri: "ui://dashboard", route: "my-app" },
+  ],
+  "ws_engineering",
+);
 
-// Query sidebar items (includes sidebar.* sub-slots)
-const items = registry.forSlot("sidebar");
-// → sorted by priority, includes sidebar, sidebar.conversations, etc.
+// Read the merged ambient + workspace-scoped list
+const items = registry.forWorkspace("ws_engineering");
+// → sorted by slot then priority
 ```
 
 ## Example: sidebar + main view

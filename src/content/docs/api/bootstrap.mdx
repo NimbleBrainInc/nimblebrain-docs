@@ -7,9 +7,18 @@ import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 The Bootstrap API returns everything a client needs to initialize: the authenticated user's identity, their workspaces, and the active workspace's shell configuration. The web UI calls this on page load.
 
+Bootstrap is the discovery endpoint — the one place the server picks a default workspace for the caller. Data endpoints (`/mcp`, `/v1/chat`, `/v1/tools/call`, `/v1/shell`, `/v1/events`) treat `X-Workspace-Id` as authoritative and reject requests that omit it. Same header name, different strictness by endpoint class.
+
 ## GET /v1/bootstrap
 
 Returns the current user, their workspaces with roles, and the shell configuration for the active workspace.
+
+**Request headers:**
+
+| Header | Required | Description |
+|---|---|---|
+| `Authorization` | Yes | `Bearer <token>` — see [Authentication](/api/authentication) |
+| `X-Workspace-Id` | No | **Soft hint.** If present and the user is a member of this workspace, it becomes `activeWorkspace` in the response. Otherwise ignored and the first membership is returned. Clients use this to restore a user's last-selected workspace from local storage. |
 
 **Response:**
 
@@ -50,15 +59,16 @@ Returns the current user, their workspaces with roles, and the shell configurati
 |-------|------|-------------|
 | `user` | `object` | Authenticated user identity (id, name, email, role) |
 | `workspaces` | `array` | Workspaces the user belongs to, with their role in each |
-| `activeWorkspace` | `string` | ID of the currently active workspace |
+| `activeWorkspace` | `string` | ID of the currently active workspace. Always populated — the server enforces the invariant that every authenticated user has at least one workspace (provisioned at login, re-created on next login if externally deleted). |
 | `shell` | `object` | Shell configuration — sidebar placements, route endpoints |
 | `config` | `object` | Runtime configuration — model, iteration limits, token limits |
 
 **Error responses:**
 
-| Status | Condition |
-|--------|-----------|
-| 401 | Not authenticated |
+| Status | Error code | Condition |
+|--------|-----------|-----------|
+| 401 | — | Not authenticated |
+| 500 | `workspace_invariant_violation` | Authenticated user reached bootstrap with zero workspaces. Provisioning should have run at login; this indicates a broken identity-layer path rather than client misuse. |
 
 **Example:**
 
