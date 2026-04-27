@@ -93,6 +93,7 @@ export default defineConfig({
               { label: 'UI Resources', slug: 'apps/ui-resources' },
               { label: 'Theming', slug: 'apps/theming' },
               { label: 'Placements & Navigation', slug: 'apps/placements' },
+              { label: 'Custom Instructions', slug: 'apps/custom-instructions' },
               { label: 'Local Development', slug: 'apps/local-dev' },
               { label: 'Publishing to mpak', slug: 'apps/publishing' },
               { label: 'Example: Hello World App', slug: 'apps/hello-world' },
