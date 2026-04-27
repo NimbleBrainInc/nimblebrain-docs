@@ -57,7 +57,7 @@ These have no spec equivalent and degrade to no-ops in non-NimbleBrain hosts.
 | `synapse/download-file` | App → Host | Trigger a file download in the browser. |
 | `synapse/persist-state` | App → Host | Persist widget state across sessions. |
 | `synapse/state-loaded` | Host → App | Load previously persisted widget state. |
-| `synapse/request-file` | App → Host | Open native file picker. |
+| `synapse/request-file` | App → Host | Open native file picker; the host persists each chosen file to the workspace store and returns `{ id, filename, mimeType, size }`. |
 | `synapse/keydown` | App → Host | Forward keyboard shortcuts to the host. |
 
 ## Initialization handshake
