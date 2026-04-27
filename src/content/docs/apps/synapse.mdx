@@ -630,11 +630,27 @@ synapse.chat('Update this contact', {
 
 synapse.openLink('https://example.com');
 synapse.saveFile('report.csv', csvContent, 'text/csv');
-synapse.pickFile({ accept: '.csv,.json' });
+
+// Open the host's native file picker. The host persists each picked
+// file to the workspace store and returns a stable file ID — bytes
+// never cross the iframe boundary, so uploads aren't bounded by the
+// tool-call JSON limit.
+const file = await synapse.pickFile({ accept: '.csv,.json' });
+// → { id: 'fl_…', filename: 'data.csv', mimeType: 'text/csv', size: 12345 } | null
+
+// Pass the ID to a tool. Tools read the bytes server-side via the
+// host's file APIs.
+if (file) {
+  await synapse.callTool('ingest_csv', { file_id: file.id });
+}
 ```
 
 <Aside type="note">
-In non-NimbleBrain hosts, `action()`, `chat()`, and `saveFile()` are silent no-ops. `openLink()` falls back to `window.open()`.
+In non-NimbleBrain hosts, `action()`, `chat()`, and `saveFile()` are silent no-ops. `openLink()` falls back to `window.open()`. `pickFile()` / `pickFiles()` throw — the file picker depends on host-side persistence.
+</Aside>
+
+<Aside type="caution">
+`pickFile` / `pickFiles` were broken in NimbleBrain hosts before `@nimblebrain/synapse@0.8.0` (the SDK sent the wrong method name; the call would hang). The result shape also changed in 0.8.0 from `{ base64Data, filename, mimeType, size }` to `{ id, filename, mimeType, size }`. If you need bytes inline for a small generated file, write a tool that takes a file ID and have it read the file server-side.
 </Aside>
 
 ## Theming
