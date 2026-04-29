@@ -1,58 +1,97 @@
 ---
 title: Settings & Preferences
-description: Customize your profile, choose a theme, select AI models, and view usage analytics.
+description: Customize your profile, manage your workspace, and configure organization-wide settings.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-Open settings from the **workspace selector** dropdown in the sidebar — click your workspace name, then select **Settings**.
+NimbleBrain organizes settings by **scope** — what each setting affects:
 
-## Profile
+- **You** — your personal profile (theme, display name, timezone). Lives outside `/settings`; reach it via the **avatar menu** in the bottom-left of the sidebar.
+- **This Workspace** — settings for the workspace you're currently active in (its name, members, instructions, app config, usage). Visible to all workspace members; admin-only writes for most.
+- **Organization** — admin-only settings that affect every workspace (model defaults, user management, the workspace catalog).
 
-![Settings profile tab showing display name, theme picker, and MCP connection](../../../assets/guide/settings-profile.png)
+Open settings from the **workspace selector** dropdown in the sidebar — click your workspace name, then select **Settings** — or directly via `/settings`.
 
-The Profile tab lets you customize your identity:
+## Your profile (`/profile`)
 
-- **Display Name** — How your name appears to teammates in shared conversations
-- **Email** — Your login email (read-only)
-- **Role** — Your role in the current workspace (read-only)
-- **Timezone** — Used for scheduling and time-related responses
-- **Theme** — Choose between System (follows your OS), Light, or Dark
+Your profile is reachable any time from the **avatar menu** at the bottom-left of the sidebar. Click your avatar → **Profile settings**.
+
+- **Display Name** — How your name appears to teammates in shared conversations.
+- **Email** — Your login email (read-only).
+- **Role** — Your org-level role (read-only).
+- **Timezone** — Used for scheduling and time-related responses.
+- **Theme** — System (follows your OS), Light, or Dark.
 
 Click **Save** after making changes.
 
-## Model selection
+The avatar menu also has a **Sign out** action.
 
-The Model tab lets you choose which AI models the agent uses:
+## This Workspace
 
-- **Default model** — The primary model for chat conversations
-- **Fast model** — A faster model for quick responses when selected
-- **Reasoning model** — A model optimized for complex, multi-step reasoning
+This section reflects the workspace you're currently active in. Switch workspaces via the workspace selector at the top of the sidebar; the **This Workspace** section updates immediately.
 
-Your admin may have pre-configured these, but you can adjust them to your preference. The dropdown shows available models from configured providers.
+### General (`/settings/workspace/general`)
 
-You can also adjust:
-
-- **Max iterations** — How many tool-call loops the agent can run per response
-- **Max input/output tokens** — Limits on conversation and response length
+- **Workspace name** — what shows up in the switcher and shared conversations.
+- **MCP Connection** — your workspace ID, copyable. Use this as the `X-Workspace-Id` header when connecting external MCP clients (Claude Desktop, VS Code, Cursor, etc.). See [Connecting External Clients](/guide/mcp-connect) for setup.
+- **Workspace Instructions** — custom instructions injected into every conversation in this workspace, on top of organization-wide policies. Markdown editor with an 8 KB cap. Workspace admins (or org admins/owners) can edit; everyone else can read.
 
 <Aside type="tip">
-  If you're unsure which model to pick, the defaults work well for most tasks. You might switch to the fast model for simple questions and the reasoning model for complex analysis.
+  Workspace instructions are great for team conventions: tone of voice for shared documents, default priorities for triage, citation policies for engineering. The agent picks them up on every turn — no need to repeat them in chat.
 </Aside>
 
-## Usage analytics
+### Members (`/settings/workspace/members`)
 
-![Usage analytics tab with cost chart and token breakdown](../../../assets/guide/settings-usage.png)
+Read-only list of who belongs to this workspace and their role (admin / member). To add or remove members, organization admins manage workspace membership from the **Organization → Workspaces** view.
 
-The Usage tab shows how your workspace is using the platform:
+### Usage (`/settings/workspace/usage`)
 
-- **Cost over time** — A chart showing daily, weekly, or monthly spending
-- **Token breakdown** — Input tokens, output tokens, cache reads, and cache creation
-- **Model usage** — Which models are being used and how much each costs
-- **Activity stats** — Total LLM calls, average response time, and conversation count
+Per-workspace usage analytics:
 
-Use the period selector (Day / Week / Month / All) to adjust the time range.
+- **Cost over time** — daily, weekly, or monthly spending.
+- **Token breakdown** — input, output, cache reads, cache creation.
+- **Model usage** — which models the agent is using and what each costs.
+- **Activity stats** — LLM calls, average response time, conversation count.
 
-## MCP connection
+Period selector (Day / Week / Month / All) adjusts the time range.
 
-The Profile tab includes a **MCP Connection** card with your workspace ID. If you want to connect an external client (like Claude Desktop or VS Code) to your NimbleBrain instance, you'll need this ID. See [Connecting External Clients](/guide/mcp-connect) for setup instructions.
+### Apps (`/settings/workspace/apps`)
+
+Per-bundle settings for the apps installed in this workspace. Apps appear here only when their author has registered a settings panel — otherwise the bundle has no settings UI to surface.
+
+Some apps support **custom instructions** of their own — saved guidance the agent picks up whenever you're using that app. Whether an app supports this is up to the app author. When supported, the editor appears inside that app's settings panel; storage and validation are owned by the app, but the platform reads the saved text on every conversation turn and includes it in the agent's system prompt — same way [bundle-author docs](/apps/custom-instructions/) describe it from the other side.
+
+## Organization (admin only)
+
+Visible only to organization admins and owners. Hidden from regular members.
+
+### Model (`/settings/org/model`)
+
+Choose which AI models the agent uses across **every** workspace:
+
+- **Default model** — primary model for chat.
+- **Fast model** — cheaper / faster model for quick auxiliary tasks.
+- **Reasoning model** — most capable model for complex analysis.
+
+Plus runtime limits — **max iterations**, **max input/output tokens**.
+
+<Aside type="caution">
+  Model configuration is platform-wide. Changes affect every workspace and every user immediately. Restrict to org admins/owners.
+</Aside>
+
+### Workspaces (`/settings/org/workspaces`)
+
+Org-wide workspace catalog. Click into any workspace to manage its members, view its bundles, and see metadata. Workspace creation, deletion, and member management for any workspace lives here.
+
+To edit a specific workspace's name or instructions, switch into that workspace via the workspace selector and use **This Workspace → General**.
+
+### Users (`/settings/org/users`)
+
+Manage user accounts at the organization level — invite, remove, or change someone's org role.
+
+## Sidebar layout
+
+The sidebar collapses with the small toggle on the right edge of the sidebar (or `⌘B` / `Ctrl-B`). Collapsing hides labels but keeps icons; expanding restores the full nav.
+
+The bottom of the sidebar shows your avatar and name (the **avatar menu**); clicking opens a popover with **Profile settings** and **Sign out**.
