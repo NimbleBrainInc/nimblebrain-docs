@@ -1,0 +1,197 @@
+---
+title: HTTP Proxy
+description: Expose a bundle-local HTTP server (Astro preview, Jupyter kernel, etc.) through the platform via a same-origin URL.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Some apps need to render content from an HTTP server they control — an `astro preview` of a user's site, a Jupyter kernel gateway, a notebook renderer, anything that's easier to ship as a server than as a static `ui://` resource.
+
+The **http-proxy primitive** lets a bundle expose its own loopback HTTP server through the platform's web origin. The browser hits a same-origin path, the platform forwards it to the bundle's local port, and the response comes back stripped of credentials and embeddable in an `iframe`.
+
+This is opt-in per bundle and per workspace. Most apps don't need it.
+
+## When to use it
+
+Reach for http-proxy when:
+
+- Your app's UI is a server-rendered page (Astro, Next.js, Rails, Django) and a static `ui://` resource isn't enough.
+- You need URL-based navigation inside the iframe (deep links, multi-page sites).
+- Your underlying tool *is* an HTTP service (Jupyter, a renderer, a dashboard).
+
+Don't reach for it when:
+
+- A static HTML `ui://` resource works. Use [UI Resources](/apps/ui-resources) — no extra trust surface.
+- You only need to make API calls from a `ui://` page. Use [`useCallTool`](/apps/synapse) or fetch directly; declare the host in `_meta.ui.csp.connectDomains`.
+
+## Quick example
+
+A bundle that runs `astro preview` on `127.0.0.1:4321` and wants the browser to load it:
+
+```json title="manifest.json"
+{
+  "_meta": {
+    "ai.nimblebrain/http-proxy": {
+      "target": "http://127.0.0.1:4321",
+      "mount": "preview",
+      "websocket": true
+    }
+  }
+}
+```
+
+The platform exposes that server at:
+
+```
+/v1/ws/<workspaceId>/apps/<bundleName>/preview/*
+```
+
+For a bundle named `@org/my-app` running for workspace `ws_demo`, the URL is `/v1/ws/ws_demo/apps/my-app/preview/`. The bundle is responsible for spawning, lifecycle-managing, and serving its loopback HTTP server — the platform only proxies.
+
+## Manifest declaration
+
+`_meta["ai.nimblebrain/http-proxy"]`:
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `target` | `string` | Yes | URL of the bundle's HTTP server. Must point at a loopback host (`127.0.0.1`, `::1`, `localhost`) and use `http://` or `https://`. |
+| `mount` | `string` | Yes | Single path segment under `/apps/<bundle>/`. Cannot be `resources`, `tools`, `mcp`, or `events` (reserved). Cannot contain `/`. |
+| `websocket` | `boolean` | No | Hints that the upstream supports WebSocket upgrades (HMR, live channels). Declared today; upgrade forwarding is not yet wired through the route. |
+
+If `target` doesn't pass the loopback check, the proxy is silently disabled and a warning logs at bundle start. See [Why loopback only](#why-loopback-only) below.
+
+## Route shape
+
+```
+/v1/ws/<workspaceId>/apps/<bundleName>/<mount>/<rest>
+```
+
+The full incoming path is forwarded to the upstream verbatim. That means your loopback server must serve content at the *same* path — usually by configuring a base URL.
+
+For Astro:
+
+```bash
+astro preview --base /v1/ws/${NB_WORKSPACE_ID}/apps/my-app/preview
+```
+
+For other servers, set the equivalent base path / prefix option. Without this, absolute URLs in your HTML won't line up with the public path and the page will 404 its own assets.
+
+The platform injects `NB_PROXY_PREFIX` (see [below](#bundle-environment-variables)) so you don't have to assemble the path yourself.
+
+<Aside type="tip">
+Workspace ID lives in the URL path, not a header. Browser iframe loads can't set custom headers, so the platform validates and authorizes the workspace from the path itself. Membership is enforced per-request against the authenticated identity.
+</Aside>
+
+## Bundle environment variables
+
+The platform injects three env vars into your bundle's process when http-proxy is declared and the platform has a workspace context:
+
+| Variable | Value | Use it for |
+|----------|-------|------------|
+| `NB_WORKSPACE_ID` | The workspace this instance is running for | Per-workspace data scoping; building URLs that include the workspace segment. |
+| `NB_PROXY_PREFIX` | `/v1/ws/<wsId>/apps/<bundle>/<mount>` | Pass to your upstream as its base path (`astro preview --base $NB_PROXY_PREFIX`, equivalent for others). |
+| `NB_PUBLIC_ORIGIN` | The platform's browser-facing origin (e.g. `http://localhost:27246`) | Declare in your `ui://` resource's CSP so the iframe can frame the proxied URL. Operator-set; falls back to first `ALLOWED_ORIGINS` entry. |
+
+If `NB_PUBLIC_ORIGIN` isn't set, omit the CSP block entirely — the host applies its restrictive default and the iframe simply won't load. That's the right failure mode: visible, fixable by setting one env var.
+
+## Required UI metadata
+
+To frame the proxied URL inside your `ui://` resource, declare it in the resource's CSP:
+
+```python title="server.py"
+import os
+from fastmcp import FastMCP
+
+mcp = FastMCP("my-app")
+
+def _ui_csp_meta() -> dict:
+    public_origin = (os.getenv("NB_PUBLIC_ORIGIN") or "").rstrip("/")
+    if not public_origin:
+        return {}
+    return {
+        "ui": {
+            "csp": {
+                "frameDomains": [public_origin],
+                "connectDomains": [public_origin],
+            }
+        }
+    }
+
+@mcp.resource(
+    "ui://my-app/main",
+    mime_type="text/html;profile=mcp-app",
+    meta=_ui_csp_meta() or None,
+)
+def main_ui() -> str:
+    return load_html()
+```
+
+The iframe inside your UI resource then loads:
+
+```html
+<iframe src={`${publicOrigin}/v1/ws/${wsId}/apps/my-app/preview/`}></iframe>
+```
+
+The platform reads `NB_PUBLIC_ORIGIN` and `NB_WORKSPACE_ID` and surfaces them however your UI prefers (inlined into the HTML, set as `<meta>` tags, fetched at runtime).
+
+## Trust model
+
+A bundle declaring http-proxy runs as **same-origin code in the authenticated user's session**. The iframe loaded from the proxy is sandboxed `allow-scripts allow-same-origin`, which means the bundle's preview JS can read cookies for the platform origin, call same-origin REST APIs as the user, and read top-frame DOM where the host UI permits it.
+
+**Treat http-proxy bundles like browser extensions: the operator vouches for the code.**
+
+### Defenses the platform enforces
+
+| Defense | Where |
+|---------|-------|
+| `target` restricted to loopback hosts | Manifest parse; off-loopback is rejected silently with a warning. |
+| `Authorization`, `Cookie`, `X-Workspace-Id` stripped from forwarded requests | Bundle's loopback server cannot read user credentials. |
+| `Set-Cookie` / `Set-Cookie2` stripped from upstream responses | Bundle cannot plant cookies on the platform's origin. |
+| Per-request workspace membership check | `wsId` from the URL is verified against the authenticated identity. |
+| `Workspace.allowHttpProxy = false` | Per-workspace kill switch. |
+| `Content-Security-Policy` and `X-Frame-Options` from upstream are replaced | Platform sets `X-Frame-Options: SAMEORIGIN`; cross-origin embedding stays denied. |
+
+### What the platform does NOT defend against today
+
+- **Cross-origin isolation per bundle.** All bundles run on the platform's origin. A malicious bundle that the user installed could attack other same-origin code. For untrusted-bundle marketplaces, the next investment is subdomain-per-bundle + COEP.
+- **WebSocket upgrades.** Declared today (`"websocket": true` in the manifest), but not yet forwarded through the route. HTTP methods only.
+
+### Why loopback only
+
+The proxy primitive exists for bundles to expose **their own** local HTTP server. There is no legitimate reason for the target to point anywhere else.
+
+Allowing arbitrary hosts would turn the proxy into an SSRF gadget that can reach:
+
+- Cloud metadata services (`169.254.169.254`)
+- Internal RFC1918 networks
+- Arbitrary external endpoints
+
+…all with the authenticated user's credentials attached. Loopback-only closes that off.
+
+## Per-workspace kill switch
+
+Operators can disable http-proxy globally for a workspace:
+
+```json title="workspace.json"
+{
+  "id": "ws_demo",
+  "allowHttpProxy": false
+}
+```
+
+When set, every proxy request for that workspace returns `403 proxy_disabled` regardless of which bundles declare http-proxy. Default is `true` (enabled).
+
+## Limitations
+
+- **Loopback hosts only.** See [Why loopback only](#why-loopback-only).
+- **HTTP methods only.** WebSocket upgrade is declared but not yet forwarded — your `astro preview` will work, but Vite HMR behind the proxy won't.
+- **Single mount per bundle.** Declare one HTTP server per bundle. If you need multiple, run a router on a single port.
+- **Bundle owns the lifecycle.** The platform doesn't spawn or supervise your loopback server. Start it in your MCP server's boot phase, kill the process group on shutdown.
+
+## Reference implementation
+
+[`synapse-astro-editor`](https://github.com/NimbleBrainInc/synapse-astro-editor) is the first bundle to use http-proxy in production. It runs `astro build` + `astro preview` against a user's GitHub repo and serves the rendered site through the proxy. Worth reading for:
+
+- How to spawn a long-running upstream server with proper process-group cleanup (`src/mcp_astro_editor/astro_runtime.py`).
+- How to declare the CSP block on `ui://` resources from `NB_PUBLIC_ORIGIN` (`src/mcp_astro_editor/server.py`).
+- How to thread `NB_PROXY_PREFIX` into the upstream server's base config.
