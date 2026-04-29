@@ -91,6 +91,7 @@ export default defineConfig({
               { label: 'Manifest Reference', slug: 'apps/manifest' },
               { label: 'MCP App Bridge', slug: 'apps/bridge' },
               { label: 'UI Resources', slug: 'apps/ui-resources' },
+              { label: 'HTTP Proxy', slug: 'apps/http-proxy' },
               { label: 'Theming', slug: 'apps/theming' },
               { label: 'Placements & Navigation', slug: 'apps/placements' },
               { label: 'Custom Instructions', slug: 'apps/custom-instructions' },
