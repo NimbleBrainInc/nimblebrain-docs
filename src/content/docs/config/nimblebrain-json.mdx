@@ -98,7 +98,7 @@ If no config file exists at the resolved path, NimbleBrain auto-creates a minima
 | `maxHistoryMessages` | `integer` | `40` | Max conversation message groups in context. Tool call/result pairs count as one group. |
 | `maxToolResultSize` | `integer` | `1000000` | Max characters for a single tool result. `0` disables the cap. |
 | `store` | `object` | `{ "type": "memory" }` | Conversation storage backend. See [store](#store). |
-| `sessionStore` | `object` | `{ "type": "memory", "ttlMs": 28800000 }` | MCP session metadata store for `/mcp`. See [sessionStore](#sessionstore). |
+| `sessionStore` | `object` | `{ "type": "memory", "ttlSeconds": 28800 }` | MCP session metadata store for `/mcp`. See [sessionStore](#sessionstore). |
 | `logging` | `object` | — | Structured logging config. See [logging](#logging). |
 | `http` | `object` | `{ "port": 27247, "host": "127.0.0.1" }` | HTTP server config. Omit for programmatic-only use. |
 | `features` | `object` | all `true` | Feature flags. See [Feature Flags](/config/features). |
@@ -198,7 +198,7 @@ Pluggable metadata store for MCP HTTP sessions. Tracks each `Mcp-Session-Id` and
     {
       "sessionStore": {
         "type": "memory",
-        "ttlMs": 28800000
+        "ttlSeconds": 28800
       }
     }
     ```
@@ -210,7 +210,7 @@ Pluggable metadata store for MCP HTTP sessions. Tracks each `Mcp-Session-Id` and
     {
       "sessionStore": {
         "type": "redis",
-        "ttlMs": 28800000,
+        "ttlSeconds": 28800,
         "redis": {
           "url": "${REDIS_URL}",
           "keyPrefix": "nb:mcp:session:"
@@ -226,7 +226,7 @@ Pluggable metadata store for MCP HTTP sessions. Tracks each `Mcp-Session-Id` and
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `type` | `"memory"` \| `"redis"` | `"memory"` | Provider. `redis` requires `redis.url`. |
-| `ttlMs` | `integer` (ms) | `28800000` (8 h) | Idle TTL. Each request resets the clock — actively-used sessions never expire. |
+| `ttlSeconds` | `integer` (s) | `28800` (8 h) | Idle TTL. Each request resets the clock — actively-used sessions never expire. |
 | `redis.url` | `string` | — | Redis connection URL (`redis://` or `rediss://`). Required when `type` is `"redis"`. Supports `${VAR}` env expansion. |
 | `redis.keyPrefix` | `string` | `"nb:mcp:session:"` | Hash key prefix for session entries. |
 
@@ -270,11 +270,11 @@ When `type: "redis"` is set without a `redis.url`, NimbleBrain refuses to fall b
 
 Drop any one of these and multi-replica is broken in a different way: PVC deadlock, re-init storms, partitioned session view, or deploy-time outages.
 
-### Tuning `ttlMs`
+### Tuning `ttlSeconds`
 
-The 8 h default is tuned for a connector left open during a working day. Tighten it (e.g. `1800000` for 30 minutes) if you want sessions to evict faster on idle; loosen it if your typical usage pattern leaves connectors open across days.
+The 8 h default is tuned for a connector left open during a working day. Tighten it (e.g. `1800` for 30 minutes) if you want sessions to evict faster on idle; loosen it if your typical usage pattern leaves connectors open across days.
 
-`MCP_SESSION_TTL_MS` env var overrides this when set.
+`MCP_SESSION_TTL_SECONDS` env var overrides this when set.
 
 ## logging
 

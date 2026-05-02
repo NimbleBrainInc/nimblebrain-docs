@@ -98,7 +98,7 @@ Each initialize creates a new MCP session tracked server-side.
 | Setting | Env var | Default | Description |
 |---------|---------|---------|-------------|
 | Max concurrent sessions | `MCP_MAX_SESSIONS` | `100` | New initialize returns `429` once this is reached. |
-| Session TTL | `MCP_SESSION_TTL_MS` | `28800000` (8 h) | Idle timeout. Each request resets the clock — an actively-used session never expires. |
+| Session TTL | `MCP_SESSION_TTL_SECONDS` | `28800` (8 h) | Idle timeout. Each request resets the clock — an actively-used session never expires. |
 
 Sessions are also closed on `DELETE /mcp` (with a valid `mcp-session-id`), transport close, or server shutdown.
 
