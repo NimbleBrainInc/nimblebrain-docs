@@ -28,7 +28,7 @@ NimbleBrain reads several environment variables for authentication, server bindi
 | `NB_TOOL_RATE_LIMIT` | No | `60` | Tool calls per minute per user. |
 | `NB_TIMEZONE` | No | — | Default IANA timezone (e.g. `America/Los_Angeles`) for time-aware features. |
 | `NB_HOST_URL` | No | `http://localhost:27247` | Public host URL, used to build OAuth redirects. |
-| `MCP_MAX_SESSIONS` | No | `100` | Max concurrent MCP sessions on `/mcp`. New initialize returns `429` once reached. Non-positive / non-integer values are rejected with a warning and the default is used. |
+| `MCP_MAX_SESSIONS` | No | `100` | Max concurrent MCP sessions on `/mcp`. New initialize returns `429` once reached. Non-positive / non-integer values are rejected with a warning and the default is used. **Sized in tandem with `MCP_SESSION_TTL_MS`:** longer TTLs hold more sessions in memory before they're swept, so a fleet of 100 connectors held open all day will keep this cap pegged. Raise the cap or shorten the TTL if you have more concurrent connectors than the default headroom. |
 | `MCP_SESSION_TTL_MS` | No | `28800000` (8 h) | MCP session inactivity TTL in milliseconds. Each request resets the clock — actively-used sessions never expire. Non-positive / non-integer values are rejected with a warning and the default is used. Also configurable via [`sessionStore.ttlMs`](/config/nimblebrain-json#sessionstore) in `nimblebrain.json`. |
 
 ### Auth & identity
