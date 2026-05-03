@@ -98,6 +98,7 @@ If no config file exists at the resolved path, NimbleBrain auto-creates a minima
 | `maxHistoryMessages` | `integer` | `40` | Max conversation message groups in context. Tool call/result pairs count as one group. |
 | `maxToolResultSize` | `integer` | `1000000` | Max characters for a single tool result. `0` disables the cap. |
 | `store` | `object` | `{ "type": "memory" }` | Conversation storage backend. See [store](#store). |
+| `sessionStore` | `object` | `{ "type": "memory", "ttlSeconds": 28800 }` | MCP session metadata store for `/mcp`. See [sessionStore](#sessionstore). |
 | `logging` | `object` | — | Structured logging config. See [logging](#logging). |
 | `http` | `object` | `{ "port": 27247, "host": "127.0.0.1" }` | HTTP server config. Omit for programmatic-only use. |
 | `features` | `object` | all `true` | Feature flags. See [Feature Flags](/config/features). |
@@ -186,6 +187,94 @@ Choose where conversations are persisted.
 |-------|------|----------|-------------|
 | `type` | `"jsonl"` \| `"memory"` | Yes | Storage backend. |
 | `dir` | `string` | JSONL only | Directory for conversation JSONL files. |
+
+## sessionStore
+
+Pluggable metadata store for MCP HTTP sessions. Tracks each `Mcp-Session-Id` and its idle TTL across the cluster.
+
+<Tabs>
+  <TabItem label="In-memory (default)">
+    ```json
+    {
+      "sessionStore": {
+        "type": "memory",
+        "ttlSeconds": 28800
+      }
+    }
+    ```
+
+    Process-local Map with periodic TTL sweep. No external dependencies. Default; fine for any single-replica deploy.
+  </TabItem>
+  <TabItem label="Redis">
+    ```json
+    {
+      "sessionStore": {
+        "type": "redis",
+        "ttlSeconds": 28800,
+        "redis": {
+          "url": "${REDIS_URL}",
+          "keyPrefix": "nb:mcp:session:"
+        }
+      }
+    }
+    ```
+
+    Hash-per-session with native `PEXPIRE` TTL. Required when `platform.replicas > 1`; also useful at single-replica if you want cluster-wide visibility into active sessions for ops/admin tooling. The `redis.url` field expands `${VAR}` placeholders from `process.env` at boot, so the deployment configmap can carry a literal `"${REDIS_URL}"` and have the actual URL injected from a secret via `envFrom`.
+  </TabItem>
+</Tabs>
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `type` | `"memory"` \| `"redis"` | `"memory"` | Provider. `redis` requires `redis.url`. |
+| `ttlSeconds` | `integer` (s) | `28800` (8 h) | Idle TTL. Each request resets the clock — actively-used sessions never expire. |
+| `redis.url` | `string` | — | Redis connection URL (`redis://` or `rediss://`). Required when `type` is `"redis"`. Supports `${VAR}` env expansion. |
+| `redis.keyPrefix` | `string` | `"nb:mcp:session:"` | Hash key prefix for session entries. |
+
+### Why a session store at all
+
+The MCP `/mcp` endpoint is stateful. Each session has two parts:
+
+- **Metadata** — `sessionId`, `identityId`, `workspaceId`, timestamps. Just data; lives in the session store.
+- **Live transport** — open HTTP response stream, SDK `Server` instance, registered request handlers, in-flight JSON-RPC state. Process-bound — holds open file descriptors and JS object references that cannot be serialized or moved.
+
+Metadata is shareable across processes; the live transport is not. Routing requests to the process that owns a session's transport is the **load balancer's** job (cookie stickiness, header-hash on `Mcp-Session-Id`), not the session store's. The session store is deliberately deployment-vocabulary-free — no notion of "which pod owns this" — so the same interface fits any deployment topology.
+
+When a request arrives at a process that doesn't have the live transport for the requested session, the 404 carries `error.data.reason`:
+
+| Reason | Meaning |
+|--------|---------|
+| `not_found` | Session store has no record. Idle-TTL eviction, or session never existed. |
+| `unavailable` | Session exists in the store, but the live transport isn't on this process. Possible causes: process restart, sticky-routing miss, transport closed locally. |
+
+Spec-compliant clients re-initialize on either reason. Operators distinguish `unavailable` causes via deploy timing, process uptime, and "session-store size vs local transport count" signals.
+
+### Configuration matrix
+
+| Replicas | Store | Use case |
+|----------|-------|----------|
+| 1 | `memory` | Default. Dev, programmatic use, simple production. Sessions die on process restart; clients re-initialize. |
+| 1 | `redis` | Single-process with cluster-shared metadata for ops visibility, audit trails, or future scale-out. |
+| N | `redis` | Horizontal scale. **Pair with sticky load-balancing** (e.g. ALB `lb_cookie`) — without it, every cross-process request returns `unavailable` and clients re-initialize constantly. |
+| N | `memory` | **Not supported.** Sessions partition across processes. |
+
+When `type: "redis"` is set without a `redis.url`, NimbleBrain refuses to fall back to in-memory and fails the boot — silently degrading would mask a misconfiguration.
+
+### Scaling to multiple replicas
+
+`platform.replicas > 1` requires all of:
+
+1. **Storage that supports concurrent multi-process mounts.** The default chart's PVC is `ReadWriteOnce` and blocks `RollingUpdate` rollouts. Move workspace data out of the PVC (Postgres/S3) or relocate to `ReadWriteMany` (EFS).
+2. **Routing strategy keyed on `Mcp-Session-Id`.** ALB `lb_cookie` stickiness is the simplest path on AWS; alternatives are NGINX/Envoy with header-hash routing, or application-level cross-process proxying.
+3. **Cluster-shared session store.** `sessionStore.type: "redis"`.
+4. **Deploy strategy that doesn't drop all replicas at once.** `platform.strategy.type: RollingUpdate` (with the storage from (1) in place).
+
+Drop any one of these and multi-replica is broken in a different way: PVC deadlock, re-init storms, partitioned session view, or deploy-time outages.
+
+### Tuning `ttlSeconds`
+
+The 8 h default is tuned for a connector left open during a working day. Tighten it (e.g. `1800` for 30 minutes) if you want sessions to evict faster on idle; loosen it if your typical usage pattern leaves connectors open across days.
+
+`MCP_SESSION_TTL_SECONDS` env var overrides this when set.
 
 ## logging
 

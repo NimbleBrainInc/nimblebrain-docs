@@ -97,10 +97,39 @@ Each initialize creates a new MCP session tracked server-side.
 
 | Setting | Env var | Default | Description |
 |---------|---------|---------|-------------|
-| Max concurrent sessions | `MCP_MAX_SESSIONS` | `100` | New initialize returns `429` once this is reached |
-| Session TTL | `MCP_SESSION_TTL_MS` | `1800000` (30 min) | Idle timeout; sessions are swept every 60 s |
+| Max concurrent sessions | `MCP_MAX_SESSIONS` | `100` | New initialize returns `429` once this is reached. |
+| Session TTL | `MCP_SESSION_TTL_SECONDS` | `28800` (8 h) | Idle timeout. Each request resets the clock — an actively-used session never expires. |
 
 Sessions are also closed on `DELETE /mcp` (with a valid `mcp-session-id`), transport close, or server shutdown.
+
+### Pluggable session store
+
+Session metadata (which sessions exist, when they were last touched) lives behind a pluggable provider. The default is process-local in-memory; multi-replica deploys use a shared backend so sessions are visible cluster-wide.
+
+See [`sessionStore` config](/config/nimblebrain-json#sessionstore) for shape, providers, and operator guidance.
+
+### Session-miss reasons
+
+When the server can't serve a request because the session isn't available, the 404 response includes `error.data.reason`:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32000,
+    "message": "Session not found",
+    "data": { "reason": "not_found" }
+  },
+  "id": null
+}
+```
+
+| Reason | Meaning |
+|--------|---------|
+| `not_found` | Session store has no record. Most often: idle-TTL eviction, or the session never existed. |
+| `unavailable` | Session exists in the store, but the live transport isn't on this process. Possible causes: process restart since `initialize`, sticky-routing miss, or local transport closure. |
+
+Spec-compliant clients re-initialize on either reason. The field exists for diagnostic purposes — operators see it in logs (`[mcp] session miss reason=...`); tooling can use it to tell steady-state idle eviction apart from process/routing issues.
 
 ## Feature flag
 
