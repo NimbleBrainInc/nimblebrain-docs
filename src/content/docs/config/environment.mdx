@@ -27,7 +27,11 @@ NimbleBrain reads several environment variables for authentication, server bindi
 | `NB_CHAT_RATE_LIMIT` | No | `20` | Chat requests per minute per user. |
 | `NB_TOOL_RATE_LIMIT` | No | `60` | Tool calls per minute per user. |
 | `NB_TIMEZONE` | No | — | Default IANA timezone (e.g. `America/Los_Angeles`) for time-aware features. |
-| `NB_HOST_URL` | No | `http://localhost:27247` | Public host URL, used to build OAuth redirects. |
+| `NB_API_URL` | Recommended (production) | `http://localhost:27247` | Public origin of the platform's API. Used to build the OAuth callback URL surfaced to vendors. **Must match the URL registered with each OAuth app's redirect_uri allow-list.** |
+| `NB_WEB_URL` | No | falls back to `NB_API_URL`, then the request origin | Public origin of the web app. Used to build post-OAuth redirect targets back to the SPA. Only needed when the API and web are served from different origins. |
+| `NB_HOST_URL` | No | `http://localhost:27247` | Public host URL passed to bundle subprocesses (used by automation executors and similar). Distinct from `NB_API_URL` — the OAuth callback URL is derived from `NB_API_URL`, not this. |
+| `NB_CATALOG_PATH` | No | — | Override path for the OAuth connectors catalog. YAML or JSON. Replaces the bundled catalog. See [Connectors Catalog](/config/connectors-catalog/#operator-override). |
+| `NB_STDIO_CATALOG_PATH` | No | — | Override path for the curated stdio bundle list. YAML or JSON. Same Replace-not-Merge semantics. |
 | `MCP_MAX_SESSIONS` | No | `100` | Max concurrent MCP sessions on `/mcp`. New initialize returns `429` once reached. Non-positive / non-integer values are rejected with a warning and the default is used. **Sized in tandem with `MCP_SESSION_TTL_SECONDS`:** longer TTLs hold more sessions in memory before they're swept, so a fleet of 100 connectors held open all day will keep this cap pegged. Raise the cap or shorten the TTL if you have more concurrent connectors than the default headroom. |
 | `MCP_SESSION_TTL_SECONDS` | No | `28800` (8 h) | MCP session inactivity TTL in seconds. Each request resets the clock — actively-used sessions never expire. Non-positive / non-integer values are rejected with a warning and the default is used. Also configurable via [`sessionStore.ttlSeconds`](/config/nimblebrain-json#sessionstore) in `nimblebrain.json`. |
 
@@ -75,6 +79,24 @@ Authentication uses constant-time comparison to prevent timing attacks. Clients 
 - An `nb_session` HttpOnly cookie set by `POST /v1/auth/login`
 
 When `NB_API_KEY` is not set, the server runs in dev mode with no authentication and `Access-Control-Allow-Origin: *`.
+
+## NB_API_URL
+
+The public origin of the platform's API. Used to build the OAuth callback URL that the platform sends to vendors:
+
+```
+${NB_API_URL}/v1/mcp-auth/callback
+```
+
+Each OAuth app registered with a vendor (Asana, HubSpot, Gmail, …) must list this exact URL in its `redirect_uri` allow-list. Mismatch surfaces as a vendor-side `redirect_uri does not match` error at the moment a user clicks **Connect** — long after the admin has configured the OAuth app, which makes the failure mode confusing.
+
+```bash
+export NB_API_URL=https://nimblebrain.acme.com
+```
+
+The Set up modal in the UI shows the resolved redirect URI with a Copy button — the operator should paste that exact string into the vendor portal.
+
+In dev (`bun run dev`) the default `http://localhost:27247` is correct without setting the variable. **In production, always set this explicitly.** Pointing it at `localhost`, an internal cluster service name, or a stale staging URL will produce confusing OAuth failures that look like vendor outages.
 
 ## NB_WORK_DIR
 

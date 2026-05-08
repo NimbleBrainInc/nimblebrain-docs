@@ -1,0 +1,221 @@
+---
+title: Connectors Catalog
+description: How to curate the OAuth and stdio bundles that appear on the Settings → Connectors page.
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The Settings → Connectors page is driven by two YAML files shipped with the platform:
+
+- **`src/connectors/catalog.yaml`** — remote OAuth connectors (Asana, HubSpot, Notion, Gmail, …). Entries describe the OAuth flow shape (DCR vs static-client), required scopes, and operator-setup hints.
+- **`src/connectors/stdio-catalog.yaml`** — curated stdio bundles published to mpak as `@nimblebraininc/*`. Entries surface as one-click installs alongside the OAuth list.
+
+Both are catalogs the operator can override at runtime via env vars without rebuilding the platform — typically by mounting a Kubernetes ConfigMap.
+
+## Adding a new OAuth connector
+
+The OAuth flow happens entirely between the user's browser, the vendor's auth server, and NimbleBrain. NimbleBrain itself never sees the vendor's bearer tokens in plaintext beyond the credential store. To add a new vendor, append an entry to `catalog.yaml`.
+
+### 1. Pick the auth flow
+
+Two shapes are supported:
+
+- **`auth: dcr`** — the vendor's MCP server speaks Dynamic Client Registration ([RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591)). The platform auto-registers a client at OAuth flow time. Operator setup is **zero**. Examples: Granola, Notion.
+- **`auth: static`** — the operator pre-registers an OAuth app in the vendor's developer portal, copies the `client_id` + `client_secret`, and pastes them into the workspace via the Set up modal. Examples: HubSpot, Asana, Gmail, Outlook, Zoom.
+
+If the vendor exposes a `/.well-known/oauth-authorization-server` document with `registration_endpoint` set, prefer DCR. Otherwise use static.
+
+### 2. Add the YAML entry
+
+Edit `src/connectors/catalog.yaml`. Keep ordering alphabetical by id within scope groupings (workspace-shared first, user-scoped second):
+
+```yaml
+- id: linear
+  name: Linear
+  description: Issues, projects, and engineering workflows
+  iconUrl: https://static.nimblebrain.ai/icons/linear.svg
+  url: https://mcp.linear.app/mcp
+  auth: dcr
+  defaultScope: workspace
+  tags: [issues, engineering]
+```
+
+For `auth: static`, also include `operatorSetup`:
+
+```yaml
+- id: linear
+  name: Linear
+  description: Issues, projects, and engineering workflows
+  iconUrl: https://static.nimblebrain.ai/icons/linear.svg
+  url: https://mcp.linear.app/mcp
+  auth: static
+  defaultScope: workspace
+  operatorSetup:
+    portalUrl: https://linear.app/settings/api
+    hint: Create an OAuth app in Linear's API settings; copy client_id + client_secret
+    clientSecretKey: linear.client_secret
+  tags: [issues, engineering]
+```
+
+### Field reference
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `id` | yes | Stable kebab-case slug. Used as the connector's primary key. Must match `[a-z0-9](?:[a-z0-9-]*[a-z0-9])?`. |
+| `name` | yes | Display name on the Browse card. |
+| `description` | yes | One-line tagline. ~80 chars. |
+| `iconUrl` | yes | Absolute http(s) URL or `/`-relative path. `javascript:` / `data:` are rejected. |
+| `url` | yes | Remote MCP server URL. |
+| `auth` | yes | `"dcr"` or `"static"`. |
+| `defaultScope` | yes | `"workspace"` or `"user"`. Workspace-shared identity vs per-user account. |
+| `requiredScopes` | no | List of OAuth scope strings. |
+| `additionalAuthorizationParams` | no | Extra authorize-URL params (e.g. Google's `access_type: offline`). Reserved keys (`client_id`, `state`, `request`, etc.) are rejected. |
+| `operatorSetup` | required when `auth: static` | `portalUrl` + `hint` + `clientSecretKey`. |
+| `tags` | no | Strings used for filter / search in the Browse page. |
+| `docsUrl` | no | Connector-specific docs link surfaced on the detail page. |
+
+### 3. Register the OAuth redirect URI
+
+The vendor's OAuth app must allow this exact callback URL:
+
+```
+{NB_API_URL}/v1/mcp-auth/callback
+```
+
+Where `NB_API_URL` is the public origin of the platform's API. For the dev server it defaults to `http://localhost:27247`. **In production this must be set explicitly** — see [Environment Variables](/config/environment/#nb_api_url).
+
+The Set up modal in the UI shows the resolved redirect URI with a Copy button so admins can register it without guessing.
+
+<Aside type="caution">
+  A `redirect_uri does not match` error from the vendor at sign-in time means the URL registered with the vendor's OAuth app doesn't match what NimbleBrain sends. Double-check `NB_API_URL` matches the app's actual public origin (not `localhost`, not the internal cluster service name).
+</Aside>
+
+### 4. Test it
+
+```bash
+bun run dev
+```
+
+The new entry appears on Settings → Connectors → Browse. Walk through the install:
+
+1. Click **Install** on the new connector.
+2. (For static-auth) Click **Set up** in the workspace admin modal, paste `client_id` + `client_secret`, save.
+3. Click **Connect**, complete the vendor's consent flow.
+4. Open the connector detail page. The status pill should read **Ready** and the tools list populates.
+
+If anything is off, check the API server logs for `[catalog]` warnings — the validator drops malformed entries with a logged reason.
+
+## Adding a new stdio bundle
+
+Stdio bundles install via the mpak SDK, which fetches the published `@nimblebraininc/<name>` package. Add a curated entry to `src/connectors/stdio-catalog.yaml`:
+
+```yaml
+- id: linear-stdio
+  name: Linear (CLI)
+  description: Read-only Linear access for engineering workflows
+  bundleName: "@nimblebraininc/linear"
+  tags: [issues, mcp-server]
+```
+
+Required fields: `id`, `name`, `description`, `bundleName` (must be a scoped npm-style name). Optional: `tags`, `iconUrl`.
+
+The bundle must be published to mpak before users can install — entries listed but not yet published surface a "package not found" error in the Browse install path.
+
+## Operator override
+
+Operators with custom curation needs can fully replace either catalog at runtime without rebuilding the platform image:
+
+| Catalog | Env var | Format |
+|---------|---------|--------|
+| OAuth | `NB_CATALOG_PATH` | YAML (`.yaml` / `.yml`) or JSON |
+| Stdio | `NB_STDIO_CATALOG_PATH` | YAML (`.yaml` / `.yml`) or JSON |
+
+Format is sniffed from the file extension. YAML files use the same top-level shape as the bundled file (`connectors:` list for OAuth, `bundles:` list for stdio). JSON files are bare arrays.
+
+### Why replace, not merge
+
+Merge has confusing semantics — which side wins on conflicts? is `disabled: true` a valid override? what about partial overrides of a single field? Replace keeps the contract obvious: what the operator mounts is the entire catalog.
+
+To start from the bundled defaults: copy `src/connectors/catalog.yaml` (or `stdio-catalog.yaml`) out of a running container, edit, and mount.
+
+### Kubernetes ConfigMap example
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nimblebrain-connectors
+  namespace: nimblebrain
+data:
+  catalog.yaml: |
+    connectors:
+      - id: linear
+        name: Linear
+        description: Issues, projects, and engineering workflows
+        iconUrl: https://static.nimblebrain.ai/icons/linear.svg
+        url: https://mcp.linear.app/mcp
+        auth: dcr
+        defaultScope: workspace
+        tags: [issues, engineering]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nimblebrain
+spec:
+  template:
+    spec:
+      containers:
+        - name: api
+          env:
+            - name: NB_CATALOG_PATH
+              value: /etc/nimblebrain/connectors/catalog.yaml
+          volumeMounts:
+            - name: connectors
+              mountPath: /etc/nimblebrain/connectors
+              readOnly: true
+      volumes:
+        - name: connectors
+          configMap:
+            name: nimblebrain-connectors
+```
+
+The platform reads the file once at boot. Edits to the ConfigMap require a pod restart to take effect.
+
+### Validation
+
+Both catalogs are validated at boot. Malformed entries are dropped with a logged warning naming the entry id (or its index when no id is present). Common rejection reasons:
+
+| Reason | Fix |
+|--------|-----|
+| `id missing or invalid` | Use a kebab-case slug matching `[a-z0-9](?:[a-z0-9-]*[a-z0-9])?`. |
+| `iconUrl must be http(s) absolute or '/'-relative` | Drop `data:` / `javascript:` / `file:` prefixes. |
+| `auth='static' requires operatorSetup.{portalUrl,hint,clientSecretKey}` | Add the `operatorSetup` block. |
+| `additionalAuthorizationParams cannot include reserved keys` | Remove `client_id`, `state`, `request`, etc. — these are filled by the OAuth provider. |
+| `bundleName must be a scoped package` | Use `@org/name` format. |
+
+When the top-level shape is bad (not a list, malformed YAML), the whole override is rejected and the bundled catalog is used. The startup logs name the file path and the parse error.
+
+## Where the secrets live
+
+The catalog never contains secrets. For `auth: static` entries, the workspace admin sets `client_id` (which lives in `workspace.json` under `oauthOperatorApps.<id>.clientId`) and `client_secret` (which lives in the workspace credential store under the key declared by `operatorSetup.clientSecretKey`).
+
+Set via the UI:
+
+```
+Settings → Connectors → <connector> → Set up
+```
+
+Or headless (per-workspace):
+
+```bash
+nb config set --raw <wsId> <clientSecretKey>=<value>
+```
+
+For example: `nb config set --raw ws_acme asana.client_secret=xxx`.
+
+## Related
+
+- [Credentials](/config/credentials/) — how `user_config` and the credential store work for stdio bundles.
+- [Environment Variables](/config/environment/) — `NB_API_URL`, `NB_CATALOG_PATH`, `NB_STDIO_CATALOG_PATH`.
+- [Workspace JSON](/config/workspace-json/) — `oauthOperatorApps`, `connectorsAllowList`.

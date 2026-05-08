@@ -90,6 +90,7 @@ The `web` container runs Caddy, which serves the static UI files and reverse-pro
 | `GOOGLE_GENERATIVE_AI_API_KEY` | No | Google Gemini API key (for Google model provider) |
 | `NB_API_KEY` | Legacy | API authentication key (used with legacy single-key auth). For multi-user auth, configure `instance.json` with a local or OIDC adapter instead |
 | `ALLOWED_ORIGINS` | Production | Comma-separated list of allowed CORS origins (e.g., `https://nb.example.com`). Required for cross-origin cookie auth |
+| `NB_API_URL` | Production (when using OAuth connectors) | Public origin of the API (e.g., `https://nb.example.com`). Used to build the OAuth `redirect_uri` for [connectors](/config/connectors-catalog/). Mismatch with the URL registered in each vendor's OAuth app produces vendor-side `redirect_uri does not match` errors at sign-in time. |
 
 <Aside type="caution">
 Running without authentication (no `instance.json` and no `NB_API_KEY`) disables auth entirely. CORS falls back to `Access-Control-Allow-Origin: *`. This is acceptable for local development but never for production. See [Security](/deploy/security) for auth adapter setup.
