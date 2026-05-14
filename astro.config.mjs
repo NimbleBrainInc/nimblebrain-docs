@@ -157,6 +157,7 @@ export default defineConfig({
             items: [
               { label: 'Docker Compose', slug: 'deploy/docker' },
               { label: 'Security', slug: 'deploy/security' },
+              { label: 'Composio Aggregator', slug: 'deploy/composio' },
             ],
           },
         ]),

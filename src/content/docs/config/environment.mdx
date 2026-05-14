@@ -30,8 +30,7 @@ NimbleBrain reads several environment variables for authentication, server bindi
 | `NB_API_URL` | Recommended (production) | `http://localhost:27247` | Public origin of the platform's API. Used to build the OAuth callback URL surfaced to vendors. **Must match the URL registered with each OAuth app's redirect_uri allow-list.** |
 | `NB_WEB_URL` | No | falls back to `NB_API_URL`, then the request origin | Public origin of the web app. Used to build post-OAuth redirect targets back to the SPA. Only needed when the API and web are served from different origins. |
 | `NB_HOST_URL` | No | `http://localhost:27247` | Public host URL passed to bundle subprocesses (used by automation executors and similar). Distinct from `NB_API_URL` — the OAuth callback URL is derived from `NB_API_URL`, not this. |
-| `NB_CATALOG_PATH` | No | — | Override path for the OAuth connectors catalog. YAML or JSON. Replaces the bundled catalog. See [Connectors Catalog](/config/connectors-catalog/#operator-override). |
-| `NB_STDIO_CATALOG_PATH` | No | — | Override path for the curated stdio bundle list. YAML or JSON. Same Replace-not-Merge semantics. |
+| `NB_REGISTRIES` | No | — | JSON array of registry configs that overrides the persisted `registries.json` for the lifetime of the process. Adds custom `static` / `mpak` / `mcp` registries without touching pod filesystem. The locked bundled-static registry is preserved automatically. See [Connectors Catalog → Operator override](/config/connectors-catalog/#operator-override). |
 | `MCP_MAX_SESSIONS` | No | `100` | Max concurrent MCP sessions on `/mcp`. New initialize returns `429` once reached. Non-positive / non-integer values are rejected with a warning and the default is used. **Sized in tandem with `MCP_SESSION_TTL_SECONDS`:** longer TTLs hold more sessions in memory before they're swept, so a fleet of 100 connectors held open all day will keep this cap pegged. Raise the cap or shorten the TTL if you have more concurrent connectors than the default headroom. |
 | `MCP_SESSION_TTL_SECONDS` | No | `28800` (8 h) | MCP session inactivity TTL in seconds. Each request resets the clock — actively-used sessions never expire. Non-positive / non-integer values are rejected with a warning and the default is used. Also configurable via [`sessionStore.ttlSeconds`](/config/nimblebrain-json#sessionstore) in `nimblebrain.json`. |
 
@@ -43,6 +42,17 @@ NimbleBrain reads several environment variables for authentication, server bindi
 | `WORKOS_API_KEY` | When `auth.adapter: "workos"` in `instance.json` | — | WorkOS API key. Can also be set via `instance.json → auth.apiKey`. |
 | `TURNSTILE_SECRET_KEY` | No | — | Cloudflare Turnstile secret for CAPTCHA on auth endpoints. |
 | `NB_INTERNAL_TOKEN` | No | — | Shared secret for service-to-service calls. Never forwarded to bundle subprocesses. |
+
+### Composio aggregator
+
+Required only when the catalog contains any `auth: composio` entries (Gmail, Outlook, …). See the [Composio operator guide](/deploy/composio/) for end-to-end setup.
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `COMPOSIO_API_KEY` | When the catalog contains `auth: composio` entries | — | Platform-wide Composio API key. Read once at startup. Without it, install of any `auth: composio` entry returns `500 composio_unconfigured`. |
+| `COMPOSIO_<TOOLKIT>_AUTH_CONFIG_ID` | One per `auth: composio` entry | — | The `ac_…` id from the Composio dashboard for this toolkit's auth config. The variable name is declared by the catalog entry's `composio.authConfigEnv`. Example: `COMPOSIO_GMAIL_AUTH_CONFIG_ID=ac_xxx`. |
+| `COMPOSIO_API_BASE_URL` | No | `https://backend.composio.dev` | Override the Composio SDK base URL (self-hosted Composio, staging). Must be `http(s)`. |
+| `NB_TENANT_ID` | When running multi-tenant pods that share a Composio account | — | Per-pod tenant identifier. Prepended to the wsId so two tenants' workspaces never collide in Composio's namespace. Single-tenant deployments can omit it. |
 
 ### Telemetry
 
