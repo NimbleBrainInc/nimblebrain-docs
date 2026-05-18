@@ -97,8 +97,8 @@ Each initialize creates a new MCP session tracked server-side.
 
 | Setting | Env var | Default | Description |
 |---------|---------|---------|-------------|
-| Max concurrent sessions | `MCP_MAX_SESSIONS` | `100` | New initialize returns `429` once this is reached. |
-| Session TTL | `MCP_SESSION_TTL_SECONDS` | `28800` (8 h) | Idle timeout. Each request resets the clock — an actively-used session never expires. |
+| Max concurrent sessions | `MCP_MAX_SESSIONS` | `100` | Soft cap. A new initialize at capacity evicts the least-recently-used session and is admitted; it never fails with `429`. |
+| Session TTL | `MCP_SESSION_TTL_SECONDS` | `28800` (8 h) | Idle timeout. Each request resets the clock — an actively-used session never expires. Idle sessions are closed by a periodic sweep on the serving pod. |
 
 Sessions are also closed on `DELETE /mcp` (with a valid `mcp-session-id`), transport close, or server shutdown.
 
@@ -211,7 +211,7 @@ The external client sees a flat list of tools. NimbleBrain resolves the caller's
 - **Organization scoping** — when `organizationId` is set, only members of that WorkOS organization can authenticate.
 - **Workspace isolation** — every request is scoped to one workspace; tools cannot reach data in other workspaces.
 - **Feature and role filtering** — disabled and admin-only tools are never exposed.
-- **Session limits** — `MCP_MAX_SESSIONS` prevents resource exhaustion from runaway clients.
+- **Session limits** — `MCP_MAX_SESSIONS` bounds memory; the LRU eviction policy means a runaway client cannot deny service to others.
 - **Bundle env isolation** — bundle processes receive a filtered host environment; the MCP endpoint does not bypass that.
 
 ## Setup (operators)
