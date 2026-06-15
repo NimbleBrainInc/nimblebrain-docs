@@ -79,14 +79,17 @@ window.addEventListener('message', (event) => {
 `applyTokens` sets CSS variables on `document.documentElement`, which overrides the injected `<style>` values. Because your CSS uses `var()` references, the UI updates instantly.
 
 <Aside type="caution">
-**Live-update caveat: only ext-apps spec tokens update on toggle.** The initial `<style>` block injected at load carries the full token set, including the `--nb-*` extensions. But the `ui/notifications/host-context-changed` payload sent on a dark-mode toggle carries **only the spec-standard tokens** (the `--color-*`, `--font-*`, `--border-radius-*`, `--shadow-*` keys in the table below). The `--nb-*` extension tokens are filtered out of that payload because the ext-apps `styles.variables` field is a typed enum and strict SDK clients reject unknown keys.
+**Live-update caveat.** The initial `<style>` block injected at load carries the full token set. But the `ui/notifications/host-context-changed` payload sent on a dark-mode toggle carries **only the tokens in the host's allow-list** — most, but not all, ext-apps spec tokens. These do **not** refresh live on a toggle:
 
-In practice: drive any color that must flip between light and dark from the spec `--color-*` tokens. The `--nb-*` tokens are safe for one-time styling at load, but they will not refresh live on a theme toggle, so don't depend on them for light/dark-sensitive surfaces.
+- the `--nb-*` extension tokens (injected at load only), and
+- `--color-text-accent`, `--font-text-base-size`, and `--font-text-base-line-height` — spec tokens the host filters out of the toggle payload.
+
+Drive any surface that must flip between light and dark from the spec tokens that *do* cross: `--color-background-*`, `--color-text-primary` / `-secondary` / `-tertiary`, `--color-border-*`, and `--color-ring-*`. Do **not** key light/dark styling off `--color-text-accent` — it is injected at load but never updates on a toggle.
 </Aside>
 
 ## Token reference
 
-The platform injects the following tokens into every iframe. Spec tokens (everything except the `--nb-*` block) also cross the ext-apps protocol boundary and refresh live on theme changes; `--nb-*` extensions are injected at load only.
+The platform injects the following tokens into every iframe. Most ext-apps spec tokens also cross the protocol boundary and refresh live on theme changes; the `--nb-*` extensions — plus `--color-text-accent`, `--font-text-base-size`, and `--font-text-base-line-height` — are injected at load only and do not refresh on a toggle.
 
 ### Colors (ext-apps spec)
 
@@ -98,7 +101,7 @@ The platform injects the following tokens into every iframe. Spec tokens (everyt
 | `--color-text-primary` | `#171717` | `#e5e5e5` | Body text |
 | `--color-text-secondary` | `#737373` | `#a3a3a3` | Captions, metadata, placeholders |
 | `--color-text-tertiary` | `#a3a3a3` | `#737373` | De-emphasized text |
-| `--color-text-accent` | `#0055FF` | `#3b8eff` | Links, primary buttons, AI accents |
+| `--color-text-accent` | `#0055FF` | `#3b8eff` | Links, primary buttons, AI accents (load-only — does not refresh on toggle) |
 | `--color-border-primary` | `#e5e5e5` | `#262626` | Borders, dividers |
 | `--color-border-secondary` | `#e5e5e5` | `#262626` | Secondary borders |
 | `--color-ring-primary` | `#0055FF` | `#3b8eff` | Focus rings |
@@ -108,7 +111,7 @@ The platform injects the following tokens into every iframe. Spec tokens (everyt
 | Token | Value | Use for |
 |-------|-------|---------|
 | `--font-sans` | `'Satoshi', system-ui, sans-serif` | Body font |
-| `--font-mono` | `'JetBrains Mono Variable', ui-monospace, monospace` | Code / monospace font |
+| `--font-mono` | `'JetBrains Mono Variable', ui-monospace, SFMono-Regular, monospace` | Code / monospace font |
 | `--font-weight-normal` | `400` | Normal weight |
 | `--font-weight-medium` | `500` | Medium weight |
 | `--font-weight-semibold` | `600` | Semibold weight |

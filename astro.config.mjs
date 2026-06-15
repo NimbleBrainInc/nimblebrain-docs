@@ -2,10 +2,31 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightSidebarTopics from 'starlight-sidebar-topics';
+import starlightLinksValidator from 'starlight-links-validator';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://docs.nimblebrain.ai',
+  // Redirects for pages removed/merged in the architecture realignment, so
+  // bookmarked and indexed URLs land on their replacements instead of 404ing.
+  redirects: {
+    '/api/overview': '/connect/mcp-endpoint/',
+    '/api/mcp-endpoint': '/connect/mcp-endpoint/',
+    '/api/authentication': '/config/instance-json/',
+    '/api/bootstrap': '/connect/mcp-endpoint/',
+    '/api/chat': '/connect/mcp-endpoint/',
+    '/api/tools': '/connect/mcp-endpoint/',
+    '/api/events': '/connect/mcp-endpoint/',
+    '/api/health': '/deploy/observability/',
+    '/guide/chat': '/using/chat/',
+    '/guide/conversations': '/using/conversations/',
+    '/guide/apps': '/using/installing-apps/',
+    '/guide/files': '/using/file-context/',
+    '/guide/workspaces': '/using/workspaces/',
+    '/guide/team': '/using/users/',
+    '/guide/mcp-connect': '/connect/external-clients/',
+    '/cli/user': '/cli/overview/',
+  },
   integrations: [
     starlight({
       title: 'NimbleBrain',
@@ -32,6 +53,7 @@ export default defineConfig({
         },
       ],
       plugins: [
+        starlightLinksValidator({ errorOnLocalLinks: false }),
         starlightSidebarTopics([
           {
             label: 'Getting Started',

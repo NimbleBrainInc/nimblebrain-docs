@@ -5,7 +5,9 @@ description: Reference for NimbleBrain's single public programmatic surface — 
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-The `/mcp` endpoint turns NimbleBrain into a **Streamable HTTP MCP server**. It is NimbleBrain's only public programmatic surface: external MCP clients (Claude Desktop, Claude Code, Cursor, another NimbleBrain instance, or any MCP-compatible host) connect here and access the tools installed across your workspaces.
+The `/mcp` endpoint turns NimbleBrain into a **Streamable HTTP MCP server**. It is NimbleBrain's public programmatic surface: external MCP clients (Claude Desktop, Claude Code, Cursor, another NimbleBrain instance, or any MCP-compatible host) connect here and access the tools installed across your workspaces.
+
+The runtime also serves a `/v1/*` REST API, but that is a trusted same-origin surface for the bundled web client — not a supported external integration point. For programmatic access from outside the platform, use `/mcp`.
 
 This makes NimbleBrain both an MCP **client** (connecting to installed bundles) and an MCP **server** (exposing composed tools to external hosts). The composition layer in between, which handles tool aggregation, feature gating, role filtering, and workspace routing, is what external clients benefit from without needing to know about individual bundles.
 
@@ -168,5 +170,5 @@ With auth enabled, include `Authorization: Bearer <jwt>` on every request.
 ## Related
 
 - [Connecting External Clients](/connect/external-clients) — setup walkthroughs for Claude Code, Claude Desktop, and Cursor.
-- [Auth adapters](/config/instance-json) — `dev` / `local` / `oidc` / `workos` configuration in `instance.json`.
+- [Auth adapters](/config/instance-json) — `dev` / `oidc` / `workos` configuration in `instance.json`.
 - [Feature Flags](/config/features) — full list of flags and enforcement points.

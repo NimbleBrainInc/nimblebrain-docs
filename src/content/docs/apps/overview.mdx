@@ -27,7 +27,7 @@ NimbleBrain recognizes two app types:
 | `plain` | Default | Standard MCP server. Tools only, or tools + optional UI via `_meta["ai.nimblebrain/host"]`. |
 | `upjack` | `_meta["ai.nimblebrain/upjack"]` present | An [Upjack](https://upjack.dev) declarative app. Automatically gets UI rendering and skill-based behavior. |
 
-The type is stored on the `BundleInstance` and returned in the `GET /v1/apps` response as the `type` field.
+The type is stored on the `BundleInstance` and surfaced in the installed-apps list in the web client.
 
 ## Architecture
 

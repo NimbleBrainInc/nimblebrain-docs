@@ -274,7 +274,7 @@ This implements the [MCP 2025-11-25 tasks utility](https://modelcontextprotocol.
 | Long-running, multi-phase, or progress-emitting | `callToolAsTask` / `useCallToolAsTask` |
 | Returns in milliseconds (CRUD, lookups) | `callTool` |
 
-The agent itself uses task augmentation automatically when a tool declares `execution.taskSupport: "optional"` — see [Long-Running Tools (MCP Tasks)](/cli/long-running-tools) for the agent-side path. This page is about the **iframe-side** API for UIs that need to fire long-running tools from a button click and reflect lifecycle in the UI.
+The agent itself uses task augmentation automatically when a tool declares `execution.taskSupport: "optional"`. This page is about the **iframe-side** API for UIs that need to fire long-running tools from a button click and reflect lifecycle in the UI.
 
 ### React hook (recommended)
 

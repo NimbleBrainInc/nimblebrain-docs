@@ -10,7 +10,7 @@ NimbleBrain splits configuration into two files:
 - **`nimblebrain.json`** — instance-level settings (models, HTTP, logging, limits, feature flags). One file per deployment. **This page.**
 - **`workspace.json`** — per-workspace settings (bundles, skill directories, named agent profiles, optional model + identity overrides). See [`workspace.json`](/config/workspace-json).
 
-Top-level `bundles`, `skillDirs`, `agents`, `home`, and `preferences` entries in `nimblebrain.json` are silently stripped at load — they belong in `workspace.json` now. See [Workspace Isolation](/concepts#workspace-isolation) for the rationale.
+Top-level `bundles`, `skillDirs`, `agents`, `home`, and `preferences` entries in `nimblebrain.json` are silently stripped at load — they belong in `workspace.json` now. See [workspace configuration](/config/workspace-json) for where they live.
 
 ## Config resolution
 

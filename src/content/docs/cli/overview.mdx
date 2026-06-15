@@ -28,6 +28,7 @@ When you run `nb` without a command, it enters interactive mode (TUI or headless
 | `telemetry` | Manage anonymous usage telemetry |
 | `automation` | Manage scheduled automations |
 | `credential` (alias `creds`) | Manage workspace-scoped secrets (OAuth client secrets, API keys) |
+| `user` | User account management (no subcommands yet) |
 
 ## Global flags
 
@@ -66,6 +67,7 @@ Commands:
   telemetry    Manage anonymous usage telemetry
   automation   Manage scheduled automations
   credential   Manage workspace-scoped secrets
+  user         User account management (no subcommands yet)
 
 Global flags:
   --config <path>   Config file path
@@ -148,7 +150,7 @@ If no config file exists at the resolved path, NimbleBrain auto-creates one with
 
 ```json title="nimblebrain.json"
 {
-  "$schema": "https://schemas.nimblebrain.ai/nimblebrain.json",
+  "$schema": "https://schemas.nimblebrain.ai/v1/nimblebrain-config.schema.json",
   "version": "1",
   "bundles": [],
   "skills": []
