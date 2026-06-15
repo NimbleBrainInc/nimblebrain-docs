@@ -75,10 +75,10 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Build bundle
-        uses: NimbleBrainInc/mcpb-pack@v1
+        uses: NimbleBrainInc/mcpb-pack@v3
         with:
           path: .
           output: dist/bundle.tar.gz

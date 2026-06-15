@@ -22,32 +22,32 @@ Docker Compose runs the platform and web UI as two containers. This is the recom
 
    ```json title="nimblebrain.json"
    {
-     "$schema": "https://schemas.nimblebrain.ai/nimblebrain.json",
-     "bundles": [
-       { "name": "@nimblebraininc/ipinfo" }
-     ]
+     "$schema": "https://schemas.nimblebrain.ai/v1/nimblebrain-config.schema.json",
+     "version": "1"
    }
    ```
+
+   This is runtime config only (model, limits, features). Installed apps are not listed here — per-workspace app installs live in `workspace.json`, which the runtime manages. See the [configuration reference](/config/nimblebrain-json) for all options.
 
 3. **Create `docker-compose.yml`**
 
    ```yaml title="docker-compose.yml"
    services:
      platform:
-       image: nimblebrain/platform:latest
+       image: ghcr.io/nimblebraininc/nimblebrain:latest
        restart: unless-stopped
        volumes:
          - workspace:/data
-         - ./nimblebrain.json:/app/nimblebrain.json:ro
-         - ./skills:/app/skills:ro
+         - ./nimblebrain.json:/data/nimblebrain.json:ro
        environment:
          - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
          - OPENAI_API_KEY=${OPENAI_API_KEY:-}
          - GOOGLE_GENERATIVE_AI_API_KEY=${GOOGLE_GENERATIVE_AI_API_KEY:-}
-         - NB_API_KEY=${NB_API_KEY}
+       networks:
+         - internal
 
      web:
-       image: nimblebrain/web:latest
+       image: ghcr.io/nimblebraininc/nimblebrain-web:latest
        restart: unless-stopped
        ports:
          - "27246:8080"
@@ -56,29 +56,55 @@ Docker Compose runs the platform and web UI as two containers. This is the recom
        depends_on:
          platform:
            condition: service_healthy
+       networks:
+         - internal
 
    volumes:
      workspace:
+
+   networks:
+     internal:
    ```
 
-   The platform image is based on `oven/bun:1.3-alpine` and includes Python 3.13, Node.js, and the mpak CLI for running MCP server bundles.
+   The platform image is built on `python:3.13-slim` and bundles Bun, Node.js 24, and the mpak CLI — the toolchain MCP server bundles shell out to at runtime. The runtime working directory inside the container is `/data` (set via `NB_WORK_DIR`), so the config mount lands at `/data/nimblebrain.json`.
 
 4. **Start the services**
 
    ```bash
    export ANTHROPIC_API_KEY=sk-ant-api03-...
-   export NB_API_KEY=my-secret-key-at-least-8-chars
    docker compose up
    ```
 
-   The platform API runs on port 27247 (internal). The web UI is exposed on port 27246.
+   The platform API runs on port 27247 (internal). The web UI is published on port 27246. Health is checked internally at `http://localhost:27247/v1/health`.
+
+   With no `instance.json` present, the platform runs in **dev mode** — unauthenticated, single built-in user. To require real auth, add an `instance.json` next to your config with an `oidc` or `workos` adapter (see [Authentication](#authentication) below).
 
 </Steps>
+
+#### Build from local source
+
+To build the images from a checkout instead of pulling `:latest`, add a `build:` key and use `docker compose up --build`:
+
+```yaml title="docker-compose.yml (build from source)"
+services:
+  platform:
+    image: ghcr.io/nimblebraininc/nimblebrain:latest
+    build: .
+    # ...
+  web:
+    image: ghcr.io/nimblebraininc/nimblebrain-web:latest
+    build: web/
+    # ...
+```
+
+```bash
+docker compose up --build
+```
 
   </TabItem>
   <TabItem label="Development (Bun)">
 
-Run from source for development. Requires [Bun](https://bun.sh) 1.1+.
+Run from source for development. Requires [Bun](https://bun.sh) 1.2.0 or newer (`engines.bun` is `>=1.2.0`).
 
 <Steps>
 
@@ -108,29 +134,18 @@ Run from source for development. Requires [Bun](https://bun.sh) 1.1+.
    bun run dev
    ```
 
-   ```
-   [api] NimbleBrain API listening on http://127.0.0.1:27247
-   [web] VITE v6.x  ready in 200ms
-   [web]   ➜  Local:   http://localhost:27246/
-   ```
-
-   This starts both the API server (with file watching and auto-restart) and the web client (with Vite HMR) in a single terminal. Output is prefixed `[api]` / `[web]`.
-
-   The development workdir is `.nimblebrain/` (project-local). No `NB_API_KEY` is required in dev mode — CORS is open.
+   This starts both the API server (with file watching and auto-restart) and the web client (Vite HMR) in a single terminal. The dev workdir is project-local (`.nimblebrain/`). Dev mode runs unauthenticated — no auth setup required locally.
 
 </Steps>
 
 **Other dev commands:**
 
 ```bash
-bun run dev:api    # API server only (watched, port 27247)
-bun run dev:web    # Web client only (Vite HMR, port 27246)
-bun run dev:empty  # Empty state — no bundles, fresh workdir (:27249/:27248)
-bun run dev:minimal # Minimal — no bundles, preset model config (:27251/:27250)
-bun run dev:tui    # Interactive TUI with project-local workdir
-bun run test       # Run unit tests
-bun run eval       # LLM evals (requires ANTHROPIC_API_KEY)
-bun run verify     # Full CI: lint → typecheck → test → smoke
+bun run dev:empty     # Empty state — no apps, fresh workdir (:27249/:27248)
+bun run dev:minimal   # Minimal — no apps, preset model config (:27251/:27250)
+bun run dev:tui       # Interactive TUI with project-local workdir
+bun run test          # Run unit AND integration tests
+bun run eval          # LLM evals (requires ANTHROPIC_API_KEY)
 ```
 
   </TabItem>
@@ -140,31 +155,48 @@ bun run verify     # Full CI: lint → typecheck → test → smoke
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `ANTHROPIC_API_KEY` | Yes | Your Anthropic API key for Claude |
-| `NB_API_KEY` | Production | API authentication key (min 8 characters). When unset, CORS allows all origins (dev mode) |
-| `NB_WORK_DIR` | No | Working directory for runtime state. Default: `~/.nimblebrain` |
-| `NB_HOST` | No | Host to bind the API server. Default: `127.0.0.1` (`0.0.0.0` in Docker) |
-| `ALLOWED_ORIGINS` | No | Comma-separated allowed CORS origins for cookie-based auth |
-| `NB_TELEMETRY_DISABLED` | No | Set to `1` to disable anonymous telemetry |
-| `DO_NOT_TRACK` | No | Set to `1` to disable anonymous telemetry |
+| `ANTHROPIC_API_KEY` | Yes | Anthropic API key for Claude. At least one provider key is required. |
+| `OPENAI_API_KEY` | No | OpenAI provider key. |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | No | Google provider key. |
+| `PORT` | No | HTTP port for the API server. Default: `3000`. |
+| `NB_PUBLIC_ORIGIN` | No | Canonical public origin used to build absolute URLs (OAuth callbacks, post-login landing). Default in dev: `http://localhost:27247`. Set this in production. See [Environment Variables](/config/environment/#public-origin-and-callbacks). |
+| `NB_WORK_DIR` | No | Working directory for conversations, skills, and app state. Default: `.nimblebrain/` (project-local) or `~/nimblebrain/` (global serve). Set to `/data` in the Docker image. |
+| `ALLOWED_ORIGINS` | No | Comma-separated allowed CORS origins. Default: all origins. |
+| `MCP_MAX_SESSIONS` | No | Maximum concurrent MCP sessions. Above this, new sessions evict the least-recently-used transport. Default: `100`. |
+| `MCP_SESSION_TTL_SECONDS` | No | MCP session idle TTL in seconds. Default: `28800` (8 hours). |
+| `NB_TELEMETRY_DISABLED` | No | Set to `1` to disable anonymous telemetry. |
+| `DO_NOT_TRACK` | No | Set to `1` to disable anonymous telemetry. |
+
+<Aside type="note">
+There is no `NB_API_KEY` request-auth variable. Authentication is configured through `instance.json` adapters, not an environment-variable bearer key.
+</Aside>
+
+## Authentication
+
+NimbleBrain's auth mode is determined by the presence of an `instance.json` file alongside your config:
+
+- **No `instance.json`** — the platform runs in **dev mode**: requests are unauthenticated and resolve to a single built-in user. Fine for local development; not for shared or networked deployments.
+- **`instance.json` with an `auth.adapter`** — a real identity provider is used. Supported adapters are `oidc` (any OpenID Connect issuer) and `workos`. On successful login the provider's callback sets an `nb_session` cookie.
+
+```json title="instance.json (OIDC example)"
+{
+  "auth": {
+    "adapter": "oidc",
+    "issuer": "https://your-idp.example.com",
+    "clientId": "your-client-id",
+    "allowedDomains": ["example.com"]
+  }
+}
+```
 
 ## Minimal config file
 
-NimbleBrain reads `nimblebrain.json` at startup. Config resolution order:
-
-1. `--config <path>` flag (explicit path)
-2. `--workdir <dir>` flag resolves to `<dir>/nimblebrain.json`
-3. `./nimblebrain.json` (current working directory)
-4. `~/.nimblebrain/nimblebrain.json` (global fallback)
-
-A minimal config:
+NimbleBrain reads `nimblebrain.json` at startup. A minimal config:
 
 ```json title="nimblebrain.json"
 {
-  "$schema": "https://schemas.nimblebrain.ai/nimblebrain.json",
-  "bundles": [
-    { "name": "@nimblebraininc/ipinfo" }
-  ]
+  "$schema": "https://schemas.nimblebrain.ai/v1/nimblebrain-config.schema.json",
+  "version": "1"
 }
 ```
 

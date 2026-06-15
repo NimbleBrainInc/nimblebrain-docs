@@ -15,29 +15,34 @@ Get NimbleBrain running locally with Docker Compose. You need Docker and an [Ant
 
    ```json title="nimblebrain.json"
    {
-     "$schema": "https://schemas.nimblebrain.ai/nimblebrain.json",
-     "bundles": []
+     "$schema": "https://schemas.nimblebrain.ai/v1/nimblebrain-config.schema.json",
+     "version": "1"
    }
    ```
 
-   This minimal config starts NimbleBrain with no MCP bundles installed. The agent still has built-in platform capabilities (home, conversations, files, settings, usage, automations). You'll install bundles in step 5 to give it domain-specific tools.
+   Both `$schema` and `version` are part of the config. This minimal file starts NimbleBrain with no MCP apps installed. The agent still has built-in platform capabilities (home, conversations, files, automations, skills, usage). You install apps from the web UI in step 5 to give it domain-specific tools.
+
+   <Aside type="note">
+   Apps are not listed in `nimblebrain.json`. Per-workspace app installs live in `workspace.json`, which the runtime manages for you. The config file is for runtime settings (model, limits, features), not app inventory.
+   </Aside>
 
 2. **Create a Docker Compose file**
 
    ```yaml title="docker-compose.yml"
    services:
      platform:
-       image: nimblebrain/platform:latest
+       image: ghcr.io/nimblebraininc/nimblebrain:latest
        restart: unless-stopped
        volumes:
          - workspace:/data
-         - ./nimblebrain.json:/app/nimblebrain.json:ro
+         - ./nimblebrain.json:/data/nimblebrain.json:ro
        environment:
          - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-         - NB_API_KEY=${NB_API_KEY}
+       networks:
+         - internal
 
      web:
-       image: nimblebrain/web:latest
+       image: ghcr.io/nimblebraininc/nimblebrain-web:latest
        restart: unless-stopped
        ports:
          - "27246:8080"
@@ -46,16 +51,22 @@ Get NimbleBrain running locally with Docker Compose. You need Docker and an [Ant
        depends_on:
          platform:
            condition: service_healthy
+       networks:
+         - internal
 
    volumes:
      workspace:
+
+   networks:
+     internal:
    ```
 
-3. **Set your environment variables and start**
+   The `platform` image runs the agent API on port 27247 (internal). The `web` image serves the UI and is published on port 27246.
+
+3. **Set your API key and start**
 
    ```bash
    export ANTHROPIC_API_KEY=sk-ant-api03-...
-   export NB_API_KEY=my-secret-key-at-least-8-chars
    docker compose up
    ```
 
@@ -66,15 +77,17 @@ Get NimbleBrain running locally with Docker Compose. You need Docker and an [Ant
    ✔ Container quickstart-web-1       Started
    ```
 
-   The platform container runs the agent engine on port 27247 (internal). The web container serves the UI on port 27246.
-
-   <Aside type="tip">
-   `NB_API_KEY` protects the API. It must be at least 8 characters. You'll enter this in the web UI login screen.
-   </Aside>
+   The platform container reports healthy once `http://localhost:27247/v1/health` responds (checked internally). The web container then starts.
 
 4. **Open the web UI**
 
-   Go to [http://localhost:27246](http://localhost:27246). Enter your `NB_API_KEY` value to log in.
+   Go to [http://localhost:27246](http://localhost:27246).
+
+   There is no login screen by default. With no `instance.json` present, NimbleBrain runs in **dev mode** — requests are unauthenticated and you act as a single built-in user. This is the right setup for trying things out locally.
+
+   <Aside type="caution">
+   Dev mode has no authentication. Before exposing NimbleBrain to a network, configure a real auth adapter (`oidc` or `workos`) in `instance.json`. See [Installation](/installation) and the configuration reference.
+   </Aside>
 
    Try sending a message:
 
@@ -82,23 +95,19 @@ Get NimbleBrain running locally with Docker Compose. You need Docker and an [Ant
    What can you help me with?
    ```
 
-   The agent responds using its built-in platform capabilities. To give it domain-specific tools, install a bundle in the next step.
+   The agent responds using its built-in platform capabilities. To give it domain-specific tools, install an app in the next step.
 
 5. **Install an app**
 
-   Ask the agent to install a bundle:
+   Apps come from two places: the in-app **connectors catalog** (remote MCP connectors with point-and-click OAuth) and the **mpak registry** (MCP server bundles).
+
+   Open the connectors catalog from workspace settings to browse and install connectors directly in the UI. You can also drive installs by chatting with the agent — it uses the `manage_connectors` tool to list the catalog and install a connector, and `manage_apps` to manage registry apps across the org:
 
    ```
-   Search mpak for available bundles
+   List the available connectors and install one for me
    ```
 
-   The agent uses `nb__search` (with `scope: "registry"`) to search the registry. To install one:
-
-   ```
-   Install @nimblebraininc/ipinfo
-   ```
-
-   The agent calls `nb__manage_app` to download and start the bundle. You can now ask things like "What's the IP info for 8.8.8.8?"
+   Once an app is installed and running, its tools join the agent's namespace. Ask the agent to use them in plain language.
 
 </Steps>
 
@@ -107,7 +116,7 @@ Get NimbleBrain running locally with Docker Compose. You need Docker and an [Ant
 import { CardGrid, LinkCard } from '@astrojs/starlight/components';
 
 <CardGrid>
-  <LinkCard title="Installation" description="All install methods: Docker Compose or from source" href="/installation" />
+  <LinkCard title="Installation" description="All install methods: Docker Compose or from source, plus auth setup" href="/installation" />
   <LinkCard title="Core Concepts" description="Understand the agent loop, bundles, skills, and tools" href="/concepts" />
   <LinkCard title="Installing Apps" description="Browse and install MCP bundles from the mpak registry" href="/using/installing-apps" />
 </CardGrid>

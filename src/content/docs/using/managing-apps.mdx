@@ -33,6 +33,8 @@ starting ──→ running ──→ crashed ──→ dead
 
 ## Listing bundles
 
+In the web UI, every installed app and its current status (running, starting, crashed) appears on the workspace **Settings → About** tab, alongside its version and tool count. From the CLI or API:
+
 <Tabs>
   <TabItem label="CLI">
     ```bash
@@ -135,7 +137,7 @@ curl http://localhost:27247/v1/bundles/health
 
     > "Restart the Postgres app"
 
-    The agent uses `nb__manage_app` to control bundle lifecycle.
+    The agent uses `manage_apps` to control bundle lifecycle.
   </TabItem>
 </Tabs>
 
@@ -173,7 +175,7 @@ Bundle **data** (Upjack entity state, bundle-owned files under `{workDir}/worksp
 
 ## Protected bundles
 
-Mark a bundle as protected in `nimblebrain.json` to prevent removal via `nb__manage_app` or the API:
+Mark a bundle as protected in `nimblebrain.json` to prevent removal via `manage_apps` or the API:
 
 ```json
 {

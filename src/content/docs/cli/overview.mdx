@@ -3,8 +3,6 @@ title: CLI Overview
 description: Global flags, modes, and config resolution for the nb command-line interface.
 ---
 
-import { Aside } from '@astrojs/starlight/components';
-
 The `nb` command is your primary interface to the NimbleBrain runtime. It starts interactive sessions, launches servers, manages bundles, and configures your workspace.
 
 ## Usage
@@ -28,7 +26,8 @@ When you run `nb` without a command, it enters interactive mode (TUI or headless
 | `status` | Show workspace status |
 | `reload` | Hot-reload bundles and config |
 | `telemetry` | Manage anonymous usage telemetry |
-| `automation` | Manage automation rules |
+| `automation` | Manage scheduled automations |
+| `credential` (alias `creds`) | Manage workspace-scoped secrets (OAuth client secrets, API keys) |
 
 ## Global flags
 
@@ -65,7 +64,8 @@ Commands:
   status       Show workspace status
   reload       Hot-reload bundles and config
   telemetry    Manage anonymous usage telemetry
-  automation   Manage automation rules
+  automation   Manage scheduled automations
+  credential   Manage workspace-scoped secrets
 
 Global flags:
   --config <path>   Config file path
@@ -142,9 +142,7 @@ NimbleBrain loads its configuration from a `nimblebrain.json` file. The CLI reso
 | 3 | `NB_WORK_DIR` env var | `<NB_WORK_DIR>/nimblebrain.json` |
 | 4 | Default work directory | `~/.nimblebrain/nimblebrain.json` |
 
-<Aside type="note">
-  The default work directory differs by mode. `nb dev` defaults to `./.nimblebrain` (project-local), while `nb serve` and `nb` (interactive) default to `~/.nimblebrain` (global).
-</Aside>
+All modes (interactive, `nb serve`, and `nb dev`) default to the same global work directory at `~/.nimblebrain`. `nb dev` spawns `nb serve` under the hood, so it inherits that default unless you override it with `--config`, `--workdir`, or `NB_WORK_DIR`.
 
 If no config file exists at the resolved path, NimbleBrain auto-creates one with defaults:
 
@@ -172,3 +170,4 @@ CLI flags override values from the config file. For example, `--model claude-son
 - [nb (Interactive)](/cli/interactive/) -- TUI and headless modes
 - [nb serve](/cli/serve/) -- production HTTP server
 - [nb dev](/cli/dev/) -- development mode
+- [nb credential](/cli/credential/) -- manage workspace-scoped secrets
