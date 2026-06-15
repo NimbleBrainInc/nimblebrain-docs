@@ -5,7 +5,7 @@ description: Deploy NimbleBrain on a single machine with Docker Compose.
 
 import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
-NimbleBrain ships two container images: **platform** (agent engine + API on port 27247, internal) and **web** (React UI served by Caddy, exposed on port 27246). Docker Compose runs both on a single machine with a shared internal network.
+NimbleBrain ships two container images: **`ghcr.io/nimblebraininc/nimblebrain`** (agent engine + API on port 27247, internal) and **`ghcr.io/nimblebraininc/nimblebrain-web`** (React UI served by Caddy, exposed on port 27246). Docker Compose runs both on a single machine with a shared internal network.
 
 ## Prerequisites
 
@@ -15,36 +15,26 @@ NimbleBrain ships two container images: **platform** (agent engine + API on port
 
 ## Compose file
 
-Create a project directory and add these two files:
-
-```json title="nimblebrain.json"
-{
-  "$schema": "https://schemas.nimblebrain.ai/nimblebrain.json",
-  "bundles": [],
-  "skillDirs": ["/data/skills"]
-}
-```
+Create a project directory and add this file:
 
 ```yaml title="docker-compose.yml"
 services:
   platform:
-    image: nimblebrain/platform:latest
+    image: ghcr.io/nimblebraininc/nimblebrain:latest
     build: .
     restart: unless-stopped
     volumes:
       - workspace:/data
-      - ./nimblebrain.json:/app/nimblebrain.json:ro
       - ./skills:/app/skills:ro
     environment:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - GOOGLE_GENERATIVE_AI_API_KEY=${GOOGLE_GENERATIVE_AI_API_KEY:-}
-      - NB_API_KEY=${NB_API_KEY}
     networks:
       - internal
 
   web:
-    image: nimblebrain/web:latest
+    image: ghcr.io/nimblebraininc/nimblebrain-web:latest
     build: web/
     restart: unless-stopped
     ports:
@@ -64,12 +54,14 @@ networks:
   internal:
 ```
 
+The platform reads its working directory from the `workspace` volume mounted at `/data` (the image sets `NB_WORK_DIR=/data`). Configuration (`nimblebrain.json`), skills, and bundle state all live under that directory — there is no separate config bind mount required to boot. Drop custom skill files into the `./skills` directory if you want to mount them read-only.
+
 ### What each service does
 
 | Service | Image | Port | Purpose |
 |---------|-------|------|---------|
-| `platform` | `nimblebrain/platform` | 3000 (internal) | Agent engine, HTTP API, MCP bundle manager |
-| `web` | `nimblebrain/web` | 27246 (host) → 8080 (container) | React SPA served by Caddy, proxies `/v1/*` to platform |
+| `platform` | `ghcr.io/nimblebraininc/nimblebrain` | 27247 (internal) | Agent engine, HTTP API, MCP bundle manager |
+| `web` | `ghcr.io/nimblebraininc/nimblebrain-web` | 27246 (host) → 8080 (container) | React SPA served by Caddy, proxies `/v1/*` to platform |
 
 The `web` container runs Caddy, which serves the static UI files and reverse-proxies all `/v1/*` API requests to the platform container. The platform container is **not** exposed to the host — all traffic flows through the web container.
 
@@ -77,8 +69,7 @@ The `web` container runs Caddy, which serves the static UI files and reverse-pro
 
 | Volume/Mount | Container path | Purpose |
 |---|---|---|
-| `workspace` (named volume) | `/data` | Workspace data — conversations, logs, installed bundles, configs |
-| `./nimblebrain.json` (bind mount, read-only) | `/app/nimblebrain.json` | Platform configuration |
+| `workspace` (named volume) | `/data` | Working directory (`NB_WORK_DIR`) — conversations, logs, installed bundles, and `nimblebrain.json` |
 | `./skills` (bind mount, read-only) | `/app/skills` | Custom skill files |
 
 ### Environment variables
@@ -88,12 +79,13 @@ The `web` container runs Caddy, which serves the static UI files and reverse-pro
 | `ANTHROPIC_API_KEY` | Yes | Your Anthropic API key for Claude |
 | `OPENAI_API_KEY` | No | OpenAI API key (for OpenAI model provider) |
 | `GOOGLE_GENERATIVE_AI_API_KEY` | No | Google Gemini API key (for Google model provider) |
-| `NB_API_KEY` | Legacy | API authentication key (used with legacy single-key auth). For multi-user auth, configure `instance.json` with a local or OIDC adapter instead |
 | `ALLOWED_ORIGINS` | Production | Comma-separated list of allowed CORS origins (e.g., `https://nb.example.com`). Required for cross-origin cookie auth |
-| `NB_API_URL` | Production (when using OAuth connectors) | Public origin of the API (e.g., `https://nb.example.com`). Used to build the OAuth `redirect_uri` for [connectors](/config/connectors-catalog/). Mismatch with the URL registered in each vendor's OAuth app produces vendor-side `redirect_uri does not match` errors at sign-in time. |
+| `NB_PUBLIC_ORIGIN` | Production (when using OAuth connectors) | Canonical public origin of the platform (e.g., `https://nb.example.com`). Used to build absolute callback URLs such as the OAuth `redirect_uri` for [connectors](/config/connectors-catalog/). A mismatch with the URL registered in each vendor's OAuth app produces vendor-side `redirect_uri does not match` errors at sign-in time. |
+
+Authentication is configured through an `instance.json` adapter (`dev`, `oidc`, or `workos`), not an environment variable. There is no `NB_API_KEY` — see [Security](/deploy/security) for adapter setup.
 
 <Aside type="caution">
-Running without authentication (no `instance.json` and no `NB_API_KEY`) disables auth entirely. CORS falls back to `Access-Control-Allow-Origin: *`. This is acceptable for local development but never for production. See [Security](/deploy/security) for auth adapter setup.
+Running without authentication (no `instance.json`) runs in **dev mode** and disables auth entirely. CORS falls back to `Access-Control-Allow-Origin: *`. This is acceptable for local development but never for production. See [Security](/deploy/security) for auth adapter setup.
 </Aside>
 
 ### Health check
@@ -117,15 +109,15 @@ The `web` service uses `depends_on` with `condition: service_healthy`, so it onl
 
    ```bash title=".env"
    ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
-   NB_API_KEY=change-me-to-a-strong-secret-at-least-32-chars
    ```
 
-   Or export them directly:
+   Or export it directly:
 
    ```bash
    export ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
-   export NB_API_KEY=change-me-to-a-strong-secret-at-least-32-chars
    ```
+
+   This starts the platform in dev mode (no authentication). Configure an `instance.json` adapter before exposing it to a network — see [Security](/deploy/security).
 
 2. **Start the services**
 
@@ -152,19 +144,19 @@ The `web` service uses `depends_on` with `condition: service_healthy`, so it onl
    project-web-1          running                0.0.0.0:27246->8080/tcp
    ```
 
-   Check the health endpoint directly:
+   Check the health endpoint directly (proxied through the web container):
 
    ```bash
    curl http://localhost:27246/v1/health
    ```
 
    ```json
-   {"status":"ok","uptime":42}
+   {"status":"ok","version":"1.2.3","buildSha":"abc1234","bundles":[]}
    ```
 
 4. **Open the UI**
 
-   Go to [http://localhost:27246](http://localhost:27246). Enter your `NB_API_KEY` value to log in.
+   Go to [http://localhost:27246](http://localhost:27246). In dev mode the UI opens straight to the agent. Once an `instance.json` adapter is configured, you sign in through that adapter's flow (for example the OIDC provider's hosted login).
 
 </Steps>
 
@@ -233,17 +225,17 @@ docker compose up -d
 
 ## Platform image details
 
-The `nimblebrain/platform` image is built from `oven/bun:1.3-alpine` and includes:
+The `ghcr.io/nimblebraininc/nimblebrain` image is built on `python:3.13-slim` (Python is the base so Python-based MCP bundles run natively) and adds the Bun runtime plus the tooling bundles shell out to:
 
 | Component | Version | Purpose |
 |-----------|---------|---------|
-| Bun | 1.3 | JavaScript/TypeScript runtime |
-| Python | 3.13 | Runs Python-based MCP bundles |
-| Node.js + npm | System | Runs Node-based MCP bundles |
-| mpak CLI | Latest | Downloads and manages bundles from the mpak registry |
-| curl | System | Used by the built-in health check |
+| Python | 3.13 | Base image; runs Python-based MCP bundles |
+| Bun | latest | JavaScript/TypeScript runtime (runs the platform itself) |
+| Node.js + npm | 24 | Runs Node-based MCP bundles |
+| Git, curl, unzip | System | Bundle clones at boot, the health check, archive extraction |
+| mpak CLI | `@nimblebrain/mpak@0.4.1` | Downloads and manages bundles from the mpak registry |
 
-The entrypoint is `bun run src/cli/index.ts serve`, which starts the HTTP API server on port 27247 with `NB_WORK_DIR=/data` and `NB_HOST=0.0.0.0`.
+The container runs as a non-root user (UID 1000). The entrypoint is `bun run src/cli/index.ts serve`, which starts the HTTP API server on port 27247 with `NB_WORK_DIR=/data` and `NB_HOST=0.0.0.0`.
 
 ## Reverse proxy
 
@@ -271,7 +263,7 @@ server {
 ```
 
 <Aside type="caution">
-If you expose NimbleBrain over a network, set `NB_API_KEY` and `ALLOWED_ORIGINS` to your domain. See the [Security](/deploy/security) guide for full hardening steps.
+If you expose NimbleBrain over a network, configure an `instance.json` auth adapter and set `ALLOWED_ORIGINS` to your domain. See the [Security](/deploy/security) guide for full hardening steps.
 </Aside>
 
 ## Troubleshooting
@@ -286,7 +278,7 @@ docker compose logs platform
 
 Common causes:
 - `ANTHROPIC_API_KEY` is missing or invalid
-- `NB_API_KEY` is set but fewer than 8 characters — the server exits with `NB_API_KEY is too short (minimum 8 characters)`
+- A malformed `instance.json` — the server refuses to start if the auth adapter config is invalid. Check the logs for the validation error and see [Security](/deploy/security).
 
 ### Web container won't start
 

@@ -10,24 +10,26 @@ NimbleBrain splits configuration into two files:
 - **`nimblebrain.json`** — instance-level settings (models, HTTP, logging, limits, feature flags). One file per deployment. **This page.**
 - **`workspace.json`** — per-workspace settings (bundles, skill directories, named agent profiles, optional model + identity overrides). See [`workspace.json`](/config/workspace-json).
 
-Top-level `bundles`, `skillDirs`, `agents`, `home`, and `preferences` entries in `nimblebrain.json` are silently stripped at load — they belong in `workspace.json` now. See [Workspace Isolation](/concepts#workspace-isolation) for the rationale.
+Top-level `bundles`, `skillDirs`, `agents`, `home`, and `preferences` entries in `nimblebrain.json` are silently stripped at load — they belong in `workspace.json` now. See [workspace configuration](/config/workspace-json) for where they live.
 
 ## Config resolution
 
 NimbleBrain looks for the config file in this order, stopping at the first match:
 
-1. **`--config <path>`** — Explicit path passed as a CLI flag
-2. **`.nimblebrain/nimblebrain.json`** — Project-local config directory in the current working directory
-3. **`--workdir <dir>/nimblebrain.json`** — Inside the working directory (flag or `NB_WORK_DIR` env var)
-4. **`./nimblebrain.json`** — Current working directory (bare file)
+1. **`--config <path>`** — Explicit path passed as a CLI flag.
+2. **`.nimblebrain/nimblebrain.json`** — Project-local config directory in the current working directory.
+3. **`<defaultWorkDir>/nimblebrain.json`** — Inside the command's default working directory (`~/.nimblebrain` for `nb serve`, the project-local workdir for worktree dev).
+4. **`./nimblebrain.json`** — Current working directory (bare file).
 
-If no config file exists at the resolved path, NimbleBrain auto-creates a minimal default file as long as the parent directory exists.
+If no config file exists at the resolved path, NimbleBrain auto-creates a minimal default file (`{ "$schema": …, "version": "1" }`) as long as the parent directory exists.
 
-`NB_WORK_DIR` takes precedence over both `workDir` in the file and `--workdir`.
-
-<Aside type="tip">
-  The `nb dev` command defaults its working directory to `./.nimblebrain` (project-local), while `nb serve` and `nb` default to `~/.nimblebrain` (global). Override either with `--workdir`.
+<Aside type="caution">
+  `NB_WORK_DIR` does **not** drive config-file discovery. It sets the `workDir` runtime value (where conversations, logs, and workspaces are stored) and is forwarded to bundle subprocesses, but the config file is located by the order above. To point at a specific config file, use `--config`.
 </Aside>
+
+### The override file
+
+A sibling `nimblebrain.overrides.json` next to the resolved config file is **deep-merged on top of it** at load. The seed (`nimblebrain.json`) is operator-managed and overwritten on every deploy; the override is written by the admin `set_model_config` tool and preserved across deploys. The merge is one level deep — top-level objects (e.g. `models`) are merged key-by-key so an override of `models.fast` doesn't clobber the seed's `models.default`; scalars and arrays are replaced wholesale. A malformed override file is logged loudly and skipped (the seed still boots) rather than taking down startup.
 
 ## Complete annotated example
 
@@ -63,10 +65,10 @@ If no config file exists at the resolved path, NimbleBrain auto-creates a minima
     "delegation":          true,
     "toolDiscovery":       true,
     "bundleDiscovery":     true,
-    "mcpServer":           true,
     "fileContext":         true,
     "userManagement":      true,
-    "workspaceManagement": true
+    "workspaceManagement": true,
+    "compaction":          false
   },
 
   "files": {
@@ -97,7 +99,9 @@ If no config file exists at the resolved path, NimbleBrain auto-creates a minima
 | `maxOutputTokens` | `integer` | `16384` | Max output tokens per LLM call. |
 | `maxHistoryMessages` | `integer` | `40` | Max conversation message groups in context. Tool call/result pairs count as one group. |
 | `maxToolResultSize` | `integer` | `1000000` | Max characters for a single tool result. `0` disables the cap. |
-| `store` | `object` | `{ "type": "memory" }` | Conversation storage backend. See [store](#store). |
+| `thinking` | `"off" \| "adaptive" \| "enabled"` | — | Extended-thinking mode for reasoning-capable models. `off`: never reason. `adaptive`: model decides per call. `enabled`: always reason (cap with `thinkingBudgetTokens`). Typically set via the admin `set_model_config` tool, which writes it to `nimblebrain.overrides.json`. |
+| `thinkingBudgetTokens` | `integer` | — | Token budget when `thinking: "enabled"`. Counts toward `maxOutputTokens`. Anthropic requires a minimum of 1,024. |
+| `store` | `object` | event-sourced (`jsonl` via CLI) | Conversation storage backend. See [store](#store). |
 | `sessionStore` | `object` | `{ "type": "memory", "ttlSeconds": 28800 }` | MCP session metadata store for `/mcp`. See [sessionStore](#sessionstore). |
 | `logging` | `object` | — | Structured logging config. See [logging](#logging). |
 | `http` | `object` | `{ "port": 27247, "host": "127.0.0.1" }` | HTTP server config. Omit for programmatic-only use. |
@@ -108,7 +112,7 @@ If no config file exists at the resolved path, NimbleBrain auto-creates a minima
 | `workDir` | `string` | `"~/.nimblebrain"` | Working directory for runtime state (conversations, logs, workspaces). |
 
 <Aside type="note">
-  **Workspace-owned fields** — `bundles`, `skillDirs`, `agents`, `home`, `preferences`, `noDefaultBundles` — are silently stripped if placed at the top level. They live in [`workspace.json`](/config/workspace-json).
+  **Workspace-owned fields** — `bundles`, `skillDirs`, `agents`, `home`, `preferences`, `noDefaultBundles` — are silently stripped if placed at the top level. They live in [`workspace.json`](/config/workspace-json). A top-level `skills` array is a **legacy** field and is silently stripped too; skill directories belong in `workspace.json` as `skillDirs`.
 
   **Deprecated fields** — `identity` and `contextFile` are ignored with a warning. Use a skill with `type: "context"` instead.
 </Aside>
@@ -157,10 +161,10 @@ Each provider key is optional. If a provider's `apiKey` is omitted, the SDK fall
 
 ## store
 
-Choose where conversations are persisted.
+Choose where conversations are persisted. **The CLI (`nb serve`) defaults to `jsonl`** — conversations persist across restarts at `{workDir}/conversations/`. In-memory is the fallback only for programmatic embedding where no `store` is given.
 
 <Tabs>
-  <TabItem label="JSONL (file-based)">
+  <TabItem label="JSONL (default for the CLI)">
     ```json
     {
       "store": {
@@ -170,7 +174,7 @@ Choose where conversations are persisted.
     }
     ```
 
-    The CLI defaults to JSONL storage with conversations in `{workDir}/conversations/`.
+    File-backed conversations in `{workDir}/conversations/`. New conversations are written in the **event-sourced** JSONL format (one append-only event log per conversation), which is what enables crash-resilient run replay and history [compaction](/config/features/). Legacy message-format JSONL files are still read.
   </TabItem>
   <TabItem label="In-memory">
     ```json
@@ -179,13 +183,13 @@ Choose where conversations are persisted.
     }
     ```
 
-    Conversations are lost when the process exits. Default for programmatic use.
+    Conversations are lost when the process exits. Only the fallback for programmatic use with no configured store.
   </TabItem>
 </Tabs>
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `type` | `"jsonl"` \| `"memory"` | Yes | Storage backend. |
+| `type` | `"jsonl"` \| `"memory"` | Yes | Storage backend. The CLI defaults to `jsonl`. |
 | `dir` | `string` | JSONL only | Directory for conversation JSONL files. |
 
 ## sessionStore
@@ -350,7 +354,8 @@ NimbleBrain validates `nimblebrain.json` at startup against the [JSON Schema (dr
 
 - **Unknown keys** produce a warning on stderr and are ignored.
 - **Structural errors** (wrong types, missing required fields) throw an error and prevent startup.
-- **Workspace-owned keys** (`bundles`, `skillDirs`, `agents`, `home`, `preferences`, `noDefaultBundles`) are silently stripped — no warning.
+- **Workspace-owned and legacy keys** (`bundles`, `skillDirs`, `agents`, `home`, `preferences`, `noDefaultBundles`, and the legacy `skills`) are silently stripped — no warning.
+- The **override file** (`nimblebrain.overrides.json`) is validated structurally, but unknown-key warnings are suppressed for it: its `set_model_config`-written vocabulary (`thinking`, `thinkingBudgetTokens`) is not yet in the published schema.
 - **Deprecated keys** (`identity`, `contextFile`) produce a warning pointing at context skills.
 
 ```

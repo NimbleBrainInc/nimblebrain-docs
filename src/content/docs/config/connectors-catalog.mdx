@@ -20,7 +20,7 @@ A registry is a typed source of `ServerDetail` records. Each instance is identif
 
 The platform seeds two registries on first boot:
 
-- **`bundled-static`** (locked, type `static`) — the curated list shipped at `src/connectors/catalog.yaml`. Cannot be disabled or removed; operators may rename it.
+- **`bundled-static`** (locked, type `static`) — the curated list shipped at `src/connectors/curated/example.yaml`. Cannot be disabled or removed; operators may rename it.
 - **`mpak`** (type `mpak`, scoped to `["nimblebraininc"]`) — the public mpak registry, narrowed to the `@nimblebraininc/*` scope so first-time installs see only NimbleBrain-curated bundles. Operators can broaden the scope or disable the registry entirely.
 
 Registry config persists at `<workDir>/registries.json`. The shape is:
@@ -54,7 +54,7 @@ The `scopes` field (when present) restricts a registry's entries to one or more 
 
 ## Adding a new OAuth connector
 
-Append an entry to `src/connectors/catalog.yaml`. The file is a list of upstream `ServerDetail` records; platform-specific fields live under the reverse-DNS extension key `_meta["ai.nimblebrain/connector"]`.
+Append an entry to the bundled catalog at `src/connectors/curated/example.yaml`. The file is a list of upstream `ServerDetail` records; platform-specific fields live under the reverse-DNS extension key `_meta["ai.nimblebrain/connector"]`.
 
 ### 1. Pick the auth flow
 
@@ -176,15 +176,15 @@ NimbleBrain-specific fields under `_meta["ai.nimblebrain/connector"]`:
 The vendor's OAuth app must allow this exact callback URL:
 
 ```
-{NB_API_URL}/v1/mcp-auth/callback
+{NB_PUBLIC_ORIGIN}/v1/mcp-auth/callback
 ```
 
-Where `NB_API_URL` is the public origin of the platform's API. For the dev server it defaults to `http://localhost:27247`. **In production this must be set explicitly** — see [Environment Variables](/config/environment/#nb_api_url).
+Where `NB_PUBLIC_ORIGIN` is the canonical public origin of the deployment. For the dev server it defaults to `http://localhost:27247`. **In production this must be set explicitly** (or derived from the chart-forwarded host facts) — see [Environment Variables → Public origin](/config/environment/#public-origin-and-callbacks).
 
 The Set up modal in the UI shows the resolved redirect URI with a Copy button so admins can register it without guessing.
 
 <Aside type="caution">
-  A `redirect_uri does not match` error from the vendor at sign-in time means the URL registered with the vendor's OAuth app doesn't match what NimbleBrain sends. Double-check `NB_API_URL` matches the app's actual public origin (not `localhost`, not the internal cluster service name).
+  A `redirect_uri does not match` error from the vendor at sign-in time means the URL registered with the vendor's OAuth app doesn't match what NimbleBrain sends. Double-check `NB_PUBLIC_ORIGIN` matches the app's actual public origin (not `localhost`, not the internal cluster service name).
 </Aside>
 
 ### 4. Test it
@@ -352,7 +352,7 @@ The probe runs the same chain the production OAuth provider uses:
 3. **RFC 8414** — `GET <as-origin>/.well-known/oauth-authorization-server` against each candidate AS origin (RFC 9728 advertised, plus bundle origin as fallback).
 4. **RFC 7591** — the AS metadata document must include `registration_endpoint`.
 
-CI runs this probe automatically on PRs that touch `src/connectors/catalog.yaml` (`.github/workflows/catalog-check.yml`), so a vendor going down or dropping DCR support breaks the PR before the catalog ships. It's not part of `bun run verify` (which stays offline).
+CI runs this probe automatically on PRs that touch the bundled catalog (`.github/workflows/catalog-check.yml`), so a vendor going down or dropping DCR support breaks the PR before the catalog ships. It's not part of `bun run verify` (which stays offline).
 
 ## Where the secrets live
 
@@ -360,19 +360,13 @@ The catalog never contains secrets. For `auth: static` entries, the workspace ad
 
 Both are keyed by the connector's reverse-DNS `name` (e.g. `io.asana/mcp`), not a short slug.
 
-Set via the UI:
+Both are set through the UI:
 
 ```
 Settings → Connectors → <connector> → Set up
 ```
 
-Or headless (per-workspace):
-
-```bash
-nb config set --raw <wsId> <clientSecretKey>=<value>
-```
-
-For example: `nb config set --raw ws_acme asana.client_secret=xxx`.
+The modal writes the public `client_id` into `workspace.json → oauthOperatorApps[<id>].clientId` and stores the `client_secret` in the workspace credential store under `operatorSetup.clientSecretKey`. There is no flag-based headless command for an operator OAuth secret — use the Set up modal (or the `manage_connectors` tool action it calls).
 
 ## Migrating from a pre-alignment install
 
@@ -381,12 +375,12 @@ Operators upgrading from a release before the `ServerDetail` alignment landed sh
 - **`RegistryType` rename.** `"curated"` → `"static"` and `"directory"` → `"mcp"`. Any `NB_REGISTRIES` JSON pinning the old strings must be re-typed. The persisted `registries.json` is auto-migrated on next read by re-seeding the locked default.
 - **Seeded id rename.** The locked seeded registry id `"curated"` is now `"bundled-static"`. Existing `registries.json` rows are preserved; the new id is re-added if missing.
 - **`NB_CATALOG_PATH` and `NB_STDIO_CATALOG_PATH` removed.** Use `NB_REGISTRIES` with a `static`-type registry pointing at a `ServerDetail[]` YAML / JSON file.
-- **Catalog id format.** `DirectoryEntry.id` (and `InstalledConnector.catalogId`) is now the reverse-DNS `ServerDetail.name` (`io.asana/mcp`) instead of a bare slug (`asana`). Catalog-keyed state — `workspace.json#oauthOperatorApps[<id>]` and the matching `<clientSecretKey>` credential entries — must be rekeyed to the reverse-DNS form before existing static-auth connectors will resolve. There's no auto-migration; rekey workspace by workspace via the admin UI or `nb config set`.
+- **Catalog id format.** `DirectoryEntry.id` (and `InstalledConnector.catalogId`) is now the reverse-DNS `ServerDetail.name` (`io.asana/mcp`) instead of a bare slug (`asana`). Catalog-keyed state — `workspace.json#oauthOperatorApps[<id>]` and the matching `<clientSecretKey>` credential entries — must be rekeyed to the reverse-DNS form before existing static-auth connectors will resolve. There's no auto-migration; rekey workspace by workspace through the admin Connectors UI.
 - **`stdio-catalog.yaml` removed.** Curated stdio bundle entries no longer live in a separate file — the mpak registry is queried directly via the SDK and filtered by `scopes`.
 - **Bundle `serverName` slug.** New catalog installs persist a slugified canonical reverse-DNS form (`com-canva-mcp`, `dev-mpak-nimblebraininc-echo`) instead of a short brand slug. Existing installs keep their persisted `serverName` via a fallback. Operators querying by `serverName` (logs, audit) need both forms during the transition.
 
 ## Related
 
-- [Environment Variables](/config/environment/) — `NB_API_URL`, `NB_REGISTRIES`.
+- [Environment Variables](/config/environment/) — `NB_PUBLIC_ORIGIN`, `NB_REGISTRIES`.
 - [Workspace JSON](/config/workspace-json/) — `oauthOperatorApps`, `connectorsAllowList`.
 - [Credentials](/config/credentials/) — how `user_config` and the credential store work for stdio bundles.

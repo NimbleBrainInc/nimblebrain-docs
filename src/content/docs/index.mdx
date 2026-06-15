@@ -1,11 +1,11 @@
 ---
 title: What is NimbleBrain?
-description: NimbleBrain is a composable MCP orchestrator and agent runtime — install MCP servers as apps, compose tools across them, render MCP Apps with full ext-apps support, and expose the whole platform as an MCP server.
+description: NimbleBrain is a self-hosted platform for MCP Apps and agent automations — install MCP servers as apps, compose tools across them, render MCP Apps with full ext-apps support, and expose the whole platform as an MCP server.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-NimbleBrain is a **composable MCP orchestrator** and agent runtime built on [Bun](https://bun.sh). It aggregates multiple MCP servers into a unified tool namespace, renders interactive [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) inside the web client, and exposes the entire platform as an MCP server that other hosts can connect to.
+NimbleBrain is a **self-hosted platform for MCP Apps and agent automations**. It aggregates multiple MCP servers into a unified tool namespace, renders interactive [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) inside the web client, and exposes the entire platform as an MCP server that other hosts can connect to.
 
 **Install MCP servers as apps. Compose tools across them. Ship interactive UIs. Expose it all as MCP.**
 
@@ -61,7 +61,7 @@ NimbleBrain doesn't just run MCP servers — it **composes** them:
 | **Bundles (Apps)** | MCP server bundles from the [mpak](https://mpak.dev) registry, local paths, or remote URLs |
 | **Skills** | Markdown files that compose the system prompt and scope tool access per task |
 | **`/mcp` Endpoint** | Exposes the platform as a Streamable HTTP MCP server for external clients |
-| **System Tools** | Built-in `nb__*` tools for discovery, bundle management, and multi-agent delegation |
+| **System Tools** | Built-in tools for discovery (`nb__search`/`nb__status`), multi-agent delegation (`nb__delegate`), and platform management (`manage_connectors`, `manage_apps`, `manage_workspaces`, `manage_users`) |
 
 ## Who is it for?
 

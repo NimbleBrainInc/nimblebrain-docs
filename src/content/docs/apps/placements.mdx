@@ -13,12 +13,12 @@ The shell layout has the following slots:
 
 | Slot | Location | Description |
 |------|----------|-------------|
-| `sidebar` | Left sidebar, top zone | Scrollable navigation items. Sub-slots like `sidebar.conversations` are grouped under a label. |
+| `sidebar` | Left sidebar, top zone | Scrollable navigation items. Priority `< 10` is ungrouped core nav; `>= 10` is grouped under "general". |
+| `sidebar.apps` | Left sidebar, "Apps" group | Items grouped under the "Apps" heading. |
 | `sidebar.bottom` | Left sidebar, bottom zone | Pinned items below the scrollable area (e.g., settings). |
 | `main` | Central content area | Full-page views rendered in iframes. Requires a `route`. |
-| `toolbar.right` | Top toolbar, right side | Compact toolbar widgets. |
 
-Sub-slots are matched hierarchically. A query for `"sidebar"` returns all entries whose slot is `"sidebar"` or starts with `"sidebar."` (e.g., `"sidebar.conversations"`, `"sidebar.apps"`).
+A `"sidebar.<group>"` slot renders under a named group heading derived from the group name (e.g., `"sidebar.apps"` → "Apps").
 
 ## Declaring placements
 
@@ -55,7 +55,7 @@ Add a `placements` array to your manifest's `_meta["ai.nimblebrain/host"]`:
 
 ## Priority sorting
 
-Within each slot, placements are sorted by `priority` (ascending). Lower values appear first. Placements with the same `priority` tie-break alphabetically by `label` (case-insensitive, falling back to `route`) — so two apps both at the default `100` render in a predictable order rather than whichever bundle happened to register first.
+Placements are sorted by **slot, then `priority`** (ascending). Lower priority values appear first within a slot. There is no further tie-break — placements with the same slot and priority keep their registration order.
 
 ```
 priority: 10  → appears first
@@ -76,23 +76,15 @@ Placements with a `route` field register a URL path in the shell. The route is p
 
 When a user clicks a sidebar item with a route, the shell navigates to `/app/<route>` and loads the placement's `resourceUri` in the main content iframe.
 
-### Legacy route resolution
-
-If your manifest uses `primaryView` without explicit placements, the route is derived from the bundle name:
-
-- Scoped names use the full scope: `@myorg/hello` becomes route `@myorg/hello`, URL `/app/@myorg/hello`
-- Unscoped names use the server name: `hello` becomes route `hello`, URL `/app/hello`
-
 ## Sidebar rendering
 
 The shell layout renders sidebar items in two zones:
 
 ### Top zone (scrollable)
 
-1. **Home** — Built-in, always first if a sidebar placement has `route: "/"`.
-2. **Chat** — Built-in, always after Home.
-3. **Grouped sidebar placements** — Sub-slots like `sidebar.conversations` or `sidebar.apps` are grouped under a heading. Items within each group are sorted by priority.
-4. **Third-party app routes** — `"main"` slot placements with routes (from non-core servers) appear under an "Apps" heading.
+1. **Core nav** — `sidebar` placements with priority `< 10` (built-ins like Home and Conversations) render ungrouped at the top.
+2. **Grouped sidebar placements** — `sidebar` placements with priority `>= 10` group under "general"; `sidebar.<group>` placements group under their named heading (e.g., `sidebar.apps` → "Apps"). Items within each group are sorted by priority.
+3. **App routes** — `"main"` slot placements with routes appear under the "Apps" heading.
 
 ### Bottom zone (pinned)
 
@@ -137,7 +129,7 @@ The `PlacementRegistry` is an in-memory store that tracks all active placements.
 
 Every entry is either **ambient** (no `wsId` — platform-provided views like Home, Conversations, Files, Settings; always present inside any workspace) or **workspace-scoped** (installed bundles, visible only to members of that workspace). The registry exposes a single read method, `forWorkspace(wsId)`, which returns ambient + scoped entries merged and sorted. There is deliberately no "return everything" accessor — in a multi-tenant host, no legitimate caller wants placements unrelated to a workspace.
 
-**Registration** — When a bundle starts, its placements are registered against the installing workspace's `wsId`. If the bundle has explicit `placements`, they are used directly. If it only has `primaryView`, `registerLegacy()` converts it to a single `"main"` placement.
+**Registration** — When a bundle starts, its declared `placements` are registered via `register(serverName, placements, wsId)` against the installing workspace's `wsId`. Platform built-ins register ambient (no `wsId`). The virtual `primary` resource path then resolves to the first registered placement's `resourceUri`.
 
 **Querying** — `forWorkspace(wsId)` returns ambient entries plus entries scoped to `wsId`, sorted by slot then priority (lower first).
 

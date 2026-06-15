@@ -103,7 +103,7 @@ function TaskBoard() {
 </TabItem>
 <TabItem label="IIFE (no bundler)">
 ```html
-<script src="node_modules/@nimblebrain/synapse/dist/connect.iife.js"></script>
+<script src="node_modules/@nimblebrain/synapse/dist/connect.iife.global.js"></script>
 <div id="root">Loading...</div>
 <script>
   Synapse.connect({
@@ -274,7 +274,7 @@ This implements the [MCP 2025-11-25 tasks utility](https://modelcontextprotocol.
 | Long-running, multi-phase, or progress-emitting | `callToolAsTask` / `useCallToolAsTask` |
 | Returns in milliseconds (CRUD, lookups) | `callTool` |
 
-The agent itself uses task augmentation automatically when a tool declares `execution.taskSupport: "optional"` — see [Long-Running Tools (MCP Tasks)](/cli/long-running-tools) for the agent-side path. This page is about the **iframe-side** API for UIs that need to fire long-running tools from a button click and reflect lifecycle in the UI.
+The agent itself uses task augmentation automatically when a tool declares `execution.taskSupport: "optional"`. This page is about the **iframe-side** API for UIs that need to fire long-running tools from a button click and reflect lifecycle in the UI.
 
 ### React hook (recommended)
 
@@ -517,10 +517,10 @@ app.updateModelContext(
 
 When the user sends a chat message while viewing your app, this state is included in the system prompt. The agent can reference it to provide contextual responses.
 
-The `summary` parameter is optional but recommended — it's used as a fallback when the full state exceeds the 4096 token budget. Calls are debounced (250ms) to avoid flooding.
+The `summary` parameter is optional but recommended — it's used as a fallback when the full state exceeds the token budget. Calls are debounced (250ms) to avoid flooding.
 
 <Aside type="note">
-State injection is **trust-gated**. Only apps with an MTF trust score of 50 or higher have their state included in the LLM context. This prevents low-trust bundles from injecting adversarial content.
+State injection is bounded by a token budget. When the serialized state exceeds the budget, the host falls back to the `summary` string (or truncates the state if no summary was provided). The state is wrapped in a `<app-state>` containment tag in the system prompt — supply a concise `summary` so the agent still gets the gist when the full state is too large.
 </Aside>
 
 Legacy API (via `createSynapse`):
@@ -711,7 +711,7 @@ The Synapse Vite plugin gives you a full dev experience with one command:
 ```bash
 cd ui
 npm run dev
-# Open http://localhost:27246/__preview
+# Open http://localhost:5173/__preview
 ```
 
 The `synapseVite()` plugin in your `vite.config.ts` automatically:
@@ -793,7 +793,7 @@ Synapse detects its host during the ext-apps handshake. In NimbleBrain, `hostInf
 |---------|----------------------|-------------|
 | Tool calls | Full | Works (if host supports `tools/call`) |
 | Data sync | Full (NB only) | No-op |
-| Visible state | Full, trust-gated (NB only) | No-op |
+| Visible state | Full (NB only) | No-op |
 | Widget store | Persist + agent (NB only) | In-memory only |
 | Actions / chat | Full | No-op |
 | Theme | Full | From ext-apps handshake |
@@ -808,7 +808,7 @@ Synapse detects its host during the ext-apps handshake. In NimbleBrain, `hostInf
 |--------|----------|
 | `@nimblebrain/synapse` | `connect`, `createSynapse`, `createStore`, all types |
 | `@nimblebrain/synapse/react` | `AppProvider`, `useApp`, `useToolResult`, `useToolInput`, `useResize`, `useConnectTheme`, `SynapseProvider`, `useSynapse`, `useCallTool`, `useDataSync`, `useTheme`, `useAction`, `useAgentAction`, `useChat`, `useVisibleState`, `useStore`, `useFileUpload` |
-| `@nimblebrain/synapse/iife` | `connect.iife.js` — `window.Synapse` global for `<script>` tags |
+| `@nimblebrain/synapse/iife` | `connect.iife.global.js` — `window.Synapse` global for `<script>` tags |
 | `@nimblebrain/synapse/vite` | `synapseVite` Vite plugin |
 | `@nimblebrain/synapse/codegen` | `readFromManifest`, `readFromServer`, `generateTypes` |
 

@@ -11,42 +11,34 @@ NimbleBrain exposes an HTTP API that controls an agent with tool execution capab
 
 ### Auth adapters
 
-NimbleBrain uses pluggable authentication adapters configured via `instance.json` in the work directory. Three adapters are available:
+NimbleBrain uses pluggable authentication adapters configured via `instance.json` in the work directory. The available adapters are:
 
 | Adapter | Use case | Configuration |
 |---------|----------|--------------|
-| **dev** | Local development | No `instance.json` needed (default) |
-| **local** | Single-server deployments | Per-user API keys with bcrypt hashing |
-| **oidc** | Enterprise / SSO | JWT verification via WorkOS or any OIDC provider |
+| **dev** | Local development | No `instance.json` (default) |
+| **oidc** | Enterprise / SSO | Authorization-code flow against any OIDC provider |
+| **workos** | Enterprise / SSO via WorkOS | AuthKit-hosted login (`adapter: "workos"`) |
+
+The adapter is selected by the `auth.adapter` field in `instance.json`. With no `instance.json` present, the platform runs in dev mode.
 
 <Aside type="danger">
 Running without an `instance.json` (dev mode) disables all authentication. The CORS policy falls back to `Access-Control-Allow-Origin: *`. Anyone who can reach the server has full access to the agent, including shell execution via the bash bundle.
 </Aside>
 
-### Local adapter key requirements
-
-When using the local auth adapter:
-
-| Constraint | Behavior |
-|---|---|
-| Fewer than 8 characters | Server refuses to start |
-| 8--15 characters | Server starts but logs a warning |
-| 16+ characters | No warnings. Use at least 32 characters for production |
-
-Generate a strong key:
-
-```bash
-openssl rand -base64 32
-```
-
 ### How authentication works
 
-The server accepts credentials in two ways, checked in this order:
+For the OIDC and WorkOS adapters, sign-in is an authorization-code flow, not a login form that the platform posts credentials to. There is **no** `POST /v1/auth/login` endpoint. The browser flow is:
 
-1. **Bearer token** in the `Authorization` header: `Authorization: Bearer <key>`
-2. **Session cookie** named `nb_session`, set by the login endpoint
+<Steps>
 
-The comparison uses a constant-time XOR loop to prevent timing attacks. Both the token length and content must match exactly.
+1. The web client redirects to `GET /v1/auth/authorize`, which sends the user to the configured identity provider.
+2. The provider authenticates the user and redirects back to `GET /v1/auth/callback` with an authorization code.
+3. The callback exchanges the code for tokens and sets the `nb_session` cookie (see [Session cookies](#session-cookies) below). It does **not** validate a shared secret — the cookie carries the provider-issued access token.
+4. Subsequent requests present either the `nb_session` cookie or an `Authorization: Bearer <token>` header. Programmatic callers (CLI, external MCP clients) use the bearer header; the browser uses the cookie.
+
+</Steps>
+
+`POST /v1/auth/refresh` rotates an expiring session, and `POST /v1/auth/logout` clears it. These four routes (`authorize`, `callback`, `refresh`, `logout`) are the entire auth surface — there is no login route and no `NB_API_KEY`.
 
 ### Failed authentication logging
 
@@ -58,27 +50,9 @@ Every failed authentication attempt is logged to stderr with the client IP and t
 
 The IP comes from the `X-Forwarded-For` header (set by your reverse proxy) or `"direct"` for direct connections. Monitor these logs for brute-force attempts.
 
-### Key rotation (local adapter)
-
-To rotate an API key:
-
-<Steps>
-
-1. Generate a new key:
-
-   ```bash
-   openssl rand -base64 32
-   ```
-
-2. Update the user's key via `nb__manage_users` or directly in the local key store.
-
-3. Restart the platform container. All existing sessions for that user become invalid — they must log in again with the new key.
-
-</Steps>
-
 ## Session cookies
 
-The `/v1/auth/login` endpoint validates the API key and sets a session cookie for browser-based access. The web UI uses this cookie for all subsequent requests.
+The OIDC/WorkOS callback (`GET /v1/auth/callback`) sets the `nb_session` cookie after a successful authorization-code exchange. The web UI uses this cookie for all subsequent same-origin requests. No login endpoint is involved — the cookie value is the provider-issued access token, not a platform-minted secret.
 
 ### Cookie attributes
 
@@ -86,10 +60,10 @@ The `/v1/auth/login` endpoint validates the API key and sets a session cookie fo
 |---|---|---|
 | Name | `nb_session` | Identifies the session |
 | `HttpOnly` | Always set | Prevents JavaScript access — mitigates XSS token theft |
-| `SameSite` | `Strict` | Cookie only sent on same-site requests — mitigates CSRF |
+| `SameSite` | `Lax` | Cookie sent on same-site requests and top-level navigations — mitigates CSRF |
 | `Secure` | Set when not localhost | Cookie only sent over HTTPS |
 | `Path` | `/` | Available to all routes |
-| `Max-Age` | `604800` (7 days) | Session expires after 7 days |
+| `Max-Age` | `3600` (1 hour) | Session expires after one hour; refreshed via `POST /v1/auth/refresh` |
 
 The `Secure` flag is automatically omitted for localhost connections (where `http://` is expected) and added for all other hosts.
 
@@ -99,23 +73,23 @@ The `Secure` flag is automatically omitted for localhost connections (where `htt
 
 ## CORS
 
-Cross-Origin Resource Sharing controls which domains can make API requests from a browser. NimbleBrain has three CORS modes depending on your configuration:
+Cross-Origin Resource Sharing controls which domains can make API requests from a browser. NimbleBrain has three CORS modes depending on your configuration. The deciding factor is whether **auth is configured** (an `instance.json` adapter is present), not any single environment variable:
 
-### Mode 1: No API key (development)
+### Mode 1: No auth configured (development)
 
-When `NB_API_KEY` is not set:
+When no `instance.json` adapter is configured (dev mode):
 - `Access-Control-Allow-Origin: *`
 - No credentials support
 - Any origin can make requests
 
-### Mode 2: API key set, no `ALLOWED_ORIGINS`
+### Mode 2: Auth configured, no `ALLOWED_ORIGINS`
 
-When `NB_API_KEY` is set but `ALLOWED_ORIGINS` is not:
+When an auth adapter is configured but `ALLOWED_ORIGINS` is not:
 - No `Access-Control-Allow-Origin` header is sent
 - Only same-origin requests work (browser enforces this)
 - Cross-origin requests from any domain are blocked
 
-### Mode 3: API key + `ALLOWED_ORIGINS` (production)
+### Mode 3: Auth configured + `ALLOWED_ORIGINS` (production)
 
 When both are set:
 - `Access-Control-Allow-Origin` is set to the requesting origin only if it appears in the allow list
@@ -127,7 +101,7 @@ export ALLOWED_ORIGINS=https://nb.example.com,https://admin.example.com
 ```
 
 <Aside type="caution">
-If you use a custom domain with the web UI, that domain must be in `ALLOWED_ORIGINS` for cookie-based login to work. Without it, the browser blocks the `Set-Cookie` response from the login endpoint.
+If you use a custom domain with the web UI, that domain must be in `ALLOWED_ORIGINS` for cookie-based auth to work. Without it, the browser blocks the `Set-Cookie` response from the OIDC callback.
 </Aside>
 
 ### Allowed headers
@@ -135,7 +109,7 @@ If you use a custom domain with the web UI, that domain must be in `ALLOWED_ORIG
 These headers are always permitted in CORS requests:
 
 ```
-Content-Type, Authorization, Mcp-Session-Id, Last-Event-ID, Mcp-Protocol-Version
+Content-Type, Authorization, Mcp-Session-Id, Last-Event-ID, Mcp-Protocol-Version, X-Workspace-Id
 ```
 
 These headers are exposed to client JavaScript:
@@ -319,7 +293,7 @@ Mark bundles as `protected` in your configuration to prevent the agent from unin
 }
 ```
 
-A protected bundle cannot be removed via `nb__manage_app`. You must edit the configuration file and restart to remove it.
+A protected bundle cannot be uninstalled through the connectors catalog (`manage_connectors`). You must edit the workspace configuration and restart to remove it.
 
 ### Bundle isolation
 
@@ -335,7 +309,7 @@ Use this checklist before exposing NimbleBrain to any network:
 
 | Item | How to verify |
 |---|---|
-| Authentication configured | `instance.json` exists with `auth.adapter` set to `local` or `oidc` |
+| Authentication configured | `instance.json` exists with `auth.adapter` set to `oidc` or `workos` |
 | `ALLOWED_ORIGINS` set to your domain(s) | `curl -v` with an `Origin` header and confirm the response includes `Access-Control-Allow-Origin` |
 | Platform port (27247) not exposed | `docker compose ps` shows no host port mapping for platform service |
 | TLS enabled | `curl -I https://nb.example.com` returns a valid certificate |

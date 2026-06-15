@@ -2,10 +2,31 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightSidebarTopics from 'starlight-sidebar-topics';
+import starlightLinksValidator from 'starlight-links-validator';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://docs.nimblebrain.ai',
+  // Redirects for pages removed/merged in the architecture realignment, so
+  // bookmarked and indexed URLs land on their replacements instead of 404ing.
+  redirects: {
+    '/api/overview': '/connect/mcp-endpoint/',
+    '/api/mcp-endpoint': '/connect/mcp-endpoint/',
+    '/api/authentication': '/config/instance-json/',
+    '/api/bootstrap': '/connect/mcp-endpoint/',
+    '/api/chat': '/connect/mcp-endpoint/',
+    '/api/tools': '/connect/mcp-endpoint/',
+    '/api/events': '/connect/mcp-endpoint/',
+    '/api/health': '/deploy/observability/',
+    '/guide/chat': '/using/chat/',
+    '/guide/conversations': '/using/conversations/',
+    '/guide/apps': '/using/installing-apps/',
+    '/guide/files': '/using/file-context/',
+    '/guide/workspaces': '/using/workspaces/',
+    '/guide/team': '/using/users/',
+    '/guide/mcp-connect': '/connect/external-clients/',
+    '/cli/user': '/cli/overview/',
+  },
   integrations: [
     starlight({
       title: 'NimbleBrain',
@@ -32,6 +53,7 @@ export default defineConfig({
         },
       ],
       plugins: [
+        starlightLinksValidator({ errorOnLocalLinks: false }),
         starlightSidebarTopics([
           {
             label: 'Getting Started',
@@ -46,38 +68,55 @@ export default defineConfig({
             ],
           },
           {
-            label: 'User Guide',
+            label: 'Using NimbleBrain',
             link: '/guide/welcome',
             icon: 'star',
             items: [
-              { label: 'Welcome', slug: 'guide/welcome' },
-              { label: 'The Interface', slug: 'guide/interface' },
-              { label: 'Chatting with the Agent', slug: 'guide/chat' },
-              { label: 'Your Conversations', slug: 'guide/conversations' },
-              { label: 'Apps & the Sidebar', slug: 'guide/apps' },
-              { label: 'Attaching Files', slug: 'guide/files' },
-              { label: 'Workspaces', slug: 'guide/workspaces' },
-              { label: 'Settings & Preferences', slug: 'guide/settings' },
-              { label: 'Keyboard Shortcuts', slug: 'guide/shortcuts' },
-              { label: 'Connecting External Clients', slug: 'guide/mcp-connect' },
-              { label: 'Team Management', slug: 'guide/team' },
+              {
+                label: 'Interface tour',
+                items: [
+                  { label: 'Welcome', slug: 'guide/welcome' },
+                  { label: 'The Interface', slug: 'guide/interface' },
+                  { label: 'Settings & Preferences', slug: 'guide/settings' },
+                  { label: 'Keyboard Shortcuts', slug: 'guide/shortcuts' },
+                ],
+              },
+              {
+                label: 'Working with the agent',
+                items: [
+                  { label: 'Chat', slug: 'using/chat' },
+                  { label: 'Conversations', slug: 'using/conversations' },
+                  { label: 'Workspaces', slug: 'using/workspaces' },
+                  { label: 'File Context', slug: 'using/file-context' },
+                  { label: 'Skills', slug: 'using/skills' },
+                  { label: 'Multi-Agent Delegation', slug: 'using/delegation' },
+                  { label: 'Automations', slug: 'using/automations' },
+                ],
+              },
+              {
+                label: 'Apps & connectors',
+                items: [
+                  { label: 'Installing Apps', slug: 'using/installing-apps' },
+                  { label: 'Managing Apps', slug: 'using/managing-apps' },
+                  { label: 'Connectors', slug: 'using/connectors' },
+                ],
+              },
+              {
+                label: 'Team',
+                items: [
+                  { label: 'User Management', slug: 'using/users' },
+                  { label: 'Telemetry', slug: 'using/telemetry' },
+                ],
+              },
             ],
           },
           {
-            label: 'Platform Guide',
-            link: '/using/chat',
-            icon: 'laptop',
+            label: 'Connect via MCP',
+            link: '/connect/external-clients',
+            icon: 'external',
             items: [
-              { label: 'Chat', slug: 'using/chat' },
-              { label: 'Installing Apps', slug: 'using/installing-apps' },
-              { label: 'Managing Apps', slug: 'using/managing-apps' },
-              { label: 'Skills', slug: 'using/skills' },
-              { label: 'Conversations', slug: 'using/conversations' },
-              { label: 'Workspaces', slug: 'using/workspaces' },
-              { label: 'File Context', slug: 'using/file-context' },
-              { label: 'User Management', slug: 'using/users' },
-              { label: 'Multi-Agent Delegation', slug: 'using/delegation' },
-              { label: 'Telemetry', slug: 'using/telemetry' },
+              { label: 'Connecting External Clients', slug: 'connect/external-clients' },
+              { label: 'MCP Endpoint Reference', slug: 'connect/mcp-endpoint' },
             ],
           },
           {
@@ -86,9 +125,10 @@ export default defineConfig({
             icon: 'puzzle',
             items: [
               { label: 'App Overview', slug: 'apps/overview' },
+              { label: 'Manifest Reference', slug: 'apps/manifest' },
+              { label: 'Host Capabilities', slug: 'apps/host-capabilities' },
               { label: 'Synapse SDK', slug: 'apps/synapse' },
               { label: 'Tool Results & Content Routing', slug: 'apps/tool-results' },
-              { label: 'Manifest Reference', slug: 'apps/manifest' },
               { label: 'MCP App Bridge', slug: 'apps/bridge' },
               { label: 'UI Resources', slug: 'apps/ui-resources' },
               { label: 'Theming', slug: 'apps/theming' },
@@ -110,27 +150,12 @@ export default defineConfig({
               { label: 'nb dev', slug: 'cli/dev' },
               { label: 'nb bundle', slug: 'cli/bundle' },
               { label: 'nb skill', slug: 'cli/skill' },
+              { label: 'nb credential', slug: 'cli/credential' },
               { label: 'nb config', slug: 'cli/config' },
               { label: 'nb status', slug: 'cli/status' },
               { label: 'nb reload', slug: 'cli/reload' },
               { label: 'nb telemetry', slug: 'cli/telemetry' },
               { label: 'nb automation', slug: 'cli/automation' },
-              { label: 'nb user', slug: 'cli/user' },
-            ],
-          },
-          {
-            label: 'API',
-            link: '/api/overview',
-            icon: 'open-book',
-            items: [
-              { label: 'Overview', slug: 'api/overview' },
-              { label: 'Authentication', slug: 'api/authentication' },
-              { label: 'Bootstrap', slug: 'api/bootstrap' },
-              { label: 'Chat', slug: 'api/chat' },
-              { label: 'Tools', slug: 'api/tools' },
-              { label: 'Events', slug: 'api/events' },
-              { label: 'MCP Endpoint', slug: 'api/mcp-endpoint' },
-              { label: 'Health', slug: 'api/health' },
             ],
           },
           {
@@ -139,6 +164,7 @@ export default defineConfig({
             icon: 'setting',
             items: [
               { label: 'nimblebrain.json', slug: 'config/nimblebrain-json' },
+              { label: 'instance.json', slug: 'config/instance-json' },
               { label: 'workspace.json', slug: 'config/workspace-json' },
               { label: 'Bundle Configuration', slug: 'config/bundles' },
               { label: 'Credentials', slug: 'config/credentials' },
@@ -156,6 +182,7 @@ export default defineConfig({
             items: [
               { label: 'Docker Compose', slug: 'deploy/docker' },
               { label: 'Security', slug: 'deploy/security' },
+              { label: 'Observability', slug: 'deploy/observability' },
               { label: 'Composio Aggregator', slug: 'deploy/composio' },
             ],
           },

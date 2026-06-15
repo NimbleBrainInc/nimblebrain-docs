@@ -29,21 +29,19 @@ The command writes a timestamp to `~/.nimblebrain/.reload`. The running server w
 
 Run `nb reload` after:
 
-- Adding a bundle with `nb bundle add`
-- Removing a bundle with `nb bundle remove`
+- Installing or removing a bundle (via the Apps catalog, or by editing `nimblebrain.json` / `workspace.json`)
 - Changing bundle configuration with `nb config set` or `nb config clear`
 - Manually editing your `nimblebrain.json`
 
 ## Typical workflow
 
 ```bash
-nb bundle add @nimblebraininc/postgres
+# after adding the bundle entry to nimblebrain.json:
 nb config set @nimblebraininc/postgres connection_string=postgres://localhost/mydb
 nb reload
 ```
 
 ```
-Added "@nimblebraininc/postgres" to config. Run nb reload to activate.
 Saved connection_string for @nimblebraininc/postgres
 Reload signal sent. Running runtime will pick up changes.
 ```

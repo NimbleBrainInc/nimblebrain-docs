@@ -1,27 +1,31 @@
 ---
 title: Conversations
-description: Persistence, history, forking, and search for NimbleBrain conversations.
+description: Persistence, history, resuming, and storage for NimbleBrain conversations.
 ---
 
 import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
-<Aside type="tip">
-  Looking for a quick overview of conversations in the web UI? See [Your Conversations](/guide/conversations) in the User Guide.
-</Aside>
+NimbleBrain automatically persists every conversation. Each conversation is stored as a JSONL file owned by the user who created it, and you can resume, rename, fork, and delete conversations through the web UI or CLI.
 
-NimbleBrain automatically persists every conversation. Each conversation is stored as a JSONL file, and you can resume, fork, rename, delete, and search conversations through the CLI, API, or web UI.
+## Where conversations live
+
+Conversations are **owned by you**, not by a workspace. Every conversation lives at the top level of the work directory, keyed by its ID:
+
+```
+~/.nimblebrain/conversations/conv_a1b2c3d4e5f67890.jsonl
+```
+
+A conversation records which workspace's tools the agent could reach when a turn ran (`workspaceId` in its metadata), but that is a tool-scoping breadcrumb, not a location. The file always lives under `conversations/` regardless of which workspace you were in, and it follows you across every workspace you belong to.
+
+<Aside type="note">
+Conversation IDs follow the pattern `conv_` followed by 16 hex characters (for example `conv_a1b2c3d4e5f67890`). They are generated from a UUIDv4 with the dashes stripped.
+</Aside>
 
 ## Storage format
 
-Conversations are stored as append-only JSONL (JSON Lines) files. In workspace mode, files live under the workspace directory:
+Conversations are stored as append-only JSONL (JSON Lines) files using event sourcing:
 
-```
-~/.nimblebrain/workspaces/ws_engineering/conversations/conv_a1b2c3d4e5f67890.jsonl
-```
-
-The file format uses event sourcing:
-
-- **Line 1** — immutable conversation metadata (created once, never rewritten)
+- **Line 1** — immutable conversation metadata (written once, never rewritten)
 - **Lines 2+** — append-only conversation events
 
 ### Metadata (line 1)
@@ -30,15 +34,16 @@ The file format uses event sourcing:
 {
   "id": "conv_a1b2c3d4e5f67890",
   "createdAt": "2026-03-25T10:30:00.000Z",
-  "format": "events",
-  "workspaceId": "ws_engineering",
+  "updatedAt": "2026-03-25T10:42:00.000Z",
+  "title": "Weekly meeting summary",
+  "lastModel": "anthropic:claude-sonnet-4-6",
   "ownerId": "user_abc123",
-  "visibility": "private",
-  "participants": ["user_abc123"]
+  "workspaceId": "ws_3f9a1c7e0b2d4856",
+  "format": "events"
 }
 ```
 
-Token totals, cost, and last model are not stored in line 1 — they are derived at read time by scanning `llm.response` events in the file.
+Each conversation has exactly one owner (`ownerId`), the single authorization principal. Token totals and cost are **not** stored in line 1 — they are derived at read time by scanning `llm.response` events, which avoids drift between a cached total and what re-aggregating the events would produce.
 
 ### Events (lines 2+)
 
@@ -46,13 +51,13 @@ Events are appended chronologically. Key event types:
 
 | Event | Description |
 |-------|-------------|
-| `user.message` | A user sent a message (includes `userId` for multi-participant conversations) |
-| `run.start` | Agent engine started processing |
-| `llm.response` | LLM returned a response (contains token counts, model, content) |
+| `user.message` | A user sent a message |
+| `run.start` | The agent engine started processing |
+| `llm.response` | The model returned a response (token counts, model, content) |
 | `tool.start` | A tool call began |
-| `tool.done` | A tool call completed (contains result, latency) |
-| `run.done` | Agent engine finished processing |
-| `run.error` | Agent engine encountered an error |
+| `tool.done` | A tool call completed (result, latency) |
+| `run.done` | The agent engine finished processing |
+| `run.error` | The agent engine encountered an error |
 
 Example user message event:
 
@@ -60,52 +65,29 @@ Example user message event:
 {
   "ts": "2026-03-25T10:30:00.000Z",
   "type": "user.message",
-  "content": [{"type": "text", "text": "Summarize my meetings from this week"}],
-  "userId": "user_abc123"
+  "content": [{"type": "text", "text": "Summarize my meetings from this week"}]
 }
 ```
 
-## Shared conversations
+## Finding past conversations
 
-Conversations can be shared with other workspace members for multi-participant chat. When a conversation is shared, all participants can send messages and see each other's messages and assistant responses in real time.
+Open **Conversations** from the sidebar to see your history. Each conversation shows:
 
-### Sharing a conversation
+- **Title** — auto-generated from your first message
+- **Timestamp** — when the conversation last had activity
 
-The agent can share a conversation and manage participants through the `manage_conversation` tool:
+Click any conversation to load it in the chat panel and continue where you left off. The agent has the full context of everything discussed previously.
 
-- **Share** — changes visibility from `private` to `shared`
-- **Add participant** — adds a workspace member to the conversation
-- **Remove participant** — removes a participant (cannot remove the owner)
-- **Unshare** — reverts to private, removing all participants except the owner
-
-Only the conversation owner or a workspace admin can manage sharing.
-
-### Access control
-
-| Role | Private conversations | Shared conversations |
-|------|---------------------|---------------------|
-| Owner | Full access | Full access |
-| Workspace admin | Can view all | Can view all |
-| Participant | No access | Can view and send messages |
-| Other members | No access | No access |
-
-### Multi-participant chat UI
-
-When multiple participants are in a conversation, the chat UI shows who sent each message:
-
-- **Your messages** appear as normal (right-aligned, italic, no label)
-- **Other participants' messages** get a colored dot and display name above the message, shown only when the speaker changes — keeping the interface clean
-- Each participant gets a unique accent color on their message border
-
-### Real-time streaming
-
-When you're viewing a shared conversation and another participant sends a message, you see the assistant's response stream in real time — the same way you'd see your own messages stream. If your connection drops, the conversation reloads automatically on reconnect to catch anything you missed.
-
-Participants who are removed from a conversation or whose conversation is unshared have their streaming connection closed immediately.
+<Aside type="tip">
+You can link directly to a conversation by sharing its URL. When you open the link, the conversation loads automatically in your chat panel.
+</Aside>
 
 ## Resuming a conversation
 
 <Tabs>
+  <TabItem label="Web UI">
+    Select a conversation from the sidebar list. The full message history loads, and new messages continue the conversation.
+  </TabItem>
   <TabItem label="CLI">
     ```bash
     nb --resume conv_a1b2c3d4e5f67890
@@ -113,24 +95,33 @@ Participants who are removed from a conversation or whose conversation is unshar
 
     This loads the conversation history and continues from where you left off.
   </TabItem>
-  <TabItem label="Web UI">
-    Select a conversation from the sidebar list. The full message history loads, and new messages continue the conversation.
-  </TabItem>
 </Tabs>
-
-## Listing conversations
-
-The sidebar in the web UI shows recent conversations with titles and timestamps. Click any conversation to load it.
-
-Conversations can also be listed and managed programmatically through the `nb__status` system tool with `scope: "overview"`.
 
 ## Auto-titling
 
-NimbleBrain generates conversation titles automatically after the first assistant response. The title is stored in the metadata line of the JSONL file and displayed in the web UI sidebar and conversation list.
+NimbleBrain generates a conversation title automatically after the first assistant response. The title is stored in the metadata line of the JSONL file and shown in the web UI sidebar and conversation list.
+
+## Starting fresh
+
+Click **New conversation** in the chat panel header, or type `/clear` in the input. Your previous conversation is saved — you can always return to it.
+
+## History compaction
+
+For long-running conversations, NimbleBrain can compact older history to keep the context window manageable. This is **opt-in** and disabled by default. Enable it with the `compaction` feature flag in `nimblebrain.json`:
+
+```json title="nimblebrain.json"
+{
+  "features": {
+    "compaction": false
+  }
+}
+```
+
+When enabled, the runtime summarizes earlier turns once a conversation grows large, preserving the gist while freeing room for new context. With it off (the default), the full event history is replayed every turn.
 
 ## Storage configuration
 
-By default, the CLI uses JSONL storage in `~/.nimblebrain/conversations/`. You can change the storage backend in `nimblebrain.json`:
+By default the CLI uses event-sourced JSONL storage under the work directory. You can point storage elsewhere in `nimblebrain.json`:
 
 ```json
 {
@@ -141,7 +132,7 @@ By default, the CLI uses JSONL storage in `~/.nimblebrain/conversations/`. You c
 }
 ```
 
-For in-memory storage (no persistence):
+For ephemeral, in-memory storage with no persistence:
 
 ```json
 {
@@ -151,12 +142,8 @@ For in-memory storage (no persistence):
 }
 ```
 
-<Aside type="note">
-  Conversation IDs follow the pattern `conv_` followed by 16 hex characters (e.g., `conv_a1b2c3d4e5f67890`). They are generated from UUIDv4 with dashes stripped.
-</Aside>
-
 ## What's next
 
 - [Chat](/using/chat) — how conversations are created during chat
 - [Multi-Agent Delegation](/using/delegation) — child agents run in their own conversations
-- [Events API](/api/events) — real-time event streaming (workspace and per-conversation)
+- [Automations](/using/automations) — scheduled agent runs that produce deliverables

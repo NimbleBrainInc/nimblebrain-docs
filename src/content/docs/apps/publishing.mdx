@@ -75,10 +75,10 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Build bundle
-        uses: NimbleBrainInc/mcpb-pack@v1
+        uses: NimbleBrainInc/mcpb-pack@v3
         with:
           path: .
           output: dist/bundle.tar.gz
@@ -123,19 +123,7 @@ The `mcpb-pack` action:
    ```
 </Steps>
 
-After publishing, anyone can install your app:
-
-```bash
-nb bundle add @myorg/my-app
-```
-
-Or via the API:
-
-```bash
-curl -X POST http://localhost:27247/v1/apps/install \
-  -H "Content-Type: application/json" \
-  -d '{"name": "@myorg/my-app"}'
-```
+After publishing, anyone can install your app from the Apps catalog in their workspace settings, or by adding it to their `workspace.json` bundles and running `nb reload`.
 
 ## Version conventions
 
@@ -172,10 +160,7 @@ Test your bundle against a local NimbleBrain instance before publishing:
    }
    ```
 
-   Or install at runtime:
-   ```bash
-   nb bundle add ../my-app
-   ```
+   Then run `nb reload` (or restart the dev server) to load it.
 
 3. **Verify tools** are registered:
    ```bash

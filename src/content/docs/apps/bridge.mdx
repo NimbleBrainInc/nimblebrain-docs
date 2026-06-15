@@ -32,6 +32,7 @@ All messages use `window.postMessage` with JSON-RPC 2.0 envelopes:
 | `ui/notifications/tool-result` | Notification | Forwarded tool result from the agent. |
 | `ui/notifications/tool-input` | Notification | Tool arguments being sent to a tool on the app's server. |
 | `ui/notifications/host-context-changed` | Notification | Host context changed (theme toggle, locale, etc.). |
+| `notifications/tasks/status` | Notification | Status update for a long-running task. Forwarded verbatim from the MCP server. See [Tasks](#tasks). |
 
 #### App to Host
 
@@ -42,6 +43,10 @@ All messages use `window.postMessage` with JSON-RPC 2.0 envelopes:
 | `ui/notifications/size-changed` | Notification | Report content dimensions for auto-sizing inline views. |
 | `ui/notifications/request-teardown` | Notification | App requests the host to tear down the iframe. Currently a no-op. |
 | `tools/call` | Request | Call a tool on the app's MCP server. Returns `CallToolResult`. |
+| `resources/read` | Request | Read a resource from the app's MCP server. Returns `ReadResourceResult`. See [below](#resourcesread). |
+| `tasks/get` | Request | Non-blocking fetch of a long-running task's current state. See [Tasks](#tasks). |
+| `tasks/result` | Request | Block until a task reaches a terminal state and return its payload. See [Tasks](#tasks). |
+| `tasks/cancel` | Request | Best-effort cancel of a running task. See [Tasks](#tasks). |
 | `ui/message` | Request | Send a message to the conversation. |
 | `ui/open-link` | Request | Open a URL in a new browser tab. |
 | `ui/update-model-context` | Request | Push structured state visible to the LLM. See [below](#uiupdate-model-context). |
@@ -89,7 +94,12 @@ The app initiates the handshake per the ext-apps spec:
   "result": {
     "protocolVersion": "2026-01-26",
     "hostInfo": { "name": "nimblebrain", "version": "1.0.0" },
-    "hostCapabilities": { "openLinks": {}, "serverTools": {}, "logging": {} },
+    "hostCapabilities": {
+      "openLinks": {},
+      "serverTools": {},
+      "logging": {},
+      "tasks": { "cancel": {}, "requests": { "tools": { "call": {} } } }
+    },
     "hostContext": {
       "theme": "dark",
       "styles": {
@@ -239,6 +249,82 @@ Call a tool on your app's MCP server. This is a JSON-RPC **request** — the res
 Tool calls are scoped to your app's MCP server. The bridge automatically routes `tools/call` with your app's server name. An iframe cannot call tools on other servers.
 </Aside>
 
+### `resources/read`
+
+Read a resource from your app's MCP server. This is a JSON-RPC **request** — the response is a standard MCP `ReadResourceResult` (`{ contents: [...] }`). The URI passes through verbatim to your server; resources are namespaced by the bundle that authored them.
+
+**Request:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "resources/read",
+  "id": "res-1",
+  "params": {
+    "uri": "data://board/state"
+  }
+}
+```
+
+**Success response (ReadResourceResult):**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "res-1",
+  "result": {
+    "contents": [
+      { "uri": "data://board/state", "mimeType": "application/json", "text": "{\"columns\":[]}" }
+    ]
+  }
+}
+```
+
+Like `tools/call`, resource reads are scoped to your app's own server.
+
+### Tasks
+
+Long-running tools (work that exceeds the stock MCP request timeout) run as **task-augmented** calls. To start one, send a `tools/call` whose `params` include a `task` object; the response is a `CreateTaskResult` carrying a `taskId`. You then track progress two ways:
+
+- **Status notifications** — the host forwards each `notifications/tasks/status` from the server to your iframe verbatim. Filter on the `taskId` you own.
+- **Polling** — call `tasks/get`, `tasks/result`, or `tasks/cancel` with the `taskId`.
+
+| Method | Blocking | Returns |
+|--------|----------|---------|
+| `tasks/get` | No | Current task state (`GetTaskResult`). |
+| `tasks/result` | Yes — blocks until terminal | The original request's payload (for `tools/call`, a `CallToolResult`). |
+| `tasks/cancel` | No | The (final) task state. Cancelling an already-terminal task surfaces as JSON-RPC `-32602`. |
+
+**Start a task-augmented call:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "id": "call-2",
+  "params": {
+    "name": "start_research",
+    "arguments": { "query": "competitive landscape" },
+    "task": { "ttl": 3600000 }
+  }
+}
+```
+
+**Fetch the result when ready:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "tasks/result",
+  "id": "res-2",
+  "params": { "taskId": "tsk_abc123" }
+}
+```
+
+<Aside type="tip">
+The `@nimblebrain/synapse` SDK's `callToolAsTask` handles the full flow — starting the task, subscribing to status notifications, and awaiting the result. See [Long-running tools](/apps/synapse) for the dual-channel (task + entity) pattern.
+</Aside>
+
 ### `ui/message`
 
 Send a message to the conversation. Follows the ext-apps spec format with `role` and `content` array. Context can be attached via `_meta` on the content block.
@@ -330,7 +416,7 @@ Push structured state into the agent's context so the LLM knows what the user is
 The `summary` field is optional but recommended — it's used as a fallback when the full state exceeds the token budget. If the message includes an `id`, the host responds with an empty result.
 
 <Aside type="note">
-State injection is trust-gated. Only apps with an MTF trust score of 50 or higher have their state included in the LLM context. If you're using the Synapse SDK, `app.updateModelContext()` handles this automatically.
+If you're using the `@nimblebrain/synapse` SDK, `app.updateModelContext()` constructs and posts this message for you.
 </Aside>
 
 ### `synapse/download-file`
@@ -466,7 +552,7 @@ The bridge enforces two security boundaries:
 
 ## Bridge runtime helper
 
-NimbleBrain's core resources include a bridge runtime script that automatically handles theme synchronization. It listens for `ui/initialize` (legacy notification path) and `ui/notifications/host-context-changed` (spec) and applies tokens as CSS custom properties.
+The platform's built-in apps ship a small bridge runtime script that handles theme synchronization automatically. It listens for `ui/initialize` (legacy notification path) and `ui/notifications/host-context-changed` (spec) and applies tokens as CSS custom properties.
 
 If you are building a third-party app, you can implement the same pattern:
 

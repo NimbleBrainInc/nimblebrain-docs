@@ -19,7 +19,8 @@ nb dev [flags]
 |------|-------------|---------|
 | `--port <number>` | API server port | `27247` |
 | `--no-web` | Skip the web dev server (API only) | Off |
-| `--workdir <dir>` | Working directory | `.nimblebrain` (project-local) |
+| `--app <path>` | Path to an app directory to serve with a Vite HMR dev server | None |
+| `--app-port <number>` | Vite dev server port for `--app` | `5173` |
 | `--debug` | Verbose logging | Off |
 
 ## Starting dev mode
@@ -86,19 +87,31 @@ The web dev server port is controlled by `NB_WEB_PORT`. The standard npm scripts
 | `bun run dev:empty` | :27249 | :27248 |
 | `bun run dev:minimal` | :27251 | :27250 |
 
-## Working directory
+## Developing an app
 
-By default, `nb dev` uses `.nimblebrain` in the current directory as the working directory. This keeps development data (config, conversations, logs) local to your project instead of the global `~/.nimblebrain`.
-
-Override with `--workdir`:
+To iterate on a Synapse/Upjack app with hot module replacement, point `nb dev` at the app directory with `--app`. The CLI reads the app's `manifest.json`, registers the app in dev mode, and starts a Vite dev server for it (default port `5173`):
 
 ```bash
-nb dev --workdir ./my-project/.nimblebrain
+nb dev --app ../synapse-apps/synapse-crm
 ```
 
-<Aside type="note">
-  This is different from `nb serve` and `nb` (interactive), which default to `~/.nimblebrain` (global). The project-local default in dev mode keeps development and production data separate.
-</Aside>
+Use `--app-port` to run the app's Vite server on a different port:
+
+```bash
+nb dev --app ../synapse-apps/synapse-crm --app-port 5180
+```
+
+The app dev server runs alongside the API and web processes; its output is prefixed with `[app]`. If the app directory has no `manifest.json`, `nb dev` logs a warning and skips the app dev server.
+
+## Working directory
+
+`nb dev` spawns `nb serve` under the hood, so it uses the same default work directory: `~/.nimblebrain`. Development data (config, conversations, logs) lives there unless you point somewhere else.
+
+Override the work directory by setting `NB_WORK_DIR` or passing `--config` to target a specific config file:
+
+```bash
+NB_WORK_DIR=./my-project/.nimblebrain nb dev
+```
 
 ## What happens when the web directory is missing
 

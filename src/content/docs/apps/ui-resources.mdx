@@ -175,15 +175,15 @@ Your HTML resources are rendered inside iframes. Keep these points in mind:
 For inline or compact views, send `ui/notifications/size-changed` messages to tell the host your content dimensions. This prevents unnecessary scrollbars.
 </Aside>
 
-## Core resources
+## Built-in views use the same path
 
-NimbleBrain itself uses the same `ui://` pattern for built-in views like the conversation list, settings, and home dashboard. These are served from in-memory templates by the `core` and `home` servers rather than from MCP subprocess resources.
+NimbleBrain's own surfaces — the home dashboard, conversation list, usage, files, and automations — use the exact same `ui://` pattern as third-party apps. There is no separate "core" code path. Each built-in is an **in-process MCP bundle**: it runs inside the platform process (over an in-memory transport) and registers `ui://` resources just like a subprocess bundle would.
 
-When the resource proxy receives a request for `core` or `home`, it serves from the internal `getCoreResource()` registry instead of calling an MCP server:
+When the resource proxy receives a request for a built-in's view, it calls `resources/read` on that in-process bundle through the same dispatch path it uses for any other server:
 
 ```
-GET /v1/apps/core/resources/conversations   → built-in conversations panel
-GET /v1/apps/home/resources/primary         → built-in home dashboard
+GET /v1/apps/home/resources/primary   → home bundle's ui:// resource
+GET /v1/apps/files/resources/primary  → files bundle's ui:// resource
 ```
 
-Third-party apps always go through the MCP resource read path.
+This means the built-ins and your app are governed by one contract. Anything the platform's own UI can do through `ui://` and the bridge, your app can do too.
