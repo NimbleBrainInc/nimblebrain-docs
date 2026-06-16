@@ -1,3 +1,14 @@
+> [!WARNING]
+> **This repository is archived and no longer maintained.**
+>
+> The NimbleBrain documentation now lives **inside the runtime repo** at [`NimbleBrainInc/nimblebrain` → `docs/`](https://github.com/NimbleBrainInc/nimblebrain/tree/main/docs), so docs ship in lockstep with the code that they describe.
+>
+> **👉 Active location:** [github.com/NimbleBrainInc/nimblebrain/tree/main/docs](https://github.com/NimbleBrainInc/nimblebrain/tree/main/docs) · Published site unchanged: **[docs.nimblebrain.ai](https://docs.nimblebrain.ai)**
+>
+> Issues and pull requests are closed. Please open any new docs reports against the runtime repository.
+
+---
+
 # NimbleBrain Docs
 
 [![Deploy to GitHub Pages](https://github.com/NimbleBrainInc/nimblebrain-docs/actions/workflows/deploy.yml/badge.svg)](https://github.com/NimbleBrainInc/nimblebrain-docs/actions/workflows/deploy.yml)
